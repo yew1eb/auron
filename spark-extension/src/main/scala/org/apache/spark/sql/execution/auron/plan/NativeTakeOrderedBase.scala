@@ -19,8 +19,8 @@ package org.apache.spark.sql.execution.auron.plan
 import scala.collection.JavaConverters._
 import scala.collection.immutable.SortedMap
 import scala.collection.mutable.ArrayBuffer
+
 import org.apache.spark.OneToOneDependency
-import org.apache.spark.sql.auron.AuronConverters.{convertProjectExec, tryConvert}
 import org.apache.spark.sql.auron.NativeConverters
 import org.apache.spark.sql.auron.NativeHelper
 import org.apache.spark.sql.auron.NativeRDD
@@ -32,15 +32,16 @@ import org.apache.spark.sql.catalyst.expressions.codegen.LazilyGeneratedOrdering
 import org.apache.spark.sql.catalyst.plans.physical.Partitioning
 import org.apache.spark.sql.catalyst.plans.physical.SinglePartition
 import org.apache.spark.sql.catalyst.plans.physical.UnknownPartitioning
-import org.apache.spark.sql.execution.{ProjectExec, SparkPlan, UnaryExecNode}
+import org.apache.spark.sql.execution.{SparkPlan, UnaryExecNode}
+import org.apache.spark.sql.execution.auron.plan.NativeProjectBase.getNativeProjectBuilder
 import org.apache.spark.sql.execution.metric.SQLMetric
+
 import org.apache.auron.metric.SparkMetricNode
 import org.apache.auron.protobuf.FetchLimit
 import org.apache.auron.protobuf.PhysicalExprNode
 import org.apache.auron.protobuf.PhysicalPlanNode
 import org.apache.auron.protobuf.PhysicalSortExprNode
 import org.apache.auron.protobuf.SortExecNode
-import org.apache.spark.sql.execution.auron.plan.NativeProjectBase.getNativeProjectBuilder
 
 abstract class NativeTakeOrderedBase(
     limit: Long,
@@ -74,7 +75,6 @@ abstract class NativeTakeOrderedBase(
   }
 
   private def nativeProject = getNativeProjectBuilder(projectList).buildPartial()
-
 
   override def executeCollect(): Array[InternalRow] = {
     val partial = Shims.get.createNativePartialTakeOrderedExec(limit, sortOrder, child, metrics)
@@ -154,9 +154,9 @@ abstract class NativeTakeOrderedBase(
           .build()
         val plan = PhysicalPlanNode.newBuilder().setSort(nativeTakeOrderedExec).build()
 
-        if(projectList != child.output) {
+        if (projectList != child.output) {
           val nativeProjectExec = nativeProject.toBuilder.setInput(plan).build()
-           PhysicalPlanNode.newBuilder().setProjection(nativeProjectExec).build()
+          PhysicalPlanNode.newBuilder().setProjection(nativeProjectExec).build()
         } else {
           plan
         }

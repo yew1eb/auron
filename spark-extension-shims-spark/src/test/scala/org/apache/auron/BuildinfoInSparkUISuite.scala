@@ -14,25 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.spark.sql.execution.auron.plan
+package org.apache.spark.sql.auron
 
-import org.apache.spark.sql.catalyst.expressions.{NamedExpression, SortOrder}
-import org.apache.spark.sql.execution.SparkPlan
+import org.apache.spark.sql.execution.ui.AuronSQLAppStatusListener
 
-import org.apache.auron.sparkver
+class BuildinfoInSparkUISuite
+    extends org.apache.spark.sql.QueryTest
+    with BuildInfoAuronSQLSuite
+    with AuronSQLTestHelper {
 
-case class NativeTakeOrderedExec(
-    limit: Long,
-    sortOrder: Seq[SortOrder],
-    projectList: Seq[NamedExpression],
-    override val child: SparkPlan)
-    extends NativeTakeOrderedBase(limit, sortOrder, projectList, child) {
+  test("test build info in spark UI ") {
+    val listeners = spark.sparkContext.listenerBus.findListenersByClass[AuronSQLAppStatusListener]
+    assert(listeners.size === 1)
+    val listener = listeners(0)
+    assert(listener.getAuronBuildInfo() == 1)
+  }
 
-  @sparkver("3.2 / 3.3 / 3.4 / 3.5")
-  override protected def withNewChildInternal(newChild: SparkPlan): SparkPlan =
-    copy(child = newChild)
-
-  @sparkver("3.0 / 3.1")
-  override def withNewChildren(newChildren: Seq[SparkPlan]): SparkPlan =
-    copy(child = newChildren.head)
 }

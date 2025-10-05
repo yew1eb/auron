@@ -18,7 +18,9 @@ package org.apache.auron.execution
 
 import java.sql.Date
 import java.time.{Duration, Period}
+
 import scala.util.Random
+
 import org.apache.hadoop.fs.Path
 import org.apache.spark.sql._
 import org.apache.spark.sql.catalyst.{FunctionIdentifier, TableIdentifier}
@@ -27,7 +29,7 @@ import org.apache.spark.sql.catalyst.expressions.{Expression, ExpressionInfo, He
 import org.apache.spark.sql.catalyst.expressions.aggregate.{AggregateMode, BloomFilterAggregate}
 import org.apache.spark.sql.execution.{SQLExecution, UnionExec}
 import org.apache.spark.sql.execution.adaptive.{AdaptiveSparkPlanExec, BroadcastQueryStageExec}
-import org.apache.spark.sql.execution.auron.plan.{NativeAggExec, NativeBroadcastExchangeExec, NativeFilterExec, NativeGlobalLimitExec, NativeParquetScanExec, NativeProjectBase, NativeShuffleExchangeExec, NativeShuffledHashJoinBase, NativeSortExec, NativeSortMergeJoinBase, NativeTakeOrderedExec}
+import org.apache.spark.sql.execution.auron.plan.{NativeAggExec, NativeBroadcastExchangeExec, NativeFilterExec, NativeGlobalLimitExec, NativeParquetScanExec, NativeProjectBase, NativeShuffledHashJoinBase, NativeShuffleExchangeExec, NativeSortExec, NativeSortMergeJoinBase, NativeTakeOrderedExec}
 import org.apache.spark.sql.execution.datasources.parquet.ParquetFileFormat
 import org.apache.spark.sql.execution.exchange.{ReusedExchangeExec, ShuffleExchangeExec}
 import org.apache.spark.sql.execution.joins.{BroadcastHashJoinExec, SortMergeJoinExec}
@@ -37,6 +39,7 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.internal.SQLConf
 import org.apache.spark.sql.internal.SQLConf.SESSION_LOCAL_TIMEZONE
 import org.apache.spark.unsafe.types.UTF8String
+
 import org.apache.auron.BaseAuronSQLSuite
 import org.apache.auron.testing.{DataGenOptions, ParquetGenerator, SchemaGenOptions}
 
@@ -65,10 +68,12 @@ class AuronExecSuite extends AuronQueryTest with BaseAuronSQLSuite {
         println(df.queryExecution.executedPlan)
 
         //checkSparkAnswerAndOperator(() => df)
-        df = checkSparkAnswerAndOperator("SELECT id + 42, length(name) FROM t1 order by id limit 4")
+        df =
+          checkSparkAnswerAndOperator("SELECT id + 42, length(name) FROM t1 order by id limit 4")
         println(df.queryExecution.executedPlan)
 
-        df = checkSparkAnswerAndOperator("select * from (SELECT id, id + 42, length(name) FROM t1 order by id limit 4) where id > 1")
+        df = checkSparkAnswerAndOperator(
+          "select * from (SELECT id, id + 42, length(name) FROM t1 order by id limit 4) where id > 1")
         println(df.queryExecution.executedPlan)
 
         //Thread.sleep(10000000)

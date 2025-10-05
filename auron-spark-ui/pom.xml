@@ -27,8 +27,11 @@
 
   <artifactId>auron-spark-ui_${scalaVersion}</artifactId>
   <packaging>jar</packaging>
+<<<<<<< HEAD
   <name>Apache Auron Spark UI ${scalaVersion}</name>
   <description>Apache Auron Spark UI Project</description>
+=======
+>>>>>>> ffb4e026 ([AURON #1409]Support displaying Auron build info in Spark UI)
 
   <dependencies>
     <dependency>

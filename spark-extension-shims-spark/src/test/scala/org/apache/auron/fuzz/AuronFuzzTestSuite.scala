@@ -361,7 +361,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
   // TODO
 //  Expected :0
 //  Actual   :1
-   test("count(col1, col2, ..) group by single column") {
+  test("count(col1, col2, ..) group by single column") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")
     val groupCol = df.columns.head
@@ -563,6 +563,6 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
     df.createOrReplaceTempView("t1")
     val sql =
       s"SELECT ${cols(0)} div ${cols(1)} FROM t1 ORDER BY ${cols(0)}, ${cols(1)} LIMIT 500"
-      checkSparkAnswerAndOperator(sql)
+    checkSparkAnswerAndOperator(sql)
   }
 }

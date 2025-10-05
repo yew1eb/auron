@@ -16,12 +16,13 @@
  */
 package org.apache.auron.misc
 
-import org.apache.auron.BaseAuronSQLSuite
-import org.apache.auron.testing.{DataGenOptions, ParquetGenerator, SchemaGenOptions}
+import scala.util.Random
+
 import org.apache.hadoop.fs.Path
 import org.apache.spark.sql.AuronQueryTest
 
-import scala.util.Random
+import org.apache.auron.BaseAuronSQLSuite
+import org.apache.auron.testing.{DataGenOptions, ParquetGenerator, SchemaGenOptions}
 
 class AuronBitwiseExpressionSuite extends AuronQueryTest with BaseAuronSQLSuite {
 

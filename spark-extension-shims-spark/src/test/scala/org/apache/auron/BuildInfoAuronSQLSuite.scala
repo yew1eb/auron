@@ -14,25 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.spark.sql.execution.auron.plan
+package org.apache.spark.sql.auron
 
-import org.apache.spark.sql.catalyst.expressions.{NamedExpression, SortOrder}
-import org.apache.spark.sql.execution.SparkPlan
+import org.apache.spark.SparkConf
+import org.apache.spark.sql.test.SharedSparkSession
 
-import org.apache.auron.sparkver
+trait BuildInfoAuronSQLSuite extends SharedSparkSession {
 
-case class NativeTakeOrderedExec(
-    limit: Long,
-    sortOrder: Seq[SortOrder],
-    projectList: Seq[NamedExpression],
-    override val child: SparkPlan)
-    extends NativeTakeOrderedBase(limit, sortOrder, projectList, child) {
+  override protected def sparkConf: SparkConf = {
+    super.sparkConf
+      .set("spark.sql.extensions", "org.apache.spark.sql.auron.AuronSparkSessionExtension")
+      .set(
+        "spark.shuffle.manager",
+        "org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager")
+      .set("spark.memory.offHeap.enabled", "false")
+      .set("spark.eventLog.enabled", "true")
+      .set("spark.ui.enabled", "true")
+      .set("spark.auron.ui.enabled", "true")
+      .set("spark.ui.port", "4040")
+      .set("spark.auron.enable", "true")
+  }
 
-  @sparkver("3.2 / 3.3 / 3.4 / 3.5")
-  override protected def withNewChildInternal(newChild: SparkPlan): SparkPlan =
-    copy(child = newChild)
-
-  @sparkver("3.0 / 3.1")
-  override def withNewChildren(newChildren: Seq[SparkPlan]): SparkPlan =
-    copy(child = newChildren.head)
 }
