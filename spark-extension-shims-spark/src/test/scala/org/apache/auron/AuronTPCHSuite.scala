@@ -260,10 +260,9 @@ abstract class AuronTPCHSuite extends AuronQueryTest with SharedSparkSession {
     }
   }
 
-
-    // FIXME
-    // TODO q1 avg函数浮点数精度差异
-    /*
+  // FIXME
+  // TODO q1 avg函数浮点数精度差异
+  /*
     q1  与spark结果不一致, avg函数有差异
 ![A,F,380456.00,532348211.65,505822441.4861,526165934.000839,25.575155,35785.709307,0.050081,14876]   --- spark
  [A,F,380456.00,532348211.65,505822441.4861,526165934.000839,25.575154,35785.709306,0.050081,14876]   --- auron
@@ -282,7 +281,7 @@ abstract class AuronTPCHSuite extends AuronQueryTest with SharedSparkSession {
     25/11/30 17:30:43 WARN AuronConverters: Falling back exec: SortMergeJoinExec: assertion failed: join condition is not supported
     25/11/30 17:30:43 WARN NativeConverters: Falling back expression: scala.NotImplementedError: unsupported expression: (class org.apache.spark.sql.catalyst.expressions.Subtract) (1 - l_discount#67)
     25/11/30 17:30:43 WARN NativeConverters: Falling back expression: scala.NotImplementedError: unsupported expression: (class org.apache.spark.sql.catalyst.expressions.Multiply) (class org.apache.spark.sql.auron
-     */
+   */
 
   // only run single query
   if (false) {
@@ -312,6 +311,10 @@ abstract class AuronTPCHSuite extends AuronQueryTest with SharedSparkSession {
         //checkSparkAnswerAndOperator(sqlStr)
         checkSparkAnswer(sqlStr)
       }
+    }
+
+    test("fake test") {
+      Thread.sleep(10000000000L)
     }
   }
 }

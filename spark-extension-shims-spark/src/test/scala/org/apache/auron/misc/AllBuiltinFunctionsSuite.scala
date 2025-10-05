@@ -16,8 +16,9 @@
  */
 package org.apache.auron.misc
 
-import org.apache.auron.BaseAuronSQLSuite
 import org.apache.spark.sql.AuronQueryTest
+
+import org.apache.auron.BaseAuronSQLSuite
 
 class AllBuiltinFunctionsSuite extends AuronQueryTest with BaseAuronSQLSuite {
 

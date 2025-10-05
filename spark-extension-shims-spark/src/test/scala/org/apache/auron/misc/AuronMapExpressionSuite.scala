@@ -16,14 +16,15 @@
  */
 package org.apache.auron.misc
 
-import org.apache.auron.BaseAuronSQLSuite
-import org.apache.auron.testing.{DataGenOptions, ParquetGenerator, SchemaGenOptions}
+import scala.util.Random
+
 import org.apache.hadoop.fs.Path
 import org.apache.spark.sql.AuronQueryTest
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.internal.SQLConf
 
-import scala.util.Random
+import org.apache.auron.BaseAuronSQLSuite
+import org.apache.auron.testing.{DataGenOptions, ParquetGenerator, SchemaGenOptions}
 
 class AuronMapExpressionSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
