@@ -16,21 +16,46 @@
  */
 package org.apache.spark.sql.auron
 
+import org.apache.auron.jni.{AuronAdaptor, SparkAuronAdaptor}
+import org.apache.commons.io.FileUtils
 import org.apache.spark.sql.{QueryTest, Row, SparkSession}
 import org.apache.spark.sql.execution.auron.plan.NativeShuffleExchangeExec
 import org.apache.spark.sql.execution.exchange.ShuffleExchangeExec
 import org.apache.spark.sql.test.SharedSparkSession
 
+import java.io.File
+
 class AuronCheckConvertShuffleExchangeSuite
-    extends QueryTest
+  extends QueryTest
     with SharedSparkSession
     with AuronSQLTestHelper
     with org.apache.spark.sql.execution.adaptive.AdaptiveSparkPlanHelper {
 
+  protected val rootPath: String = getClass.getResource("/").getPath
+  protected val basePath: String = rootPath + "unit-tests-working-home"
+
+  protected val warehouse: String = basePath + "/spark-warehouse"
+  protected val metaStorePathAbsolute: String = basePath + "/meta"
+
+  def prepareWorkDir(): Unit = {
+    // prepare working paths
+    val basePathDir = new File(basePath)
+    if (basePathDir.exists()) {
+      FileUtils.forceDelete(basePathDir)
+    }
+    FileUtils.forceMkdir(basePathDir)
+    FileUtils.forceMkdir(new File(warehouse))
+    FileUtils.forceMkdir(new File(metaStorePathAbsolute))
+  }
+
+  override protected def beforeAll(): Unit = {
+    prepareWorkDir()
+    AuronAdaptor.initInstance(new SparkAuronAdaptor)
+  }
+
   test(
     "test set auron shuffle manager convert to native shuffle exchange where set spark.auron.enable is true") {
-    withTable("test_shuffle") {
-      val spark = SparkSession
+      val customSpark = SparkSession
         .builder()
         .master("local[2]")
         .appName("checkConvertToNativeShuffleManger")
@@ -40,31 +65,29 @@ class AuronCheckConvertShuffleExchangeSuite
         .config(
           "spark.shuffle.manager",
           "org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager")
+        .config("spark.sql.warehouse.dir", warehouse)
         .config("spark.memory.offHeap.enabled", "false")
         .config("spark.auron.enable", "true")
         .getOrCreate()
 
-      spark.sql("drop table if exists test_shuffle")
-      spark.sql(
+      customSpark.sql("drop table if exists test_shuffle")
+      customSpark.sql(
         "create table if not exists test_shuffle using parquet PARTITIONED BY (part) as select 1 as c1, 2 as c2, 'test test' as part")
-      val executePlan =
-        spark.sql("select c1, count(1) from test_shuffle group by c1")
+      val df =
+        customSpark.sql("select c1, count(1) from test_shuffle group by c1")
 
-      val shuffleExchangeExec =
-        executePlan.queryExecution.executedPlan
-          .collectFirst { case shuffleExchangeExec: ShuffleExchangeExec =>
+      val shuffleExchangeExec = collectFirst(df.queryExecution.executedPlan) {
+        case shuffleExchangeExec: ShuffleExchangeExec =>
             shuffleExchangeExec
-          }
+      }
       val afterConvertPlan = AuronConverters.convertSparkPlan(shuffleExchangeExec.get)
       assert(afterConvertPlan.isInstanceOf[NativeShuffleExchangeExec])
-      checkAnswer(executePlan, Seq(Row(1, 1)))
-    }
+      checkAnswer(df, Seq(Row(1, 1)))
   }
 
   test(
     "test set non auron shuffle manager do not convert to native shuffle exchange where set spark.auron.enable is true") {
-    withTable("test_shuffle") {
-      val spark = SparkSession
+      val customSpark = SparkSession
         .builder()
         .master("local[2]")
         .appName("checkConvertToNativeShuffleManger")
@@ -72,25 +95,25 @@ class AuronCheckConvertShuffleExchangeSuite
         .config("spark.sql.autoBroadcastJoinThreshold", -1)
         .config("spark.shuffle.manager", "org.apache.spark.shuffle.sort.SortShuffleManager")
         .config("spark.sql.extensions", "org.apache.spark.sql.auron.AuronSparkSessionExtension")
+        .config("spark.sql.warehouse.dir", warehouse)
         .config("spark.memory.offHeap.enabled", "false")
         .config("spark.auron.enable", "true")
         .getOrCreate()
-      spark.sql("drop table if exists test_shuffle")
-      spark.sql(
+
+      customSpark.sql("drop table if exists test_shuffle")
+      customSpark.sql(
         "create table if not exists test_shuffle using parquet PARTITIONED BY (part) as select 1 as c1, 2 as c2, 'test test' as part")
-      val executePlan =
-        spark.sql("select c1, count(1) from test_shuffle group by c1")
+      val df =
+        customSpark.sql("select c1, count(1) from test_shuffle group by c1")
 
-      val shuffleExchangeExec =
-        executePlan.queryExecution.executedPlan
-          .collectFirst { case shuffleExchangeExec: ShuffleExchangeExec =>
-            shuffleExchangeExec
-          }
-      val afterConvertPlan = AuronConverters.convertSparkPlan(shuffleExchangeExec.get)
-      assert(afterConvertPlan.isInstanceOf[ShuffleExchangeExec])
-      checkAnswer(executePlan, Seq(Row(1, 1)))
-
-    }
+      val shuffleExchangeExec = collectFirst(df.queryExecution.executedPlan) {
+        case shuffleExchangeExec: ShuffleExchangeExec =>
+          shuffleExchangeExec
+      }
+    val afterConvertPlan = AuronConverters.convertSparkPlan(shuffleExchangeExec.get)
+    assert(afterConvertPlan.isInstanceOf[ShuffleExchangeExec])
+    println(df.collect().mkString("Array(", ", ", ")"))
+    Thread.sleep(10000000)
+    checkAnswer(df, Seq(Row(1, 1)))
   }
-
 }

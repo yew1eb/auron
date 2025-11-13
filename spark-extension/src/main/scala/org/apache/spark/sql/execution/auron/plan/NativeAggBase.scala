@@ -289,7 +289,7 @@ object NativeAggBase extends Logging {
     @tailrec
     def findRecursive(exec: SparkPlan): Option[NativeAggBase] = {
       val passthroughNodeNames =
-        Seq("QueryStage", "InputAdapter", "CustomShuffleRead", "AQEShuffleRead")
+        Seq("QueryStage", "InputAdapter", "CustomShuffleRead", "AQEShuffleRead", "Exchange")
       exec match {
         case e: NativeAggBase => Some(e)
         case e: ReusedExchangeExec => findRecursive(e.child)
