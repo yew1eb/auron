@@ -392,11 +392,14 @@ jobs:
             --data-location dev/tpcds_1g \
             --query-filter ${{ matrix.query }}
 
-      - name: Upload TPC-DS validator logs (on failure) – Query ${{ matrix.query }}
+      - name: Upload TPC-DS validator logs – Query ${{ matrix.query }}
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: tpcds-validator-${{ matrix.query }}
+          name: tpcds-validator-${{ matrix.query }}-
+            ${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
+            }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || ''
+            }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
           path: /tmp/tpcds-validator/
 
       - name: Upload RSS log
