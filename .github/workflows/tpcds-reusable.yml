@@ -91,7 +91,7 @@ jobs:
         uses: actions/cache@v4
         id: cache-tpcds-validator
         with:
-          key: tpcds-validator_${{ inputs.scalaver }}
+          key: tpcds-validator_${{ inputs.scalaver }}-${{ github.run_id }}
           path: target/tpcds-validator_${{ inputs.scalaver }}-0.1.0-SNAPSHOT-with-dependencies.jar
 
       - name: Checkout TPC-DS Validator
@@ -385,10 +385,19 @@ jobs:
           export RUST_BACKTRACE=1
           export SCALA_VERSION=${{ inputs.scalaver }}
           export SPARK_HOME=spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
+          export TPCDS_VALIDATOR_LOG=/tmp/tpcds-validator/
+          rm -rf /tmp/tpcds-validator && mkdir -p /tmp/tpcds-validator
           dev/run-tpcds-test \
             ${{ inputs.extrasparkconf }} \
             --data-location dev/tpcds_1g \
             --query-filter ${{ matrix.query }}
+
+      - name: Upload TPC-DS validator logs (on failure) – Query ${{ matrix.query }}
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tpcds-validator-${{ matrix.query }}
+          path: /tmp/tpcds-validator/
 
       - name: Upload RSS log
         if: ${{ failure() && (inputs.celebornver != '' || inputs.unifflever != '') }}
