@@ -1,0 +1,335 @@
+== Physical Plan ==
+AdaptiveSparkPlan (59)
++- == Final Plan ==
+   NativeTakeOrdered (35)
+   +- NativeProject (34)
+      +- NativeHashAggregate (33)
+         +- InputAdapter (32)
+            +- AQEShuffleRead (31)
+               +- ShuffleQueryStage (30), Statistics(sizeInBytes=83.0 KiB, rowCount=399)
+                  +- NativeShuffleExchange (29)
+                     +- NativeHashAggregate (28)
+                        +- NativeProject (27)
+                           +- NativeProject (26)
+                              +- NativeBroadcastJoin Inner BuildRight (25)
+                                 :- NativeProject (19)
+                                 :  +- NativeBroadcastJoin Inner BuildRight (18)
+                                 :     :- NativeProject (11)
+                                 :     :  +- NativeBroadcastJoin Inner BuildRight (10)
+                                 :     :     :- NativeFilter (3)
+                                 :     :     :  +- InputAdapter (2)
+                                 :     :     :     +- NativeParquetScan  (1)
+                                 :     :     +- BroadcastQueryStage (9), Statistics(sizeInBytes=2.5 KiB, rowCount=611)
+                                 :     :        +- NativeBroadcastExchange (8)
+                                 :     :           +- NativeProject (7)
+                                 :     :              +- NativeFilter (6)
+                                 :     :                 +- InputAdapter (5)
+                                 :     :                    +- NativeParquetScan  (4)
+                                 :     +- BroadcastQueryStage (17), Statistics(sizeInBytes=72.6 KiB, rowCount=1.49E+4)
+                                 :        +- NativeBroadcastExchange (16)
+                                 :           +- NativeProject (15)
+                                 :              +- NativeFilter (14)
+                                 :                 +- InputAdapter (13)
+                                 :                    +- NativeParquetScan  (12)
+                                 +- BroadcastQueryStage (24), Statistics(sizeInBytes=261.0 B, rowCount=25)
+                                    +- NativeBroadcastExchange (23)
+                                       +- NativeFilter (22)
+                                          +- InputAdapter (21)
+                                             +- NativeParquetScan  (20)
++- == Initial Plan ==
+   TakeOrderedAndProject (58)
+   +- HashAggregate (57)
+      +- Exchange (56)
+         +- HashAggregate (55)
+            +- Project (54)
+               +- BroadcastHashJoin Inner BuildRight (53)
+                  :- Project (49)
+                  :  +- BroadcastHashJoin Inner BuildRight (48)
+                  :     :- Project (43)
+                  :     :  +- BroadcastHashJoin Inner BuildRight (42)
+                  :     :     :- Filter (37)
+                  :     :     :  +- Scan parquet  (36)
+                  :     :     +- BroadcastExchange (41)
+                  :     :        +- Project (40)
+                  :     :           +- Filter (39)
+                  :     :              +- Scan parquet  (38)
+                  :     +- BroadcastExchange (47)
+                  :        +- Project (46)
+                  :           +- Filter (45)
+                  :              +- Scan parquet  (44)
+                  +- BroadcastExchange (52)
+                     +- Filter (51)
+                        +- Scan parquet  (50)
+
+
+(1) NativeParquetScan 
+Output [7]: [c_custkey#0L, c_name#1, c_address#2, c_nationkey#3L, c_phone#4, c_acctbal#5, c_comment#7]
+Arguments: FileScan parquet [c_custkey#0L,c_name#1,c_address#2,c_nationkey#3L,c_phone#4,c_acctbal#5,c_comment#7] Batched: true, DataFilters: [isnotnull(c_custkey#0L), isnotnull(c_nationkey#3L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(c_custkey), IsNotNull(c_nationkey)], ReadSchema: struct<c_custkey:bigint,c_name:string,c_address:string,c_nationkey:bigint,c_phone:string,c_acctba...
+
+(2) InputAdapter
+Input [7]: [c_custkey#0L, c_name#1, c_address#2, c_nationkey#3L, c_phone#4, c_acctbal#5, c_comment#7]
+Arguments: [#0, #1, #2, #3, #4, #5, #7]
+
+(3) NativeFilter
+Input [7]: [#0#0L, #1#1, #2#2, #3#3L, #4#4, #5#5, #7#7]
+Arguments: (isnotnull(c_custkey#0L) AND isnotnull(c_nationkey#3L))
+
+(4) NativeParquetScan 
+Output [3]: [o_orderkey#199L, o_custkey#200L, o_orderdate#203]
+Arguments: FileScan parquet [o_orderkey#199L,o_custkey#200L,o_orderdate#203] Batched: true, DataFilters: [isnotnull(o_orderdate#203), (o_orderdate#203 >= 1993-10-01), (o_orderdate#203 < 1994-01-01), isn..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(o_orderdate), GreaterThanOrEqual(o_orderdate,1993-10-01), LessThan(o_orderdate,1994-01..., ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_orderdate:date>
+
+(5) InputAdapter
+Input [3]: [o_orderkey#199L, o_custkey#200L, o_orderdate#203]
+Arguments: [#199, #200, #203]
+
+(6) NativeFilter
+Input [3]: [#199#199L, #200#200L, #203#203]
+Arguments: ((((isnotnull(o_orderdate#203) AND (o_orderdate#203 >= 1993-10-01)) AND (o_orderdate#203 < 1994-01-01)) AND isnotnull(o_custkey#200L)) AND isnotnull(o_orderkey#199L))
+
+(7) NativeProject
+Input [3]: [#199#199L, #200#200L, #203#203]
+Arguments: [o_orderkey#199L, o_custkey#200L]
+
+(8) NativeBroadcastExchange
+Input [2]: [o_orderkey#199L, o_custkey#200L]
+Arguments: HashedRelationBroadcastMode(List(input[1, bigint, true]),false), [plan_id=7076]
+
+(9) BroadcastQueryStage
+Output [2]: [o_orderkey#199L, o_custkey#200L]
+Arguments: 0
+
+(10) NativeBroadcastJoin
+Left keys [1]: [c_custkey#0L]
+Right keys [1]: [o_custkey#200L]
+Join type: Inner
+Join condition: None
+
+(11) NativeProject
+Input [9]: [#0#0L, #1#1, #2#2, #3#3L, #4#4, #5#5, #7#7, o_orderkey#199L, o_custkey#200L]
+Arguments: [c_custkey#0L, c_name#1, c_address#2, c_nationkey#3L, c_phone#4, c_acctbal#5, c_comment#7, o_orderkey#199L]
+
+(12) NativeParquetScan 
+Output [4]: [l_orderkey#61L, l_extendedprice#66, l_discount#67, l_returnflag#69]
+Arguments: FileScan parquet [l_orderkey#61L,l_extendedprice#66,l_discount#67,l_returnflag#69] Batched: true, DataFilters: [isnotnull(l_returnflag#69), (l_returnflag#69 = R), isnotnull(l_orderkey#61L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(l_returnflag), EqualTo(l_returnflag,R), IsNotNull(l_orderkey)], ReadSchema: struct<l_orderkey:bigint,l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_returnflag:string>
+
+(13) InputAdapter
+Input [4]: [l_orderkey#61L, l_extendedprice#66, l_discount#67, l_returnflag#69]
+Arguments: [#61, #66, #67, #69]
+
+(14) NativeFilter
+Input [4]: [#61#61L, #66#66, #67#67, #69#69]
+Arguments: ((isnotnull(l_returnflag#69) AND (l_returnflag#69 = R)) AND isnotnull(l_orderkey#61L))
+
+(15) NativeProject
+Input [4]: [#61#61L, #66#66, #67#67, #69#69]
+Arguments: [l_orderkey#61L, l_extendedprice#66, l_discount#67]
+
+(16) NativeBroadcastExchange
+Input [3]: [l_orderkey#61L, l_extendedprice#66, l_discount#67]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=7108]
+
+(17) BroadcastQueryStage
+Output [3]: [l_orderkey#61L, l_extendedprice#66, l_discount#67]
+Arguments: 1
+
+(18) NativeBroadcastJoin
+Left keys [1]: [o_orderkey#199L]
+Right keys [1]: [l_orderkey#61L]
+Join type: Inner
+Join condition: None
+
+(19) NativeProject
+Input [11]: [c_custkey#0L, c_name#1, c_address#2, c_nationkey#3L, c_phone#4, c_acctbal#5, c_comment#7, o_orderkey#199L, l_orderkey#61L, l_extendedprice#66, l_discount#67]
+Arguments: [c_custkey#0L, c_name#1, c_address#2, c_nationkey#3L, c_phone#4, c_acctbal#5, c_comment#7, l_extendedprice#66, l_discount#67]
+
+(20) NativeParquetScan 
+Output [2]: [n_nationkey#154L, n_name#155]
+Arguments: FileScan parquet [n_nationkey#154L,n_name#155] Batched: true, DataFilters: [isnotnull(n_nationkey#154L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(n_nationkey)], ReadSchema: struct<n_nationkey:bigint,n_name:string>
+
+(21) InputAdapter
+Input [2]: [n_nationkey#154L, n_name#155]
+Arguments: [#154, #155]
+
+(22) NativeFilter
+Input [2]: [#154#154L, #155#155]
+Arguments: isnotnull(n_nationkey#154L)
+
+(23) NativeBroadcastExchange
+Input [2]: [#154#154L, #155#155]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=7132]
+
+(24) BroadcastQueryStage
+Output [2]: [#154#154L, #155#155]
+Arguments: 2
+
+(25) NativeBroadcastJoin
+Left keys [1]: [c_nationkey#3L]
+Right keys [1]: [n_nationkey#154L]
+Join type: Inner
+Join condition: None
+
+(26) NativeProject
+Input [11]: [c_custkey#0L, c_name#1, c_address#2, c_nationkey#3L, c_phone#4, c_acctbal#5, c_comment#7, l_extendedprice#66, l_discount#67, #154#154L, #155#155]
+Arguments: [c_custkey#0L, c_name#1, c_address#2, c_phone#4, c_acctbal#5, c_comment#7, l_extendedprice#66, l_discount#67, n_name#155]
+
+(27) NativeProject
+Input [9]: [c_custkey#0L, c_name#1, c_address#2, c_phone#4, c_acctbal#5, c_comment#7, l_extendedprice#66, l_discount#67, n_name#155]
+Arguments: [c_custkey#0L AS c_custkey#0L, c_name#1 AS c_name#1, c_acctbal#5 AS c_acctbal#5, c_phone#4 AS c_phone#4, n_name#155 AS n_name#155, c_address#2 AS c_address#2, c_comment#7 AS c_comment#7, (l_extendedprice#66 * (1 - l_discount#67)) AS _c7#1486]
+
+(28) NativeHashAggregate
+Input [8]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7, _c7#1486]
+Keys [7]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7]
+Functions [1]: [partial_sum(_c7#1486)]
+Aggregate Attributes [2]: [sum#1454, isEmpty#1455]
+Results [8]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7, #9223372036854775807#9223372036854775807]
+
+(29) NativeShuffleExchange
+Input [8]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7, #9223372036854775807#9223372036854775807]
+Arguments: hashpartitioning(c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7, 5), ENSURE_REQUIREMENTS, [plan_id=7398]
+
+(30) ShuffleQueryStage
+Output [8]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7, #9223372036854775807#9223372036854775807]
+Arguments: 3
+
+(31) AQEShuffleRead
+Input [8]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7, #9223372036854775807#9223372036854775807]
+Arguments: coalesced
+
+(32) InputAdapter
+Input [8]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7, #9223372036854775807#9223372036854775807]
+
+(33) NativeHashAggregate
+Input [8]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7, #9223372036854775807#9223372036854775807]
+Keys [7]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7]
+Functions [1]: [sum((l_extendedprice#66 * (1 - l_discount#67)))]
+Aggregate Attributes [1]: [sum((l_extendedprice#66 * (1 - l_discount#67)))#1445]
+Results [8]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7, sum((l_extendedprice#66 * (1 - l_discount#67)))#1445]
+
+(34) NativeProject
+Input [8]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7, sum((l_extendedprice#66 * (1 - l_discount#67)))#1445]
+Arguments: [c_custkey#0L, c_name#1, sum((l_extendedprice#66 * (1 - l_discount#67)))#1445 AS revenue#1444, c_acctbal#5, n_name#155, c_address#2, c_phone#4, c_comment#7]
+
+(35) NativeTakeOrdered
+Input [8]: [c_custkey#0L, c_name#1, revenue#1444, c_acctbal#5, n_name#155, c_address#2, c_phone#4, c_comment#7]
+Arguments: 20, [revenue#1444 DESC NULLS LAST]
+
+(36) Scan parquet 
+Output [7]: [c_custkey#0L, c_name#1, c_address#2, c_nationkey#3L, c_phone#4, c_acctbal#5, c_comment#7]
+Batched: true
+Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/customer]
+PushedFilters: [IsNotNull(c_custkey), IsNotNull(c_nationkey)]
+ReadSchema: struct<c_custkey:bigint,c_name:string,c_address:string,c_nationkey:bigint,c_phone:string,c_acctbal:decimal(12,2),c_comment:string>
+
+(37) Filter
+Input [7]: [c_custkey#0L, c_name#1, c_address#2, c_nationkey#3L, c_phone#4, c_acctbal#5, c_comment#7]
+Condition : (isnotnull(c_custkey#0L) AND isnotnull(c_nationkey#3L))
+
+(38) Scan parquet 
+Output [3]: [o_orderkey#199L, o_custkey#200L, o_orderdate#203]
+Batched: true
+Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/orders]
+PushedFilters: [IsNotNull(o_orderdate), GreaterThanOrEqual(o_orderdate,1993-10-01), LessThan(o_orderdate,1994-01-01), IsNotNull(o_custkey), IsNotNull(o_orderkey)]
+ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_orderdate:date>
+
+(39) Filter
+Input [3]: [o_orderkey#199L, o_custkey#200L, o_orderdate#203]
+Condition : ((((isnotnull(o_orderdate#203) AND (o_orderdate#203 >= 1993-10-01)) AND (o_orderdate#203 < 1994-01-01)) AND isnotnull(o_custkey#200L)) AND isnotnull(o_orderkey#199L))
+
+(40) Project
+Output [2]: [o_orderkey#199L, o_custkey#200L]
+Input [3]: [o_orderkey#199L, o_custkey#200L, o_orderdate#203]
+
+(41) BroadcastExchange
+Input [2]: [o_orderkey#199L, o_custkey#200L]
+Arguments: HashedRelationBroadcastMode(List(input[1, bigint, true]),false), [plan_id=7004]
+
+(42) BroadcastHashJoin
+Left keys [1]: [c_custkey#0L]
+Right keys [1]: [o_custkey#200L]
+Join type: Inner
+Join condition: None
+
+(43) Project
+Output [8]: [c_custkey#0L, c_name#1, c_address#2, c_nationkey#3L, c_phone#4, c_acctbal#5, c_comment#7, o_orderkey#199L]
+Input [9]: [c_custkey#0L, c_name#1, c_address#2, c_nationkey#3L, c_phone#4, c_acctbal#5, c_comment#7, o_orderkey#199L, o_custkey#200L]
+
+(44) Scan parquet 
+Output [4]: [l_orderkey#61L, l_extendedprice#66, l_discount#67, l_returnflag#69]
+Batched: true
+Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/lineitem]
+PushedFilters: [IsNotNull(l_returnflag), EqualTo(l_returnflag,R), IsNotNull(l_orderkey)]
+ReadSchema: struct<l_orderkey:bigint,l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_returnflag:string>
+
+(45) Filter
+Input [4]: [l_orderkey#61L, l_extendedprice#66, l_discount#67, l_returnflag#69]
+Condition : ((isnotnull(l_returnflag#69) AND (l_returnflag#69 = R)) AND isnotnull(l_orderkey#61L))
+
+(46) Project
+Output [3]: [l_orderkey#61L, l_extendedprice#66, l_discount#67]
+Input [4]: [l_orderkey#61L, l_extendedprice#66, l_discount#67, l_returnflag#69]
+
+(47) BroadcastExchange
+Input [3]: [l_orderkey#61L, l_extendedprice#66, l_discount#67]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=7008]
+
+(48) BroadcastHashJoin
+Left keys [1]: [o_orderkey#199L]
+Right keys [1]: [l_orderkey#61L]
+Join type: Inner
+Join condition: None
+
+(49) Project
+Output [9]: [c_custkey#0L, c_name#1, c_address#2, c_nationkey#3L, c_phone#4, c_acctbal#5, c_comment#7, l_extendedprice#66, l_discount#67]
+Input [11]: [c_custkey#0L, c_name#1, c_address#2, c_nationkey#3L, c_phone#4, c_acctbal#5, c_comment#7, o_orderkey#199L, l_orderkey#61L, l_extendedprice#66, l_discount#67]
+
+(50) Scan parquet 
+Output [2]: [n_nationkey#154L, n_name#155]
+Batched: true
+Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/nation]
+PushedFilters: [IsNotNull(n_nationkey)]
+ReadSchema: struct<n_nationkey:bigint,n_name:string>
+
+(51) Filter
+Input [2]: [n_nationkey#154L, n_name#155]
+Condition : isnotnull(n_nationkey#154L)
+
+(52) BroadcastExchange
+Input [2]: [n_nationkey#154L, n_name#155]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=7012]
+
+(53) BroadcastHashJoin
+Left keys [1]: [c_nationkey#3L]
+Right keys [1]: [n_nationkey#154L]
+Join type: Inner
+Join condition: None
+
+(54) Project
+Output [9]: [c_custkey#0L, c_name#1, c_address#2, c_phone#4, c_acctbal#5, c_comment#7, l_extendedprice#66, l_discount#67, n_name#155]
+Input [11]: [c_custkey#0L, c_name#1, c_address#2, c_nationkey#3L, c_phone#4, c_acctbal#5, c_comment#7, l_extendedprice#66, l_discount#67, n_nationkey#154L, n_name#155]
+
+(55) HashAggregate
+Input [9]: [c_custkey#0L, c_name#1, c_address#2, c_phone#4, c_acctbal#5, c_comment#7, l_extendedprice#66, l_discount#67, n_name#155]
+Keys [7]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7]
+Functions [1]: [partial_sum((l_extendedprice#66 * (1 - l_discount#67)))]
+Aggregate Attributes [2]: [sum#1454, isEmpty#1455]
+Results [9]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7, sum#1456, isEmpty#1457]
+
+(56) Exchange
+Input [9]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7, sum#1456, isEmpty#1457]
+Arguments: hashpartitioning(c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7, 5), ENSURE_REQUIREMENTS, [plan_id=7017]
+
+(57) HashAggregate
+Input [9]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7, sum#1456, isEmpty#1457]
+Keys [7]: [c_custkey#0L, c_name#1, c_acctbal#5, c_phone#4, n_name#155, c_address#2, c_comment#7]
+Functions [1]: [sum((l_extendedprice#66 * (1 - l_discount#67)))]
+Aggregate Attributes [1]: [sum((l_extendedprice#66 * (1 - l_discount#67)))#1445]
+Results [8]: [c_custkey#0L, c_name#1, sum((l_extendedprice#66 * (1 - l_discount#67)))#1445 AS revenue#1444, c_acctbal#5, n_name#155, c_address#2, c_phone#4, c_comment#7]
+
+(58) TakeOrderedAndProject
+Input [8]: [c_custkey#0L, c_name#1, revenue#1444, c_acctbal#5, n_name#155, c_address#2, c_phone#4, c_comment#7]
+Arguments: 20, [revenue#1444 DESC NULLS LAST], [c_custkey#0L, c_name#1, revenue#1444, c_acctbal#5, n_name#155, c_address#2, c_phone#4, c_comment#7]
+
+(59) AdaptiveSparkPlan
+Output [8]: [c_custkey#0L, c_name#1, revenue#1444, c_acctbal#5, n_name#155, c_address#2, c_phone#4, c_comment#7]
+Arguments: isFinalPlan=true
+

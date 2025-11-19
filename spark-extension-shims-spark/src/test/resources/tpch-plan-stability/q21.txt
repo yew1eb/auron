@@ -1,0 +1,439 @@
+== Physical Plan ==
+AdaptiveSparkPlan (77)
++- == Final Plan ==
+   * HashAggregate (44)
+   +- AQEShuffleRead (43)
+      +- ShuffleQueryStage (42), Statistics(sizeInBytes=48.0 B, rowCount=1)
+         +- Exchange (41)
+            +- * HashAggregate (40)
+               +- * Project (39)
+                  +- * BroadcastHashJoin Inner BuildRight (38)
+                     :- * Project (31)
+                     :  +- * BroadcastHashJoin Inner BuildRight (30)
+                     :     :- * Project (23)
+                     :     :  +- * BroadcastHashJoin Inner BuildLeft (22)
+                     :     :     :- BroadcastQueryStage (5), Statistics(sizeInBytes=673.0 B, rowCount=100)
+                     :     :     :  +- NativeBroadcastExchange (4)
+                     :     :     :     +- NativeFilter (3)
+                     :     :     :        +- InputAdapter (2)
+                     :     :     :           +- NativeParquetScan  (1)
+                     :     :     +- * BroadcastHashJoin LeftAnti BuildRight (21)
+                     :     :        :- * BroadcastHashJoin LeftSemi BuildRight (14)
+                     :     :        :  :- NativeProject (9)
+                     :     :        :  :  +- NativeFilter (8)
+                     :     :        :  :     +- InputAdapter (7)
+                     :     :        :  :        +- NativeParquetScan  (6)
+                     :     :        :  +- BroadcastQueryStage (13), Statistics(sizeInBytes=91.2 KiB, rowCount=6.02E+4)
+                     :     :        :     +- NativeBroadcastExchange (12)
+                     :     :        :        +- InputAdapter (11)
+                     :     :        :           +- NativeParquetScan  (10)
+                     :     :        +- BroadcastQueryStage (20), Statistics(sizeInBytes=61.5 KiB, rowCount=3.79E+4)
+                     :     :           +- NativeBroadcastExchange (19)
+                     :     :              +- NativeProject (18)
+                     :     :                 +- NativeFilter (17)
+                     :     :                    +- InputAdapter (16)
+                     :     :                       +- NativeParquetScan  (15)
+                     :     +- BroadcastQueryStage (29), Statistics(sizeInBytes=7.1 KiB, rowCount=7.30E+3)
+                     :        +- NativeBroadcastExchange (28)
+                     :           +- NativeProject (27)
+                     :              +- NativeFilter (26)
+                     :                 +- InputAdapter (25)
+                     :                    +- NativeParquetScan  (24)
+                     +- BroadcastQueryStage (37), Statistics(sizeInBytes=29.0 B, rowCount=1)
+                        +- NativeBroadcastExchange (36)
+                           +- NativeProject (35)
+                              +- NativeFilter (34)
+                                 +- InputAdapter (33)
+                                    +- NativeParquetScan  (32)
++- == Initial Plan ==
+   TakeOrderedAndProject (76)
+   +- HashAggregate (75)
+      +- Exchange (74)
+         +- HashAggregate (73)
+            +- Project (72)
+               +- BroadcastHashJoin Inner BuildRight (71)
+                  :- Project (66)
+                  :  +- BroadcastHashJoin Inner BuildRight (65)
+                  :     :- Project (60)
+                  :     :  +- BroadcastHashJoin Inner BuildLeft (59)
+                  :     :     :- BroadcastExchange (47)
+                  :     :     :  +- Filter (46)
+                  :     :     :     +- Scan parquet  (45)
+                  :     :     +- BroadcastHashJoin LeftAnti BuildRight (58)
+                  :     :        :- BroadcastHashJoin LeftSemi BuildRight (53)
+                  :     :        :  :- Project (50)
+                  :     :        :  :  +- Filter (49)
+                  :     :        :  :     +- Scan parquet  (48)
+                  :     :        :  +- BroadcastExchange (52)
+                  :     :        :     +- Scan parquet  (51)
+                  :     :        +- BroadcastExchange (57)
+                  :     :           +- Project (56)
+                  :     :              +- Filter (55)
+                  :     :                 +- Scan parquet  (54)
+                  :     +- BroadcastExchange (64)
+                  :        +- Project (63)
+                  :           +- Filter (62)
+                  :              +- Scan parquet  (61)
+                  +- BroadcastExchange (70)
+                     +- Project (69)
+                        +- Filter (68)
+                           +- Scan parquet  (67)
+
+
+(1) NativeParquetScan 
+Output [3]: [s_suppkey#419L, s_name#420, s_nationkey#422L]
+Arguments: FileScan parquet [s_suppkey#419L,s_name#420,s_nationkey#422L] Batched: true, DataFilters: [isnotnull(s_suppkey#419L), isnotnull(s_nationkey#422L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(s_suppkey), IsNotNull(s_nationkey)], ReadSchema: struct<s_suppkey:bigint,s_name:string,s_nationkey:bigint>
+
+(2) InputAdapter
+Input [3]: [s_suppkey#419L, s_name#420, s_nationkey#422L]
+Arguments: [#419, #420, #422]
+
+(3) NativeFilter
+Input [3]: [#419#419L, #420#420, #422#422L]
+Arguments: (isnotnull(s_suppkey#419L) AND isnotnull(s_nationkey#422L))
+
+(4) NativeBroadcastExchange
+Input [3]: [#419#419L, #420#420, #422#422L]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=12842]
+
+(5) BroadcastQueryStage
+Output [3]: [#419#419L, #420#420, #422#422L]
+Arguments: 0
+
+(6) NativeParquetScan 
+Output [4]: [l_orderkey#61L, l_suppkey#63L, l_commitdate#72, l_receiptdate#73]
+Arguments: FileScan parquet [l_orderkey#61L,l_suppkey#63L,l_commitdate#72,l_receiptdate#73] Batched: true, DataFilters: [isnotnull(l_receiptdate#73), isnotnull(l_commitdate#72), (l_receiptdate#73 > l_commitdate#72), i..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(l_receiptdate), IsNotNull(l_commitdate), IsNotNull(l_suppkey), IsNotNull(l_orderkey)], ReadSchema: struct<l_orderkey:bigint,l_suppkey:bigint,l_commitdate:date,l_receiptdate:date>
+
+(7) InputAdapter
+Input [4]: [l_orderkey#61L, l_suppkey#63L, l_commitdate#72, l_receiptdate#73]
+Arguments: [#61, #63, #72, #73]
+
+(8) NativeFilter
+Input [4]: [#61#61L, #63#63L, #72#72, #73#73]
+Arguments: ((((isnotnull(l_receiptdate#73) AND isnotnull(l_commitdate#72)) AND (l_receiptdate#73 > l_commitdate#72)) AND isnotnull(l_suppkey#63L)) AND isnotnull(l_orderkey#61L))
+
+(9) NativeProject
+Input [4]: [#61#61L, #63#63L, #72#72, #73#73]
+Arguments: [l_orderkey#61L, l_suppkey#63L]
+
+(10) NativeParquetScan 
+Output [2]: [l_orderkey#2530L, l_suppkey#2532L]
+Arguments: FileScan parquet [l_orderkey#2530L,l_suppkey#2532L] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [], ReadSchema: struct<l_orderkey:bigint,l_suppkey:bigint>
+
+(11) InputAdapter
+Input [2]: [l_orderkey#2530L, l_suppkey#2532L]
+Arguments: [#2530, #2532]
+
+(12) NativeBroadcastExchange
+Input [2]: [#2530#2530L, #2532#2532L]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=12860]
+
+(13) BroadcastQueryStage
+Output [2]: [#2530#2530L, #2532#2532L]
+Arguments: 1
+
+(14) BroadcastHashJoin
+Left keys [1]: [l_orderkey#61L]
+Right keys [1]: [l_orderkey#2530L]
+Join type: LeftSemi
+Join condition: NOT (l_suppkey#2532L = l_suppkey#63L)
+
+(15) NativeParquetScan 
+Output [4]: [l_orderkey#2546L, l_suppkey#2548L, l_commitdate#2557, l_receiptdate#2558]
+Arguments: FileScan parquet [l_orderkey#2546L,l_suppkey#2548L,l_commitdate#2557,l_receiptdate#2558] Batched: true, DataFilters: [isnotnull(l_receiptdate#2558), isnotnull(l_commitdate#2557), (l_receiptdate#2558 > l_commitdate#..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(l_receiptdate), IsNotNull(l_commitdate)], ReadSchema: struct<l_orderkey:bigint,l_suppkey:bigint,l_commitdate:date,l_receiptdate:date>
+
+(16) InputAdapter
+Input [4]: [l_orderkey#2546L, l_suppkey#2548L, l_commitdate#2557, l_receiptdate#2558]
+Arguments: [#2546, #2548, #2557, #2558]
+
+(17) NativeFilter
+Input [4]: [#2546#2546L, #2548#2548L, #2557#2557, #2558#2558]
+Arguments: ((isnotnull(l_receiptdate#2558) AND isnotnull(l_commitdate#2557)) AND (l_receiptdate#2558 > l_commitdate#2557))
+
+(18) NativeProject
+Input [4]: [#2546#2546L, #2548#2548L, #2557#2557, #2558#2558]
+Arguments: [l_orderkey#2546L, l_suppkey#2548L]
+
+(19) NativeBroadcastExchange
+Input [2]: [l_orderkey#2546L, l_suppkey#2548L]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=12885]
+
+(20) BroadcastQueryStage
+Output [2]: [l_orderkey#2546L, l_suppkey#2548L]
+Arguments: 2
+
+(21) BroadcastHashJoin
+Left keys [1]: [l_orderkey#61L]
+Right keys [1]: [l_orderkey#2546L]
+Join type: LeftAnti
+Join condition: NOT (l_suppkey#2548L = l_suppkey#63L)
+
+(22) BroadcastHashJoin [codegen id : 1]
+Left keys [1]: [s_suppkey#419L]
+Right keys [1]: [l_suppkey#63L]
+Join type: Inner
+Join condition: None
+
+(23) Project [codegen id : 1]
+Output [3]: [s_name#420, s_nationkey#422L, l_orderkey#61L]
+Input [5]: [#419#419L, #420#420, #422#422L, l_orderkey#61L, l_suppkey#63L]
+
+(24) NativeParquetScan 
+Output [2]: [o_orderkey#199L, o_orderstatus#201]
+Arguments: FileScan parquet [o_orderkey#199L,o_orderstatus#201] Batched: true, DataFilters: [isnotnull(o_orderstatus#201), (o_orderstatus#201 = F), isnotnull(o_orderkey#199L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(o_orderstatus), EqualTo(o_orderstatus,F), IsNotNull(o_orderkey)], ReadSchema: struct<o_orderkey:bigint,o_orderstatus:string>
+
+(25) InputAdapter
+Input [2]: [o_orderkey#199L, o_orderstatus#201]
+Arguments: [#199, #201]
+
+(26) NativeFilter
+Input [2]: [#199#199L, #201#201]
+Arguments: ((isnotnull(o_orderstatus#201) AND (o_orderstatus#201 = F)) AND isnotnull(o_orderkey#199L))
+
+(27) NativeProject
+Input [2]: [#199#199L, #201#201]
+Arguments: [o_orderkey#199L]
+
+(28) NativeBroadcastExchange
+Input [1]: [o_orderkey#199L]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=12918]
+
+(29) BroadcastQueryStage
+Output [1]: [o_orderkey#199L]
+Arguments: 3
+
+(30) BroadcastHashJoin [codegen id : 1]
+Left keys [1]: [l_orderkey#61L]
+Right keys [1]: [o_orderkey#199L]
+Join type: Inner
+Join condition: None
+
+(31) Project [codegen id : 1]
+Output [2]: [s_name#420, s_nationkey#422L]
+Input [4]: [s_name#420, s_nationkey#422L, l_orderkey#61L, o_orderkey#199L]
+
+(32) NativeParquetScan 
+Output [2]: [n_nationkey#154L, n_name#155]
+Arguments: FileScan parquet [n_nationkey#154L,n_name#155] Batched: true, DataFilters: [isnotnull(n_name#155), (n_name#155 = SAUDI ARABIA), isnotnull(n_nationkey#154L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(n_name), EqualTo(n_name,SAUDI ARABIA), IsNotNull(n_nationkey)], ReadSchema: struct<n_nationkey:bigint,n_name:string>
+
+(33) InputAdapter
+Input [2]: [n_nationkey#154L, n_name#155]
+Arguments: [#154, #155]
+
+(34) NativeFilter
+Input [2]: [#154#154L, #155#155]
+Arguments: ((isnotnull(n_name#155) AND (n_name#155 = SAUDI ARABIA)) AND isnotnull(n_nationkey#154L))
+
+(35) NativeProject
+Input [2]: [#154#154L, #155#155]
+Arguments: [n_nationkey#154L]
+
+(36) NativeBroadcastExchange
+Input [1]: [n_nationkey#154L]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=12950]
+
+(37) BroadcastQueryStage
+Output [1]: [n_nationkey#154L]
+Arguments: 4
+
+(38) BroadcastHashJoin [codegen id : 1]
+Left keys [1]: [s_nationkey#422L]
+Right keys [1]: [n_nationkey#154L]
+Join type: Inner
+Join condition: None
+
+(39) Project [codegen id : 1]
+Output [1]: [s_name#420]
+Input [3]: [s_name#420, s_nationkey#422L, n_nationkey#154L]
+
+(40) HashAggregate [codegen id : 1]
+Input [1]: [s_name#420]
+Keys [1]: [s_name#420]
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#2564L]
+Results [2]: [s_name#420, count#2565L]
+
+(41) Exchange
+Input [2]: [s_name#420, count#2565L]
+Arguments: hashpartitioning(s_name#420, 5), ENSURE_REQUIREMENTS, [plan_id=13324]
+
+(42) ShuffleQueryStage
+Output [2]: [s_name#420, count#2565L]
+Arguments: 5
+
+(43) AQEShuffleRead
+Input [2]: [s_name#420, count#2565L]
+Arguments: coalesced
+
+(44) HashAggregate [codegen id : 2]
+Input [2]: [s_name#420, count#2565L]
+Keys [1]: [s_name#420]
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#2529L]
+Results [2]: [s_name#420, count(1)#2529L AS numwait#2526L]
+
+(45) Scan parquet 
+Output [3]: [s_suppkey#419L, s_name#420, s_nationkey#422L]
+Batched: true
+Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/supplier]
+PushedFilters: [IsNotNull(s_suppkey), IsNotNull(s_nationkey)]
+ReadSchema: struct<s_suppkey:bigint,s_name:string,s_nationkey:bigint>
+
+(46) Filter
+Input [3]: [s_suppkey#419L, s_name#420, s_nationkey#422L]
+Condition : (isnotnull(s_suppkey#419L) AND isnotnull(s_nationkey#422L))
+
+(47) BroadcastExchange
+Input [3]: [s_suppkey#419L, s_name#420, s_nationkey#422L]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=12764]
+
+(48) Scan parquet 
+Output [4]: [l_orderkey#61L, l_suppkey#63L, l_commitdate#72, l_receiptdate#73]
+Batched: true
+Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/lineitem]
+PushedFilters: [IsNotNull(l_receiptdate), IsNotNull(l_commitdate), IsNotNull(l_suppkey), IsNotNull(l_orderkey)]
+ReadSchema: struct<l_orderkey:bigint,l_suppkey:bigint,l_commitdate:date,l_receiptdate:date>
+
+(49) Filter
+Input [4]: [l_orderkey#61L, l_suppkey#63L, l_commitdate#72, l_receiptdate#73]
+Condition : ((((isnotnull(l_receiptdate#73) AND isnotnull(l_commitdate#72)) AND (l_receiptdate#73 > l_commitdate#72)) AND isnotnull(l_suppkey#63L)) AND isnotnull(l_orderkey#61L))
+
+(50) Project
+Output [2]: [l_orderkey#61L, l_suppkey#63L]
+Input [4]: [l_orderkey#61L, l_suppkey#63L, l_commitdate#72, l_receiptdate#73]
+
+(51) Scan parquet 
+Output [2]: [l_orderkey#2530L, l_suppkey#2532L]
+Batched: true
+Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/lineitem]
+ReadSchema: struct<l_orderkey:bigint,l_suppkey:bigint>
+
+(52) BroadcastExchange
+Input [2]: [l_orderkey#2530L, l_suppkey#2532L]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=12758]
+
+(53) BroadcastHashJoin
+Left keys [1]: [l_orderkey#61L]
+Right keys [1]: [l_orderkey#2530L]
+Join type: LeftSemi
+Join condition: NOT (l_suppkey#2532L = l_suppkey#63L)
+
+(54) Scan parquet 
+Output [4]: [l_orderkey#2546L, l_suppkey#2548L, l_commitdate#2557, l_receiptdate#2558]
+Batched: true
+Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/lineitem]
+PushedFilters: [IsNotNull(l_receiptdate), IsNotNull(l_commitdate)]
+ReadSchema: struct<l_orderkey:bigint,l_suppkey:bigint,l_commitdate:date,l_receiptdate:date>
+
+(55) Filter
+Input [4]: [l_orderkey#2546L, l_suppkey#2548L, l_commitdate#2557, l_receiptdate#2558]
+Condition : ((isnotnull(l_receiptdate#2558) AND isnotnull(l_commitdate#2557)) AND (l_receiptdate#2558 > l_commitdate#2557))
+
+(56) Project
+Output [2]: [l_orderkey#2546L, l_suppkey#2548L]
+Input [4]: [l_orderkey#2546L, l_suppkey#2548L, l_commitdate#2557, l_receiptdate#2558]
+
+(57) BroadcastExchange
+Input [2]: [l_orderkey#2546L, l_suppkey#2548L]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=12761]
+
+(58) BroadcastHashJoin
+Left keys [1]: [l_orderkey#61L]
+Right keys [1]: [l_orderkey#2546L]
+Join type: LeftAnti
+Join condition: NOT (l_suppkey#2548L = l_suppkey#63L)
+
+(59) BroadcastHashJoin
+Left keys [1]: [s_suppkey#419L]
+Right keys [1]: [l_suppkey#63L]
+Join type: Inner
+Join condition: None
+
+(60) Project
+Output [3]: [s_name#420, s_nationkey#422L, l_orderkey#61L]
+Input [5]: [s_suppkey#419L, s_name#420, s_nationkey#422L, l_orderkey#61L, l_suppkey#63L]
+
+(61) Scan parquet 
+Output [2]: [o_orderkey#199L, o_orderstatus#201]
+Batched: true
+Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/orders]
+PushedFilters: [IsNotNull(o_orderstatus), EqualTo(o_orderstatus,F), IsNotNull(o_orderkey)]
+ReadSchema: struct<o_orderkey:bigint,o_orderstatus:string>
+
+(62) Filter
+Input [2]: [o_orderkey#199L, o_orderstatus#201]
+Condition : ((isnotnull(o_orderstatus#201) AND (o_orderstatus#201 = F)) AND isnotnull(o_orderkey#199L))
+
+(63) Project
+Output [1]: [o_orderkey#199L]
+Input [2]: [o_orderkey#199L, o_orderstatus#201]
+
+(64) BroadcastExchange
+Input [1]: [o_orderkey#199L]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=12768]
+
+(65) BroadcastHashJoin
+Left keys [1]: [l_orderkey#61L]
+Right keys [1]: [o_orderkey#199L]
+Join type: Inner
+Join condition: None
+
+(66) Project
+Output [2]: [s_name#420, s_nationkey#422L]
+Input [4]: [s_name#420, s_nationkey#422L, l_orderkey#61L, o_orderkey#199L]
+
+(67) Scan parquet 
+Output [2]: [n_nationkey#154L, n_name#155]
+Batched: true
+Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/nation]
+PushedFilters: [IsNotNull(n_name), EqualTo(n_name,SAUDI ARABIA), IsNotNull(n_nationkey)]
+ReadSchema: struct<n_nationkey:bigint,n_name:string>
+
+(68) Filter
+Input [2]: [n_nationkey#154L, n_name#155]
+Condition : ((isnotnull(n_name#155) AND (n_name#155 = SAUDI ARABIA)) AND isnotnull(n_nationkey#154L))
+
+(69) Project
+Output [1]: [n_nationkey#154L]
+Input [2]: [n_nationkey#154L, n_name#155]
+
+(70) BroadcastExchange
+Input [1]: [n_nationkey#154L]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=12772]
+
+(71) BroadcastHashJoin
+Left keys [1]: [s_nationkey#422L]
+Right keys [1]: [n_nationkey#154L]
+Join type: Inner
+Join condition: None
+
+(72) Project
+Output [1]: [s_name#420]
+Input [3]: [s_name#420, s_nationkey#422L, n_nationkey#154L]
+
+(73) HashAggregate
+Input [1]: [s_name#420]
+Keys [1]: [s_name#420]
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#2564L]
+Results [2]: [s_name#420, count#2565L]
+
+(74) Exchange
+Input [2]: [s_name#420, count#2565L]
+Arguments: hashpartitioning(s_name#420, 5), ENSURE_REQUIREMENTS, [plan_id=12777]
+
+(75) HashAggregate
+Input [2]: [s_name#420, count#2565L]
+Keys [1]: [s_name#420]
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#2529L]
+Results [2]: [s_name#420, count(1)#2529L AS numwait#2526L]
+
+(76) TakeOrderedAndProject
+Input [2]: [s_name#420, numwait#2526L]
+Arguments: 100, [numwait#2526L DESC NULLS LAST, s_name#420 ASC NULLS FIRST], [s_name#420, numwait#2526L]
+
+(77) AdaptiveSparkPlan
+Output [2]: [s_name#420, numwait#2526L]
+Arguments: isFinalPlan=true
+

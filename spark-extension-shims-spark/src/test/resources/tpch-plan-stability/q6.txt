@@ -1,0 +1,105 @@
+== Physical Plan ==
+AdaptiveSparkPlan (17)
++- == Final Plan ==
+   NativeProject (10)
+   +- NativeHashAggregate (9)
+      +- ShuffleQueryStage (8), Statistics(sizeInBytes=360.0 B, rowCount=1)
+         +- NativeShuffleExchange (7)
+            +- NativeHashAggregate (6)
+               +- NativeProject (5)
+                  +- NativeProject (4)
+                     +- NativeFilter (3)
+                        +- InputAdapter (2)
+                           +- NativeParquetScan  (1)
++- == Initial Plan ==
+   HashAggregate (16)
+   +- Exchange (15)
+      +- HashAggregate (14)
+         +- Project (13)
+            +- Filter (12)
+               +- Scan parquet  (11)
+
+
+(1) NativeParquetScan 
+Output [4]: [l_quantity#65, l_extendedprice#66, l_discount#67, l_shipdate#71]
+Arguments: FileScan parquet [l_quantity#65,l_extendedprice#66,l_discount#67,l_shipdate#71] Batched: true, DataFilters: [isnotnull(l_shipdate#71), isnotnull(l_discount#67), isnotnull(l_quantity#65), (l_shipdate#71 >= ..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(l_shipdate), IsNotNull(l_discount), IsNotNull(l_quantity), GreaterThanOrEqual(l_shipda..., ReadSchema: struct<l_quantity:decimal(12,2),l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_shipdate...
+
+(2) InputAdapter
+Input [4]: [l_quantity#65, l_extendedprice#66, l_discount#67, l_shipdate#71]
+Arguments: [#65, #66, #67, #71]
+
+(3) NativeFilter
+Input [4]: [#65#65, #66#66, #67#67, #71#71]
+Arguments: (((((((isnotnull(l_shipdate#71) AND isnotnull(l_discount#67)) AND isnotnull(l_quantity#65)) AND (l_shipdate#71 >= 1994-01-01)) AND (l_shipdate#71 < 1995-01-01)) AND (l_discount#67 >= 0.05)) AND (l_discount#67 <= 0.07)) AND (l_quantity#65 < 24.00))
+
+(4) NativeProject
+Input [4]: [#65#65, #66#66, #67#67, #71#71]
+Arguments: [l_extendedprice#66, l_discount#67]
+
+(5) NativeProject
+Input [2]: [l_extendedprice#66, l_discount#67]
+Arguments: [(l_extendedprice#66 * l_discount#67) AS _c0#1160]
+
+(6) NativeHashAggregate
+Input [1]: [_c0#1160]
+Keys: []
+Functions [1]: [partial_sum(_c0#1160)]
+Aggregate Attributes [2]: [sum#1146, isEmpty#1147]
+Results [1]: [#9223372036854775807#9223372036854775807]
+
+(7) NativeShuffleExchange
+Input [1]: [#9223372036854775807#9223372036854775807]
+Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=3450]
+
+(8) ShuffleQueryStage
+Output [1]: [#9223372036854775807#9223372036854775807]
+Arguments: 0
+
+(9) NativeHashAggregate
+Input [1]: [#9223372036854775807#9223372036854775807]
+Keys: []
+Functions [1]: [sum((l_extendedprice#66 * l_discount#67))]
+Aggregate Attributes [1]: [sum((l_extendedprice#66 * l_discount#67))#1144]
+Results [1]: [sum((l_extendedprice#66 * l_discount#67))#1144]
+
+(10) NativeProject
+Input [1]: [sum((l_extendedprice#66 * l_discount#67))#1144]
+Arguments: [sum((l_extendedprice#66 * l_discount#67))#1144 AS revenue#1143]
+
+(11) Scan parquet 
+Output [4]: [l_quantity#65, l_extendedprice#66, l_discount#67, l_shipdate#71]
+Batched: true
+Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/lineitem]
+PushedFilters: [IsNotNull(l_shipdate), IsNotNull(l_discount), IsNotNull(l_quantity), GreaterThanOrEqual(l_shipdate,1994-01-01), LessThan(l_shipdate,1995-01-01), GreaterThanOrEqual(l_discount,0.05), LessThanOrEqual(l_discount,0.07), LessThan(l_quantity,24.00)]
+ReadSchema: struct<l_quantity:decimal(12,2),l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_shipdate:date>
+
+(12) Filter
+Input [4]: [l_quantity#65, l_extendedprice#66, l_discount#67, l_shipdate#71]
+Condition : (((((((isnotnull(l_shipdate#71) AND isnotnull(l_discount#67)) AND isnotnull(l_quantity#65)) AND (l_shipdate#71 >= 1994-01-01)) AND (l_shipdate#71 < 1995-01-01)) AND (l_discount#67 >= 0.05)) AND (l_discount#67 <= 0.07)) AND (l_quantity#65 < 24.00))
+
+(13) Project
+Output [2]: [l_extendedprice#66, l_discount#67]
+Input [4]: [l_quantity#65, l_extendedprice#66, l_discount#67, l_shipdate#71]
+
+(14) HashAggregate
+Input [2]: [l_extendedprice#66, l_discount#67]
+Keys: []
+Functions [1]: [partial_sum((l_extendedprice#66 * l_discount#67))]
+Aggregate Attributes [2]: [sum#1146, isEmpty#1147]
+Results [2]: [sum#1148, isEmpty#1149]
+
+(15) Exchange
+Input [2]: [sum#1148, isEmpty#1149]
+Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=3409]
+
+(16) HashAggregate
+Input [2]: [sum#1148, isEmpty#1149]
+Keys: []
+Functions [1]: [sum((l_extendedprice#66 * l_discount#67))]
+Aggregate Attributes [1]: [sum((l_extendedprice#66 * l_discount#67))#1144]
+Results [1]: [sum((l_extendedprice#66 * l_discount#67))#1144 AS revenue#1143]
+
+(17) AdaptiveSparkPlan
+Output [1]: [revenue#1143]
+Arguments: isFinalPlan=true
+

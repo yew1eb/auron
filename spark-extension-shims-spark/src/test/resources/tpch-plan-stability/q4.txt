@@ -1,0 +1,220 @@
+== Physical Plan ==
+AdaptiveSparkPlan (39)
++- == Final Plan ==
+   NativeSort (24)
+   +- InputAdapter (23)
+      +- AQEShuffleRead (22)
+         +- ShuffleQueryStage (21), Statistics(sizeInBytes=584.0 B, rowCount=5)
+            +- NativeShuffleExchange (20)
+               +- NativeProject (19)
+                  +- NativeHashAggregate (18)
+                     +- InputAdapter (17)
+                        +- AQEShuffleRead (16)
+                           +- ShuffleQueryStage (15), Statistics(sizeInBytes=696.0 B, rowCount=5)
+                              +- NativeShuffleExchange (14)
+                                 +- NativeHashAggregate (13)
+                                    +- NativeProject (12)
+                                       +- NativeBroadcastJoin LeftSemi BuildRight (11)
+                                          :- NativeProject (4)
+                                          :  +- NativeFilter (3)
+                                          :     +- InputAdapter (2)
+                                          :        +- NativeParquetScan  (1)
+                                          +- BroadcastQueryStage (10), Statistics(sizeInBytes=22.4 KiB, rowCount=3.79E+4)
+                                             +- NativeBroadcastExchange (9)
+                                                +- NativeProject (8)
+                                                   +- NativeFilter (7)
+                                                      +- InputAdapter (6)
+                                                         +- NativeParquetScan  (5)
++- == Initial Plan ==
+   Sort (38)
+   +- Exchange (37)
+      +- HashAggregate (36)
+         +- Exchange (35)
+            +- HashAggregate (34)
+               +- Project (33)
+                  +- BroadcastHashJoin LeftSemi BuildRight (32)
+                     :- Project (27)
+                     :  +- Filter (26)
+                     :     +- Scan parquet  (25)
+                     +- BroadcastExchange (31)
+                        +- Project (30)
+                           +- Filter (29)
+                              +- Scan parquet  (28)
+
+
+(1) NativeParquetScan 
+Output [3]: [o_orderkey#199L, o_orderdate#203, o_orderpriority#204]
+Arguments: FileScan parquet [o_orderkey#199L,o_orderdate#203,o_orderpriority#204] Batched: true, DataFilters: [isnotnull(o_orderdate#203), (o_orderdate#203 >= 1993-07-01), (o_orderdate#203 < 1993-10-01)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(o_orderdate), GreaterThanOrEqual(o_orderdate,1993-07-01), LessThan(o_orderdate,1993-10..., ReadSchema: struct<o_orderkey:bigint,o_orderdate:date,o_orderpriority:string>
+
+(2) InputAdapter
+Input [3]: [o_orderkey#199L, o_orderdate#203, o_orderpriority#204]
+Arguments: [#199, #203, #204]
+
+(3) NativeFilter
+Input [3]: [#199#199L, #203#203, #204#204]
+Arguments: ((isnotnull(o_orderdate#203) AND (o_orderdate#203 >= 1993-07-01)) AND (o_orderdate#203 < 1993-10-01))
+
+(4) NativeProject
+Input [3]: [#199#199L, #203#203, #204#204]
+Arguments: [o_orderkey#199L, o_orderpriority#204]
+
+(5) NativeParquetScan 
+Output [3]: [l_orderkey#61L, l_commitdate#72, l_receiptdate#73]
+Arguments: FileScan parquet [l_orderkey#61L,l_commitdate#72,l_receiptdate#73] Batched: true, DataFilters: [isnotnull(l_commitdate#72), isnotnull(l_receiptdate#73), (l_commitdate#72 < l_receiptdate#73)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(l_commitdate), IsNotNull(l_receiptdate)], ReadSchema: struct<l_orderkey:bigint,l_commitdate:date,l_receiptdate:date>
+
+(6) InputAdapter
+Input [3]: [l_orderkey#61L, l_commitdate#72, l_receiptdate#73]
+Arguments: [#61, #72, #73]
+
+(7) NativeFilter
+Input [3]: [#61#61L, #72#72, #73#73]
+Arguments: ((isnotnull(l_commitdate#72) AND isnotnull(l_receiptdate#73)) AND (l_commitdate#72 < l_receiptdate#73))
+
+(8) NativeProject
+Input [3]: [#61#61L, #72#72, #73#73]
+Arguments: [l_orderkey#61L]
+
+(9) NativeBroadcastExchange
+Input [1]: [l_orderkey#61L]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=2302]
+
+(10) BroadcastQueryStage
+Output [1]: [l_orderkey#61L]
+Arguments: 0
+
+(11) NativeBroadcastJoin
+Left keys [1]: [o_orderkey#199L]
+Right keys [1]: [l_orderkey#61L]
+Join type: LeftSemi
+Join condition: None
+
+(12) NativeProject
+Input [2]: [o_orderkey#199L, o_orderpriority#204]
+Arguments: [o_orderpriority#204]
+
+(13) NativeHashAggregate
+Input [1]: [o_orderpriority#204]
+Keys [1]: [o_orderpriority#204]
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#1033L]
+Results [2]: [o_orderpriority#204, #9223372036854775807#9223372036854775807]
+
+(14) NativeShuffleExchange
+Input [2]: [o_orderpriority#204, #9223372036854775807#9223372036854775807]
+Arguments: hashpartitioning(o_orderpriority#204, 5), ENSURE_REQUIREMENTS, [plan_id=2390]
+
+(15) ShuffleQueryStage
+Output [2]: [o_orderpriority#204, #9223372036854775807#9223372036854775807]
+Arguments: 1
+
+(16) AQEShuffleRead
+Input [2]: [o_orderpriority#204, #9223372036854775807#9223372036854775807]
+Arguments: coalesced
+
+(17) InputAdapter
+Input [2]: [o_orderpriority#204, #9223372036854775807#9223372036854775807]
+
+(18) NativeHashAggregate
+Input [2]: [o_orderpriority#204, #9223372036854775807#9223372036854775807]
+Keys [1]: [o_orderpriority#204]
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#1030L]
+Results [2]: [o_orderpriority#204, count(1)#1030L]
+
+(19) NativeProject
+Input [2]: [o_orderpriority#204, count(1)#1030L]
+Arguments: [o_orderpriority#204, count(1)#1030L AS order_count#1028L]
+
+(20) NativeShuffleExchange
+Input [2]: [o_orderpriority#204, order_count#1028L]
+Arguments: rangepartitioning(o_orderpriority#204 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=2437]
+
+(21) ShuffleQueryStage
+Output [2]: [o_orderpriority#204, order_count#1028L]
+Arguments: 2
+
+(22) AQEShuffleRead
+Input [2]: [o_orderpriority#204, order_count#1028L]
+Arguments: coalesced
+
+(23) InputAdapter
+Input [2]: [o_orderpriority#204, order_count#1028L]
+
+(24) NativeSort
+Input [2]: [o_orderpriority#204, order_count#1028L]
+Arguments: [o_orderpriority#204 ASC NULLS FIRST], true
+
+(25) Scan parquet 
+Output [3]: [o_orderkey#199L, o_orderdate#203, o_orderpriority#204]
+Batched: true
+Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/orders]
+PushedFilters: [IsNotNull(o_orderdate), GreaterThanOrEqual(o_orderdate,1993-07-01), LessThan(o_orderdate,1993-10-01)]
+ReadSchema: struct<o_orderkey:bigint,o_orderdate:date,o_orderpriority:string>
+
+(26) Filter
+Input [3]: [o_orderkey#199L, o_orderdate#203, o_orderpriority#204]
+Condition : ((isnotnull(o_orderdate#203) AND (o_orderdate#203 >= 1993-07-01)) AND (o_orderdate#203 < 1993-10-01))
+
+(27) Project
+Output [2]: [o_orderkey#199L, o_orderpriority#204]
+Input [3]: [o_orderkey#199L, o_orderdate#203, o_orderpriority#204]
+
+(28) Scan parquet 
+Output [3]: [l_orderkey#61L, l_commitdate#72, l_receiptdate#73]
+Batched: true
+Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/lineitem]
+PushedFilters: [IsNotNull(l_commitdate), IsNotNull(l_receiptdate)]
+ReadSchema: struct<l_orderkey:bigint,l_commitdate:date,l_receiptdate:date>
+
+(29) Filter
+Input [3]: [l_orderkey#61L, l_commitdate#72, l_receiptdate#73]
+Condition : ((isnotnull(l_commitdate#72) AND isnotnull(l_receiptdate#73)) AND (l_commitdate#72 < l_receiptdate#73))
+
+(30) Project
+Output [1]: [l_orderkey#61L]
+Input [3]: [l_orderkey#61L, l_commitdate#72, l_receiptdate#73]
+
+(31) BroadcastExchange
+Input [1]: [l_orderkey#61L]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=2248]
+
+(32) BroadcastHashJoin
+Left keys [1]: [o_orderkey#199L]
+Right keys [1]: [l_orderkey#61L]
+Join type: LeftSemi
+Join condition: None
+
+(33) Project
+Output [1]: [o_orderpriority#204]
+Input [2]: [o_orderkey#199L, o_orderpriority#204]
+
+(34) HashAggregate
+Input [1]: [o_orderpriority#204]
+Keys [1]: [o_orderpriority#204]
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#1033L]
+Results [2]: [o_orderpriority#204, count#1034L]
+
+(35) Exchange
+Input [2]: [o_orderpriority#204, count#1034L]
+Arguments: hashpartitioning(o_orderpriority#204, 5), ENSURE_REQUIREMENTS, [plan_id=2253]
+
+(36) HashAggregate
+Input [2]: [o_orderpriority#204, count#1034L]
+Keys [1]: [o_orderpriority#204]
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#1030L]
+Results [2]: [o_orderpriority#204, count(1)#1030L AS order_count#1028L]
+
+(37) Exchange
+Input [2]: [o_orderpriority#204, order_count#1028L]
+Arguments: rangepartitioning(o_orderpriority#204 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=2256]
+
+(38) Sort
+Input [2]: [o_orderpriority#204, order_count#1028L]
+Arguments: [o_orderpriority#204 ASC NULLS FIRST], true, 0
+
+(39) AdaptiveSparkPlan
+Output [2]: [o_orderpriority#204, order_count#1028L]
+Arguments: isFinalPlan=true
+
