@@ -1,0 +1,133 @@
+|!                          |SELECT ! true;                                                                                                                                         |PASSED |OK
+|%                          |SELECT 2 % 1.8;                                                                                                                                        |PASSED |OK
+|&                          |SELECT 3 & 5;                                                                                                                                          |PASSED |OK
+|*                          |SELECT 2 * 3;                                                                                                                                          |PASSED |OK
+|+                          |SELECT 1 + 2;                                                                                                                                          |PASSED |OK
+|-                          |SELECT 2 - 1;                                                                                                                                          |PASSED |OK
+|/                          |SELECT 3 / 2;                                                                                                                                          |PASSED |OK
+|<                          |SELECT 1 < 2;                                                                                                                                          |PASSED |OK
+|<=                         |SELECT 2 <= 2;                                                                                                                                         |PASSED |OK
+|<=>                        |SELECT 2 <=> 2;                                                                                                                                        |PASSED |OK
+|=                          |SELECT 2 = 2;                                                                                                                                          |PASSED |OK
+|==                         |SELECT 2 == 2;                                                                                                                                         |PASSED |OK
+|>                          |SELECT 2 > 1;                                                                                                                                          |PASSED |OK
+|>=                         |SELECT 2 >= 1;                                                                                                                                         |PASSED |OK
+|^                          |SELECT 3 ^ 5;                                                                                                                                          |PASSED |OK
+|abs                        |SELECT abs(-1);                                                                                                                                        |PASSED |OK
+|acos                       |SELECT acos(1);                                                                                                                                        |PASSED |OK
+|and                        |SELECT true and true;                                                                                                                                  |PASSED |OK
+|any                        |SELECT any(col) FROM VALUES (true), (false), (false) AS tab(col);                                                                                      |PASSED |OK
+|any_value                  |SELECT any_value(col) FROM VALUES (10), (5), (20) AS tab(col);                                                                                         |PASSED |OK
+|ascii                      |SELECT ascii('222');                                                                                                                                   |PASSED |OK
+|asin                       |SELECT asin(0);                                                                                                                                        |PASSED |OK
+|atan                       |SELECT atan(0);                                                                                                                                        |PASSED |OK
+|atan2                      |SELECT atan2(0, 0);                                                                                                                                    |PASSED |OK
+|avg                        |SELECT avg(col) FROM VALUES (1), (2), (3) AS tab(col);                                                                                                 |PASSED |OK
+|bit_and                    |SELECT bit_and(col) FROM VALUES (3), (5) AS tab(col);                                                                                                  |PASSED |OK
+|bit_length                 |SELECT bit_length('Spark SQL');                                                                                                                        |PASSED |OK
+|bit_or                     |SELECT bit_or(col) FROM VALUES (3), (5) AS tab(col);                                                                                                   |PASSED |OK
+|bit_xor                    |SELECT bit_xor(col) FROM VALUES (3), (5) AS tab(col);                                                                                                  |PASSED |OK
+|bool_and                   |SELECT bool_and(col) FROM VALUES (true), (true), (true) AS tab(col);                                                                                   |PASSED |OK
+|bool_or                    |SELECT bool_or(col) FROM VALUES (true), (false), (false) AS tab(col);                                                                                  |PASSED |OK
+|btrim                      |SELECT btrim('    SparkSQL   ');                                                                                                                       |PASSED |OK
+|ceil                       |SELECT ceil(-0.1);                                                                                                                                     |PASSED |OK
+|ceiling                    |SELECT ceiling(-0.1);                                                                                                                                  |PASSED |OK
+|char                       |SELECT char(65);                                                                                                                                       |PASSED |OK
+|char_length                |SELECT char_length('Spark SQL ');                                                                                                                      |PASSED |OK
+|character_length           |SELECT character_length('Spark SQL ');                                                                                                                 |PASSED |OK
+|chr                        |SELECT chr(65);                                                                                                                                        |PASSED |OK
+|coalesce                   |SELECT coalesce(NULL, 1, NULL);                                                                                                                        |PASSED |OK
+|concat_ws                  |SELECT concat_ws(' ', 'Spark', 'SQL');                                                                                                                 |PASSED |OK
+|contains                   |SELECT contains('Spark SQL', 'Spark');                                                                                                                 |PASSED |OK
+|cos                        |SELECT cos(0);                                                                                                                                         |PASSED |OK
+|count                      |SELECT count(*) FROM VALUES (NULL), (5), (5), (20) AS tab(col);                                                                                        |PASSED |OK
+|count_if                   |SELECT count_if(col % 2 = 0) FROM VALUES (NULL), (0), (1), (2), (3) AS tab(col);                                                                       |PASSED |OK
+|covar_pop                  |SELECT covar_pop(c1, c2) FROM VALUES (1,1), (2,2), (3,3) AS tab(c1, c2);                                                                               |PASSED |OK
+|covar_samp                 |SELECT covar_samp(c1, c2) FROM VALUES (1,1), (2,2), (3,3) AS tab(c1, c2);                                                                              |PASSED |OK
+|curdate                    |SELECT curdate();                                                                                                                                      |PASSED |OK
+|current_catalog            |SELECT current_catalog();                                                                                                                              |PASSED |OK
+|current_database           |SELECT current_database();                                                                                                                             |PASSED |OK
+|current_date               |SELECT current_date();                                                                                                                                 |PASSED |OK
+|current_schema             |SELECT current_schema();                                                                                                                               |PASSED |OK
+|current_timezone           |SELECT current_timezone();                                                                                                                             |PASSED |OK
+|current_user               |SELECT current_user();                                                                                                                                 |PASSED |OK
+|date_part                  |SELECT date_part('YEAR', TIMESTAMP '2019-08-12 01:00:00.123456');                                                                                      |PASSED |OK
+|datepart                   |SELECT datepart('YEAR', TIMESTAMP '2019-08-12 01:00:00.123456');                                                                                       |PASSED |OK
+|endswith                   |SELECT endswith('Spark SQL', 'SQL');                                                                                                                   |PASSED |OK
+|equal_null                 |SELECT equal_null(3, 3);                                                                                                                               |PASSED |OK
+|every                      |SELECT every(col) FROM VALUES (true), (true), (true) AS tab(col);                                                                                      |PASSED |OK
+|exp                        |SELECT exp(0);                                                                                                                                         |PASSED |OK
+|extract                    |SELECT extract(YEAR FROM TIMESTAMP '2019-08-12 01:00:00.123456');                                                                                      |PASSED |OK
+|first                      |SELECT first(col) FROM VALUES (10), (5), (20) AS tab(col);                                                                                             |PASSED |OK
+|first_value                |SELECT first_value(col) FROM VALUES (10), (5), (20) AS tab(col);                                                                                       |PASSED |OK
+|floor                      |SELECT floor(-0.1);                                                                                                                                    |PASSED |OK
+|if                         |SELECT if(1 < 2, 'a', 'b');                                                                                                                            |PASSED |OK
+|ifnull                     |SELECT ifnull(NULL, array('2'));                                                                                                                       |PASSED |OK
+|ilike                      |SELECT ilike('Spark', '_Park');                                                                                                                        |PASSED |OK
+|in                         |SELECT 1 in(1, 2, 3);                                                                                                                                  |PASSED |OK
+|initcap                    |SELECT initcap('sPark sql');                                                                                                                           |PASSED |OK
+|instr                      |SELECT instr('SparkSQL', 'SQL');                                                                                                                       |PASSED |OK
+|isnotnull                  |SELECT isnotnull(1);                                                                                                                                   |PASSED |OK
+|isnull                     |SELECT isnull(1);                                                                                                                                      |PASSED |OK
+|last                       |SELECT last(col) FROM VALUES (10), (5), (20) AS tab(col);                                                                                              |PASSED |OK
+|last_value                 |SELECT last_value(col) FROM VALUES (10), (5), (20) AS tab(col);                                                                                        |PASSED |OK
+|lcase                      |SELECT lcase('SparkSql');                                                                                                                              |PASSED |OK
+|len                        |SELECT len('Spark SQL ');                                                                                                                              |PASSED |OK
+|length                     |SELECT length('Spark SQL ');                                                                                                                           |PASSED |OK
+|like                       |SELECT like('Spark', '_park');                                                                                                                         |PASSED |OK
+|ln                         |SELECT ln(1);                                                                                                                                          |PASSED |OK
+|log10                      |SELECT log10(10);                                                                                                                                      |PASSED |OK
+|log2                       |SELECT log2(2);                                                                                                                                        |PASSED |OK
+|lower                      |SELECT lower('SparkSql');                                                                                                                              |PASSED |OK
+|ltrim                      |SELECT ltrim('    SparkSQL   ');                                                                                                                       |PASSED |OK
+|max                        |SELECT max(col) FROM VALUES (10), (50), (20) AS tab(col);                                                                                              |PASSED |OK
+|md5                        |SELECT md5('Spark');                                                                                                                                   |PASSED |OK
+|mean                       |SELECT mean(col) FROM VALUES (1), (2), (3) AS tab(col);                                                                                                |PASSED |OK
+|min                        |SELECT min(col) FROM VALUES (10), (-1), (20) AS tab(col);                                                                                              |PASSED |OK
+|mod                        |SELECT 2 % 1.8;                                                                                                                                        |PASSED |OK
+|negative                   |SELECT negative(1);                                                                                                                                    |PASSED |OK
+|not                        |SELECT not true;                                                                                                                                       |PASSED |OK
+|nullif                     |SELECT nullif(2, 2);                                                                                                                                   |PASSED |OK
+|nvl                        |SELECT nvl(NULL, array('2'));                                                                                                                          |PASSED |OK
+|nvl2                       |SELECT nvl2(NULL, 2, 1);                                                                                                                               |PASSED |OK
+|octet_length               |SELECT octet_length('Spark SQL');                                                                                                                      |PASSED |OK
+|or                         |SELECT true or false;                                                                                                                                  |PASSED |OK
+|positive                   |SELECT positive(1);                                                                                                                                    |PASSED |OK
+|pow                        |SELECT pow(2, 3);                                                                                                                                      |PASSED |OK
+|power                      |SELECT power(2, 3);                                                                                                                                    |PASSED |OK
+|regr_avgx                  |SELECT regr_avgx(y, x) FROM VALUES (1, 2), (2, 2), (2, 3), (2, 4) AS tab(y, x);                                                                        |PASSED |OK
+|regr_avgy                  |SELECT regr_avgy(y, x) FROM VALUES (1, 2), (2, 2), (2, 3), (2, 4) AS tab(y, x);                                                                        |PASSED |OK
+|regr_count                 |SELECT regr_count(y, x) FROM VALUES (1, 2), (2, 2), (2, 3), (2, 4) AS tab(y, x);                                                                       |PASSED |OK
+|repeat                     |SELECT repeat('123', 2);                                                                                                                               |PASSED |OK
+|replace                    |SELECT replace('ABCabc', 'abc', 'DEF');                                                                                                                |PASSED |OK
+|reverse                    |SELECT reverse('Spark SQL');                                                                                                                           |PASSED |OK
+|round                      |SELECT round(2.5, 0);                                                                                                                                  |PASSED |OK
+|rtrim                      |SELECT rtrim('    SparkSQL   ');                                                                                                                       |PASSED |OK
+|shiftleft                  |SELECT shiftleft(2, 1);                                                                                                                                |PASSED |OK
+|shiftright                 |SELECT shiftright(4, 1);                                                                                                                               |PASSED |OK
+|sign                       |SELECT sign(40);                                                                                                                                       |PASSED |OK
+|signum                     |SELECT signum(40);                                                                                                                                     |PASSED |OK
+|sin                        |SELECT sin(0);                                                                                                                                         |PASSED |OK
+|some                       |SELECT some(col) FROM VALUES (true), (false), (false) AS tab(col);                                                                                     |PASSED |OK
+|space                      |SELECT concat(space(2), '1');                                                                                                                          |PASSED |OK
+|sqrt                       |SELECT sqrt(4);                                                                                                                                        |PASSED |OK
+|startswith                 |SELECT startswith('Spark SQL', 'Spark');                                                                                                               |PASSED |OK
+|std                        |SELECT std(col) FROM VALUES (1), (2), (3) AS tab(col);                                                                                                 |PASSED |OK
+|stddev                     |SELECT stddev(col) FROM VALUES (1), (2), (3) AS tab(col);                                                                                              |PASSED |OK
+|stddev_pop                 |SELECT stddev_pop(col) FROM VALUES (1), (2), (3) AS tab(col);                                                                                          |PASSED |OK
+|stddev_samp                |SELECT stddev_samp(col) FROM VALUES (1), (2), (3) AS tab(col);                                                                                         |PASSED |OK
+|sum                        |SELECT sum(col) FROM VALUES (5), (10), (15) AS tab(col);                                                                                               |PASSED |OK
+|tan                        |SELECT tan(0);                                                                                                                                         |PASSED |OK
+|translate                  |SELECT translate('AaBbCc', 'abc', '123');                                                                                                              |PASSED |OK
+|trim                       |SELECT trim('    SparkSQL   ');                                                                                                                        |PASSED |OK
+|try_divide                 |SELECT try_divide(3, 2);                                                                                                                               |PASSED |OK
+|try_subtract               |SELECT try_subtract(2, 1);                                                                                                                             |PASSED |OK
+|ucase                      |SELECT ucase('SparkSql');                                                                                                                              |PASSED |OK
+|unhex                      |SELECT decode(unhex('537061726B2053514C'), 'UTF-8');                                                                                                   |PASSED |OK
+|upper                      |SELECT upper('SparkSql');                                                                                                                              |PASSED |OK
+|user                       |SELECT user();                                                                                                                                         |PASSED |OK
+|var_pop                    |SELECT var_pop(col) FROM VALUES (1), (2), (3) AS tab(col);                                                                                             |PASSED |OK
+|var_samp                   |SELECT var_samp(col) FROM VALUES (1), (2), (3) AS tab(col);                                                                                            |PASSED |OK
+|variance                   |SELECT variance(col) FROM VALUES (1), (2), (3) AS tab(col);                                                                                            |PASSED |OK
+||                          |SELECT 3 | 5;                                                                                                                                          |PASSED |OK
+|~                          |SELECT ~ 0;                                                                                                                                            |PASSED |OK

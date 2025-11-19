@@ -154,6 +154,7 @@ abstract class Shims {
   def createNativeTakeOrderedExec(
       limit: Long,
       sortOrder: Seq[SortOrder],
+      projectList: Seq[NamedExpression],
       child: SparkPlan): NativeTakeOrderedBase
 
   def createNativePartialTakeOrderedExec(

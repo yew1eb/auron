@@ -489,4 +489,114 @@ class AuronFunctionSuite extends AuronQueryTest with BaseAuronSQLSuite {
       }
     }
   }
+
+  test("abs") {
+    withSQLConf() {
+      withTable("t1") {
+        sql(s"CREATE TABLE t1(id INT, name STRING) USING parquet")
+        sql(s"""
+             |INSERT INTO t1 VALUES
+             | (1, 'fooBar'),
+             | (2, 'foo Bar foo-bar FOO-BAR foO-barR'),
+             | (3, 'straße'),
+             | (4, 'CAFÉ'),
+             | (5, '世界'),
+             | (6, '世 界'),
+             | (7, ''),
+             | (8, NULL)
+            """.stripMargin)
+
+        checkSparkAnswerAndOperator(s"SELECT abs(id) FROM t1")
+        // if (isnull(c0#37146)) null else if ((c1#37147 <= 0))  else substring(c0#37146, -c1#37147, 2147483647)
+        // Thread.sleep(10000000)
+      }
+    }
+  }
+
+  test("if else if") {
+    withSQLConf() {
+      withTable("t1") {
+        sql(s"CREATE TABLE t1(id INT, name STRING) USING parquet")
+        sql(s"""
+             |INSERT INTO t1 VALUES
+             | (1, 'fooBar'),
+             | (2, 'foo Bar foo-bar FOO-BAR foO-barR'),
+             | (3, 'straße'),
+             | (4, 'CAFÉ'),
+             | (5, '世界'),
+             | (6, '世 界'),
+             | (7, ''),
+             | (8, NULL)
+            """.stripMargin)
+
+        checkSparkAnswerAndOperator(s"SELECT if(id < 3, 'a', if(id < 6, 'b', 'c')) FROM t1")
+        // if (isnull(c0#37146)) null else if ((c1#37147 <= 0))  else substring(c0#37146, -c1#37147, 2147483647)
+        // Thread.sleep(10000000)
+      }
+    }
+  }
+
+  test("base64 functions") {
+    withSQLConf() {
+      withTable("t1") {
+        sql(s"CREATE TABLE t1(id INT, name STRING) USING parquet")
+        sql(s"""
+               |INSERT INTO t1 VALUES
+               | (1, 'fooBar'),
+               | (2, 'foo Bar foo-bar FOO-BAR foO-barR'),
+               | (3, 'straße'),
+               | (4, 'CAFÉ'),
+               | (5, '世界'),
+               | (6, '世 界'),
+               | (7, ''),
+               | (8, NULL)
+            """.stripMargin)
+
+        checkSparkAnswerAndOperator(s"SELECT id + bit_length(name) FROM t1")
+        // Thread.sleep(10000000)
+      }
+    }
+
+    /**
+     * 2025-12-04 11:02:09.485 (+2.404s) [INFO] [auron::rt:144] (stage: 2, partition: 0, tid: 4) -
+     * start executing plan: ProjectExec [#7@0 AS #7, UDFWrapper(staticinvoke(class
+     * org.apache.spark.sql.catalyst.expressions.Base64, StringType, encode, cast(name#8 as
+     * binary), true, BinaryType, BooleanType, true, false, true)) AS #15], schema=[#7:Int32;N,
+     * #15:Utf8;N] RenameColumnsExec: ["#7", "#8"], schema=[#7:Int32;N, #8:Utf8;N] ParquetExec:
+     * limit=None, file_group=[FileGroup { files: [PartitionedFile { object_meta: ObjectMeta {
+     * location: Path { raw:
+     * "ZmlsZTovLy9Vc2Vycy95ZXcxZWIvd29ya3NwYWNlcy9hdXJvbi10ZXN0cy9zcGFyay13YXJlaG91c2Uvb3JnLmFwYWNoZS5hdXJvbi5BdXJvbkZ1bmN0aW9uU3VpdGUvdDEvcGFydC0wMDAwMC1jOTg2NmJkNi1lZjFkLTQyMmEtYmNjYS0xNGI0NTE0NDQ2ZGQtYzAwMC5zbmFwcHkucGFycXVldA"
+     * }, last_modified: 1970-01-01T00:00:00Z, size: 748, e_tag: None, version: None },
+     * partition_values: [], range: Some(FileRange { start: 0, end: 748 }), statistics: None,
+     * extensions: None, metadata_size_hint: None }], statistics: Some(Statistics { num_rows:
+     * Exact(0), total_byte_size: Exact(0), column_statistics: [ColumnStatistics { null_count:
+     * Absent, max_value: Absent, min_value: Absent, sum_value: Absent, distinct_count: Absent },
+     * ColumnStatistics { null_count: Absent, max_value: Absent, min_value: Absent, sum_value:
+     * Absent, distinct_count: Absent }] }) }, FileGroup { files: [], statistics: None }],
+     * predicate=Some(Literal { value: Boolean(true), field: Field { name: "lit", data_type:
+     * Boolean, nullable: false, dict_id: 0, dict_is_ordered: false, metadata: {} } }),
+     * schema=[id:Int32;N, name:Utf8;N]
+     */
+  }
+
+  test("length function") {
+    withSQLConf() {
+      withTempView("t1") {
+        sql(s"CREATE TABLE t1(id INT, name STRING) USING parquet")
+        sql(s"""
+             |INSERT INTO t1 VALUES
+             | (1, 'fooBar'),
+             | (2, 'foo Bar foo-bar FOO-BAR foO-barR'),
+             | (3, 'straße'),
+             | (4, 'CAFÉ'),
+             | (5, '世界'),
+             | (6, '世 界'),
+             | (7, ''),
+             | (8, NULL)
+            """.stripMargin)
+
+        checkSparkAnswerAndOperator(s"SELECT id ^ id FROM t1")
+      }
+    }
+  }
 }

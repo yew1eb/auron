@@ -1,0 +1,832 @@
+select element_at(c0,c1) from tbl
+select second(c0) from tbl
+select left(c0,c1) from tbl
+select unix_millis(c0) from tbl
+select cot(c0) from tbl
+select array_prepend(c0,c1) from tbl
+select position(c0,c1) from tbl
+select sha2(c0,c1) from tbl
+select log10(c0) from tbl
+select shiftright(c0,c1) from tbl
+SELECT bool_and(col) FROM tbl
+select url_decode(c0) from tbl
+select a + b from tbl
+select bit_count(c0) from tbl
+select parse_url(c0,c1) from tbl
+SELECT stddev_pop(col) FROM tbl
+select hash(c0,c1,c2) from tbl
+select flatten(c0) from tbl
+select trunc(c0,c1) from tbl
+SELECT collect_list(col) FROM tbl
+select log(c0,c1) from tbl
+select char_length(c0) from tbl
+select format_string(c0,c1,c2) from tbl
+select replace(c0,c1,c2) from tbl
+SELECT a, b, row_number() OVER (PARTITION BY a ORDER BY b) FROM tbl
+select year(c0) from tbl
+select atan2(c0,c1) from tbl
+SELECT hll_sketch_estimate(hll_sketch_agg(col, 12)) FROM tbl
+select bit_length(c0) from tbl
+select raise_error(c0) from tbl
+select substring_index(c0,c1,c2) from tbl
+select map_from_entries(c0) from tbl
+select bround(c0, 0) from tbl
+select reverse(c0) from tbl
+SELECT approx_count_distinct(col1) FROM tbl
+SELECT a in ('1', '2', '3') from tbl
+SELECT skewness(col) FROM tbl
+select isnotnull(c0) from tbl
+SELECT any(col) FROM tbl
+SELECT a, b, lead(b) OVER (PARTITION BY a ORDER BY b) FROM tbl
+select now() from tbl
+select sin(c0) from tbl
+select cbrt(c0) from tbl
+SELECT date_part('YEAR', a) from tbl
+select try_add(a, b) from tbl
+select a <= b from tbl
+select dayofweek(c0) from tbl
+select sentences(c0) from tbl
+select from_utc_timestamp(c0,c1) from tbl
+select json_object_keys(c0) from tbl
+SELECT substring(hex(bitmap_construct_agg(bitmap_bit_position(col))), 0, 6) FROM tbl
+select decode(c0,c1) from tbl
+select greatest(c0,c1,c2,c3,c4) from tbl
+select div(b, a) from tbl
+select next_day(c0,c1) from tbl
+select unhex(a) from tbl
+SELECT regr_sxy(y, x) FROM tbl
+select slice(c0,c1,c2) from tbl
+select factorial(c0) from tbl
+SELECT aggregate(a, 0, (acc, x), acc + x) from tbl
+select array(c0,c1,c2) from tbl
+select soundex(c0) from tbl
+select nvl2(c, b, a) from tbl
+select to_unix_timestamp(c0,c1) from tbl
+SELECT stddev_samp(col) FROM tbl
+select inline(c0) from tbl
+select isnan(c0) from tbl
+SELECT histogram_numeric(col, 5) FROM tbl
+SELECT bit_or(col) FROM tbl
+select cardinality(c0) from tbl
+select make_timestamp_ltz(c0,c1,c2,c3,c4,c5) from tbl
+SELECT last(col) FROM tbl
+SELECT count_if(col % 2 = 0) FROM tbl
+SELECT corr(c1, c2) FROM tbl
+SELECT hll_sketch_estimate(hll_union(hll_sketch_agg(col1), hll_sketch_agg(col2))) FROM tbl
+select endswith(c0,c1) from tbl
+select map(c0,c1,c2,c3) from tbl
+select sequence(c0,c1) from tbl
+select sort_array(a) from tbl
+select map_concat(c0,c1) from tbl
+select a < b from tbl
+select acosh(c0) from tbl
+select pi() from tbl
+select array_repeat(c0,c1) from tbl
+select quarter(c0) from tbl
+select degrees(c0) from tbl
+select btrim(c0) from tbl
+select to_varchar(c0,c1) from tbl
+select array_min(c0) from tbl
+select aes_decrypt(c0,c1) from tbl
+SELECT regr_avgx(y, x) FROM tbl
+select like(c0,c1) from tbl
+select current_timezone() from tbl
+select unbase64(c0) from tbl
+select tanh(c0) from tbl
+select dateadd(c0,c1) from tbl
+select bitmap_bit_position(c0) from tbl
+select input_file_block_start() from tbl
+select xpath_double(c0, 'sum(a/b)') from tbl
+select len(c0) from tbl
+select asinh(c0) from tbl
+select map_keys(c0) from tbl
+SELECT filter(a, x, x % 2 == 1) from tbl
+select transform(a, (k, v), v + 1) from tbl
+SELECT any_value(col) FROM tbl
+select space(a) from tbl
+select timestamp_millis(c0) from tbl
+select date_diff(c0,c1) from tbl
+select instr(c0,c1) from tbl
+select monotonically_increasing_id() from tbl
+select to_timestamp(c0) from tbl
+select substring(c0,c1) from tbl
+select dayofmonth(c0) from tbl
+select ilike(c0,c1) from tbl
+select try_aes_decrypt(c0,c1,c2) from tbl
+select overlay(a PLACING '_' FROM 6) from tbl
+select array_size(c0) from tbl
+select to_date(c0) from tbl
+SELECT forall(a, x, x % 2 == 0) from tbl
+select to_timestamp_ntz(c0) from tbl
+select unix_timestamp() from tbl
+select rand() from tbl
+SELECT last_value(col) FROM tbl
+select bitmap_bucket_number(c0) from tbl
+SELECT substring(hex(bitmap_or_agg(col)), 0, 6) FROM tbl
+select character_length(c0) from tbl
+select date_trunc(c0,c1) from tbl
+SELECT map_filter(a, (k, v), k > v) from tbl
+select input_file_name() from tbl
+SELECT percentile_approx(col, array(0.5, 0.4, 0.1), 100) FROM tbl
+select xpath_short(c0, 'sum(a/b)') from tbl
+select encode(c0,c1) from tbl
+select lcase(c0) from tbl
+select array_contains(c0,c1) from tbl
+select ucase(c0) from tbl
+select coalesce(c, b, a) from tbl
+SELECT regr_count(y, x) FROM tbl
+SELECT first_value(col) FROM tbl
+select sec(c0) from tbl
+SELECT kurtosis(col) FROM tbl
+select try_to_timestamp(c0) from tbl
+select getbit(c0,c1) from tbl
+select to_char(c0, '999') from tbl
+select hypot(c0,c1) from tbl
+select get(c0,c1) from tbl
+SELECT regr_intercept(y, x) FROM tbl
+select bit_get(c0,c1) from tbl
+select array_union(c0,c1) from tbl
+SELECT a, b, lag(b) OVER (PARTITION BY a ORDER BY b) FROM tbl
+select a * b from tbl
+select lower(c0) from tbl
+select arrays_overlap(c0,c1) from tbl
+SELECT regr_sxx(y, x) FROM tbl
+select try_to_binary(c0, 'utf-8') from tbl
+SELECT bit_and(col) FROM tbl
+select array_intersect(c0,c1) from tbl
+select posexplode_outer(c0) from tbl
+select shiftleft(c0,c1) from tbl
+select sqrt(c0) from tbl
+select concat_ws(c0,c1,c2) from tbl
+SELECT var_pop(col) FROM tbl
+SELECT regr_r2(y, x) FROM tbl
+SELECT ifnull(b, a) from tbl
+select timestamp_seconds(c0) from tbl
+select unix_date(c0) from tbl
+select try_to_number(c0, '999') from tbl
+select floor(c0) from tbl
+select assert_true(c0) from tbl
+select case a > b then c else d end from tbl
+select acos(c0) from tbl
+select try_subtract(a, b) from tbl
+select array_except(c0,c1) from tbl
+select add_months(c0,c1) from tbl
+select arrays_zip(c0,c1) from tbl
+SELECT from_csv(a, 'a INT, b DOUBLE') from tbl
+select if(c0,c1,c2) from tbl
+SELECT hll_sketch_estimate(hll_sketch_agg(col)) FROM tbl
+select levenshtein(c0,c1) from tbl
+select timestamp_micros(c0) from tbl
+select user() from tbl
+select to_csv(c0) from tbl
+select array_join(c0,c1) from tbl
+select substr(c0,c1) from tbl
+select locate(c0,c1) from tbl
+select xpath(c0, 'a/b/text()') from tbl
+select pow(c0,c1) from tbl
+select atanh(c0) from tbl
+select mask(c0) from tbl
+SELECT min(col) FROM tbl
+select month(c0) from tbl
+select named_struct('a', a) from tbl
+select map_values(c0) from tbl
+SELECT a, b, dense_rank(b) OVER (PARTITION BY a ORDER BY b) FROM tbl
+select convert_timezone(c0,c1,c2) from tbl
+select array_sort(c0) from tbl
+select input_file_block_length() from tbl
+select atan(c0) from tbl
+SELECT median(col) FROM tbl
+select ! true from tbl
+SELECT mean(col) FROM tbl
+select tan(c0) from tbl
+SELECT max(col) FROM tbl
+select shiftrightunsigned(c0,c1) from tbl
+select make_dt_interval(c0,c1,c2,c3) from tbl
+select nvl(b, a) from tbl
+select map_contains_key(c0,c1) from tbl
+select negative(c0) from tbl
+select transform_keys(map_from_arrays(a, a), (k, v), v + 1) from tbl
+SELECT hex(count_min_sketch(col, 0.5d, 0.5d, 1)) FROM tbl
+select regexp(c0,c1) from tbl
+select chr(c0) from tbl
+select split_part(c0,c1,c2) from tbl
+select regexp_replace(c0,c1,c2) from tbl
+select a = b from tbl
+select make_interval(c0,c1,c2,c3,c4,c5,c6) from tbl
+SELECT avg(col) FROM tbl
+select a / b from tbl
+SELECT min_by(x, y) FROM tbl
+select typeof(c0) from tbl
+select repeat(c0,c1) from tbl
+select format_number(c0,c1) from tbl
+select bin(c0) from tbl
+SELECT extract(YEAR FROM a) from tbl
+select log2(c0) from tbl
+select to_utc_timestamp(c0,c1) from tbl
+SELECT cast(a as int) from tbl
+select a | b from tbl
+select startswith(c0,c1) from tbl
+select concat(c0,c1) from tbl
+select schema_of_csv(c0) from tbl
+select dayofyear(c0) from tbl
+select random() from tbl
+select ltrim(c0) from tbl
+select a - b from tbl
+select try_divide(c0,c1) from tbl
+select ceil(c0) from tbl
+select crc32(c0) from tbl
+select rtrim(c0) from tbl
+select least(c0,c1,c2,c3,c4) from tbl
+select minute(c0) from tbl
+SELECT approx_percentile(col, array(0.5, 0.4, 0.1), 100) FROM tbl
+select explode_outer(c0) from tbl
+select char(c0) from tbl
+select make_timestamp_ntz(c0,c1,c2,c3,c4,c5) from tbl
+select xpath_long(c0, 'sum(a/b)') from tbl
+select ln(c0) from tbl
+select version() from tbl
+SELECT first(col) FROM tbl
+SELECT bool_or(col) FROM tbl
+select xpath_boolean(c0, 'a/b') from tbl
+select array_append(c0,c1) from tbl
+select array_position(c0,c1) from tbl
+select from_unixtime(c0,c1) from tbl
+select isnull(c0) from tbl
+select date_sub(c0,c1) from tbl
+select transform_values(map_from_arrays(a, a), (k, v), v + 1) from tbl
+SELECT covar_pop(c1, c2) FROM tbl
+select rlike(c0, '%SystemDrive%\\Users.*') from tbl
+select nullif(c0,c1) from tbl
+SELECT try_avg(col) FROM tbl
+select find_in_set(c0,c1) from tbl
+select exp(c0) from tbl
+SELECT from_json(a, 'a INT, b DOUBLE') from tbl
+select make_ym_interval(c0,c1) from tbl
+SELECT collect_set(col) FROM tbl
+select md5(c0) from tbl
+select round(c0, 0) from tbl
+select a >= b from tbl
+select schema_of_json(c0) from tbl
+SELECT some(col) FROM tbl
+SELECT var_samp(col) FROM tbl
+select array_distinct(c0) from tbl
+select weekofyear(c0) from tbl
+select get_json_object(c0,c1) from tbl
+SELECT percentile(col, 0.3) FROM tbl
+select elt(c0,c1,c2) from tbl
+select equal_null(c0,c1) from tbl
+select hex(c0) from tbl
+select bitmap_count(c0) from tbl
+select uuid() from tbl
+select url_encode(c0) from tbl
+select initcap(c0) from tbl
+select ceiling(c0) from tbl
+select array_max(c0) from tbl
+select explode(c0) from tbl
+select hour(c0) from tbl
+select luhn_check(c0) from tbl
+select a <=> b from tbl
+select json_tuple(c0,c1,c2) from tbl
+SELECT aes_encrypt(a, b) from tbl
+select current_timestamp() from tbl
+select rpad(c0,c1,c2) from tbl
+select contains(c0,c1) from tbl
+select nanvl(c0,c1) from tbl
+SELECT variance(col) FROM tbl
+select mod(b, a) from tbl
+SELECT a, b, ntile(2) OVER (PARTITION BY a ORDER BY b) FROM tbl
+select day(c0) from tbl
+select width_bucket(c0,c1,c2,c3) from tbl
+select map_entries(c0) from tbl
+SELECT every(col) FROM tbl
+select a > b from tbl
+select weekday(c0) from tbl
+select make_timestamp(c0,c1,c2,c3,c4,c5) from tbl
+SELECT try_sum(col) FROM tbl
+select conv(c0,c1,c2) from tbl
+select localtimestamp() from tbl
+select sign(c0) from tbl
+select abs(c0) from tbl
+select lpad(c0,c1,c2) from tbl
+select inline_outer(c0) from tbl
+select try_element_at(c0,c1) from tbl
+SELECT bit_xor(col) FROM tbl
+select spark_partition_id() from tbl
+select xpath_int(c0, 'sum(a/b)') from tbl
+select positive(c0) from tbl
+SELECT regr_slope(y, x) FROM tbl
+select xpath_string(c0, 'a/c') from tbl
+select a and b from tbl
+select posexplode(c0) from tbl
+select xxhash64(c0,c1,c2) from tbl
+select array_remove(c0,c1) from tbl
+select ascii(c0) from tbl
+select cosh(c0) from tbl
+SELECT max_by(x, y) FROM tbl
+SELECT regr_syy(y, x) FROM tbl
+select sha(c0) from tbl
+SELECT filter(a, x, x % 2 == 0) from tbl
+select csc(c0) from tbl
+select regexp_count(c0,c1) from tbl
+select last_day(c0) from tbl
+select reduce(a, 0, (acc, x), acc + x) from tbl
+select translate(c0,c1,c2) from tbl
+SELECT std(col) FROM tbl
+select stack(1, a, b) from tbl
+select regexp_extract(c0,c1,c2) from tbl
+select a ^ b from tbl
+select pmod(c0,c1) from tbl
+select printf(c0,c1,c2) from tbl
+select json_array_length(c0) from tbl
+SELECT datepart('YEAR', a) from tbl
+SELECT a, b, rank(b) OVER (PARTITION BY a ORDER BY b) FROM tbl
+select rint(c0) from tbl
+select regexp_like(c0,c1) from tbl
+select date_add(c0,c1) from tbl
+select a or b from tbl
+select base64(c0) from tbl
+select sinh(c0) from tbl
+select datediff(c0,c1) from tbl
+select map_from_arrays(c0,c1) from tbl
+select to_binary(c0, 'utf-8') from tbl
+select unix_seconds(c0) from tbl
+select date_from_unix_date(c0) from tbl
+select shuffle(c0) from tbl
+select trim(c0) from tbl
+SELECT array_agg(col) FROM tbl
+SELECT stddev(col) FROM tbl
+select power(c0,c1) from tbl
+SELECT covar_samp(c1, c2) FROM tbl
+select try_multiply(a, b) from tbl
+SELECT a, b, nth_value(b, 2) OVER (PARTITION BY a ORDER BY b) FROM tbl
+select e() from tbl
+select signum(c0) from tbl
+select regexp_substr(c0,c1) from tbl
+select curdate() from tbl
+select length(c0) from tbl
+select array_compact(c0) from tbl
+SELECT count(*) FROM tbl
+select size(c0) from tbl
+SELECT mode(col) FROM tbl
+select struct(a, b) from tbl
+select split(c0,c1) from tbl
+select to_json(c0) from tbl
+select current_date() from tbl
+select zip_with(c0,c1) from tbl
+select array_insert(c0,c1,c2) from tbl
+select expm1(c0) from tbl
+select make_date(c0,c1,c2) from tbl
+select xpath_float(c0, 'sum(a/b)') from tbl
+SELECT sum(col) FROM tbl
+select octet_length(c0) from tbl
+select right(c0,c1) from tbl
+select asin(c0) from tbl
+select regexp_instr(c0,c1) from tbl
+select xpath_number(c0, 'sum(a/b)') from tbl
+select upper(c0) from tbl
+SELECT regr_avgy(y, x) FROM tbl
+select radians(c0) from tbl
+select regexp_extract_all(c0,c1,c2) from tbl
+SELECT map_zip_with(a, b, (k, v1, v2), concat(v1, v2)) from tbl
+select sha1(c0) from tbl
+select date_format(c0,c1) from tbl
+select to_timestamp_ltz(c0) from tbl
+select months_between(c0,c1) from tbl
+select to_number(c0, '999') from tbl
+select a % b from tbl
+select not a from tbl
+SELECT a, b, percent_rank(b) OVER (PARTITION BY a ORDER BY b) FROM tbl
+select a == b from tbl
+select ~ a from tbl
+select log1p(c0) from tbl
+select cos(c0) from tbl
+select a & b from tbl
+select randn() from tbl
+SELECT a, b, cume_dist() OVER (PARTITION BY a ORDER BY b) FROM tbl
+select unix_micros(c0) from tbl
+select str_to_map(c0,c1,c2) from tbl
+select element_at(c0,c1) from tbl
+select second(c0) from tbl
+select left(c0,c1) from tbl
+select unix_millis(c0) from tbl
+select cot(c0) from tbl
+select array_prepend(c0,c1) from tbl
+select position(c0,c1) from tbl
+select sha2(c0,c1) from tbl
+select log10(c0) from tbl
+select shiftright(c0,c1) from tbl
+SELECT bool_and(col) FROM tbl
+select url_decode(c0) from tbl
+select a + b from tbl
+select bit_count(c0) from tbl
+select parse_url(c0,c1) from tbl
+SELECT stddev_pop(col) FROM tbl
+select hash(c0,c1,c2) from tbl
+select flatten(c0) from tbl
+select trunc(c0,c1) from tbl
+SELECT collect_list(col) FROM tbl
+select log(c0,c1) from tbl
+select char_length(c0) from tbl
+select format_string(c0,c1,c2) from tbl
+select replace(c0,c1,c2) from tbl
+SELECT a, b, row_number() OVER (PARTITION BY a ORDER BY b) FROM tbl
+select year(c0) from tbl
+select atan2(c0,c1) from tbl
+SELECT hll_sketch_estimate(hll_sketch_agg(col, 12)) FROM tbl
+select bit_length(c0) from tbl
+select raise_error(c0) from tbl
+select substring_index(c0,c1,c2) from tbl
+select map_from_entries(c0) from tbl
+select bround(c0, 0) from tbl
+select reverse(c0) from tbl
+SELECT approx_count_distinct(col1) FROM tbl
+SELECT a in ('1', '2', '3') from tbl
+SELECT skewness(col) FROM tbl
+select isnotnull(c0) from tbl
+SELECT any(col) FROM tbl
+SELECT a, b, lead(b) OVER (PARTITION BY a ORDER BY b) FROM tbl
+select now() from tbl
+select sin(c0) from tbl
+select cbrt(c0) from tbl
+SELECT date_part('YEAR', a) from tbl
+select try_add(a, b) from tbl
+select a <= b from tbl
+select dayofweek(c0) from tbl
+select sentences(c0) from tbl
+select from_utc_timestamp(c0,c1) from tbl
+select json_object_keys(c0) from tbl
+SELECT substring(hex(bitmap_construct_agg(bitmap_bit_position(col))), 0, 6) FROM tbl
+select decode(c0,c1) from tbl
+select greatest(c0,c1,c2,c3,c4) from tbl
+select div(b, a) from tbl
+select next_day(c0,c1) from tbl
+select unhex(a) from tbl
+SELECT regr_sxy(y, x) FROM tbl
+select slice(c0,c1,c2) from tbl
+select factorial(c0) from tbl
+SELECT aggregate(a, 0, (acc, x), acc + x) from tbl
+select array(c0,c1,c2) from tbl
+select soundex(c0) from tbl
+select nvl2(c, b, a) from tbl
+select to_unix_timestamp(c0,c1) from tbl
+SELECT stddev_samp(col) FROM tbl
+select inline(c0) from tbl
+select isnan(c0) from tbl
+SELECT histogram_numeric(col, 5) FROM tbl
+SELECT bit_or(col) FROM tbl
+select cardinality(c0) from tbl
+select make_timestamp_ltz(c0,c1,c2,c3,c4,c5) from tbl
+SELECT last(col) FROM tbl
+SELECT count_if(col % 2 = 0) FROM tbl
+SELECT corr(c1, c2) FROM tbl
+SELECT hll_sketch_estimate(hll_union(hll_sketch_agg(col1), hll_sketch_agg(col2))) FROM tbl
+select endswith(c0,c1) from tbl
+select map(c0,c1,c2,c3) from tbl
+select sequence(c0,c1) from tbl
+select sort_array(a) from tbl
+select map_concat(c0,c1) from tbl
+select a < b from tbl
+select acosh(c0) from tbl
+select pi() from tbl
+select array_repeat(c0,c1) from tbl
+select quarter(c0) from tbl
+select degrees(c0) from tbl
+select btrim(c0) from tbl
+select to_varchar(c0,c1) from tbl
+select array_min(c0) from tbl
+select aes_decrypt(c0,c1) from tbl
+SELECT regr_avgx(y, x) FROM tbl
+select like(c0,c1) from tbl
+select current_timezone() from tbl
+select unbase64(c0) from tbl
+select tanh(c0) from tbl
+select dateadd(c0,c1) from tbl
+select bitmap_bit_position(c0) from tbl
+select input_file_block_start() from tbl
+select xpath_double(c0, 'sum(a/b)') from tbl
+select len(c0) from tbl
+select asinh(c0) from tbl
+select map_keys(c0) from tbl
+SELECT filter(a, x, x % 2 == 1) from tbl
+select transform(a, (k, v), v + 1) from tbl
+SELECT any_value(col) FROM tbl
+select space(a) from tbl
+select timestamp_millis(c0) from tbl
+select date_diff(c0,c1) from tbl
+select instr(c0,c1) from tbl
+select monotonically_increasing_id() from tbl
+select to_timestamp(c0) from tbl
+select substring(c0,c1) from tbl
+select dayofmonth(c0) from tbl
+select ilike(c0,c1) from tbl
+select try_aes_decrypt(c0,c1,c2) from tbl
+select overlay(a PLACING '_' FROM 6) from tbl
+select array_size(c0) from tbl
+select to_date(c0) from tbl
+SELECT forall(a, x, x % 2 == 0) from tbl
+select to_timestamp_ntz(c0) from tbl
+select unix_timestamp() from tbl
+select rand() from tbl
+SELECT last_value(col) FROM tbl
+select bitmap_bucket_number(c0) from tbl
+SELECT substring(hex(bitmap_or_agg(col)), 0, 6) FROM tbl
+select character_length(c0) from tbl
+select date_trunc(c0,c1) from tbl
+SELECT map_filter(a, (k, v), k > v) from tbl
+select input_file_name() from tbl
+SELECT percentile_approx(col, array(0.5, 0.4, 0.1), 100) FROM tbl
+select xpath_short(c0, 'sum(a/b)') from tbl
+select encode(c0,c1) from tbl
+select lcase(c0) from tbl
+select array_contains(c0,c1) from tbl
+select ucase(c0) from tbl
+select coalesce(c, b, a) from tbl
+SELECT regr_count(y, x) FROM tbl
+SELECT first_value(col) FROM tbl
+select sec(c0) from tbl
+SELECT kurtosis(col) FROM tbl
+select try_to_timestamp(c0) from tbl
+select getbit(c0,c1) from tbl
+select to_char(c0, '999') from tbl
+select hypot(c0,c1) from tbl
+select get(c0,c1) from tbl
+SELECT regr_intercept(y, x) FROM tbl
+select bit_get(c0,c1) from tbl
+select array_union(c0,c1) from tbl
+SELECT a, b, lag(b) OVER (PARTITION BY a ORDER BY b) FROM tbl
+select a * b from tbl
+select lower(c0) from tbl
+select arrays_overlap(c0,c1) from tbl
+SELECT regr_sxx(y, x) FROM tbl
+select try_to_binary(c0, 'utf-8') from tbl
+SELECT bit_and(col) FROM tbl
+select array_intersect(c0,c1) from tbl
+select posexplode_outer(c0) from tbl
+select shiftleft(c0,c1) from tbl
+select sqrt(c0) from tbl
+select concat_ws(c0,c1,c2) from tbl
+SELECT var_pop(col) FROM tbl
+SELECT regr_r2(y, x) FROM tbl
+SELECT ifnull(b, a) from tbl
+select timestamp_seconds(c0) from tbl
+select unix_date(c0) from tbl
+select try_to_number(c0, '999') from tbl
+select floor(c0) from tbl
+select assert_true(c0) from tbl
+select case a > b then c else d end from tbl
+select acos(c0) from tbl
+select try_subtract(a, b) from tbl
+select array_except(c0,c1) from tbl
+select add_months(c0,c1) from tbl
+select arrays_zip(c0,c1) from tbl
+SELECT from_csv(a, 'a INT, b DOUBLE') from tbl
+select if(c0,c1,c2) from tbl
+SELECT hll_sketch_estimate(hll_sketch_agg(col)) FROM tbl
+select levenshtein(c0,c1) from tbl
+select timestamp_micros(c0) from tbl
+select user() from tbl
+select to_csv(c0) from tbl
+select array_join(c0,c1) from tbl
+select substr(c0,c1) from tbl
+select locate(c0,c1) from tbl
+select xpath(c0, 'a/b/text()') from tbl
+select pow(c0,c1) from tbl
+select atanh(c0) from tbl
+select mask(c0) from tbl
+SELECT min(col) FROM tbl
+select month(c0) from tbl
+select named_struct('a', a) from tbl
+select map_values(c0) from tbl
+SELECT a, b, dense_rank(b) OVER (PARTITION BY a ORDER BY b) FROM tbl
+select convert_timezone(c0,c1,c2) from tbl
+select array_sort(c0) from tbl
+select input_file_block_length() from tbl
+select atan(c0) from tbl
+SELECT median(col) FROM tbl
+select ! true from tbl
+SELECT mean(col) FROM tbl
+select tan(c0) from tbl
+SELECT max(col) FROM tbl
+select shiftrightunsigned(c0,c1) from tbl
+select make_dt_interval(c0,c1,c2,c3) from tbl
+select nvl(b, a) from tbl
+select map_contains_key(c0,c1) from tbl
+select negative(c0) from tbl
+select transform_keys(map_from_arrays(a, a), (k, v), v + 1) from tbl
+SELECT hex(count_min_sketch(col, 0.5d, 0.5d, 1)) FROM tbl
+select regexp(c0,c1) from tbl
+select chr(c0) from tbl
+select split_part(c0,c1,c2) from tbl
+select regexp_replace(c0,c1,c2) from tbl
+select a = b from tbl
+select make_interval(c0,c1,c2,c3,c4,c5,c6) from tbl
+SELECT avg(col) FROM tbl
+select a / b from tbl
+SELECT min_by(x, y) FROM tbl
+select typeof(c0) from tbl
+select repeat(c0,c1) from tbl
+select format_number(c0,c1) from tbl
+select bin(c0) from tbl
+SELECT extract(YEAR FROM a) from tbl
+select log2(c0) from tbl
+select to_utc_timestamp(c0,c1) from tbl
+SELECT cast(a as int) from tbl
+select a | b from tbl
+select startswith(c0,c1) from tbl
+select concat(c0,c1) from tbl
+select schema_of_csv(c0) from tbl
+select dayofyear(c0) from tbl
+select random() from tbl
+select ltrim(c0) from tbl
+select a - b from tbl
+select try_divide(c0,c1) from tbl
+select ceil(c0) from tbl
+select crc32(c0) from tbl
+select rtrim(c0) from tbl
+select least(c0,c1,c2,c3,c4) from tbl
+select minute(c0) from tbl
+SELECT approx_percentile(col, array(0.5, 0.4, 0.1), 100) FROM tbl
+select explode_outer(c0) from tbl
+select char(c0) from tbl
+select make_timestamp_ntz(c0,c1,c2,c3,c4,c5) from tbl
+select xpath_long(c0, 'sum(a/b)') from tbl
+select ln(c0) from tbl
+select version() from tbl
+SELECT first(col) FROM tbl
+SELECT bool_or(col) FROM tbl
+select xpath_boolean(c0, 'a/b') from tbl
+select array_append(c0,c1) from tbl
+select array_position(c0,c1) from tbl
+select from_unixtime(c0,c1) from tbl
+select isnull(c0) from tbl
+select date_sub(c0,c1) from tbl
+select transform_values(map_from_arrays(a, a), (k, v), v + 1) from tbl
+SELECT covar_pop(c1, c2) FROM tbl
+select rlike(c0, '%SystemDrive%\\Users.*') from tbl
+select nullif(c0,c1) from tbl
+SELECT try_avg(col) FROM tbl
+select find_in_set(c0,c1) from tbl
+select exp(c0) from tbl
+SELECT from_json(a, 'a INT, b DOUBLE') from tbl
+select make_ym_interval(c0,c1) from tbl
+SELECT collect_set(col) FROM tbl
+select md5(c0) from tbl
+select round(c0, 0) from tbl
+select a >= b from tbl
+select schema_of_json(c0) from tbl
+SELECT some(col) FROM tbl
+SELECT var_samp(col) FROM tbl
+select array_distinct(c0) from tbl
+select weekofyear(c0) from tbl
+select get_json_object(c0,c1) from tbl
+SELECT percentile(col, 0.3) FROM tbl
+select elt(c0,c1,c2) from tbl
+select equal_null(c0,c1) from tbl
+select hex(c0) from tbl
+select bitmap_count(c0) from tbl
+select uuid() from tbl
+select url_encode(c0) from tbl
+select initcap(c0) from tbl
+select ceiling(c0) from tbl
+select array_max(c0) from tbl
+select explode(c0) from tbl
+select hour(c0) from tbl
+select luhn_check(c0) from tbl
+select a <=> b from tbl
+select json_tuple(c0,c1,c2) from tbl
+SELECT aes_encrypt(a, b) from tbl
+select current_timestamp() from tbl
+select rpad(c0,c1,c2) from tbl
+select contains(c0,c1) from tbl
+select nanvl(c0,c1) from tbl
+SELECT variance(col) FROM tbl
+select mod(b, a) from tbl
+SELECT a, b, ntile(2) OVER (PARTITION BY a ORDER BY b) FROM tbl
+select day(c0) from tbl
+select width_bucket(c0,c1,c2,c3) from tbl
+select map_entries(c0) from tbl
+SELECT every(col) FROM tbl
+select a > b from tbl
+select weekday(c0) from tbl
+select make_timestamp(c0,c1,c2,c3,c4,c5) from tbl
+SELECT try_sum(col) FROM tbl
+select conv(c0,c1,c2) from tbl
+select localtimestamp() from tbl
+select sign(c0) from tbl
+select abs(c0) from tbl
+select lpad(c0,c1,c2) from tbl
+select inline_outer(c0) from tbl
+select try_element_at(c0,c1) from tbl
+SELECT bit_xor(col) FROM tbl
+select spark_partition_id() from tbl
+select xpath_int(c0, 'sum(a/b)') from tbl
+select positive(c0) from tbl
+SELECT regr_slope(y, x) FROM tbl
+select xpath_string(c0, 'a/c') from tbl
+select a and b from tbl
+select posexplode(c0) from tbl
+select xxhash64(c0,c1,c2) from tbl
+select array_remove(c0,c1) from tbl
+select ascii(c0) from tbl
+select cosh(c0) from tbl
+SELECT max_by(x, y) FROM tbl
+SELECT regr_syy(y, x) FROM tbl
+select sha(c0) from tbl
+SELECT filter(a, x, x % 2 == 0) from tbl
+select csc(c0) from tbl
+select regexp_count(c0,c1) from tbl
+select last_day(c0) from tbl
+select reduce(a, 0, (acc, x), acc + x) from tbl
+select translate(c0,c1,c2) from tbl
+SELECT std(col) FROM tbl
+select stack(1, a, b) from tbl
+select regexp_extract(c0,c1,c2) from tbl
+select a ^ b from tbl
+select pmod(c0,c1) from tbl
+select printf(c0,c1,c2) from tbl
+select json_array_length(c0) from tbl
+SELECT datepart('YEAR', a) from tbl
+SELECT a, b, rank(b) OVER (PARTITION BY a ORDER BY b) FROM tbl
+select rint(c0) from tbl
+select regexp_like(c0,c1) from tbl
+select date_add(c0,c1) from tbl
+select a or b from tbl
+select base64(c0) from tbl
+select sinh(c0) from tbl
+select datediff(c0,c1) from tbl
+select map_from_arrays(c0,c1) from tbl
+select to_binary(c0, 'utf-8') from tbl
+select unix_seconds(c0) from tbl
+select date_from_unix_date(c0) from tbl
+select shuffle(c0) from tbl
+select trim(c0) from tbl
+SELECT array_agg(col) FROM tbl
+SELECT stddev(col) FROM tbl
+select power(c0,c1) from tbl
+SELECT covar_samp(c1, c2) FROM tbl
+select try_multiply(a, b) from tbl
+SELECT a, b, nth_value(b, 2) OVER (PARTITION BY a ORDER BY b) FROM tbl
+select e() from tbl
+select signum(c0) from tbl
+select regexp_substr(c0,c1) from tbl
+select curdate() from tbl
+select length(c0) from tbl
+select array_compact(c0) from tbl
+SELECT count(*) FROM tbl
+select size(c0) from tbl
+SELECT mode(col) FROM tbl
+select struct(a, b) from tbl
+select split(c0,c1) from tbl
+select to_json(c0) from tbl
+select current_date() from tbl
+select zip_with(c0,c1) from tbl
+select array_insert(c0,c1,c2) from tbl
+select expm1(c0) from tbl
+select make_date(c0,c1,c2) from tbl
+select xpath_float(c0, 'sum(a/b)') from tbl
+SELECT sum(col) FROM tbl
+select octet_length(c0) from tbl
+select right(c0,c1) from tbl
+select asin(c0) from tbl
+select regexp_instr(c0,c1) from tbl
+select xpath_number(c0, 'sum(a/b)') from tbl
+select upper(c0) from tbl
+SELECT regr_avgy(y, x) FROM tbl
+select radians(c0) from tbl
+select regexp_extract_all(c0,c1,c2) from tbl
+SELECT map_zip_with(a, b, (k, v1, v2), concat(v1, v2)) from tbl
+select sha1(c0) from tbl
+select date_format(c0,c1) from tbl
+select to_timestamp_ltz(c0) from tbl
+select months_between(c0,c1) from tbl
+select to_number(c0, '999') from tbl
+select a % b from tbl
+select not a from tbl
+SELECT a, b, percent_rank(b) OVER (PARTITION BY a ORDER BY b) FROM tbl
+select a == b from tbl
+select ~ a from tbl
+select log1p(c0) from tbl
+select cos(c0) from tbl
+select a & b from tbl
+select randn() from tbl
+SELECT a, b, cume_dist() OVER (PARTITION BY a ORDER BY b) FROM tbl
+select unix_micros(c0) from tbl
+select str_to_map(c0,c1,c2) from tbl
+select a, b, typeof(a), typeof(b) from (select c1 * 2.345678 a, c2 * c1 b from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * -2.345678 a, c2 * c1 b from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * 0.0 a, c2 * c1 b from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * 1.0 a, c2 * c1 b from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * cast(987654321.9876543210 as decimal(20,10)) a, c2 * c1 b from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * cast(0.00000000987654321 as decimal(20,19)) a, c2 * c1 b from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * cast(12345 as decimal(10,0)) a, c2 * c1 b from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * cast(1.2345 as decimal(10,9)) a, c2 * c1 b from tbl)
+select a, typeof(a) from (select c1 * c2 a from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * 2.345678 a, c2 * c1 b from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * -2.345678 a, c2 * c1 b from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * 0.0 a, c2 * c1 b from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * 1.0 a, c2 * c1 b from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * cast(987654321.9876543210 as decimal(20,10)) a, c2 * c1 b from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * cast(0.00000000987654321 as decimal(20,19)) a, c2 * c1 b from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * cast(12345 as decimal(10,0)) a, c2 * c1 b from tbl)
+select a, b, typeof(a), typeof(b) from (select c1 * cast(1.2345 as decimal(10,9)) a, c2 * c1 b from tbl)
+select a, typeof(a) from (select c1 * c2 a from tbl)
