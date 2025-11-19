@@ -187,7 +187,6 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
 
   protected def verifyResult(df: DataFrame, sqlNum: String, resultsPath: String): Unit = {
     val result = df.collect()
-    println(df.schema.toString)
     if (df.schema.exists(_.dataType == DoubleType)) {
       compareDoubleResult(sqlNum, result, resultsPath)
     } else {
@@ -198,7 +197,6 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
   protected def verifyPlan(df: DataFrame, sqlNum: String, planPath: String): Unit = {
     val expectedFile = new File(planPath, s"$sqlNum.txt")
     val expected = FileUtils.readFileToString(expectedFile, StandardCharsets.UTF_8)
-    println(df.queryExecution.explainString(FormattedMode))
     val actual = normalizeFormattedPlan(df.queryExecution.explainString(FormattedMode))
     val actualFile = new File(FileUtils.getTempDirectory, s"actual.$sqlNum.txt")
     FileUtils.writeStringToFile(actualFile, actual, StandardCharsets.UTF_8)
@@ -210,9 +208,13 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
 
     if (expected != actual) {
       fail(s"""
-           | PLAN NOT match: $sqlNum
-           | approved plan: ${expectedFile.getAbsolutePath}
-           | actual   plan: ${actualFile.getAbsolutePath}
+           |Plans did not match:: $sqlNum
+           |approved explain plan: ${expectedFile.getAbsolutePath}
+           |
+           |$expected
+           |actual explain plan: ${actualFile.getAbsolutePath}
+           |
+           |$actual
            |""".stripMargin)
     }
   }
