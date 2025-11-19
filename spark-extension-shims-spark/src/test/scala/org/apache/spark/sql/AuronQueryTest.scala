@@ -69,8 +69,7 @@ abstract class AuronQueryTest
         .foreach { op: SparkPlan =>
           fail(s"""
                |Found non-native operator: ${op.nodeName}
-               |plan:
-               |${plan}""".stripMargin)
+               |plan: ${plan}""".stripMargin)
         }
     }
 

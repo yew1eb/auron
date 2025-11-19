@@ -18,9 +18,7 @@ package org.apache.spark.sql.auron
 
 import java.io.File
 import java.util.UUID
-
 import scala.collection.mutable
-
 import org.apache.commons.lang3.reflect.FieldUtils
 import org.apache.spark.{OneToOneDependency, ShuffleDependency, SparkContext, SparkEnv, SparkException, TaskContext}
 import org.apache.spark.internal.Logging
@@ -108,8 +106,7 @@ import org.apache.spark.sql.types.StringType
 import org.apache.spark.status.ElementTrackingStore
 import org.apache.spark.storage.BlockManagerId
 import org.apache.spark.storage.FileSegment
-
-import org.apache.auron.{protobuf => pb, sparkver}
+import org.apache.auron.{sparkver, protobuf => pb}
 import org.apache.auron.common.AuronBuildInfo
 import org.apache.auron.metric.SparkMetricNode
 import org.apache.auron.spark.ui.AuronBuildInfoEvent
@@ -336,8 +333,9 @@ class ShimsImpl extends Shims with Logging {
   override def createNativeTakeOrderedExec(
       limit: Long,
       sortOrder: Seq[SortOrder],
+      projectList: Seq[NamedExpression],
       child: SparkPlan): NativeTakeOrderedBase =
-    NativeTakeOrderedExec(limit, sortOrder, child)
+    NativeTakeOrderedExec(limit, sortOrder, projectList, child)
 
   override def createNativePartialTakeOrderedExec(
       limit: Long,

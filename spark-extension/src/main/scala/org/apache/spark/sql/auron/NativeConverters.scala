@@ -306,7 +306,7 @@ object NativeConverters extends Logging {
       //  N - fallback the whole expression
       numInconvertibleChildren match {
         case 0 => convertExprWithFallback(sparkExpr, isPruningExpr = false, fallbackToError)
-        case 1 =>
+        case 100 =>
           val childrenConverted = sparkExpr.mapChildren { child =>
             try {
               val converted =
@@ -322,10 +322,10 @@ object NativeConverters extends Logging {
         case _ =>
           fallbackToError(sparkExpr)
       }
-
     } catch {
       case e: NotImplementedError =>
         logWarning(s"Falling back expression: $e")
+        fallbackToError(sparkExpr)
 
         // update subquery result if needed
         sparkExpr.foreach {

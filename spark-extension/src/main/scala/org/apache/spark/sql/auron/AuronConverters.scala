@@ -779,14 +779,9 @@ object AuronConverters extends Logging {
     val nativeTakeOrdered = Shims.get.createNativeTakeOrderedExec(
       exec.limit,
       exec.sortOrder,
+      exec.projectList,
       addRenameColumnsExec(convertToNative(exec.child)))
-
-    if (exec.projectList != exec.child.output) {
-      val project = ProjectExec(exec.projectList, nativeTakeOrdered)
-      tryConvert(project, convertProjectExec)
-    } else {
-      nativeTakeOrdered
-    }
+    nativeTakeOrdered
   }
 
   def convertCollectLimitExec(exec: CollectLimitExec): SparkPlan = {
