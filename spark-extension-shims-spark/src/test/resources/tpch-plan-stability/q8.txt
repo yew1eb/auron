@@ -116,512 +116,512 @@ AdaptiveSparkPlan (112)
 
 
 (1) NativeParquetScan 
-Output [2]: [p_partkey#264L, p_type#268]
-Arguments: FileScan parquet [p_partkey#264L,p_type#268] Batched: true, DataFilters: [isnotnull(p_type#268), (p_type#268 = ECONOMY ANODIZED STEEL), isnotnull(p_partkey#264L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(p_type), EqualTo(p_type,ECONOMY ANODIZED STEEL), IsNotNull(p_partkey)], ReadSchema: struct<p_partkey:bigint,p_type:string>
+Output [2]: [p_partkey#1, p_type#2]
+Arguments: FileScan parquet [p_partkey#1,p_type#2] Batched: true, DataFilters: [isnotnull(p_type#2), (p_type#2 = ECONOMY ANODIZED STEEL), isnotnull(p_partkey#1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(p_type), EqualTo(p_type,ECONOMY ANODIZED STEEL), IsNotNull(p_partkey)], ReadSchema: struct<p_partkey:bigint,p_type:string>
 
 (2) InputAdapter
-Input [2]: [p_partkey#264L, p_type#268]
-Arguments: [#264, #268]
+Input [2]: [p_partkey#1, p_type#2]
+Arguments: [#3, #2]
 
 (3) NativeFilter
-Input [2]: [#264#264L, #268#268]
-Arguments: ((isnotnull(p_type#268) AND (p_type#268 = ECONOMY ANODIZED STEEL)) AND isnotnull(p_partkey#264L))
+Input [2]: [#3#1, #2#2]
+Arguments: ((isnotnull(p_type#2) AND (p_type#2 = ECONOMY ANODIZED STEEL)) AND isnotnull(p_partkey#1))
 
 (4) NativeProject
-Input [2]: [#264#264L, #268#268]
-Arguments: [p_partkey#264L]
+Input [2]: [#3#1, #2#2]
+Arguments: [p_partkey#1]
 
 (5) NativeBroadcastExchange
-Input [1]: [p_partkey#264L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=4628]
+Input [1]: [p_partkey#1]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=1]
 
 (6) BroadcastQueryStage
-Output [1]: [p_partkey#264L]
-Arguments: 0
+Output [1]: [p_partkey#1]
+Arguments: X
 
 (7) NativeParquetScan 
-Output [5]: [l_orderkey#61L, l_partkey#62L, l_suppkey#63L, l_extendedprice#66, l_discount#67]
-Arguments: FileScan parquet [l_orderkey#61L,l_partkey#62L,l_suppkey#63L,l_extendedprice#66,l_discount#67] Batched: true, DataFilters: [isnotnull(l_partkey#62L), isnotnull(l_suppkey#63L), isnotnull(l_orderkey#61L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(l_partkey), IsNotNull(l_suppkey), IsNotNull(l_orderkey)], ReadSchema: struct<l_orderkey:bigint,l_partkey:bigint,l_suppkey:bigint,l_extendedprice:decimal(12,2),l_discou...
+Output [5]: [l_orderkey#4, l_partkey#5, l_suppkey#6, l_extendedprice#7, l_discount#8]
+Arguments: FileScan parquet [l_orderkey#4,l_partkey#5,l_suppkey#6,l_extendedprice#7,l_discount#8] Batched: true, DataFilters: [isnotnull(l_partkey#5), isnotnull(l_suppkey#6), isnotnull(l_orderkey#4)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_partkey), IsNotNull(l_suppkey), IsNotNull(l_orderkey)], ReadSchema: struct<l_orderkey:bigint,l_partkey:bigint,l_suppkey:bigint,l_extendedprice:decimal(12,2),l_discou...
 
 (8) InputAdapter
-Input [5]: [l_orderkey#61L, l_partkey#62L, l_suppkey#63L, l_extendedprice#66, l_discount#67]
-Arguments: [#61, #62, #63, #66, #67]
+Input [5]: [l_orderkey#4, l_partkey#5, l_suppkey#6, l_extendedprice#7, l_discount#8]
+Arguments: [#9, #10, #11, #7, #8]
 
 (9) NativeFilter
-Input [5]: [#61#61L, #62#62L, #63#63L, #66#66, #67#67]
-Arguments: ((isnotnull(l_partkey#62L) AND isnotnull(l_suppkey#63L)) AND isnotnull(l_orderkey#61L))
+Input [5]: [#9#4, #10#5, #11#6, #7#7, #8#8]
+Arguments: ((isnotnull(l_partkey#5) AND isnotnull(l_suppkey#6)) AND isnotnull(l_orderkey#4))
 
 (10) NativeBroadcastJoin
-Left keys [1]: [p_partkey#264L]
-Right keys [1]: [l_partkey#62L]
+Left keys [1]: [p_partkey#1]
+Right keys [1]: [l_partkey#5]
 Join type: Inner
 Join condition: None
 
 (11) NativeProject
-Input [6]: [p_partkey#264L, #61#61L, #62#62L, #63#63L, #66#66, #67#67]
-Arguments: [l_orderkey#61L, l_suppkey#63L, l_extendedprice#66, l_discount#67]
+Input [6]: [p_partkey#1, #9#4, #10#5, #11#6, #7#7, #8#8]
+Arguments: [l_orderkey#4, l_suppkey#6, l_extendedprice#7, l_discount#8]
 
 (12) NativeParquetScan 
-Output [2]: [s_suppkey#419L, s_nationkey#422L]
-Arguments: FileScan parquet [s_suppkey#419L,s_nationkey#422L] Batched: true, DataFilters: [isnotnull(s_suppkey#419L), isnotnull(s_nationkey#422L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(s_suppkey), IsNotNull(s_nationkey)], ReadSchema: struct<s_suppkey:bigint,s_nationkey:bigint>
+Output [2]: [s_suppkey#12, s_nationkey#13]
+Arguments: FileScan parquet [s_suppkey#12,s_nationkey#13] Batched: true, DataFilters: [isnotnull(s_suppkey#12), isnotnull(s_nationkey#13)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(s_suppkey), IsNotNull(s_nationkey)], ReadSchema: struct<s_suppkey:bigint,s_nationkey:bigint>
 
 (13) InputAdapter
-Input [2]: [s_suppkey#419L, s_nationkey#422L]
-Arguments: [#419, #422]
+Input [2]: [s_suppkey#12, s_nationkey#13]
+Arguments: [#14, #15]
 
 (14) NativeFilter
-Input [2]: [#419#419L, #422#422L]
-Arguments: (isnotnull(s_suppkey#419L) AND isnotnull(s_nationkey#422L))
+Input [2]: [#14#12, #15#13]
+Arguments: (isnotnull(s_suppkey#12) AND isnotnull(s_nationkey#13))
 
 (15) NativeBroadcastExchange
-Input [2]: [#419#419L, #422#422L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=4652]
+Input [2]: [#14#12, #15#13]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=2]
 
 (16) BroadcastQueryStage
-Output [2]: [#419#419L, #422#422L]
-Arguments: 1
+Output [2]: [#14#12, #15#13]
+Arguments: X
 
 (17) NativeBroadcastJoin
-Left keys [1]: [l_suppkey#63L]
-Right keys [1]: [s_suppkey#419L]
+Left keys [1]: [l_suppkey#6]
+Right keys [1]: [s_suppkey#12]
 Join type: Inner
 Join condition: None
 
 (18) NativeProject
-Input [6]: [l_orderkey#61L, l_suppkey#63L, l_extendedprice#66, l_discount#67, #419#419L, #422#422L]
-Arguments: [l_orderkey#61L, l_extendedprice#66, l_discount#67, s_nationkey#422L]
+Input [6]: [l_orderkey#4, l_suppkey#6, l_extendedprice#7, l_discount#8, #14#12, #15#13]
+Arguments: [l_orderkey#4, l_extendedprice#7, l_discount#8, s_nationkey#13]
 
 (19) NativeParquetScan 
-Output [3]: [o_orderkey#199L, o_custkey#200L, o_orderdate#203]
-Arguments: FileScan parquet [o_orderkey#199L,o_custkey#200L,o_orderdate#203] Batched: true, DataFilters: [isnotnull(o_orderdate#203), (o_orderdate#203 >= 1995-01-01), (o_orderdate#203 <= 1996-12-31), is..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(o_orderdate), GreaterThanOrEqual(o_orderdate,1995-01-01), LessThanOrEqual(o_orderdate,..., ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_orderdate:date>
+Output [3]: [o_orderkey#16, o_custkey#17, o_orderdate#18]
+Arguments: FileScan parquet [o_orderkey#16,o_custkey#17,o_orderdate#18] Batched: true, DataFilters: [isnotnull(o_orderdate#18), (o_orderdate#18 >= 1995-01-01), (o_orderdate#18 <= 1996-12-31), is..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(o_orderdate), GreaterThanOrEqual(o_orderdate,1995-01-01), LessThanOrEqual(o_orderdate,..., ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_orderdate:date>
 
 (20) InputAdapter
-Input [3]: [o_orderkey#199L, o_custkey#200L, o_orderdate#203]
-Arguments: [#199, #200, #203]
+Input [3]: [o_orderkey#16, o_custkey#17, o_orderdate#18]
+Arguments: [#19, #20, #18]
 
 (21) NativeFilter
-Input [3]: [#199#199L, #200#200L, #203#203]
-Arguments: ((((isnotnull(o_orderdate#203) AND (o_orderdate#203 >= 1995-01-01)) AND (o_orderdate#203 <= 1996-12-31)) AND isnotnull(o_orderkey#199L)) AND isnotnull(o_custkey#200L))
+Input [3]: [#19#16, #20#17, #18#18]
+Arguments: ((((isnotnull(o_orderdate#18) AND (o_orderdate#18 >= 1995-01-01)) AND (o_orderdate#18 <= 1996-12-31)) AND isnotnull(o_orderkey#16)) AND isnotnull(o_custkey#17))
 
 (22) NativeBroadcastExchange
-Input [3]: [#199#199L, #200#200L, #203#203]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=4678]
+Input [3]: [#19#16, #20#17, #18#18]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=3]
 
 (23) BroadcastQueryStage
-Output [3]: [#199#199L, #200#200L, #203#203]
-Arguments: 2
+Output [3]: [#19#16, #20#17, #18#18]
+Arguments: X
 
 (24) NativeBroadcastJoin
-Left keys [1]: [l_orderkey#61L]
-Right keys [1]: [o_orderkey#199L]
+Left keys [1]: [l_orderkey#4]
+Right keys [1]: [o_orderkey#16]
 Join type: Inner
 Join condition: None
 
 (25) NativeProject
-Input [7]: [l_orderkey#61L, l_extendedprice#66, l_discount#67, s_nationkey#422L, #199#199L, #200#200L, #203#203]
-Arguments: [l_extendedprice#66, l_discount#67, s_nationkey#422L, o_custkey#200L, o_orderdate#203]
+Input [7]: [l_orderkey#4, l_extendedprice#7, l_discount#8, s_nationkey#13, #19#16, #20#17, #18#18]
+Arguments: [l_extendedprice#7, l_discount#8, s_nationkey#13, o_custkey#17, o_orderdate#18]
 
 (26) NativeParquetScan 
-Output [2]: [c_custkey#0L, c_nationkey#3L]
-Arguments: FileScan parquet [c_custkey#0L,c_nationkey#3L] Batched: true, DataFilters: [isnotnull(c_custkey#0L), isnotnull(c_nationkey#3L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(c_custkey), IsNotNull(c_nationkey)], ReadSchema: struct<c_custkey:bigint,c_nationkey:bigint>
+Output [2]: [c_custkey#21, c_nationkey#22]
+Arguments: FileScan parquet [c_custkey#21,c_nationkey#22] Batched: true, DataFilters: [isnotnull(c_custkey#21), isnotnull(c_nationkey#22)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(c_custkey), IsNotNull(c_nationkey)], ReadSchema: struct<c_custkey:bigint,c_nationkey:bigint>
 
 (27) InputAdapter
-Input [2]: [c_custkey#0L, c_nationkey#3L]
-Arguments: [#0, #3]
+Input [2]: [c_custkey#21, c_nationkey#22]
+Arguments: [#23, #24]
 
 (28) NativeFilter
-Input [2]: [#0#0L, #3#3L]
-Arguments: (isnotnull(c_custkey#0L) AND isnotnull(c_nationkey#3L))
+Input [2]: [#23#21, #24#22]
+Arguments: (isnotnull(c_custkey#21) AND isnotnull(c_nationkey#22))
 
 (29) NativeBroadcastExchange
-Input [2]: [#0#0L, #3#3L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=4704]
+Input [2]: [#23#21, #24#22]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=4]
 
 (30) BroadcastQueryStage
-Output [2]: [#0#0L, #3#3L]
-Arguments: 3
+Output [2]: [#23#21, #24#22]
+Arguments: X
 
 (31) NativeBroadcastJoin
-Left keys [1]: [o_custkey#200L]
-Right keys [1]: [c_custkey#0L]
+Left keys [1]: [o_custkey#17]
+Right keys [1]: [c_custkey#21]
 Join type: Inner
 Join condition: None
 
 (32) NativeProject
-Input [7]: [l_extendedprice#66, l_discount#67, s_nationkey#422L, o_custkey#200L, o_orderdate#203, #0#0L, #3#3L]
-Arguments: [l_extendedprice#66, l_discount#67, s_nationkey#422L, o_orderdate#203, c_nationkey#3L]
+Input [7]: [l_extendedprice#7, l_discount#8, s_nationkey#13, o_custkey#17, o_orderdate#18, #23#21, #24#22]
+Arguments: [l_extendedprice#7, l_discount#8, s_nationkey#13, o_orderdate#18, c_nationkey#22]
 
 (33) NativeParquetScan 
-Output [2]: [n_nationkey#154L, n_regionkey#156L]
-Arguments: FileScan parquet [n_nationkey#154L,n_regionkey#156L] Batched: true, DataFilters: [isnotnull(n_nationkey#154L), isnotnull(n_regionkey#156L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(n_nationkey), IsNotNull(n_regionkey)], ReadSchema: struct<n_nationkey:bigint,n_regionkey:bigint>
+Output [2]: [n_nationkey#25, n_regionkey#26]
+Arguments: FileScan parquet [n_nationkey#25,n_regionkey#26] Batched: true, DataFilters: [isnotnull(n_nationkey#25), isnotnull(n_regionkey#26)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(n_nationkey), IsNotNull(n_regionkey)], ReadSchema: struct<n_nationkey:bigint,n_regionkey:bigint>
 
 (34) InputAdapter
-Input [2]: [n_nationkey#154L, n_regionkey#156L]
-Arguments: [#154, #156]
+Input [2]: [n_nationkey#25, n_regionkey#26]
+Arguments: [#27, #28]
 
 (35) NativeFilter
-Input [2]: [#154#154L, #156#156L]
-Arguments: (isnotnull(n_nationkey#154L) AND isnotnull(n_regionkey#156L))
+Input [2]: [#27#25, #28#26]
+Arguments: (isnotnull(n_nationkey#25) AND isnotnull(n_regionkey#26))
 
 (36) NativeBroadcastExchange
-Input [2]: [#154#154L, #156#156L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=4730]
+Input [2]: [#27#25, #28#26]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=5]
 
 (37) BroadcastQueryStage
-Output [2]: [#154#154L, #156#156L]
-Arguments: 4
+Output [2]: [#27#25, #28#26]
+Arguments: X
 
 (38) NativeBroadcastJoin
-Left keys [1]: [c_nationkey#3L]
-Right keys [1]: [n_nationkey#154L]
+Left keys [1]: [c_nationkey#22]
+Right keys [1]: [n_nationkey#25]
 Join type: Inner
 Join condition: None
 
 (39) NativeProject
-Input [7]: [l_extendedprice#66, l_discount#67, s_nationkey#422L, o_orderdate#203, c_nationkey#3L, #154#154L, #156#156L]
-Arguments: [l_extendedprice#66, l_discount#67, s_nationkey#422L, o_orderdate#203, n_regionkey#156L]
+Input [7]: [l_extendedprice#7, l_discount#8, s_nationkey#13, o_orderdate#18, c_nationkey#22, #27#25, #28#26]
+Arguments: [l_extendedprice#7, l_discount#8, s_nationkey#13, o_orderdate#18, n_regionkey#26]
 
 (40) NativeParquetScan 
-Output [2]: [n_nationkey#1241L, n_name#1242]
-Arguments: FileScan parquet [n_nationkey#1241L,n_name#1242] Batched: true, DataFilters: [isnotnull(n_nationkey#1241L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(n_nationkey)], ReadSchema: struct<n_nationkey:bigint,n_name:string>
+Output [2]: [n_nationkey#29, n_name#30]
+Arguments: FileScan parquet [n_nationkey#29,n_name#30] Batched: true, DataFilters: [isnotnull(n_nationkey#29)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(n_nationkey)], ReadSchema: struct<n_nationkey:bigint,n_name:string>
 
 (41) InputAdapter
-Input [2]: [n_nationkey#1241L, n_name#1242]
-Arguments: [#1241, #1242]
+Input [2]: [n_nationkey#29, n_name#30]
+Arguments: [#31, #30]
 
 (42) NativeFilter
-Input [2]: [#1241#1241L, #1242#1242]
-Arguments: isnotnull(n_nationkey#1241L)
+Input [2]: [#31#29, #30#30]
+Arguments: isnotnull(n_nationkey#29)
 
 (43) NativeBroadcastExchange
-Input [2]: [#1241#1241L, #1242#1242]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=4756]
+Input [2]: [#31#29, #30#30]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=6]
 
 (44) BroadcastQueryStage
-Output [2]: [#1241#1241L, #1242#1242]
-Arguments: 5
+Output [2]: [#31#29, #30#30]
+Arguments: X
 
 (45) NativeBroadcastJoin
-Left keys [1]: [s_nationkey#422L]
-Right keys [1]: [n_nationkey#1241L]
+Left keys [1]: [s_nationkey#13]
+Right keys [1]: [n_nationkey#29]
 Join type: Inner
 Join condition: None
 
 (46) NativeProject
-Input [7]: [l_extendedprice#66, l_discount#67, s_nationkey#422L, o_orderdate#203, n_regionkey#156L, #1241#1241L, #1242#1242]
-Arguments: [l_extendedprice#66, l_discount#67, o_orderdate#203, n_regionkey#156L, n_name#1242]
+Input [7]: [l_extendedprice#7, l_discount#8, s_nationkey#13, o_orderdate#18, n_regionkey#26, #31#29, #30#30]
+Arguments: [l_extendedprice#7, l_discount#8, o_orderdate#18, n_regionkey#26, n_name#30]
 
 (47) NativeParquetScan 
-Output [2]: [r_regionkey#378L, r_name#379]
-Arguments: FileScan parquet [r_regionkey#378L,r_name#379] Batched: true, DataFilters: [isnotnull(r_name#379), (r_name#379 = AMERICA), isnotnull(r_regionkey#378L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(r_name), EqualTo(r_name,AMERICA), IsNotNull(r_regionkey)], ReadSchema: struct<r_regionkey:bigint,r_name:string>
+Output [2]: [r_regionkey#32, r_name#33]
+Arguments: FileScan parquet [r_regionkey#32,r_name#33] Batched: true, DataFilters: [isnotnull(r_name#33), (r_name#33 = AMERICA), isnotnull(r_regionkey#32)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(r_name), EqualTo(r_name,AMERICA), IsNotNull(r_regionkey)], ReadSchema: struct<r_regionkey:bigint,r_name:string>
 
 (48) InputAdapter
-Input [2]: [r_regionkey#378L, r_name#379]
-Arguments: [#378, #379]
+Input [2]: [r_regionkey#32, r_name#33]
+Arguments: [#34, #33]
 
 (49) NativeFilter
-Input [2]: [#378#378L, #379#379]
-Arguments: ((isnotnull(r_name#379) AND (r_name#379 = AMERICA)) AND isnotnull(r_regionkey#378L))
+Input [2]: [#34#32, #33#33]
+Arguments: ((isnotnull(r_name#33) AND (r_name#33 = AMERICA)) AND isnotnull(r_regionkey#32))
 
 (50) NativeProject
-Input [2]: [#378#378L, #379#379]
-Arguments: [r_regionkey#378L]
+Input [2]: [#34#32, #33#33]
+Arguments: [r_regionkey#32]
 
 (51) NativeBroadcastExchange
-Input [1]: [r_regionkey#378L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=4790]
+Input [1]: [r_regionkey#32]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=7]
 
 (52) BroadcastQueryStage
-Output [1]: [r_regionkey#378L]
-Arguments: 6
+Output [1]: [r_regionkey#32]
+Arguments: X
 
 (53) NativeBroadcastJoin
-Left keys [1]: [n_regionkey#156L]
-Right keys [1]: [r_regionkey#378L]
+Left keys [1]: [n_regionkey#26]
+Right keys [1]: [r_regionkey#32]
 Join type: Inner
 Join condition: None
 
 (54) NativeProject
-Input [6]: [l_extendedprice#66, l_discount#67, o_orderdate#203, n_regionkey#156L, n_name#1242, r_regionkey#378L]
-Arguments: [year(o_orderdate#203) AS o_year#1237, (l_extendedprice#66 * (1 - l_discount#67)) AS volume#1238, n_name#1242 AS nation#1239]
+Input [6]: [l_extendedprice#7, l_discount#8, o_orderdate#18, n_regionkey#26, n_name#30, r_regionkey#32]
+Arguments: [year(o_orderdate#18) AS o_year#35, (l_extendedprice#7 * (1 - l_discount#8)) AS volume#36, n_name#30 AS nation#37]
 
 (55) NativeProject
-Input [3]: [o_year#1237, volume#1238, nation#1239]
-Arguments: [o_year#1237 AS o_year#1237, CASE WHEN (nation#1239 = BRAZIL) THEN volume#1238 ELSE 0.0000 END AS _c1#1309, volume#1238 AS _c2#1310]
+Input [3]: [o_year#35, volume#36, nation#37]
+Arguments: [o_year#35 AS o_year#35, CASE WHEN (nation#37 = BRAZIL) THEN volume#36 ELSE 0.0000 END AS _c1#38, volume#36 AS _c2#39]
 
 (56) NativeHashAggregate
-Input [3]: [o_year#1237, _c1#1309, _c2#1310]
-Keys [1]: [o_year#1237]
-Functions [2]: [partial_sum(_c1#1309), partial_sum(_c2#1310)]
-Aggregate Attributes [4]: [sum#1249, isEmpty#1250, sum#1251, isEmpty#1252]
-Results [2]: [o_year#1237, #9223372036854775807#9223372036854775807]
+Input [3]: [o_year#35, _c1#38, _c2#39]
+Keys [1]: [o_year#35]
+Functions [2]: [partial_sum(_c1#38), partial_sum(_c2#39)]
+Aggregate Attributes [4]: [sum#40, isEmpty#41, sum#42, isEmpty#43]
+Results [2]: [o_year#35, #44#44]
 
 (57) NativeShuffleExchange
-Input [2]: [o_year#1237, #9223372036854775807#9223372036854775807]
-Arguments: hashpartitioning(o_year#1237, 5), ENSURE_REQUIREMENTS, [plan_id=5552]
+Input [2]: [o_year#35, #44#44]
+Arguments: hashpartitioning(o_year#35, 5), ENSURE_REQUIREMENTS, [plan_id=8]
 
 (58) ShuffleQueryStage
-Output [2]: [o_year#1237, #9223372036854775807#9223372036854775807]
-Arguments: 7
+Output [2]: [o_year#35, #44#44]
+Arguments: X
 
 (59) AQEShuffleRead
-Input [2]: [o_year#1237, #9223372036854775807#9223372036854775807]
+Input [2]: [o_year#35, #44#44]
 Arguments: coalesced
 
 (60) InputAdapter
-Input [2]: [o_year#1237, #9223372036854775807#9223372036854775807]
+Input [2]: [o_year#35, #44#44]
 
 (61) NativeHashAggregate
-Input [2]: [o_year#1237, #9223372036854775807#9223372036854775807]
-Keys [1]: [o_year#1237]
-Functions [2]: [sum(CASE WHEN (nation#1239 = BRAZIL) THEN volume#1238 ELSE 0.0000 END), sum(volume#1238)]
-Aggregate Attributes [2]: [sum(CASE WHEN (nation#1239 = BRAZIL) THEN volume#1238 ELSE 0.0000 END)#1246, sum(volume#1238)#1245]
-Results [3]: [o_year#1237, sum(CASE WHEN (nation#1239 = BRAZIL) THEN volume#1238 ELSE 0.0000 END)#1246, sum(volume#1238)#1245]
+Input [2]: [o_year#35, #44#44]
+Keys [1]: [o_year#35]
+Functions [2]: [sum(CASE WHEN (nation#37 = BRAZIL) THEN volume#36 ELSE 0.0000 END), sum(volume#36)]
+Aggregate Attributes [2]: [sum(CASE WHEN (nation#37 = BRAZIL) THEN volume#36 ELSE 0.0000 END)#45, sum(volume#36)#46]
+Results [3]: [o_year#35, sum(CASE WHEN (nation#37 = BRAZIL) THEN volume#36 ELSE 0.0000 END)#45, sum(volume#36)#46]
 
 (62) NativeProject
-Input [3]: [o_year#1237, sum(CASE WHEN (nation#1239 = BRAZIL) THEN volume#1238 ELSE 0.0000 END)#1246, sum(volume#1238)#1245]
-Arguments: [o_year#1237, (sum(CASE WHEN (nation#1239 = BRAZIL) THEN volume#1238 ELSE 0.0000 END)#1246 / sum(volume#1238)#1245) AS mkt_share#1240]
+Input [3]: [o_year#35, sum(CASE WHEN (nation#37 = BRAZIL) THEN volume#36 ELSE 0.0000 END)#45, sum(volume#36)#46]
+Arguments: [o_year#35, (sum(CASE WHEN (nation#37 = BRAZIL) THEN volume#36 ELSE 0.0000 END)#45 / sum(volume#36)#46) AS mkt_share#47]
 
 (63) NativeShuffleExchange
-Input [2]: [o_year#1237, mkt_share#1240]
-Arguments: rangepartitioning(o_year#1237 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=5691]
+Input [2]: [o_year#35, mkt_share#47]
+Arguments: rangepartitioning(o_year#35 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=9]
 
 (64) ShuffleQueryStage
-Output [2]: [o_year#1237, mkt_share#1240]
-Arguments: 8
+Output [2]: [o_year#35, mkt_share#47]
+Arguments: X
 
 (65) AQEShuffleRead
-Input [2]: [o_year#1237, mkt_share#1240]
+Input [2]: [o_year#35, mkt_share#47]
 Arguments: coalesced
 
 (66) InputAdapter
-Input [2]: [o_year#1237, mkt_share#1240]
+Input [2]: [o_year#35, mkt_share#47]
 
 (67) NativeSort
-Input [2]: [o_year#1237, mkt_share#1240]
-Arguments: [o_year#1237 ASC NULLS FIRST], true
+Input [2]: [o_year#35, mkt_share#47]
+Arguments: [o_year#35 ASC NULLS FIRST], true
 
 (68) Scan parquet 
-Output [2]: [p_partkey#264L, p_type#268]
+Output [2]: [p_partkey#1, p_type#2]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/part]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(p_type), EqualTo(p_type,ECONOMY ANODIZED STEEL), IsNotNull(p_partkey)]
 ReadSchema: struct<p_partkey:bigint,p_type:string>
 
 (69) Filter
-Input [2]: [p_partkey#264L, p_type#268]
-Condition : ((isnotnull(p_type#268) AND (p_type#268 = ECONOMY ANODIZED STEEL)) AND isnotnull(p_partkey#264L))
+Input [2]: [p_partkey#1, p_type#2]
+Condition : ((isnotnull(p_type#2) AND (p_type#2 = ECONOMY ANODIZED STEEL)) AND isnotnull(p_partkey#1))
 
 (70) Project
-Output [1]: [p_partkey#264L]
-Input [2]: [p_partkey#264L, p_type#268]
+Output [1]: [p_partkey#1]
+Input [2]: [p_partkey#1, p_type#2]
 
 (71) BroadcastExchange
-Input [1]: [p_partkey#264L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=4502]
+Input [1]: [p_partkey#1]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=10]
 
 (72) Scan parquet 
-Output [5]: [l_orderkey#61L, l_partkey#62L, l_suppkey#63L, l_extendedprice#66, l_discount#67]
+Output [5]: [l_orderkey#4, l_partkey#5, l_suppkey#6, l_extendedprice#7, l_discount#8]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/lineitem]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(l_partkey), IsNotNull(l_suppkey), IsNotNull(l_orderkey)]
 ReadSchema: struct<l_orderkey:bigint,l_partkey:bigint,l_suppkey:bigint,l_extendedprice:decimal(12,2),l_discount:decimal(12,2)>
 
 (73) Filter
-Input [5]: [l_orderkey#61L, l_partkey#62L, l_suppkey#63L, l_extendedprice#66, l_discount#67]
-Condition : ((isnotnull(l_partkey#62L) AND isnotnull(l_suppkey#63L)) AND isnotnull(l_orderkey#61L))
+Input [5]: [l_orderkey#4, l_partkey#5, l_suppkey#6, l_extendedprice#7, l_discount#8]
+Condition : ((isnotnull(l_partkey#5) AND isnotnull(l_suppkey#6)) AND isnotnull(l_orderkey#4))
 
 (74) BroadcastHashJoin
-Left keys [1]: [p_partkey#264L]
-Right keys [1]: [l_partkey#62L]
+Left keys [1]: [p_partkey#1]
+Right keys [1]: [l_partkey#5]
 Join type: Inner
 Join condition: None
 
 (75) Project
-Output [4]: [l_orderkey#61L, l_suppkey#63L, l_extendedprice#66, l_discount#67]
-Input [6]: [p_partkey#264L, l_orderkey#61L, l_partkey#62L, l_suppkey#63L, l_extendedprice#66, l_discount#67]
+Output [4]: [l_orderkey#4, l_suppkey#6, l_extendedprice#7, l_discount#8]
+Input [6]: [p_partkey#1, l_orderkey#4, l_partkey#5, l_suppkey#6, l_extendedprice#7, l_discount#8]
 
 (76) Scan parquet 
-Output [2]: [s_suppkey#419L, s_nationkey#422L]
+Output [2]: [s_suppkey#12, s_nationkey#13]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/supplier]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(s_suppkey), IsNotNull(s_nationkey)]
 ReadSchema: struct<s_suppkey:bigint,s_nationkey:bigint>
 
 (77) Filter
-Input [2]: [s_suppkey#419L, s_nationkey#422L]
-Condition : (isnotnull(s_suppkey#419L) AND isnotnull(s_nationkey#422L))
+Input [2]: [s_suppkey#12, s_nationkey#13]
+Condition : (isnotnull(s_suppkey#12) AND isnotnull(s_nationkey#13))
 
 (78) BroadcastExchange
-Input [2]: [s_suppkey#419L, s_nationkey#422L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=4506]
+Input [2]: [s_suppkey#12, s_nationkey#13]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=11]
 
 (79) BroadcastHashJoin
-Left keys [1]: [l_suppkey#63L]
-Right keys [1]: [s_suppkey#419L]
+Left keys [1]: [l_suppkey#6]
+Right keys [1]: [s_suppkey#12]
 Join type: Inner
 Join condition: None
 
 (80) Project
-Output [4]: [l_orderkey#61L, l_extendedprice#66, l_discount#67, s_nationkey#422L]
-Input [6]: [l_orderkey#61L, l_suppkey#63L, l_extendedprice#66, l_discount#67, s_suppkey#419L, s_nationkey#422L]
+Output [4]: [l_orderkey#4, l_extendedprice#7, l_discount#8, s_nationkey#13]
+Input [6]: [l_orderkey#4, l_suppkey#6, l_extendedprice#7, l_discount#8, s_suppkey#12, s_nationkey#13]
 
 (81) Scan parquet 
-Output [3]: [o_orderkey#199L, o_custkey#200L, o_orderdate#203]
+Output [3]: [o_orderkey#16, o_custkey#17, o_orderdate#18]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/orders]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(o_orderdate), GreaterThanOrEqual(o_orderdate,1995-01-01), LessThanOrEqual(o_orderdate,1996-12-31), IsNotNull(o_orderkey), IsNotNull(o_custkey)]
 ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_orderdate:date>
 
 (82) Filter
-Input [3]: [o_orderkey#199L, o_custkey#200L, o_orderdate#203]
-Condition : ((((isnotnull(o_orderdate#203) AND (o_orderdate#203 >= 1995-01-01)) AND (o_orderdate#203 <= 1996-12-31)) AND isnotnull(o_orderkey#199L)) AND isnotnull(o_custkey#200L))
+Input [3]: [o_orderkey#16, o_custkey#17, o_orderdate#18]
+Condition : ((((isnotnull(o_orderdate#18) AND (o_orderdate#18 >= 1995-01-01)) AND (o_orderdate#18 <= 1996-12-31)) AND isnotnull(o_orderkey#16)) AND isnotnull(o_custkey#17))
 
 (83) BroadcastExchange
-Input [3]: [o_orderkey#199L, o_custkey#200L, o_orderdate#203]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=4510]
+Input [3]: [o_orderkey#16, o_custkey#17, o_orderdate#18]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=12]
 
 (84) BroadcastHashJoin
-Left keys [1]: [l_orderkey#61L]
-Right keys [1]: [o_orderkey#199L]
+Left keys [1]: [l_orderkey#4]
+Right keys [1]: [o_orderkey#16]
 Join type: Inner
 Join condition: None
 
 (85) Project
-Output [5]: [l_extendedprice#66, l_discount#67, s_nationkey#422L, o_custkey#200L, o_orderdate#203]
-Input [7]: [l_orderkey#61L, l_extendedprice#66, l_discount#67, s_nationkey#422L, o_orderkey#199L, o_custkey#200L, o_orderdate#203]
+Output [5]: [l_extendedprice#7, l_discount#8, s_nationkey#13, o_custkey#17, o_orderdate#18]
+Input [7]: [l_orderkey#4, l_extendedprice#7, l_discount#8, s_nationkey#13, o_orderkey#16, o_custkey#17, o_orderdate#18]
 
 (86) Scan parquet 
-Output [2]: [c_custkey#0L, c_nationkey#3L]
+Output [2]: [c_custkey#21, c_nationkey#22]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/customer]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(c_custkey), IsNotNull(c_nationkey)]
 ReadSchema: struct<c_custkey:bigint,c_nationkey:bigint>
 
 (87) Filter
-Input [2]: [c_custkey#0L, c_nationkey#3L]
-Condition : (isnotnull(c_custkey#0L) AND isnotnull(c_nationkey#3L))
+Input [2]: [c_custkey#21, c_nationkey#22]
+Condition : (isnotnull(c_custkey#21) AND isnotnull(c_nationkey#22))
 
 (88) BroadcastExchange
-Input [2]: [c_custkey#0L, c_nationkey#3L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=4514]
+Input [2]: [c_custkey#21, c_nationkey#22]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=13]
 
 (89) BroadcastHashJoin
-Left keys [1]: [o_custkey#200L]
-Right keys [1]: [c_custkey#0L]
+Left keys [1]: [o_custkey#17]
+Right keys [1]: [c_custkey#21]
 Join type: Inner
 Join condition: None
 
 (90) Project
-Output [5]: [l_extendedprice#66, l_discount#67, s_nationkey#422L, o_orderdate#203, c_nationkey#3L]
-Input [7]: [l_extendedprice#66, l_discount#67, s_nationkey#422L, o_custkey#200L, o_orderdate#203, c_custkey#0L, c_nationkey#3L]
+Output [5]: [l_extendedprice#7, l_discount#8, s_nationkey#13, o_orderdate#18, c_nationkey#22]
+Input [7]: [l_extendedprice#7, l_discount#8, s_nationkey#13, o_custkey#17, o_orderdate#18, c_custkey#21, c_nationkey#22]
 
 (91) Scan parquet 
-Output [2]: [n_nationkey#154L, n_regionkey#156L]
+Output [2]: [n_nationkey#25, n_regionkey#26]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/nation]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(n_nationkey), IsNotNull(n_regionkey)]
 ReadSchema: struct<n_nationkey:bigint,n_regionkey:bigint>
 
 (92) Filter
-Input [2]: [n_nationkey#154L, n_regionkey#156L]
-Condition : (isnotnull(n_nationkey#154L) AND isnotnull(n_regionkey#156L))
+Input [2]: [n_nationkey#25, n_regionkey#26]
+Condition : (isnotnull(n_nationkey#25) AND isnotnull(n_regionkey#26))
 
 (93) BroadcastExchange
-Input [2]: [n_nationkey#154L, n_regionkey#156L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=4518]
+Input [2]: [n_nationkey#25, n_regionkey#26]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=14]
 
 (94) BroadcastHashJoin
-Left keys [1]: [c_nationkey#3L]
-Right keys [1]: [n_nationkey#154L]
+Left keys [1]: [c_nationkey#22]
+Right keys [1]: [n_nationkey#25]
 Join type: Inner
 Join condition: None
 
 (95) Project
-Output [5]: [l_extendedprice#66, l_discount#67, s_nationkey#422L, o_orderdate#203, n_regionkey#156L]
-Input [7]: [l_extendedprice#66, l_discount#67, s_nationkey#422L, o_orderdate#203, c_nationkey#3L, n_nationkey#154L, n_regionkey#156L]
+Output [5]: [l_extendedprice#7, l_discount#8, s_nationkey#13, o_orderdate#18, n_regionkey#26]
+Input [7]: [l_extendedprice#7, l_discount#8, s_nationkey#13, o_orderdate#18, c_nationkey#22, n_nationkey#25, n_regionkey#26]
 
 (96) Scan parquet 
-Output [2]: [n_nationkey#1241L, n_name#1242]
+Output [2]: [n_nationkey#29, n_name#30]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/nation]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(n_nationkey)]
 ReadSchema: struct<n_nationkey:bigint,n_name:string>
 
 (97) Filter
-Input [2]: [n_nationkey#1241L, n_name#1242]
-Condition : isnotnull(n_nationkey#1241L)
+Input [2]: [n_nationkey#29, n_name#30]
+Condition : isnotnull(n_nationkey#29)
 
 (98) BroadcastExchange
-Input [2]: [n_nationkey#1241L, n_name#1242]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=4522]
+Input [2]: [n_nationkey#29, n_name#30]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=15]
 
 (99) BroadcastHashJoin
-Left keys [1]: [s_nationkey#422L]
-Right keys [1]: [n_nationkey#1241L]
+Left keys [1]: [s_nationkey#13]
+Right keys [1]: [n_nationkey#29]
 Join type: Inner
 Join condition: None
 
 (100) Project
-Output [5]: [l_extendedprice#66, l_discount#67, o_orderdate#203, n_regionkey#156L, n_name#1242]
-Input [7]: [l_extendedprice#66, l_discount#67, s_nationkey#422L, o_orderdate#203, n_regionkey#156L, n_nationkey#1241L, n_name#1242]
+Output [5]: [l_extendedprice#7, l_discount#8, o_orderdate#18, n_regionkey#26, n_name#30]
+Input [7]: [l_extendedprice#7, l_discount#8, s_nationkey#13, o_orderdate#18, n_regionkey#26, n_nationkey#29, n_name#30]
 
 (101) Scan parquet 
-Output [2]: [r_regionkey#378L, r_name#379]
+Output [2]: [r_regionkey#32, r_name#33]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/region]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(r_name), EqualTo(r_name,AMERICA), IsNotNull(r_regionkey)]
 ReadSchema: struct<r_regionkey:bigint,r_name:string>
 
 (102) Filter
-Input [2]: [r_regionkey#378L, r_name#379]
-Condition : ((isnotnull(r_name#379) AND (r_name#379 = AMERICA)) AND isnotnull(r_regionkey#378L))
+Input [2]: [r_regionkey#32, r_name#33]
+Condition : ((isnotnull(r_name#33) AND (r_name#33 = AMERICA)) AND isnotnull(r_regionkey#32))
 
 (103) Project
-Output [1]: [r_regionkey#378L]
-Input [2]: [r_regionkey#378L, r_name#379]
+Output [1]: [r_regionkey#32]
+Input [2]: [r_regionkey#32, r_name#33]
 
 (104) BroadcastExchange
-Input [1]: [r_regionkey#378L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=4526]
+Input [1]: [r_regionkey#32]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=16]
 
 (105) BroadcastHashJoin
-Left keys [1]: [n_regionkey#156L]
-Right keys [1]: [r_regionkey#378L]
+Left keys [1]: [n_regionkey#26]
+Right keys [1]: [r_regionkey#32]
 Join type: Inner
 Join condition: None
 
 (106) Project
-Output [3]: [year(o_orderdate#203) AS o_year#1237, (l_extendedprice#66 * (1 - l_discount#67)) AS volume#1238, n_name#1242 AS nation#1239]
-Input [6]: [l_extendedprice#66, l_discount#67, o_orderdate#203, n_regionkey#156L, n_name#1242, r_regionkey#378L]
+Output [3]: [year(o_orderdate#18) AS o_year#35, (l_extendedprice#7 * (1 - l_discount#8)) AS volume#36, n_name#30 AS nation#37]
+Input [6]: [l_extendedprice#7, l_discount#8, o_orderdate#18, n_regionkey#26, n_name#30, r_regionkey#32]
 
 (107) HashAggregate
-Input [3]: [o_year#1237, volume#1238, nation#1239]
-Keys [1]: [o_year#1237]
-Functions [2]: [partial_sum(CASE WHEN (nation#1239 = BRAZIL) THEN volume#1238 ELSE 0.0000 END), partial_sum(volume#1238)]
-Aggregate Attributes [4]: [sum#1249, isEmpty#1250, sum#1251, isEmpty#1252]
-Results [5]: [o_year#1237, sum#1253, isEmpty#1254, sum#1255, isEmpty#1256]
+Input [3]: [o_year#35, volume#36, nation#37]
+Keys [1]: [o_year#35]
+Functions [2]: [partial_sum(CASE WHEN (nation#37 = BRAZIL) THEN volume#36 ELSE 0.0000 END), partial_sum(volume#36)]
+Aggregate Attributes [4]: [sum#40, isEmpty#41, sum#42, isEmpty#43]
+Results [5]: [o_year#35, sum#48, isEmpty#49, sum#50, isEmpty#51]
 
 (108) Exchange
-Input [5]: [o_year#1237, sum#1253, isEmpty#1254, sum#1255, isEmpty#1256]
-Arguments: hashpartitioning(o_year#1237, 5), ENSURE_REQUIREMENTS, [plan_id=4531]
+Input [5]: [o_year#35, sum#48, isEmpty#49, sum#50, isEmpty#51]
+Arguments: hashpartitioning(o_year#35, 5), ENSURE_REQUIREMENTS, [plan_id=17]
 
 (109) HashAggregate
-Input [5]: [o_year#1237, sum#1253, isEmpty#1254, sum#1255, isEmpty#1256]
-Keys [1]: [o_year#1237]
-Functions [2]: [sum(CASE WHEN (nation#1239 = BRAZIL) THEN volume#1238 ELSE 0.0000 END), sum(volume#1238)]
-Aggregate Attributes [2]: [sum(CASE WHEN (nation#1239 = BRAZIL) THEN volume#1238 ELSE 0.0000 END)#1246, sum(volume#1238)#1245]
-Results [2]: [o_year#1237, (sum(CASE WHEN (nation#1239 = BRAZIL) THEN volume#1238 ELSE 0.0000 END)#1246 / sum(volume#1238)#1245) AS mkt_share#1240]
+Input [5]: [o_year#35, sum#48, isEmpty#49, sum#50, isEmpty#51]
+Keys [1]: [o_year#35]
+Functions [2]: [sum(CASE WHEN (nation#37 = BRAZIL) THEN volume#36 ELSE 0.0000 END), sum(volume#36)]
+Aggregate Attributes [2]: [sum(CASE WHEN (nation#37 = BRAZIL) THEN volume#36 ELSE 0.0000 END)#45, sum(volume#36)#46]
+Results [2]: [o_year#35, (sum(CASE WHEN (nation#37 = BRAZIL) THEN volume#36 ELSE 0.0000 END)#45 / sum(volume#36)#46) AS mkt_share#47]
 
 (110) Exchange
-Input [2]: [o_year#1237, mkt_share#1240]
-Arguments: rangepartitioning(o_year#1237 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=4534]
+Input [2]: [o_year#35, mkt_share#47]
+Arguments: rangepartitioning(o_year#35 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=18]
 
 (111) Sort
-Input [2]: [o_year#1237, mkt_share#1240]
-Arguments: [o_year#1237 ASC NULLS FIRST], true, 0
+Input [2]: [o_year#35, mkt_share#47]
+Arguments: [o_year#35 ASC NULLS FIRST], true, 0
 
 (112) AdaptiveSparkPlan
-Output [2]: [o_year#1237, mkt_share#1240]
+Output [2]: [o_year#35, mkt_share#47]
 Arguments: isFinalPlan=true
 

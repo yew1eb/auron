@@ -56,243 +56,243 @@ AdaptiveSparkPlan (52)
 
 
 (1) NativeParquetScan 
-Output [4]: [ps_partkey#329L, ps_suppkey#330L, ps_availqty#331, ps_supplycost#332]
-Arguments: FileScan parquet [ps_partkey#329L,ps_suppkey#330L,ps_availqty#331,ps_supplycost#332] Batched: true, DataFilters: [isnotnull(ps_suppkey#330L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(ps_suppkey)], ReadSchema: struct<ps_partkey:bigint,ps_suppkey:bigint,ps_availqty:int,ps_supplycost:decimal(12,2)>
+Output [4]: [ps_partkey#1, ps_suppkey#2, ps_availqty#3, ps_supplycost#4]
+Arguments: FileScan parquet [ps_partkey#1,ps_suppkey#2,ps_availqty#3,ps_supplycost#4] Batched: true, DataFilters: [isnotnull(ps_suppkey#2)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ps_suppkey)], ReadSchema: struct<ps_partkey:bigint,ps_suppkey:bigint,ps_availqty:int,ps_supplycost:decimal(12,2)>
 
 (2) InputAdapter
-Input [4]: [ps_partkey#329L, ps_suppkey#330L, ps_availqty#331, ps_supplycost#332]
-Arguments: [#329, #330, #331, #332]
+Input [4]: [ps_partkey#1, ps_suppkey#2, ps_availqty#3, ps_supplycost#4]
+Arguments: [#5, #6, #3, #4]
 
 (3) NativeFilter
-Input [4]: [#329#329L, #330#330L, #331#331, #332#332]
-Arguments: isnotnull(ps_suppkey#330L)
+Input [4]: [#5#1, #6#2, #3#3, #4#4]
+Arguments: isnotnull(ps_suppkey#2)
 
 (4) NativeParquetScan 
-Output [2]: [s_suppkey#419L, s_nationkey#422L]
-Arguments: FileScan parquet [s_suppkey#419L,s_nationkey#422L] Batched: true, DataFilters: [isnotnull(s_suppkey#419L), isnotnull(s_nationkey#422L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(s_suppkey), IsNotNull(s_nationkey)], ReadSchema: struct<s_suppkey:bigint,s_nationkey:bigint>
+Output [2]: [s_suppkey#7, s_nationkey#8]
+Arguments: FileScan parquet [s_suppkey#7,s_nationkey#8] Batched: true, DataFilters: [isnotnull(s_suppkey#7), isnotnull(s_nationkey#8)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(s_suppkey), IsNotNull(s_nationkey)], ReadSchema: struct<s_suppkey:bigint,s_nationkey:bigint>
 
 (5) InputAdapter
-Input [2]: [s_suppkey#419L, s_nationkey#422L]
-Arguments: [#419, #422]
+Input [2]: [s_suppkey#7, s_nationkey#8]
+Arguments: [#9, #10]
 
 (6) NativeFilter
-Input [2]: [#419#419L, #422#422L]
-Arguments: (isnotnull(s_suppkey#419L) AND isnotnull(s_nationkey#422L))
+Input [2]: [#9#7, #10#8]
+Arguments: (isnotnull(s_suppkey#7) AND isnotnull(s_nationkey#8))
 
 (7) NativeBroadcastExchange
-Input [2]: [#419#419L, #422#422L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=7688]
+Input [2]: [#9#7, #10#8]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=1]
 
 (8) BroadcastQueryStage
-Output [2]: [#419#419L, #422#422L]
-Arguments: 0
+Output [2]: [#9#7, #10#8]
+Arguments: X
 
 (9) NativeBroadcastJoin
-Left keys [1]: [ps_suppkey#330L]
-Right keys [1]: [s_suppkey#419L]
+Left keys [1]: [ps_suppkey#2]
+Right keys [1]: [s_suppkey#7]
 Join type: Inner
 Join condition: None
 
 (10) NativeProject
-Input [6]: [#329#329L, #330#330L, #331#331, #332#332, #419#419L, #422#422L]
-Arguments: [ps_partkey#329L, ps_availqty#331, ps_supplycost#332, s_nationkey#422L]
+Input [6]: [#5#1, #6#2, #3#3, #4#4, #9#7, #10#8]
+Arguments: [ps_partkey#1, ps_availqty#3, ps_supplycost#4, s_nationkey#8]
 
 (11) NativeParquetScan 
-Output [2]: [n_nationkey#154L, n_name#155]
-Arguments: FileScan parquet [n_nationkey#154L,n_name#155] Batched: true, DataFilters: [isnotnull(n_name#155), (n_name#155 = GERMANY), isnotnull(n_nationkey#154L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(n_name), EqualTo(n_name,GERMANY), IsNotNull(n_nationkey)], ReadSchema: struct<n_nationkey:bigint,n_name:string>
+Output [2]: [n_nationkey#11, n_name#12]
+Arguments: FileScan parquet [n_nationkey#11,n_name#12] Batched: true, DataFilters: [isnotnull(n_name#12), (n_name#12 = GERMANY), isnotnull(n_nationkey#11)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(n_name), EqualTo(n_name,GERMANY), IsNotNull(n_nationkey)], ReadSchema: struct<n_nationkey:bigint,n_name:string>
 
 (12) InputAdapter
-Input [2]: [n_nationkey#154L, n_name#155]
-Arguments: [#154, #155]
+Input [2]: [n_nationkey#11, n_name#12]
+Arguments: [#13, #12]
 
 (13) NativeFilter
-Input [2]: [#154#154L, #155#155]
-Arguments: ((isnotnull(n_name#155) AND (n_name#155 = GERMANY)) AND isnotnull(n_nationkey#154L))
+Input [2]: [#13#11, #12#12]
+Arguments: ((isnotnull(n_name#12) AND (n_name#12 = GERMANY)) AND isnotnull(n_nationkey#11))
 
 (14) NativeProject
-Input [2]: [#154#154L, #155#155]
-Arguments: [n_nationkey#154L]
+Input [2]: [#13#11, #12#12]
+Arguments: [n_nationkey#11]
 
 (15) NativeBroadcastExchange
-Input [1]: [n_nationkey#154L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=7722]
+Input [1]: [n_nationkey#11]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=2]
 
 (16) BroadcastQueryStage
-Output [1]: [n_nationkey#154L]
-Arguments: 1
+Output [1]: [n_nationkey#11]
+Arguments: X
 
 (17) NativeBroadcastJoin
-Left keys [1]: [s_nationkey#422L]
-Right keys [1]: [n_nationkey#154L]
+Left keys [1]: [s_nationkey#8]
+Right keys [1]: [n_nationkey#11]
 Join type: Inner
 Join condition: None
 
 (18) NativeProject
-Input [5]: [ps_partkey#329L, ps_availqty#331, ps_supplycost#332, s_nationkey#422L, n_nationkey#154L]
-Arguments: [ps_partkey#329L, ps_availqty#331, ps_supplycost#332]
+Input [5]: [ps_partkey#1, ps_availqty#3, ps_supplycost#4, s_nationkey#8, n_nationkey#11]
+Arguments: [ps_partkey#1, ps_availqty#3, ps_supplycost#4]
 
 (19) NativeProject
-Input [3]: [ps_partkey#329L, ps_availqty#331, ps_supplycost#332]
-Arguments: [ps_partkey#329L AS ps_partkey#329L, (ps_supplycost#332 * cast(ps_availqty#331 as decimal(10,0))) AS _c1#1573]
+Input [3]: [ps_partkey#1, ps_availqty#3, ps_supplycost#4]
+Arguments: [ps_partkey#1 AS ps_partkey#1, (ps_supplycost#4 * cast(ps_availqty#3 as decimal(10,0))) AS _c1#14]
 
 (20) NativeHashAggregate
-Input [2]: [ps_partkey#329L, _c1#1573]
-Keys [1]: [ps_partkey#329L]
-Functions [1]: [partial_sum(_c1#1573)]
-Aggregate Attributes [2]: [sum#1536, isEmpty#1537]
-Results [2]: [ps_partkey#329L, #9223372036854775807#9223372036854775807]
+Input [2]: [ps_partkey#1, _c1#14]
+Keys [1]: [ps_partkey#1]
+Functions [1]: [partial_sum(_c1#14)]
+Aggregate Attributes [2]: [sum#15, isEmpty#16]
+Results [2]: [ps_partkey#1, #17#17]
 
 (21) NativeShuffleExchange
-Input [2]: [ps_partkey#329L, #9223372036854775807#9223372036854775807]
-Arguments: hashpartitioning(ps_partkey#329L, 5), ENSURE_REQUIREMENTS, [plan_id=7933]
+Input [2]: [ps_partkey#1, #17#17]
+Arguments: hashpartitioning(ps_partkey#1, 5), ENSURE_REQUIREMENTS, [plan_id=3]
 
 (22) ShuffleQueryStage
-Output [2]: [ps_partkey#329L, #9223372036854775807#9223372036854775807]
-Arguments: 2
+Output [2]: [ps_partkey#1, #17#17]
+Arguments: X
 
 (23) AQEShuffleRead
-Input [2]: [ps_partkey#329L, #9223372036854775807#9223372036854775807]
+Input [2]: [ps_partkey#1, #17#17]
 Arguments: coalesced
 
 (24) InputAdapter
-Input [2]: [ps_partkey#329L, #9223372036854775807#9223372036854775807]
+Input [2]: [ps_partkey#1, #17#17]
 
 (25) NativeHashAggregate
-Input [2]: [ps_partkey#329L, #9223372036854775807#9223372036854775807]
-Keys [1]: [ps_partkey#329L]
-Functions [1]: [sum((ps_supplycost#332 * cast(ps_availqty#331 as decimal(10,0))))]
-Aggregate Attributes [1]: [sum((ps_supplycost#332 * cast(ps_availqty#331 as decimal(10,0))))#1514]
-Results [2]: [ps_partkey#329L, sum((ps_supplycost#332 * cast(ps_availqty#331 as decimal(10,0))))#1514]
+Input [2]: [ps_partkey#1, #17#17]
+Keys [1]: [ps_partkey#1]
+Functions [1]: [sum((ps_supplycost#4 * cast(ps_availqty#3 as decimal(10,0))))]
+Aggregate Attributes [1]: [sum((ps_supplycost#4 * cast(ps_availqty#3 as decimal(10,0))))#18]
+Results [2]: [ps_partkey#1, sum((ps_supplycost#4 * cast(ps_availqty#3 as decimal(10,0))))#18]
 
 (26) NativeProject
-Input [2]: [ps_partkey#329L, sum((ps_supplycost#332 * cast(ps_availqty#331 as decimal(10,0))))#1514]
-Arguments: [ps_partkey#329L, sum((ps_supplycost#332 * cast(ps_availqty#331 as decimal(10,0))))#1514 AS value#1512]
+Input [2]: [ps_partkey#1, sum((ps_supplycost#4 * cast(ps_availqty#3 as decimal(10,0))))#18]
+Arguments: [ps_partkey#1, sum((ps_supplycost#4 * cast(ps_availqty#3 as decimal(10,0))))#18 AS value#19]
 
 (27) NativeFilter
-Input [2]: [ps_partkey#329L, value#1512]
-Arguments: (isnotnull(value#1512) AND (cast(value#1512 as decimal(38,6)) > Subquery subquery#1513, [id=#7589]))
+Input [2]: [ps_partkey#1, value#19]
+Arguments: (isnotnull(value#19) AND (cast(value#19 as decimal(38,6)) > Subquery subquery#20, [id=#21]))
 
 (28) Exchange
-Input [2]: [ps_partkey#329L, value#1512]
-Arguments: rangepartitioning(value#1512 DESC NULLS LAST, 5), ENSURE_REQUIREMENTS, [plan_id=8189]
+Input [2]: [ps_partkey#1, value#19]
+Arguments: rangepartitioning(value#19 DESC NULLS LAST, 5), ENSURE_REQUIREMENTS, [plan_id=4]
 
 (29) ShuffleQueryStage
-Output [2]: [ps_partkey#329L, value#1512]
-Arguments: 3
+Output [2]: [ps_partkey#1, value#19]
+Arguments: X
 
 (30) AQEShuffleRead
-Input [2]: [ps_partkey#329L, value#1512]
+Input [2]: [ps_partkey#1, value#19]
 Arguments: coalesced
 
 (31) ConvertToNative
-Input [2]: [ps_partkey#329L, value#1512]
+Input [2]: [ps_partkey#1, value#19]
 
 (32) NativeSort
-Input [2]: [ps_partkey#329L, value#1512]
-Arguments: [value#1512 DESC NULLS LAST], true
+Input [2]: [ps_partkey#1, value#19]
+Arguments: [value#19 DESC NULLS LAST], true
 
 (33) Scan parquet 
-Output [4]: [ps_partkey#329L, ps_suppkey#330L, ps_availqty#331, ps_supplycost#332]
+Output [4]: [ps_partkey#1, ps_suppkey#2, ps_availqty#3, ps_supplycost#4]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/partsupp]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(ps_suppkey)]
 ReadSchema: struct<ps_partkey:bigint,ps_suppkey:bigint,ps_availqty:int,ps_supplycost:decimal(12,2)>
 
 (34) Filter
-Input [4]: [ps_partkey#329L, ps_suppkey#330L, ps_availqty#331, ps_supplycost#332]
-Condition : isnotnull(ps_suppkey#330L)
+Input [4]: [ps_partkey#1, ps_suppkey#2, ps_availqty#3, ps_supplycost#4]
+Condition : isnotnull(ps_suppkey#2)
 
 (35) Scan parquet 
-Output [2]: [s_suppkey#419L, s_nationkey#422L]
+Output [2]: [s_suppkey#7, s_nationkey#8]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/supplier]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(s_suppkey), IsNotNull(s_nationkey)]
 ReadSchema: struct<s_suppkey:bigint,s_nationkey:bigint>
 
 (36) Filter
-Input [2]: [s_suppkey#419L, s_nationkey#422L]
-Condition : (isnotnull(s_suppkey#419L) AND isnotnull(s_nationkey#422L))
+Input [2]: [s_suppkey#7, s_nationkey#8]
+Condition : (isnotnull(s_suppkey#7) AND isnotnull(s_nationkey#8))
 
 (37) BroadcastExchange
-Input [2]: [s_suppkey#419L, s_nationkey#422L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=7601]
+Input [2]: [s_suppkey#7, s_nationkey#8]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=5]
 
 (38) BroadcastHashJoin
-Left keys [1]: [ps_suppkey#330L]
-Right keys [1]: [s_suppkey#419L]
+Left keys [1]: [ps_suppkey#2]
+Right keys [1]: [s_suppkey#7]
 Join type: Inner
 Join condition: None
 
 (39) Project
-Output [4]: [ps_partkey#329L, ps_availqty#331, ps_supplycost#332, s_nationkey#422L]
-Input [6]: [ps_partkey#329L, ps_suppkey#330L, ps_availqty#331, ps_supplycost#332, s_suppkey#419L, s_nationkey#422L]
+Output [4]: [ps_partkey#1, ps_availqty#3, ps_supplycost#4, s_nationkey#8]
+Input [6]: [ps_partkey#1, ps_suppkey#2, ps_availqty#3, ps_supplycost#4, s_suppkey#7, s_nationkey#8]
 
 (40) Scan parquet 
-Output [2]: [n_nationkey#154L, n_name#155]
+Output [2]: [n_nationkey#11, n_name#12]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/nation]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(n_name), EqualTo(n_name,GERMANY), IsNotNull(n_nationkey)]
 ReadSchema: struct<n_nationkey:bigint,n_name:string>
 
 (41) Filter
-Input [2]: [n_nationkey#154L, n_name#155]
-Condition : ((isnotnull(n_name#155) AND (n_name#155 = GERMANY)) AND isnotnull(n_nationkey#154L))
+Input [2]: [n_nationkey#11, n_name#12]
+Condition : ((isnotnull(n_name#12) AND (n_name#12 = GERMANY)) AND isnotnull(n_nationkey#11))
 
 (42) Project
-Output [1]: [n_nationkey#154L]
-Input [2]: [n_nationkey#154L, n_name#155]
+Output [1]: [n_nationkey#11]
+Input [2]: [n_nationkey#11, n_name#12]
 
 (43) BroadcastExchange
-Input [1]: [n_nationkey#154L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=7605]
+Input [1]: [n_nationkey#11]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=6]
 
 (44) BroadcastHashJoin
-Left keys [1]: [s_nationkey#422L]
-Right keys [1]: [n_nationkey#154L]
+Left keys [1]: [s_nationkey#8]
+Right keys [1]: [n_nationkey#11]
 Join type: Inner
 Join condition: None
 
 (45) Project
-Output [3]: [ps_partkey#329L, ps_availqty#331, ps_supplycost#332]
-Input [5]: [ps_partkey#329L, ps_availqty#331, ps_supplycost#332, s_nationkey#422L, n_nationkey#154L]
+Output [3]: [ps_partkey#1, ps_availqty#3, ps_supplycost#4]
+Input [5]: [ps_partkey#1, ps_availqty#3, ps_supplycost#4, s_nationkey#8, n_nationkey#11]
 
 (46) HashAggregate
-Input [3]: [ps_partkey#329L, ps_availqty#331, ps_supplycost#332]
-Keys [1]: [ps_partkey#329L]
-Functions [1]: [partial_sum((ps_supplycost#332 * cast(ps_availqty#331 as decimal(10,0))))]
-Aggregate Attributes [2]: [sum#1536, isEmpty#1537]
-Results [3]: [ps_partkey#329L, sum#1538, isEmpty#1539]
+Input [3]: [ps_partkey#1, ps_availqty#3, ps_supplycost#4]
+Keys [1]: [ps_partkey#1]
+Functions [1]: [partial_sum((ps_supplycost#4 * cast(ps_availqty#3 as decimal(10,0))))]
+Aggregate Attributes [2]: [sum#15, isEmpty#16]
+Results [3]: [ps_partkey#1, sum#22, isEmpty#23]
 
 (47) Exchange
-Input [3]: [ps_partkey#329L, sum#1538, isEmpty#1539]
-Arguments: hashpartitioning(ps_partkey#329L, 5), ENSURE_REQUIREMENTS, [plan_id=7610]
+Input [3]: [ps_partkey#1, sum#22, isEmpty#23]
+Arguments: hashpartitioning(ps_partkey#1, 5), ENSURE_REQUIREMENTS, [plan_id=7]
 
 (48) HashAggregate
-Input [3]: [ps_partkey#329L, sum#1538, isEmpty#1539]
-Keys [1]: [ps_partkey#329L]
-Functions [1]: [sum((ps_supplycost#332 * cast(ps_availqty#331 as decimal(10,0))))]
-Aggregate Attributes [1]: [sum((ps_supplycost#332 * cast(ps_availqty#331 as decimal(10,0))))#1514]
-Results [2]: [ps_partkey#329L, sum((ps_supplycost#332 * cast(ps_availqty#331 as decimal(10,0))))#1514 AS value#1512]
+Input [3]: [ps_partkey#1, sum#22, isEmpty#23]
+Keys [1]: [ps_partkey#1]
+Functions [1]: [sum((ps_supplycost#4 * cast(ps_availqty#3 as decimal(10,0))))]
+Aggregate Attributes [1]: [sum((ps_supplycost#4 * cast(ps_availqty#3 as decimal(10,0))))#18]
+Results [2]: [ps_partkey#1, sum((ps_supplycost#4 * cast(ps_availqty#3 as decimal(10,0))))#18 AS value#19]
 
 (49) Filter
-Input [2]: [ps_partkey#329L, value#1512]
-Condition : (isnotnull(value#1512) AND (cast(value#1512 as decimal(38,6)) > Subquery subquery#1513, [id=#7589]))
+Input [2]: [ps_partkey#1, value#19]
+Condition : (isnotnull(value#19) AND (cast(value#19 as decimal(38,6)) > Subquery subquery#20, [id=#21]))
 
 (50) Exchange
-Input [2]: [ps_partkey#329L, value#1512]
-Arguments: rangepartitioning(value#1512 DESC NULLS LAST, 5), ENSURE_REQUIREMENTS, [plan_id=7614]
+Input [2]: [ps_partkey#1, value#19]
+Arguments: rangepartitioning(value#19 DESC NULLS LAST, 5), ENSURE_REQUIREMENTS, [plan_id=8]
 
 (51) Sort
-Input [2]: [ps_partkey#329L, value#1512]
-Arguments: [value#1512 DESC NULLS LAST], true, 0
+Input [2]: [ps_partkey#1, value#19]
+Arguments: [value#19 DESC NULLS LAST], true, 0
 
 (52) AdaptiveSparkPlan
-Output [2]: [ps_partkey#329L, value#1512]
+Output [2]: [ps_partkey#1, value#19]
 Arguments: isFinalPlan=true
 
 ===== Subqueries =====
 
-Subquery:1 Hosting operator id = 27 Hosting Expression = Subquery subquery#1513, [id=#7589]
+Subquery:1 Hosting operator id = 27 Hosting Expression = Subquery subquery#20, [id=#21]
 AdaptiveSparkPlan (88)
 +- == Final Plan ==
    NativeProject (71)
@@ -334,174 +334,174 @@ AdaptiveSparkPlan (88)
 
 
 (53) NativeParquetScan 
-Output [3]: [ps_suppkey#1518L, ps_availqty#1519, ps_supplycost#1520]
-Arguments: FileScan parquet [ps_suppkey#1518L,ps_availqty#1519,ps_supplycost#1520] Batched: true, DataFilters: [isnotnull(ps_suppkey#1518L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(ps_suppkey)], ReadSchema: struct<ps_suppkey:bigint,ps_availqty:int,ps_supplycost:decimal(12,2)>
+Output [3]: [ps_suppkey#24, ps_availqty#25, ps_supplycost#26]
+Arguments: FileScan parquet [ps_suppkey#24,ps_availqty#25,ps_supplycost#26] Batched: true, DataFilters: [isnotnull(ps_suppkey#24)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ps_suppkey)], ReadSchema: struct<ps_suppkey:bigint,ps_availqty:int,ps_supplycost:decimal(12,2)>
 
 (54) InputAdapter
-Input [3]: [ps_suppkey#1518L, ps_availqty#1519, ps_supplycost#1520]
-Arguments: [#1518, #1519, #1520]
+Input [3]: [ps_suppkey#24, ps_availqty#25, ps_supplycost#26]
+Arguments: [#27, #25, #26]
 
 (55) NativeFilter
-Input [3]: [#1518#1518L, #1519#1519, #1520#1520]
-Arguments: isnotnull(ps_suppkey#1518L)
+Input [3]: [#27#24, #25#25, #26#26]
+Arguments: isnotnull(ps_suppkey#24)
 
 (56) ReusedExchange [Reuses operator id: 7]
-Output [2]: [s_suppkey#1522L, s_nationkey#1525L]
+Output [2]: [s_suppkey#28, s_nationkey#29]
 
 (57) BroadcastQueryStage
-Output [2]: [s_suppkey#1522L, s_nationkey#1525L]
-Arguments: 1
+Output [2]: [s_suppkey#28, s_nationkey#29]
+Arguments: X
 
 (58) InputAdapter
-Input [2]: [s_suppkey#1522L, s_nationkey#1525L]
-Arguments: [#1522, #1525]
+Input [2]: [s_suppkey#28, s_nationkey#29]
+Arguments: [#30, #31]
 
 (59) NativeBroadcastJoin
-Left keys [1]: [ps_suppkey#1518L]
-Right keys [1]: [s_suppkey#1522L]
+Left keys [1]: [ps_suppkey#24]
+Right keys [1]: [s_suppkey#28]
 Join type: Inner
 Join condition: None
 
 (60) NativeProject
-Input [5]: [#1518#1518L, #1519#1519, #1520#1520, #1522#1522L, #1525#1525L]
-Arguments: [ps_availqty#1519, ps_supplycost#1520, s_nationkey#1525L]
+Input [5]: [#27#24, #25#25, #26#26, #30#28, #31#29]
+Arguments: [ps_availqty#25, ps_supplycost#26, s_nationkey#29]
 
 (61) ReusedExchange [Reuses operator id: 15]
-Output [1]: [n_nationkey#1529L]
+Output [1]: [n_nationkey#32]
 
 (62) BroadcastQueryStage
-Output [1]: [n_nationkey#1529L]
-Arguments: 3
+Output [1]: [n_nationkey#32]
+Arguments: X
 
 (63) InputAdapter
-Input [1]: [n_nationkey#1529L]
-Arguments: [#1529]
+Input [1]: [n_nationkey#32]
+Arguments: [#33]
 
 (64) NativeBroadcastJoin
-Left keys [1]: [s_nationkey#1525L]
-Right keys [1]: [n_nationkey#1529L]
+Left keys [1]: [s_nationkey#29]
+Right keys [1]: [n_nationkey#32]
 Join type: Inner
 Join condition: None
 
 (65) NativeProject
-Input [4]: [ps_availqty#1519, ps_supplycost#1520, s_nationkey#1525L, #1529#1529L]
-Arguments: [ps_availqty#1519, ps_supplycost#1520]
+Input [4]: [ps_availqty#25, ps_supplycost#26, s_nationkey#29, #33#32]
+Arguments: [ps_availqty#25, ps_supplycost#26]
 
 (66) NativeProject
-Input [2]: [ps_availqty#1519, ps_supplycost#1520]
-Arguments: [(ps_supplycost#1520 * cast(ps_availqty#1519 as decimal(10,0))) AS _c0#1607]
+Input [2]: [ps_availqty#25, ps_supplycost#26]
+Arguments: [(ps_supplycost#26 * cast(ps_availqty#25 as decimal(10,0))) AS _c0#34]
 
 (67) NativeHashAggregate
-Input [1]: [_c0#1607]
+Input [1]: [_c0#34]
 Keys: []
-Functions [1]: [partial_sum(_c0#1607)]
-Aggregate Attributes [2]: [sum#1540, isEmpty#1541]
-Results [1]: [#9223372036854775807#9223372036854775807]
+Functions [1]: [partial_sum(_c0#34)]
+Aggregate Attributes [2]: [sum#35, isEmpty#36]
+Results [1]: [#17#17]
 
 (68) NativeShuffleExchange
-Input [1]: [#9223372036854775807#9223372036854775807]
-Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=8141]
+Input [1]: [#17#17]
+Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=9]
 
 (69) ShuffleQueryStage
-Output [1]: [#9223372036854775807#9223372036854775807]
-Arguments: 4
+Output [1]: [#17#17]
+Arguments: X
 
 (70) NativeHashAggregate
-Input [1]: [#9223372036854775807#9223372036854775807]
+Input [1]: [#17#17]
 Keys: []
-Functions [1]: [sum((ps_supplycost#1520 * cast(ps_availqty#1519 as decimal(10,0))))]
-Aggregate Attributes [1]: [sum((ps_supplycost#1520 * cast(ps_availqty#1519 as decimal(10,0))))#1515]
-Results [1]: [sum((ps_supplycost#1520 * cast(ps_availqty#1519 as decimal(10,0))))#1515]
+Functions [1]: [sum((ps_supplycost#26 * cast(ps_availqty#25 as decimal(10,0))))]
+Aggregate Attributes [1]: [sum((ps_supplycost#26 * cast(ps_availqty#25 as decimal(10,0))))#37]
+Results [1]: [sum((ps_supplycost#26 * cast(ps_availqty#25 as decimal(10,0))))#37]
 
 (71) NativeProject
-Input [1]: [sum((ps_supplycost#1520 * cast(ps_availqty#1519 as decimal(10,0))))#1515]
-Arguments: [(sum((ps_supplycost#1520 * cast(ps_availqty#1519 as decimal(10,0))))#1515 * 0.0001000000) AS (sum((ps_supplycost * ps_availqty)) * 0.0001000000)#1516]
+Input [1]: [sum((ps_supplycost#26 * cast(ps_availqty#25 as decimal(10,0))))#37]
+Arguments: [(sum((ps_supplycost#26 * cast(ps_availqty#25 as decimal(10,0))))#37 * 0.0001000000) AS (sum((ps_supplycost * ps_availqty)) * 0.0001000000)#38]
 
 (72) Scan parquet 
-Output [3]: [ps_suppkey#1518L, ps_availqty#1519, ps_supplycost#1520]
+Output [3]: [ps_suppkey#24, ps_availqty#25, ps_supplycost#26]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/partsupp]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(ps_suppkey)]
 ReadSchema: struct<ps_suppkey:bigint,ps_availqty:int,ps_supplycost:decimal(12,2)>
 
 (73) Filter
-Input [3]: [ps_suppkey#1518L, ps_availqty#1519, ps_supplycost#1520]
-Condition : isnotnull(ps_suppkey#1518L)
+Input [3]: [ps_suppkey#24, ps_availqty#25, ps_supplycost#26]
+Condition : isnotnull(ps_suppkey#24)
 
 (74) Scan parquet 
-Output [2]: [s_suppkey#1522L, s_nationkey#1525L]
+Output [2]: [s_suppkey#28, s_nationkey#29]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/supplier]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(s_suppkey), IsNotNull(s_nationkey)]
 ReadSchema: struct<s_suppkey:bigint,s_nationkey:bigint>
 
 (75) Filter
-Input [2]: [s_suppkey#1522L, s_nationkey#1525L]
-Condition : (isnotnull(s_suppkey#1522L) AND isnotnull(s_nationkey#1525L))
+Input [2]: [s_suppkey#28, s_nationkey#29]
+Condition : (isnotnull(s_suppkey#28) AND isnotnull(s_nationkey#29))
 
 (76) BroadcastExchange
-Input [2]: [s_suppkey#1522L, s_nationkey#1525L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=7578]
+Input [2]: [s_suppkey#28, s_nationkey#29]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=10]
 
 (77) BroadcastHashJoin
-Left keys [1]: [ps_suppkey#1518L]
-Right keys [1]: [s_suppkey#1522L]
+Left keys [1]: [ps_suppkey#24]
+Right keys [1]: [s_suppkey#28]
 Join type: Inner
 Join condition: None
 
 (78) Project
-Output [3]: [ps_availqty#1519, ps_supplycost#1520, s_nationkey#1525L]
-Input [5]: [ps_suppkey#1518L, ps_availqty#1519, ps_supplycost#1520, s_suppkey#1522L, s_nationkey#1525L]
+Output [3]: [ps_availqty#25, ps_supplycost#26, s_nationkey#29]
+Input [5]: [ps_suppkey#24, ps_availqty#25, ps_supplycost#26, s_suppkey#28, s_nationkey#29]
 
 (79) Scan parquet 
-Output [2]: [n_nationkey#1529L, n_name#1530]
+Output [2]: [n_nationkey#32, n_name#39]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/nation]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(n_name), EqualTo(n_name,GERMANY), IsNotNull(n_nationkey)]
 ReadSchema: struct<n_nationkey:bigint,n_name:string>
 
 (80) Filter
-Input [2]: [n_nationkey#1529L, n_name#1530]
-Condition : ((isnotnull(n_name#1530) AND (n_name#1530 = GERMANY)) AND isnotnull(n_nationkey#1529L))
+Input [2]: [n_nationkey#32, n_name#39]
+Condition : ((isnotnull(n_name#39) AND (n_name#39 = GERMANY)) AND isnotnull(n_nationkey#32))
 
 (81) Project
-Output [1]: [n_nationkey#1529L]
-Input [2]: [n_nationkey#1529L, n_name#1530]
+Output [1]: [n_nationkey#32]
+Input [2]: [n_nationkey#32, n_name#39]
 
 (82) BroadcastExchange
-Input [1]: [n_nationkey#1529L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=7582]
+Input [1]: [n_nationkey#32]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=11]
 
 (83) BroadcastHashJoin
-Left keys [1]: [s_nationkey#1525L]
-Right keys [1]: [n_nationkey#1529L]
+Left keys [1]: [s_nationkey#29]
+Right keys [1]: [n_nationkey#32]
 Join type: Inner
 Join condition: None
 
 (84) Project
-Output [2]: [ps_availqty#1519, ps_supplycost#1520]
-Input [4]: [ps_availqty#1519, ps_supplycost#1520, s_nationkey#1525L, n_nationkey#1529L]
+Output [2]: [ps_availqty#25, ps_supplycost#26]
+Input [4]: [ps_availqty#25, ps_supplycost#26, s_nationkey#29, n_nationkey#32]
 
 (85) HashAggregate
-Input [2]: [ps_availqty#1519, ps_supplycost#1520]
+Input [2]: [ps_availqty#25, ps_supplycost#26]
 Keys: []
-Functions [1]: [partial_sum((ps_supplycost#1520 * cast(ps_availqty#1519 as decimal(10,0))))]
-Aggregate Attributes [2]: [sum#1540, isEmpty#1541]
-Results [2]: [sum#1542, isEmpty#1543]
+Functions [1]: [partial_sum((ps_supplycost#26 * cast(ps_availqty#25 as decimal(10,0))))]
+Aggregate Attributes [2]: [sum#35, isEmpty#36]
+Results [2]: [sum#40, isEmpty#41]
 
 (86) Exchange
-Input [2]: [sum#1542, isEmpty#1543]
-Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=7587]
+Input [2]: [sum#40, isEmpty#41]
+Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=12]
 
 (87) HashAggregate
-Input [2]: [sum#1542, isEmpty#1543]
+Input [2]: [sum#40, isEmpty#41]
 Keys: []
-Functions [1]: [sum((ps_supplycost#1520 * cast(ps_availqty#1519 as decimal(10,0))))]
-Aggregate Attributes [1]: [sum((ps_supplycost#1520 * cast(ps_availqty#1519 as decimal(10,0))))#1515]
-Results [1]: [(sum((ps_supplycost#1520 * cast(ps_availqty#1519 as decimal(10,0))))#1515 * 0.0001000000) AS (sum((ps_supplycost * ps_availqty)) * 0.0001000000)#1516]
+Functions [1]: [sum((ps_supplycost#26 * cast(ps_availqty#25 as decimal(10,0))))]
+Aggregate Attributes [1]: [sum((ps_supplycost#26 * cast(ps_availqty#25 as decimal(10,0))))#37]
+Results [1]: [(sum((ps_supplycost#26 * cast(ps_availqty#25 as decimal(10,0))))#37 * 0.0001000000) AS (sum((ps_supplycost * ps_availqty)) * 0.0001000000)#38]
 
 (88) AdaptiveSparkPlan
-Output [1]: [(sum((ps_supplycost * ps_availqty)) * 0.0001000000)#1516]
+Output [1]: [(sum((ps_supplycost * ps_availqty)) * 0.0001000000)#38]
 Arguments: isFinalPlan=true
 
 

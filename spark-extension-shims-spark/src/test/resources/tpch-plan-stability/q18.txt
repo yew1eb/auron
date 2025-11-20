@@ -79,358 +79,358 @@ AdaptiveSparkPlan (75)
 
 
 (1) NativeParquetScan 
-Output [2]: [c_custkey#0L, c_name#1]
-Arguments: FileScan parquet [c_custkey#0L,c_name#1] Batched: true, DataFilters: [isnotnull(c_custkey#0L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(c_custkey)], ReadSchema: struct<c_custkey:bigint,c_name:string>
+Output [2]: [c_custkey#1, c_name#2]
+Arguments: FileScan parquet [c_custkey#1,c_name#2] Batched: true, DataFilters: [isnotnull(c_custkey#1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(c_custkey)], ReadSchema: struct<c_custkey:bigint,c_name:string>
 
 (2) InputAdapter
-Input [2]: [c_custkey#0L, c_name#1]
-Arguments: [#0, #1]
+Input [2]: [c_custkey#1, c_name#2]
+Arguments: [#3, #2]
 
 (3) NativeFilter
-Input [2]: [#0#0L, #1#1]
-Arguments: isnotnull(c_custkey#0L)
+Input [2]: [#3#1, #2#2]
+Arguments: isnotnull(c_custkey#1)
 
 (4) NativeBroadcastExchange
-Input [2]: [#0#0L, #1#1]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=10689]
+Input [2]: [#3#1, #2#2]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=1]
 
 (5) BroadcastQueryStage
-Output [2]: [#0#0L, #1#1]
-Arguments: 0
+Output [2]: [#3#1, #2#2]
+Arguments: X
 
 (6) NativeParquetScan 
-Output [4]: [o_orderkey#199L, o_custkey#200L, o_totalprice#202, o_orderdate#203]
-Arguments: FileScan parquet [o_orderkey#199L,o_custkey#200L,o_totalprice#202,o_orderdate#203] Batched: true, DataFilters: [isnotnull(o_custkey#200L), isnotnull(o_orderkey#199L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(o_custkey), IsNotNull(o_orderkey)], ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_totalprice:decimal(12,2),o_orderdate:date>
+Output [4]: [o_orderkey#4, o_custkey#5, o_totalprice#6, o_orderdate#7]
+Arguments: FileScan parquet [o_orderkey#4,o_custkey#5,o_totalprice#6,o_orderdate#7] Batched: true, DataFilters: [isnotnull(o_custkey#5), isnotnull(o_orderkey#4)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(o_custkey), IsNotNull(o_orderkey)], ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_totalprice:decimal(12,2),o_orderdate:date>
 
 (7) InputAdapter
-Input [4]: [o_orderkey#199L, o_custkey#200L, o_totalprice#202, o_orderdate#203]
-Arguments: [#199, #200, #202, #203]
+Input [4]: [o_orderkey#4, o_custkey#5, o_totalprice#6, o_orderdate#7]
+Arguments: [#8, #9, #6, #7]
 
 (8) NativeFilter
-Input [4]: [#199#199L, #200#200L, #202#202, #203#203]
-Arguments: (isnotnull(o_custkey#200L) AND isnotnull(o_orderkey#199L))
+Input [4]: [#8#4, #9#5, #6#6, #7#7]
+Arguments: (isnotnull(o_custkey#5) AND isnotnull(o_orderkey#4))
 
 (9) NativeParquetScan 
-Output [2]: [l_orderkey#2277L, l_quantity#2281]
-Arguments: FileScan parquet [l_orderkey#2277L,l_quantity#2281] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [], ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
+Output [2]: [l_orderkey#10, l_quantity#11]
+Arguments: FileScan parquet [l_orderkey#10,l_quantity#11] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [], ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
 
 (10) InputAdapter
-Input [2]: [l_orderkey#2277L, l_quantity#2281]
-Arguments: [#2277, #2281]
+Input [2]: [l_orderkey#10, l_quantity#11]
+Arguments: [#12, #11]
 
 (11) NativeHashAggregate
-Input [2]: [#2277#2277L, #2281#2281]
-Keys [1]: [l_orderkey#2277L]
-Functions [1]: [partial_sum(l_quantity#2281)]
-Aggregate Attributes [2]: [sum#2305, isEmpty#2306]
-Results [2]: [l_orderkey#2277L, #9223372036854775807#9223372036854775807]
+Input [2]: [#12#10, #11#11]
+Keys [1]: [l_orderkey#10]
+Functions [1]: [partial_sum(l_quantity#11)]
+Aggregate Attributes [2]: [sum#13, isEmpty#14]
+Results [2]: [l_orderkey#10, #15#15]
 
 (12) NativeShuffleExchange
-Input [2]: [l_orderkey#2277L, #9223372036854775807#9223372036854775807]
-Arguments: hashpartitioning(l_orderkey#2277L, 5), ENSURE_REQUIREMENTS, [plan_id=10711]
+Input [2]: [l_orderkey#10, #15#15]
+Arguments: hashpartitioning(l_orderkey#10, 5), ENSURE_REQUIREMENTS, [plan_id=2]
 
 (13) ShuffleQueryStage
-Output [2]: [l_orderkey#2277L, #9223372036854775807#9223372036854775807]
-Arguments: 1
+Output [2]: [l_orderkey#10, #15#15]
+Arguments: X
 
 (14) AQEShuffleRead
-Input [2]: [l_orderkey#2277L, #9223372036854775807#9223372036854775807]
+Input [2]: [l_orderkey#10, #15#15]
 Arguments: coalesced
 
 (15) InputAdapter
-Input [2]: [l_orderkey#2277L, #9223372036854775807#9223372036854775807]
+Input [2]: [l_orderkey#10, #15#15]
 
 (16) NativeHashAggregate
-Input [2]: [l_orderkey#2277L, #9223372036854775807#9223372036854775807]
-Keys [1]: [l_orderkey#2277L]
-Functions [1]: [sum(l_quantity#2281)]
-Aggregate Attributes [1]: [sum(l_quantity#2281)#2275]
-Results [2]: [l_orderkey#2277L, sum(l_quantity#2281)#2275]
+Input [2]: [l_orderkey#10, #15#15]
+Keys [1]: [l_orderkey#10]
+Functions [1]: [sum(l_quantity#11)]
+Aggregate Attributes [1]: [sum(l_quantity#11)#16]
+Results [2]: [l_orderkey#10, sum(l_quantity#11)#16]
 
 (17) NativeProject
-Input [2]: [l_orderkey#2277L, sum(l_quantity#2281)#2275]
-Arguments: [l_orderkey#2277L, sum(l_quantity#2281)#2275 AS sum(l_quantity#65)#2276]
+Input [2]: [l_orderkey#10, sum(l_quantity#11)#16]
+Arguments: [l_orderkey#10, sum(l_quantity#11)#16 AS sum(l_quantity#17)#18]
 
 (18) NativeFilter
-Input [2]: [l_orderkey#2277L, sum(l_quantity#65)#2276]
-Arguments: (isnotnull(sum(l_quantity#65)#2276) AND (sum(l_quantity#65)#2276 > 300.00))
+Input [2]: [l_orderkey#10, sum(l_quantity#17)#18]
+Arguments: (isnotnull(sum(l_quantity#17)#18) AND (sum(l_quantity#17)#18 > 300.00))
 
 (19) NativeProject
-Input [2]: [l_orderkey#2277L, sum(l_quantity#65)#2276]
-Arguments: [l_orderkey#2277L]
+Input [2]: [l_orderkey#10, sum(l_quantity#17)#18]
+Arguments: [l_orderkey#10]
 
 (20) NativeBroadcastExchange
-Input [1]: [l_orderkey#2277L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=10981]
+Input [1]: [l_orderkey#10]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=3]
 
 (21) BroadcastQueryStage
-Output [1]: [l_orderkey#2277L]
-Arguments: 4
+Output [1]: [l_orderkey#10]
+Arguments: X
 
 (22) NativeBroadcastJoin
-Left keys [1]: [o_orderkey#199L]
-Right keys [1]: [l_orderkey#2277L]
+Left keys [1]: [o_orderkey#4]
+Right keys [1]: [l_orderkey#10]
 Join type: LeftSemi
 Join condition: None
 
 (23) NativeBroadcastJoin
-Left keys [1]: [c_custkey#0L]
-Right keys [1]: [o_custkey#200L]
+Left keys [1]: [c_custkey#1]
+Right keys [1]: [o_custkey#5]
 Join type: Inner
 Join condition: None
 
 (24) NativeProject
-Input [6]: [#0#0L, #1#1, #199#199L, #200#200L, #202#202, #203#203]
-Arguments: [c_custkey#0L, c_name#1, o_orderkey#199L, o_totalprice#202, o_orderdate#203]
+Input [6]: [#3#1, #2#2, #8#4, #9#5, #6#6, #7#7]
+Arguments: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7]
 
 (25) NativeParquetScan 
-Output [2]: [l_orderkey#61L, l_quantity#65]
-Arguments: FileScan parquet [l_orderkey#61L,l_quantity#65] Batched: true, DataFilters: [isnotnull(l_orderkey#61L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(l_orderkey)], ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
+Output [2]: [l_orderkey#19, l_quantity#17]
+Arguments: FileScan parquet [l_orderkey#19,l_quantity#17] Batched: true, DataFilters: [isnotnull(l_orderkey#19)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_orderkey)], ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
 
 (26) InputAdapter
-Input [2]: [l_orderkey#61L, l_quantity#65]
-Arguments: [#61, #65]
+Input [2]: [l_orderkey#19, l_quantity#17]
+Arguments: [#20, #17]
 
 (27) NativeFilter
-Input [2]: [#61#61L, #65#65]
-Arguments: isnotnull(l_orderkey#61L)
+Input [2]: [#20#19, #17#17]
+Arguments: isnotnull(l_orderkey#19)
 
 (28) ReusedExchange [Reuses operator id: 20]
-Output [1]: [l_orderkey#2277L]
+Output [1]: [l_orderkey#10]
 
 (29) BroadcastQueryStage
-Output [1]: [l_orderkey#2277L]
-Arguments: 6
+Output [1]: [l_orderkey#10]
+Arguments: X
 
 (30) NativeBroadcastJoin
-Left keys [1]: [l_orderkey#61L]
-Right keys [1]: [l_orderkey#2277L]
+Left keys [1]: [l_orderkey#19]
+Right keys [1]: [l_orderkey#10]
 Join type: LeftSemi
 Join condition: None
 
 (31) NativeBroadcastExchange
-Input [2]: [#61#61L, #65#65]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=11168]
+Input [2]: [#20#19, #17#17]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=4]
 
 (32) BroadcastQueryStage
-Output [2]: [#61#61L, #65#65]
-Arguments: 7
+Output [2]: [#20#19, #17#17]
+Arguments: X
 
 (33) NativeBroadcastJoin
-Left keys [1]: [o_orderkey#199L]
-Right keys [1]: [l_orderkey#61L]
+Left keys [1]: [o_orderkey#4]
+Right keys [1]: [l_orderkey#19]
 Join type: Inner
 Join condition: None
 
 (34) NativeProject
-Input [7]: [c_custkey#0L, c_name#1, o_orderkey#199L, o_totalprice#202, o_orderdate#203, #61#61L, #65#65]
-Arguments: [c_custkey#0L, c_name#1, o_orderkey#199L, o_totalprice#202, o_orderdate#203, l_quantity#65]
+Input [7]: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7, #20#19, #17#17]
+Arguments: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7, l_quantity#17]
 
 (35) NativeHashAggregate
-Input [6]: [c_custkey#0L, c_name#1, o_orderkey#199L, o_totalprice#202, o_orderdate#203, l_quantity#65]
-Keys [5]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202]
-Functions [1]: [partial_sum(l_quantity#65)]
-Aggregate Attributes [2]: [sum#2301, isEmpty#2302]
-Results [6]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, #9223372036854775807#9223372036854775807]
+Input [6]: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7, l_quantity#17]
+Keys [5]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6]
+Functions [1]: [partial_sum(l_quantity#17)]
+Aggregate Attributes [2]: [sum#21, isEmpty#22]
+Results [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, #15#15]
 
 (36) NativeShuffleExchange
-Input [6]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, #9223372036854775807#9223372036854775807]
-Arguments: hashpartitioning(c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, 5), ENSURE_REQUIREMENTS, [plan_id=11351]
+Input [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, #15#15]
+Arguments: hashpartitioning(c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, 5), ENSURE_REQUIREMENTS, [plan_id=5]
 
 (37) ShuffleQueryStage
-Output [6]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, #9223372036854775807#9223372036854775807]
-Arguments: 8
+Output [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, #15#15]
+Arguments: X
 
 (38) AQEShuffleRead
-Input [6]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, #9223372036854775807#9223372036854775807]
+Input [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, #15#15]
 Arguments: coalesced
 
 (39) InputAdapter
-Input [6]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, #9223372036854775807#9223372036854775807]
+Input [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, #15#15]
 
 (40) NativeHashAggregate
-Input [6]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, #9223372036854775807#9223372036854775807]
-Keys [5]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202]
-Functions [1]: [sum(l_quantity#65)]
-Aggregate Attributes [1]: [sum(l_quantity#65)#2293]
-Results [6]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, sum(l_quantity#65)#2293]
+Input [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, #15#15]
+Keys [5]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6]
+Functions [1]: [sum(l_quantity#17)]
+Aggregate Attributes [1]: [sum(l_quantity#17)#23]
+Results [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum(l_quantity#17)#23]
 
 (41) NativeProject
-Input [6]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, sum(l_quantity#65)#2293]
-Arguments: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, sum(l_quantity#65)#2293 AS sum(l_quantity)#2294]
+Input [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum(l_quantity#17)#23]
+Arguments: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum(l_quantity#17)#23 AS sum(l_quantity)#24]
 
 (42) NativeTakeOrdered
-Input [6]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, sum(l_quantity)#2294]
-Arguments: 100, [o_totalprice#202 DESC NULLS LAST, o_orderdate#203 ASC NULLS FIRST]
+Input [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum(l_quantity)#24]
+Arguments: X, [o_totalprice#6 DESC NULLS LAST, o_orderdate#7 ASC NULLS FIRST]
 
 (43) Scan parquet 
-Output [2]: [c_custkey#0L, c_name#1]
+Output [2]: [c_custkey#1, c_name#2]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/customer]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(c_custkey)]
 ReadSchema: struct<c_custkey:bigint,c_name:string>
 
 (44) Filter
-Input [2]: [c_custkey#0L, c_name#1]
-Condition : isnotnull(c_custkey#0L)
+Input [2]: [c_custkey#1, c_name#2]
+Condition : isnotnull(c_custkey#1)
 
 (45) BroadcastExchange
-Input [2]: [c_custkey#0L, c_name#1]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=10606]
+Input [2]: [c_custkey#1, c_name#2]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=6]
 
 (46) Scan parquet 
-Output [4]: [o_orderkey#199L, o_custkey#200L, o_totalprice#202, o_orderdate#203]
+Output [4]: [o_orderkey#4, o_custkey#5, o_totalprice#6, o_orderdate#7]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/orders]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(o_custkey), IsNotNull(o_orderkey)]
 ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_totalprice:decimal(12,2),o_orderdate:date>
 
 (47) Filter
-Input [4]: [o_orderkey#199L, o_custkey#200L, o_totalprice#202, o_orderdate#203]
-Condition : (isnotnull(o_custkey#200L) AND isnotnull(o_orderkey#199L))
+Input [4]: [o_orderkey#4, o_custkey#5, o_totalprice#6, o_orderdate#7]
+Condition : (isnotnull(o_custkey#5) AND isnotnull(o_orderkey#4))
 
 (48) Scan parquet 
-Output [2]: [l_orderkey#2277L, l_quantity#2281]
+Output [2]: [l_orderkey#10, l_quantity#11]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/lineitem]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
 
 (49) HashAggregate
-Input [2]: [l_orderkey#2277L, l_quantity#2281]
-Keys [1]: [l_orderkey#2277L]
-Functions [1]: [partial_sum(l_quantity#2281)]
-Aggregate Attributes [2]: [sum#2305, isEmpty#2306]
-Results [3]: [l_orderkey#2277L, sum#2307, isEmpty#2308]
+Input [2]: [l_orderkey#10, l_quantity#11]
+Keys [1]: [l_orderkey#10]
+Functions [1]: [partial_sum(l_quantity#11)]
+Aggregate Attributes [2]: [sum#13, isEmpty#14]
+Results [3]: [l_orderkey#10, sum#25, isEmpty#26]
 
 (50) Exchange
-Input [3]: [l_orderkey#2277L, sum#2307, isEmpty#2308]
-Arguments: hashpartitioning(l_orderkey#2277L, 5), ENSURE_REQUIREMENTS, [plan_id=10598]
+Input [3]: [l_orderkey#10, sum#25, isEmpty#26]
+Arguments: hashpartitioning(l_orderkey#10, 5), ENSURE_REQUIREMENTS, [plan_id=7]
 
 (51) HashAggregate
-Input [3]: [l_orderkey#2277L, sum#2307, isEmpty#2308]
-Keys [1]: [l_orderkey#2277L]
-Functions [1]: [sum(l_quantity#2281)]
-Aggregate Attributes [1]: [sum(l_quantity#2281)#2275]
-Results [2]: [l_orderkey#2277L, sum(l_quantity#2281)#2275 AS sum(l_quantity#65)#2276]
+Input [3]: [l_orderkey#10, sum#25, isEmpty#26]
+Keys [1]: [l_orderkey#10]
+Functions [1]: [sum(l_quantity#11)]
+Aggregate Attributes [1]: [sum(l_quantity#11)#16]
+Results [2]: [l_orderkey#10, sum(l_quantity#11)#16 AS sum(l_quantity#17)#18]
 
 (52) Filter
-Input [2]: [l_orderkey#2277L, sum(l_quantity#65)#2276]
-Condition : (isnotnull(sum(l_quantity#65)#2276) AND (sum(l_quantity#65)#2276 > 300.00))
+Input [2]: [l_orderkey#10, sum(l_quantity#17)#18]
+Condition : (isnotnull(sum(l_quantity#17)#18) AND (sum(l_quantity#17)#18 > 300.00))
 
 (53) Project
-Output [1]: [l_orderkey#2277L]
-Input [2]: [l_orderkey#2277L, sum(l_quantity#65)#2276]
+Output [1]: [l_orderkey#10]
+Input [2]: [l_orderkey#10, sum(l_quantity#17)#18]
 
 (54) BroadcastExchange
-Input [1]: [l_orderkey#2277L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=10603]
+Input [1]: [l_orderkey#10]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=8]
 
 (55) BroadcastHashJoin
-Left keys [1]: [o_orderkey#199L]
-Right keys [1]: [l_orderkey#2277L]
+Left keys [1]: [o_orderkey#4]
+Right keys [1]: [l_orderkey#10]
 Join type: LeftSemi
 Join condition: None
 
 (56) BroadcastHashJoin
-Left keys [1]: [c_custkey#0L]
-Right keys [1]: [o_custkey#200L]
+Left keys [1]: [c_custkey#1]
+Right keys [1]: [o_custkey#5]
 Join type: Inner
 Join condition: None
 
 (57) Project
-Output [5]: [c_custkey#0L, c_name#1, o_orderkey#199L, o_totalprice#202, o_orderdate#203]
-Input [6]: [c_custkey#0L, c_name#1, o_orderkey#199L, o_custkey#200L, o_totalprice#202, o_orderdate#203]
+Output [5]: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7]
+Input [6]: [c_custkey#1, c_name#2, o_orderkey#4, o_custkey#5, o_totalprice#6, o_orderdate#7]
 
 (58) Scan parquet 
-Output [2]: [l_orderkey#61L, l_quantity#65]
+Output [2]: [l_orderkey#19, l_quantity#17]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/lineitem]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(l_orderkey)]
 ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
 
 (59) Filter
-Input [2]: [l_orderkey#61L, l_quantity#65]
-Condition : isnotnull(l_orderkey#61L)
+Input [2]: [l_orderkey#19, l_quantity#17]
+Condition : isnotnull(l_orderkey#19)
 
 (60) Scan parquet 
-Output [2]: [l_orderkey#2277L, l_quantity#2281]
+Output [2]: [l_orderkey#10, l_quantity#11]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/lineitem]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
 
 (61) HashAggregate
-Input [2]: [l_orderkey#2277L, l_quantity#2281]
-Keys [1]: [l_orderkey#2277L]
-Functions [1]: [partial_sum(l_quantity#2281)]
-Aggregate Attributes [2]: [sum#2305, isEmpty#2306]
-Results [3]: [l_orderkey#2277L, sum#2307, isEmpty#2308]
+Input [2]: [l_orderkey#10, l_quantity#11]
+Keys [1]: [l_orderkey#10]
+Functions [1]: [partial_sum(l_quantity#11)]
+Aggregate Attributes [2]: [sum#13, isEmpty#14]
+Results [3]: [l_orderkey#10, sum#25, isEmpty#26]
 
 (62) Exchange
-Input [3]: [l_orderkey#2277L, sum#2307, isEmpty#2308]
-Arguments: hashpartitioning(l_orderkey#2277L, 5), ENSURE_REQUIREMENTS, [plan_id=10609]
+Input [3]: [l_orderkey#10, sum#25, isEmpty#26]
+Arguments: hashpartitioning(l_orderkey#10, 5), ENSURE_REQUIREMENTS, [plan_id=9]
 
 (63) HashAggregate
-Input [3]: [l_orderkey#2277L, sum#2307, isEmpty#2308]
-Keys [1]: [l_orderkey#2277L]
-Functions [1]: [sum(l_quantity#2281)]
-Aggregate Attributes [1]: [sum(l_quantity#2281)#2275]
-Results [2]: [l_orderkey#2277L, sum(l_quantity#2281)#2275 AS sum(l_quantity#65)#2276]
+Input [3]: [l_orderkey#10, sum#25, isEmpty#26]
+Keys [1]: [l_orderkey#10]
+Functions [1]: [sum(l_quantity#11)]
+Aggregate Attributes [1]: [sum(l_quantity#11)#16]
+Results [2]: [l_orderkey#10, sum(l_quantity#11)#16 AS sum(l_quantity#17)#18]
 
 (64) Filter
-Input [2]: [l_orderkey#2277L, sum(l_quantity#65)#2276]
-Condition : (isnotnull(sum(l_quantity#65)#2276) AND (sum(l_quantity#65)#2276 > 300.00))
+Input [2]: [l_orderkey#10, sum(l_quantity#17)#18]
+Condition : (isnotnull(sum(l_quantity#17)#18) AND (sum(l_quantity#17)#18 > 300.00))
 
 (65) Project
-Output [1]: [l_orderkey#2277L]
-Input [2]: [l_orderkey#2277L, sum(l_quantity#65)#2276]
+Output [1]: [l_orderkey#10]
+Input [2]: [l_orderkey#10, sum(l_quantity#17)#18]
 
 (66) BroadcastExchange
-Input [1]: [l_orderkey#2277L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=10614]
+Input [1]: [l_orderkey#10]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=10]
 
 (67) BroadcastHashJoin
-Left keys [1]: [l_orderkey#61L]
-Right keys [1]: [l_orderkey#2277L]
+Left keys [1]: [l_orderkey#19]
+Right keys [1]: [l_orderkey#10]
 Join type: LeftSemi
 Join condition: None
 
 (68) BroadcastExchange
-Input [2]: [l_orderkey#61L, l_quantity#65]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=10617]
+Input [2]: [l_orderkey#19, l_quantity#17]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=11]
 
 (69) BroadcastHashJoin
-Left keys [1]: [o_orderkey#199L]
-Right keys [1]: [l_orderkey#61L]
+Left keys [1]: [o_orderkey#4]
+Right keys [1]: [l_orderkey#19]
 Join type: Inner
 Join condition: None
 
 (70) Project
-Output [6]: [c_custkey#0L, c_name#1, o_orderkey#199L, o_totalprice#202, o_orderdate#203, l_quantity#65]
-Input [7]: [c_custkey#0L, c_name#1, o_orderkey#199L, o_totalprice#202, o_orderdate#203, l_orderkey#61L, l_quantity#65]
+Output [6]: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7, l_quantity#17]
+Input [7]: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7, l_orderkey#19, l_quantity#17]
 
 (71) HashAggregate
-Input [6]: [c_custkey#0L, c_name#1, o_orderkey#199L, o_totalprice#202, o_orderdate#203, l_quantity#65]
-Keys [5]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202]
-Functions [1]: [partial_sum(l_quantity#65)]
-Aggregate Attributes [2]: [sum#2301, isEmpty#2302]
-Results [7]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, sum#2303, isEmpty#2304]
+Input [6]: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7, l_quantity#17]
+Keys [5]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6]
+Functions [1]: [partial_sum(l_quantity#17)]
+Aggregate Attributes [2]: [sum#21, isEmpty#22]
+Results [7]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum#27, isEmpty#28]
 
 (72) Exchange
-Input [7]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, sum#2303, isEmpty#2304]
-Arguments: hashpartitioning(c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, 5), ENSURE_REQUIREMENTS, [plan_id=10622]
+Input [7]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum#27, isEmpty#28]
+Arguments: hashpartitioning(c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, 5), ENSURE_REQUIREMENTS, [plan_id=12]
 
 (73) HashAggregate
-Input [7]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, sum#2303, isEmpty#2304]
-Keys [5]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202]
-Functions [1]: [sum(l_quantity#65)]
-Aggregate Attributes [1]: [sum(l_quantity#65)#2293]
-Results [6]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, sum(l_quantity#65)#2293 AS sum(l_quantity)#2294]
+Input [7]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum#27, isEmpty#28]
+Keys [5]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6]
+Functions [1]: [sum(l_quantity#17)]
+Aggregate Attributes [1]: [sum(l_quantity#17)#23]
+Results [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum(l_quantity#17)#23 AS sum(l_quantity)#24]
 
 (74) TakeOrderedAndProject
-Input [6]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, sum(l_quantity)#2294]
-Arguments: 100, [o_totalprice#202 DESC NULLS LAST, o_orderdate#203 ASC NULLS FIRST], [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, sum(l_quantity)#2294]
+Input [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum(l_quantity)#24]
+Arguments: X, [o_totalprice#6 DESC NULLS LAST, o_orderdate#7 ASC NULLS FIRST], [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum(l_quantity)#24]
 
 (75) AdaptiveSparkPlan
-Output [6]: [c_name#1, c_custkey#0L, o_orderkey#199L, o_orderdate#203, o_totalprice#202, sum(l_quantity)#2294]
+Output [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum(l_quantity)#24]
 Arguments: isFinalPlan=true
 

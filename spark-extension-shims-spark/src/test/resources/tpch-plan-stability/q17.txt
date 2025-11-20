@@ -31,141 +31,141 @@ AdaptiveSparkPlan (27)
 
 
 (1) AuronConverters$NativeEmptyExec$1
-Output [1]: [l_extendedprice#66]
-Arguments: [l_extendedprice#66], UnknownPartitioning(0)
+Output [1]: [l_extendedprice#1]
+Arguments: [l_extendedprice#1], UnknownPartitioning(0)
 
 (2) NativeHashAggregate
-Input [1]: [l_extendedprice#66]
+Input [1]: [l_extendedprice#1]
 Keys: []
-Functions [1]: [partial_sum(l_extendedprice#66)]
-Aggregate Attributes [2]: [sum#2188, isEmpty#2189]
-Results [1]: [#9223372036854775807#9223372036854775807]
+Functions [1]: [partial_sum(l_extendedprice#1)]
+Aggregate Attributes [2]: [sum#2, isEmpty#3]
+Results [1]: [#4#4]
 
 (3) NativeShuffleExchange
-Input [1]: [#9223372036854775807#9223372036854775807]
-Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=10481]
+Input [1]: [#4#4]
+Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=1]
 
 (4) ShuffleQueryStage
-Output [1]: [#9223372036854775807#9223372036854775807]
-Arguments: 2
+Output [1]: [#4#4]
+Arguments: X
 
 (5) NativeHashAggregate
-Input [1]: [#9223372036854775807#9223372036854775807]
+Input [1]: [#4#4]
 Keys: []
-Functions [1]: [sum(l_extendedprice#66)]
-Aggregate Attributes [1]: [sum(l_extendedprice#66)#2186]
-Results [1]: [sum(l_extendedprice#66)#2186]
+Functions [1]: [sum(l_extendedprice#1)]
+Aggregate Attributes [1]: [sum(l_extendedprice#1)#5]
+Results [1]: [sum(l_extendedprice#1)#5]
 
 (6) NativeProject
-Input [1]: [sum(l_extendedprice#66)#2186]
-Arguments: [(sum(l_extendedprice#66)#2186 / 7.0) AS avg_yearly#2166]
+Input [1]: [sum(l_extendedprice#1)#5]
+Arguments: [(sum(l_extendedprice#1)#5 / 7.0) AS avg_yearly#6]
 
 (7) Scan parquet 
-Output [3]: [l_partkey#62L, l_quantity#65, l_extendedprice#66]
+Output [3]: [l_partkey#7, l_quantity#8, l_extendedprice#1]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/lineitem]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(l_partkey), IsNotNull(l_quantity)]
 ReadSchema: struct<l_partkey:bigint,l_quantity:decimal(12,2),l_extendedprice:decimal(12,2)>
 
 (8) Filter
-Input [3]: [l_partkey#62L, l_quantity#65, l_extendedprice#66]
-Condition : (isnotnull(l_partkey#62L) AND isnotnull(l_quantity#65))
+Input [3]: [l_partkey#7, l_quantity#8, l_extendedprice#1]
+Condition : (isnotnull(l_partkey#7) AND isnotnull(l_quantity#8))
 
 (9) Scan parquet 
-Output [3]: [p_partkey#264L, p_brand#267, p_container#270]
+Output [3]: [p_partkey#9, p_brand#10, p_container#11]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/part]
-PushedFilters: [IsNotNull(p_brand), IsNotNull(p_container), EqualTo(p_brand,Brand#23), EqualTo(p_container,MED BOX), IsNotNull(p_partkey)]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(p_brand), IsNotNull(p_container), EqualTo(p_brand,Brand#12), EqualTo(p_container,MED BOX), IsNotNull(p_partkey)]
 ReadSchema: struct<p_partkey:bigint,p_brand:string,p_container:string>
 
 (10) Filter
-Input [3]: [p_partkey#264L, p_brand#267, p_container#270]
-Condition : ((((isnotnull(p_brand#267) AND isnotnull(p_container#270)) AND (p_brand#267 = Brand#23)) AND (p_container#270 = MED BOX)) AND isnotnull(p_partkey#264L))
+Input [3]: [p_partkey#9, p_brand#10, p_container#11]
+Condition : ((((isnotnull(p_brand#10) AND isnotnull(p_container#11)) AND (p_brand#10 = Brand#12)) AND (p_container#11 = MED BOX)) AND isnotnull(p_partkey#9))
 
 (11) Project
-Output [1]: [p_partkey#264L]
-Input [3]: [p_partkey#264L, p_brand#267, p_container#270]
+Output [1]: [p_partkey#9]
+Input [3]: [p_partkey#9, p_brand#10, p_container#11]
 
 (12) BroadcastExchange
-Input [1]: [p_partkey#264L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=10226]
+Input [1]: [p_partkey#9]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=2]
 
 (13) BroadcastHashJoin
-Left keys [1]: [l_partkey#62L]
-Right keys [1]: [p_partkey#264L]
+Left keys [1]: [l_partkey#7]
+Right keys [1]: [p_partkey#9]
 Join type: Inner
 Join condition: None
 
 (14) Project
-Output [3]: [l_quantity#65, l_extendedprice#66, p_partkey#264L]
-Input [4]: [l_partkey#62L, l_quantity#65, l_extendedprice#66, p_partkey#264L]
+Output [3]: [l_quantity#8, l_extendedprice#1, p_partkey#9]
+Input [4]: [l_partkey#7, l_quantity#8, l_extendedprice#1, p_partkey#9]
 
 (15) Scan parquet 
-Output [2]: [l_partkey#2171L, l_quantity#2174]
+Output [2]: [l_partkey#13, l_quantity#14]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/lineitem]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(l_partkey)]
 ReadSchema: struct<l_partkey:bigint,l_quantity:decimal(12,2)>
 
 (16) Filter
-Input [2]: [l_partkey#2171L, l_quantity#2174]
-Condition : isnotnull(l_partkey#2171L)
+Input [2]: [l_partkey#13, l_quantity#14]
+Condition : isnotnull(l_partkey#13)
 
 (17) HashAggregate
-Input [2]: [l_partkey#2171L, l_quantity#2174]
-Keys [1]: [l_partkey#2171L]
-Functions [1]: [partial_avg(l_quantity#2174)]
-Aggregate Attributes [2]: [sum#2192, count#2193L]
-Results [3]: [l_partkey#2171L, sum#2194, count#2195L]
+Input [2]: [l_partkey#13, l_quantity#14]
+Keys [1]: [l_partkey#13]
+Functions [1]: [partial_avg(l_quantity#14)]
+Aggregate Attributes [2]: [sum#15, count#16]
+Results [3]: [l_partkey#13, sum#17, count#18]
 
 (18) Exchange
-Input [3]: [l_partkey#2171L, sum#2194, count#2195L]
-Arguments: hashpartitioning(l_partkey#2171L, 5), ENSURE_REQUIREMENTS, [plan_id=10229]
+Input [3]: [l_partkey#13, sum#17, count#18]
+Arguments: hashpartitioning(l_partkey#13, 5), ENSURE_REQUIREMENTS, [plan_id=3]
 
 (19) HashAggregate
-Input [3]: [l_partkey#2171L, sum#2194, count#2195L]
-Keys [1]: [l_partkey#2171L]
-Functions [1]: [avg(l_quantity#2174)]
-Aggregate Attributes [1]: [avg(l_quantity#2174)#2168]
-Results [2]: [(0.2 * avg(l_quantity#2174)#2168) AS (0.2 * avg(l_quantity))#2169, l_partkey#2171L]
+Input [3]: [l_partkey#13, sum#17, count#18]
+Keys [1]: [l_partkey#13]
+Functions [1]: [avg(l_quantity#14)]
+Aggregate Attributes [1]: [avg(l_quantity#14)#19]
+Results [2]: [(0.2 * avg(l_quantity#14)#19) AS (0.2 * avg(l_quantity))#20, l_partkey#13]
 
 (20) Filter
-Input [2]: [(0.2 * avg(l_quantity))#2169, l_partkey#2171L]
-Condition : isnotnull((0.2 * avg(l_quantity))#2169)
+Input [2]: [(0.2 * avg(l_quantity))#20, l_partkey#13]
+Condition : isnotnull((0.2 * avg(l_quantity))#20)
 
 (21) BroadcastExchange
-Input [2]: [(0.2 * avg(l_quantity))#2169, l_partkey#2171L]
-Arguments: HashedRelationBroadcastMode(List(input[1, bigint, true]),false), [plan_id=10233]
+Input [2]: [(0.2 * avg(l_quantity))#20, l_partkey#13]
+Arguments: HashedRelationBroadcastMode(List(input[1, bigint, true]),false), [plan_id=4]
 
 (22) BroadcastHashJoin
-Left keys [1]: [p_partkey#264L]
-Right keys [1]: [l_partkey#2171L]
+Left keys [1]: [p_partkey#9]
+Right keys [1]: [l_partkey#13]
 Join type: Inner
-Join condition: (cast(l_quantity#65 as decimal(18,7)) < (0.2 * avg(l_quantity))#2169)
+Join condition: (cast(l_quantity#8 as decimal(18,7)) < (0.2 * avg(l_quantity))#20)
 
 (23) Project
-Output [1]: [l_extendedprice#66]
-Input [5]: [l_quantity#65, l_extendedprice#66, p_partkey#264L, (0.2 * avg(l_quantity))#2169, l_partkey#2171L]
+Output [1]: [l_extendedprice#1]
+Input [5]: [l_quantity#8, l_extendedprice#1, p_partkey#9, (0.2 * avg(l_quantity))#20, l_partkey#13]
 
 (24) HashAggregate
-Input [1]: [l_extendedprice#66]
+Input [1]: [l_extendedprice#1]
 Keys: []
-Functions [1]: [partial_sum(l_extendedprice#66)]
-Aggregate Attributes [2]: [sum#2188, isEmpty#2189]
-Results [2]: [sum#2190, isEmpty#2191]
+Functions [1]: [partial_sum(l_extendedprice#1)]
+Aggregate Attributes [2]: [sum#2, isEmpty#3]
+Results [2]: [sum#21, isEmpty#22]
 
 (25) Exchange
-Input [2]: [sum#2190, isEmpty#2191]
-Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=10238]
+Input [2]: [sum#21, isEmpty#22]
+Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=5]
 
 (26) HashAggregate
-Input [2]: [sum#2190, isEmpty#2191]
+Input [2]: [sum#21, isEmpty#22]
 Keys: []
-Functions [1]: [sum(l_extendedprice#66)]
-Aggregate Attributes [1]: [sum(l_extendedprice#66)#2186]
-Results [1]: [(sum(l_extendedprice#66)#2186 / 7.0) AS avg_yearly#2166]
+Functions [1]: [sum(l_extendedprice#1)]
+Aggregate Attributes [1]: [sum(l_extendedprice#1)#5]
+Results [1]: [(sum(l_extendedprice#1)#5 / 7.0) AS avg_yearly#6]
 
 (27) AdaptiveSparkPlan
-Output [1]: [avg_yearly#2166]
+Output [1]: [avg_yearly#6]
 Arguments: isFinalPlan=true
 

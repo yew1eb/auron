@@ -42,174 +42,174 @@ AdaptiveSparkPlan (38)
 
 
 (1) NativeParquetScan 
-Output [2]: [o_orderkey#199L, o_orderpriority#204]
-Arguments: FileScan parquet [o_orderkey#199L,o_orderpriority#204] Batched: true, DataFilters: [isnotnull(o_orderkey#199L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(o_orderkey)], ReadSchema: struct<o_orderkey:bigint,o_orderpriority:string>
+Output [2]: [o_orderkey#1, o_orderpriority#2]
+Arguments: FileScan parquet [o_orderkey#1,o_orderpriority#2] Batched: true, DataFilters: [isnotnull(o_orderkey#1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(o_orderkey)], ReadSchema: struct<o_orderkey:bigint,o_orderpriority:string>
 
 (2) InputAdapter
-Input [2]: [o_orderkey#199L, o_orderpriority#204]
-Arguments: [#199, #204]
+Input [2]: [o_orderkey#1, o_orderpriority#2]
+Arguments: [#3, #2]
 
 (3) NativeFilter
-Input [2]: [#199#199L, #204#204]
-Arguments: isnotnull(o_orderkey#199L)
+Input [2]: [#3#1, #2#2]
+Arguments: isnotnull(o_orderkey#1)
 
 (4) NativeBroadcastExchange
-Input [2]: [#199#199L, #204#204]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=8372]
+Input [2]: [#3#1, #2#2]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=1]
 
 (5) BroadcastQueryStage
-Output [2]: [#199#199L, #204#204]
-Arguments: 0
+Output [2]: [#3#1, #2#2]
+Arguments: X
 
 (6) NativeParquetScan 
-Output [5]: [l_orderkey#61L, l_shipdate#71, l_commitdate#72, l_receiptdate#73, l_shipmode#75]
-Arguments: FileScan parquet [l_orderkey#61L,l_shipdate#71,l_commitdate#72,l_receiptdate#73,l_shipmode#75] Batched: true, DataFilters: [isnotnull(l_commitdate#72), isnotnull(l_receiptdate#73), isnotnull(l_shipdate#71), l_shipmode#75..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(l_commitdate), IsNotNull(l_receiptdate), IsNotNull(l_shipdate), In(l_shipmode, [MAIL,S..., ReadSchema: struct<l_orderkey:bigint,l_shipdate:date,l_commitdate:date,l_receiptdate:date,l_shipmode:string>
+Output [5]: [l_orderkey#4, l_shipdate#5, l_commitdate#6, l_receiptdate#7, l_shipmode#8]
+Arguments: FileScan parquet [l_orderkey#4,l_shipdate#5,l_commitdate#6,l_receiptdate#7,l_shipmode#8] Batched: true, DataFilters: [isnotnull(l_commitdate#6), isnotnull(l_receiptdate#7), isnotnull(l_shipdate#5), l_shipmode#8..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_commitdate), IsNotNull(l_receiptdate), IsNotNull(l_shipdate), In(l_shipmode, [MAIL,S..., ReadSchema: struct<l_orderkey:bigint,l_shipdate:date,l_commitdate:date,l_receiptdate:date,l_shipmode:string>
 
 (7) InputAdapter
-Input [5]: [l_orderkey#61L, l_shipdate#71, l_commitdate#72, l_receiptdate#73, l_shipmode#75]
-Arguments: [#61, #71, #72, #73, #75]
+Input [5]: [l_orderkey#4, l_shipdate#5, l_commitdate#6, l_receiptdate#7, l_shipmode#8]
+Arguments: [#9, #5, #6, #7, #8]
 
 (8) NativeFilter
-Input [5]: [#61#61L, #71#71, #72#72, #73#73, #75#75]
-Arguments: ((((((((isnotnull(l_commitdate#72) AND isnotnull(l_receiptdate#73)) AND isnotnull(l_shipdate#71)) AND l_shipmode#75 IN (MAIL,SHIP)) AND (l_commitdate#72 < l_receiptdate#73)) AND (l_shipdate#71 < l_commitdate#72)) AND (l_receiptdate#73 >= 1994-01-01)) AND (l_receiptdate#73 < 1995-01-01)) AND isnotnull(l_orderkey#61L))
+Input [5]: [#9#4, #5#5, #6#6, #7#7, #8#8]
+Arguments: ((((((((isnotnull(l_commitdate#6) AND isnotnull(l_receiptdate#7)) AND isnotnull(l_shipdate#5)) AND l_shipmode#8 IN (MAIL,SHIP)) AND (l_commitdate#6 < l_receiptdate#7)) AND (l_shipdate#5 < l_commitdate#6)) AND (l_receiptdate#7 >= 1994-01-01)) AND (l_receiptdate#7 < 1995-01-01)) AND isnotnull(l_orderkey#4))
 
 (9) NativeProject
-Input [5]: [#61#61L, #71#71, #72#72, #73#73, #75#75]
-Arguments: [l_orderkey#61L, l_shipmode#75]
+Input [5]: [#9#4, #5#5, #6#6, #7#7, #8#8]
+Arguments: [l_orderkey#4, l_shipmode#8]
 
 (10) NativeBroadcastJoin
-Left keys [1]: [o_orderkey#199L]
-Right keys [1]: [l_orderkey#61L]
+Left keys [1]: [o_orderkey#1]
+Right keys [1]: [l_orderkey#4]
 Join type: Inner
 Join condition: None
 
 (11) NativeProject
-Input [4]: [#199#199L, #204#204, l_orderkey#61L, l_shipmode#75]
-Arguments: [o_orderpriority#204, l_shipmode#75]
+Input [4]: [#3#1, #2#2, l_orderkey#4, l_shipmode#8]
+Arguments: [o_orderpriority#2, l_shipmode#8]
 
 (12) NativeProject
-Input [2]: [o_orderpriority#204, l_shipmode#75]
-Arguments: [l_shipmode#75 AS l_shipmode#75, CASE WHEN ((o_orderpriority#204 = 1-URGENT) OR (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END AS _c1#1683, CASE WHEN (NOT (o_orderpriority#204 = 1-URGENT) AND NOT (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END AS _c2#1684]
+Input [2]: [o_orderpriority#2, l_shipmode#8]
+Arguments: [l_shipmode#8 AS l_shipmode#8, CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END AS _c1#10, CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END AS _c2#11]
 
 (13) NativeHashAggregate
-Input [3]: [l_shipmode#75, _c1#1683, _c2#1684]
-Keys [1]: [l_shipmode#75]
-Functions [2]: [partial_sum(_c1#1683), partial_sum(_c2#1684)]
-Aggregate Attributes [2]: [sum#1654L, sum#1655L]
-Results [2]: [l_shipmode#75, #9223372036854775807#9223372036854775807]
+Input [3]: [l_shipmode#8, _c1#10, _c2#11]
+Keys [1]: [l_shipmode#8]
+Functions [2]: [partial_sum(_c1#10), partial_sum(_c2#11)]
+Aggregate Attributes [2]: [sum#12, sum#13]
+Results [2]: [l_shipmode#8, #14#14]
 
 (14) NativeShuffleExchange
-Input [2]: [l_shipmode#75, #9223372036854775807#9223372036854775807]
-Arguments: hashpartitioning(l_shipmode#75, 5), ENSURE_REQUIREMENTS, [plan_id=8491]
+Input [2]: [l_shipmode#8, #14#14]
+Arguments: hashpartitioning(l_shipmode#8, 5), ENSURE_REQUIREMENTS, [plan_id=2]
 
 (15) ShuffleQueryStage
-Output [2]: [l_shipmode#75, #9223372036854775807#9223372036854775807]
-Arguments: 1
+Output [2]: [l_shipmode#8, #14#14]
+Arguments: X
 
 (16) AQEShuffleRead
-Input [2]: [l_shipmode#75, #9223372036854775807#9223372036854775807]
+Input [2]: [l_shipmode#8, #14#14]
 Arguments: coalesced
 
 (17) InputAdapter
-Input [2]: [l_shipmode#75, #9223372036854775807#9223372036854775807]
+Input [2]: [l_shipmode#8, #14#14]
 
 (18) NativeHashAggregate
-Input [2]: [l_shipmode#75, #9223372036854775807#9223372036854775807]
-Keys [1]: [l_shipmode#75]
-Functions [2]: [sum(CASE WHEN ((o_orderpriority#204 = 1-URGENT) OR (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END), sum(CASE WHEN (NOT (o_orderpriority#204 = 1-URGENT) AND NOT (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)]
-Aggregate Attributes [2]: [sum(CASE WHEN ((o_orderpriority#204 = 1-URGENT) OR (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)#1649L, sum(CASE WHEN (NOT (o_orderpriority#204 = 1-URGENT) AND NOT (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)#1650L]
-Results [3]: [l_shipmode#75, sum(CASE WHEN ((o_orderpriority#204 = 1-URGENT) OR (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)#1649L, sum(CASE WHEN (NOT (o_orderpriority#204 = 1-URGENT) AND NOT (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)#1650L]
+Input [2]: [l_shipmode#8, #14#14]
+Keys [1]: [l_shipmode#8]
+Functions [2]: [sum(CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END), sum(CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)]
+Aggregate Attributes [2]: [sum(CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#15, sum(CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#16]
+Results [3]: [l_shipmode#8, sum(CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#15, sum(CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#16]
 
 (19) NativeProject
-Input [3]: [l_shipmode#75, sum(CASE WHEN ((o_orderpriority#204 = 1-URGENT) OR (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)#1649L, sum(CASE WHEN (NOT (o_orderpriority#204 = 1-URGENT) AND NOT (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)#1650L]
-Arguments: [l_shipmode#75, sum(CASE WHEN ((o_orderpriority#204 = 1-URGENT) OR (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)#1649L AS high_line_count#1647L, sum(CASE WHEN (NOT (o_orderpriority#204 = 1-URGENT) AND NOT (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)#1650L AS low_line_count#1648L]
+Input [3]: [l_shipmode#8, sum(CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#15, sum(CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#16]
+Arguments: [l_shipmode#8, sum(CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#15 AS high_line_count#17, sum(CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#16 AS low_line_count#18]
 
 (20) NativeShuffleExchange
-Input [3]: [l_shipmode#75, high_line_count#1647L, low_line_count#1648L]
-Arguments: rangepartitioning(l_shipmode#75 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=8550]
+Input [3]: [l_shipmode#8, high_line_count#17, low_line_count#18]
+Arguments: rangepartitioning(l_shipmode#8 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=3]
 
 (21) ShuffleQueryStage
-Output [3]: [l_shipmode#75, high_line_count#1647L, low_line_count#1648L]
-Arguments: 2
+Output [3]: [l_shipmode#8, high_line_count#17, low_line_count#18]
+Arguments: X
 
 (22) AQEShuffleRead
-Input [3]: [l_shipmode#75, high_line_count#1647L, low_line_count#1648L]
+Input [3]: [l_shipmode#8, high_line_count#17, low_line_count#18]
 Arguments: coalesced
 
 (23) InputAdapter
-Input [3]: [l_shipmode#75, high_line_count#1647L, low_line_count#1648L]
+Input [3]: [l_shipmode#8, high_line_count#17, low_line_count#18]
 
 (24) NativeSort
-Input [3]: [l_shipmode#75, high_line_count#1647L, low_line_count#1648L]
-Arguments: [l_shipmode#75 ASC NULLS FIRST], true
+Input [3]: [l_shipmode#8, high_line_count#17, low_line_count#18]
+Arguments: [l_shipmode#8 ASC NULLS FIRST], true
 
 (25) Scan parquet 
-Output [2]: [o_orderkey#199L, o_orderpriority#204]
+Output [2]: [o_orderkey#1, o_orderpriority#2]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/orders]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(o_orderkey)]
 ReadSchema: struct<o_orderkey:bigint,o_orderpriority:string>
 
 (26) Filter
-Input [2]: [o_orderkey#199L, o_orderpriority#204]
-Condition : isnotnull(o_orderkey#199L)
+Input [2]: [o_orderkey#1, o_orderpriority#2]
+Condition : isnotnull(o_orderkey#1)
 
 (27) BroadcastExchange
-Input [2]: [o_orderkey#199L, o_orderpriority#204]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=8328]
+Input [2]: [o_orderkey#1, o_orderpriority#2]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=4]
 
 (28) Scan parquet 
-Output [5]: [l_orderkey#61L, l_shipdate#71, l_commitdate#72, l_receiptdate#73, l_shipmode#75]
+Output [5]: [l_orderkey#4, l_shipdate#5, l_commitdate#6, l_receiptdate#7, l_shipmode#8]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/lineitem]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(l_commitdate), IsNotNull(l_receiptdate), IsNotNull(l_shipdate), In(l_shipmode, [MAIL,SHIP]), GreaterThanOrEqual(l_receiptdate,1994-01-01), LessThan(l_receiptdate,1995-01-01), IsNotNull(l_orderkey)]
 ReadSchema: struct<l_orderkey:bigint,l_shipdate:date,l_commitdate:date,l_receiptdate:date,l_shipmode:string>
 
 (29) Filter
-Input [5]: [l_orderkey#61L, l_shipdate#71, l_commitdate#72, l_receiptdate#73, l_shipmode#75]
-Condition : ((((((((isnotnull(l_commitdate#72) AND isnotnull(l_receiptdate#73)) AND isnotnull(l_shipdate#71)) AND l_shipmode#75 IN (MAIL,SHIP)) AND (l_commitdate#72 < l_receiptdate#73)) AND (l_shipdate#71 < l_commitdate#72)) AND (l_receiptdate#73 >= 1994-01-01)) AND (l_receiptdate#73 < 1995-01-01)) AND isnotnull(l_orderkey#61L))
+Input [5]: [l_orderkey#4, l_shipdate#5, l_commitdate#6, l_receiptdate#7, l_shipmode#8]
+Condition : ((((((((isnotnull(l_commitdate#6) AND isnotnull(l_receiptdate#7)) AND isnotnull(l_shipdate#5)) AND l_shipmode#8 IN (MAIL,SHIP)) AND (l_commitdate#6 < l_receiptdate#7)) AND (l_shipdate#5 < l_commitdate#6)) AND (l_receiptdate#7 >= 1994-01-01)) AND (l_receiptdate#7 < 1995-01-01)) AND isnotnull(l_orderkey#4))
 
 (30) Project
-Output [2]: [l_orderkey#61L, l_shipmode#75]
-Input [5]: [l_orderkey#61L, l_shipdate#71, l_commitdate#72, l_receiptdate#73, l_shipmode#75]
+Output [2]: [l_orderkey#4, l_shipmode#8]
+Input [5]: [l_orderkey#4, l_shipdate#5, l_commitdate#6, l_receiptdate#7, l_shipmode#8]
 
 (31) BroadcastHashJoin
-Left keys [1]: [o_orderkey#199L]
-Right keys [1]: [l_orderkey#61L]
+Left keys [1]: [o_orderkey#1]
+Right keys [1]: [l_orderkey#4]
 Join type: Inner
 Join condition: None
 
 (32) Project
-Output [2]: [o_orderpriority#204, l_shipmode#75]
-Input [4]: [o_orderkey#199L, o_orderpriority#204, l_orderkey#61L, l_shipmode#75]
+Output [2]: [o_orderpriority#2, l_shipmode#8]
+Input [4]: [o_orderkey#1, o_orderpriority#2, l_orderkey#4, l_shipmode#8]
 
 (33) HashAggregate
-Input [2]: [o_orderpriority#204, l_shipmode#75]
-Keys [1]: [l_shipmode#75]
-Functions [2]: [partial_sum(CASE WHEN ((o_orderpriority#204 = 1-URGENT) OR (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END), partial_sum(CASE WHEN (NOT (o_orderpriority#204 = 1-URGENT) AND NOT (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)]
-Aggregate Attributes [2]: [sum#1654L, sum#1655L]
-Results [3]: [l_shipmode#75, sum#1656L, sum#1657L]
+Input [2]: [o_orderpriority#2, l_shipmode#8]
+Keys [1]: [l_shipmode#8]
+Functions [2]: [partial_sum(CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END), partial_sum(CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)]
+Aggregate Attributes [2]: [sum#12, sum#13]
+Results [3]: [l_shipmode#8, sum#19, sum#20]
 
 (34) Exchange
-Input [3]: [l_shipmode#75, sum#1656L, sum#1657L]
-Arguments: hashpartitioning(l_shipmode#75, 5), ENSURE_REQUIREMENTS, [plan_id=8333]
+Input [3]: [l_shipmode#8, sum#19, sum#20]
+Arguments: hashpartitioning(l_shipmode#8, 5), ENSURE_REQUIREMENTS, [plan_id=5]
 
 (35) HashAggregate
-Input [3]: [l_shipmode#75, sum#1656L, sum#1657L]
-Keys [1]: [l_shipmode#75]
-Functions [2]: [sum(CASE WHEN ((o_orderpriority#204 = 1-URGENT) OR (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END), sum(CASE WHEN (NOT (o_orderpriority#204 = 1-URGENT) AND NOT (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)]
-Aggregate Attributes [2]: [sum(CASE WHEN ((o_orderpriority#204 = 1-URGENT) OR (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)#1649L, sum(CASE WHEN (NOT (o_orderpriority#204 = 1-URGENT) AND NOT (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)#1650L]
-Results [3]: [l_shipmode#75, sum(CASE WHEN ((o_orderpriority#204 = 1-URGENT) OR (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)#1649L AS high_line_count#1647L, sum(CASE WHEN (NOT (o_orderpriority#204 = 1-URGENT) AND NOT (o_orderpriority#204 = 2-HIGH)) THEN 1 ELSE 0 END)#1650L AS low_line_count#1648L]
+Input [3]: [l_shipmode#8, sum#19, sum#20]
+Keys [1]: [l_shipmode#8]
+Functions [2]: [sum(CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END), sum(CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)]
+Aggregate Attributes [2]: [sum(CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#15, sum(CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#16]
+Results [3]: [l_shipmode#8, sum(CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#15 AS high_line_count#17, sum(CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#16 AS low_line_count#18]
 
 (36) Exchange
-Input [3]: [l_shipmode#75, high_line_count#1647L, low_line_count#1648L]
-Arguments: rangepartitioning(l_shipmode#75 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=8336]
+Input [3]: [l_shipmode#8, high_line_count#17, low_line_count#18]
+Arguments: rangepartitioning(l_shipmode#8 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=6]
 
 (37) Sort
-Input [3]: [l_shipmode#75, high_line_count#1647L, low_line_count#1648L]
-Arguments: [l_shipmode#75 ASC NULLS FIRST], true, 0
+Input [3]: [l_shipmode#8, high_line_count#17, low_line_count#18]
+Arguments: [l_shipmode#8 ASC NULLS FIRST], true, 0
 
 (38) AdaptiveSparkPlan
-Output [3]: [l_shipmode#75, high_line_count#1647L, low_line_count#1648L]
+Output [3]: [l_shipmode#8, high_line_count#17, low_line_count#18]
 Arguments: isFinalPlan=true
 

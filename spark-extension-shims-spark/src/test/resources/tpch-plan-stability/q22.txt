@@ -37,159 +37,159 @@ AdaptiveSparkPlan (33)
 
 
 (1) NativeParquetScan 
-Output [3]: [c_custkey#0L, c_phone#4, c_acctbal#5]
-Arguments: FileScan parquet [c_custkey#0L,c_phone#4,c_acctbal#5] Batched: true, DataFilters: [isnotnull(c_acctbal#5), substring(c_phone#4, 1, 2) IN (13,31,23,29,30,18,17)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(c_acctbal)], ReadSchema: struct<c_custkey:bigint,c_phone:string,c_acctbal:decimal(12,2)>
+Output [3]: [c_custkey#1, c_phone#2, c_acctbal#3]
+Arguments: FileScan parquet [c_custkey#1,c_phone#2,c_acctbal#3] Batched: true, DataFilters: [isnotnull(c_acctbal#3), substring(c_phone#2, 1, 2) IN (13,31,23,29,30,18,17)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(c_acctbal)], ReadSchema: struct<c_custkey:bigint,c_phone:string,c_acctbal:decimal(12,2)>
 
 (2) InputAdapter
-Input [3]: [c_custkey#0L, c_phone#4, c_acctbal#5]
-Arguments: [#0, #4, #5]
+Input [3]: [c_custkey#1, c_phone#2, c_acctbal#3]
+Arguments: [#4, #2, #3]
 
 (3) NativeFilter
-Input [3]: [#0#0L, #4#4, #5#5]
-Arguments: ((isnotnull(c_acctbal#5) AND substring(c_phone#4, 1, 2) IN (13,31,23,29,30,18,17)) AND (cast(c_acctbal#5 as decimal(16,6)) > Subquery subquery#2588, [id=#13456]))
+Input [3]: [#4#1, #2#2, #3#3]
+Arguments: ((isnotnull(c_acctbal#3) AND substring(c_phone#2, 1, 2) IN (13,31,23,29,30,18,17)) AND (cast(c_acctbal#3 as decimal(16,6)) > Subquery subquery#5, [id=#6]))
 
 (4) NativeParquetScan 
-Output [1]: [o_custkey#200L]
-Arguments: FileScan parquet [o_custkey#200L] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [], ReadSchema: struct<o_custkey:bigint>
+Output [1]: [o_custkey#7]
+Arguments: FileScan parquet [o_custkey#7] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [], ReadSchema: struct<o_custkey:bigint>
 
 (5) InputAdapter
-Input [1]: [o_custkey#200L]
-Arguments: [#200]
+Input [1]: [o_custkey#7]
+Arguments: [#8]
 
 (6) NativeBroadcastExchange
-Input [1]: [#200#200L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=13514]
+Input [1]: [#8#7]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=1]
 
 (7) BroadcastQueryStage
-Output [1]: [#200#200L]
-Arguments: 0
+Output [1]: [#8#7]
+Arguments: X
 
 (8) NativeBroadcastJoin
-Left keys [1]: [c_custkey#0L]
-Right keys [1]: [o_custkey#200L]
+Left keys [1]: [c_custkey#1]
+Right keys [1]: [o_custkey#7]
 Join type: LeftAnti
 Join condition: None
 
 (9) NativeProject
-Input [3]: [#0#0L, #4#4, #5#5]
-Arguments: [substring(c_phone#4, 1, 2) AS cntrycode#2587, c_acctbal#5]
+Input [3]: [#4#1, #2#2, #3#3]
+Arguments: [substring(c_phone#2, 1, 2) AS cntrycode#9, c_acctbal#3]
 
 (10) NativeHashAggregate
-Input [2]: [cntrycode#2587, c_acctbal#5]
-Keys [1]: [cntrycode#2587]
-Functions [2]: [partial_count(1), partial_sum(c_acctbal#5)]
-Aggregate Attributes [3]: [count#2607L, sum#2608, isEmpty#2609]
-Results [2]: [cntrycode#2587, #9223372036854775807#9223372036854775807]
+Input [2]: [cntrycode#9, c_acctbal#3]
+Keys [1]: [cntrycode#9]
+Functions [2]: [partial_count(1), partial_sum(c_acctbal#3)]
+Aggregate Attributes [3]: [count#10, sum#11, isEmpty#12]
+Results [2]: [cntrycode#9, #13#13]
 
 (11) NativeShuffleExchange
-Input [2]: [cntrycode#2587, #9223372036854775807#9223372036854775807]
-Arguments: hashpartitioning(cntrycode#2587, 5), ENSURE_REQUIREMENTS, [plan_id=13654]
+Input [2]: [cntrycode#9, #13#13]
+Arguments: hashpartitioning(cntrycode#9, 5), ENSURE_REQUIREMENTS, [plan_id=2]
 
 (12) ShuffleQueryStage
-Output [2]: [cntrycode#2587, #9223372036854775807#9223372036854775807]
-Arguments: 1
+Output [2]: [cntrycode#9, #13#13]
+Arguments: X
 
 (13) AQEShuffleRead
-Input [2]: [cntrycode#2587, #9223372036854775807#9223372036854775807]
+Input [2]: [cntrycode#9, #13#13]
 Arguments: coalesced
 
 (14) InputAdapter
-Input [2]: [cntrycode#2587, #9223372036854775807#9223372036854775807]
+Input [2]: [cntrycode#9, #13#13]
 
 (15) NativeHashAggregate
-Input [2]: [cntrycode#2587, #9223372036854775807#9223372036854775807]
-Keys [1]: [cntrycode#2587]
-Functions [2]: [count(1), sum(c_acctbal#5)]
-Aggregate Attributes [2]: [count(1)#2592L, sum(c_acctbal#5)#2603]
-Results [3]: [cntrycode#2587, count(1)#2592L, sum(c_acctbal#5)#2603]
+Input [2]: [cntrycode#9, #13#13]
+Keys [1]: [cntrycode#9]
+Functions [2]: [count(1), sum(c_acctbal#3)]
+Aggregate Attributes [2]: [count(1)#14, sum(c_acctbal#3)#15]
+Results [3]: [cntrycode#9, count(1)#14, sum(c_acctbal#3)#15]
 
 (16) NativeProject
-Input [3]: [cntrycode#2587, count(1)#2592L, sum(c_acctbal#5)#2603]
-Arguments: [cntrycode#2587, count(1)#2592L AS numcust#2590L, sum(c_acctbal#5)#2603 AS totacctbal#2591]
+Input [3]: [cntrycode#9, count(1)#14, sum(c_acctbal#3)#15]
+Arguments: [cntrycode#9, count(1)#14 AS numcust#16, sum(c_acctbal#3)#15 AS totacctbal#17]
 
 (17) NativeShuffleExchange
-Input [3]: [cntrycode#2587, numcust#2590L, totacctbal#2591]
-Arguments: rangepartitioning(cntrycode#2587 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=13705]
+Input [3]: [cntrycode#9, numcust#16, totacctbal#17]
+Arguments: rangepartitioning(cntrycode#9 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=3]
 
 (18) ShuffleQueryStage
-Output [3]: [cntrycode#2587, numcust#2590L, totacctbal#2591]
-Arguments: 2
+Output [3]: [cntrycode#9, numcust#16, totacctbal#17]
+Arguments: X
 
 (19) AQEShuffleRead
-Input [3]: [cntrycode#2587, numcust#2590L, totacctbal#2591]
+Input [3]: [cntrycode#9, numcust#16, totacctbal#17]
 Arguments: coalesced
 
 (20) InputAdapter
-Input [3]: [cntrycode#2587, numcust#2590L, totacctbal#2591]
+Input [3]: [cntrycode#9, numcust#16, totacctbal#17]
 
 (21) NativeSort
-Input [3]: [cntrycode#2587, numcust#2590L, totacctbal#2591]
-Arguments: [cntrycode#2587 ASC NULLS FIRST], true
+Input [3]: [cntrycode#9, numcust#16, totacctbal#17]
+Arguments: [cntrycode#9 ASC NULLS FIRST], true
 
 (22) Scan parquet 
-Output [3]: [c_custkey#0L, c_phone#4, c_acctbal#5]
+Output [3]: [c_custkey#1, c_phone#2, c_acctbal#3]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/customer]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(c_acctbal)]
 ReadSchema: struct<c_custkey:bigint,c_phone:string,c_acctbal:decimal(12,2)>
 
 (23) Filter
-Input [3]: [c_custkey#0L, c_phone#4, c_acctbal#5]
-Condition : ((isnotnull(c_acctbal#5) AND substring(c_phone#4, 1, 2) IN (13,31,23,29,30,18,17)) AND (cast(c_acctbal#5 as decimal(16,6)) > Subquery subquery#2588, [id=#13456]))
+Input [3]: [c_custkey#1, c_phone#2, c_acctbal#3]
+Condition : ((isnotnull(c_acctbal#3) AND substring(c_phone#2, 1, 2) IN (13,31,23,29,30,18,17)) AND (cast(c_acctbal#3 as decimal(16,6)) > Subquery subquery#5, [id=#6]))
 
 (24) Scan parquet 
-Output [1]: [o_custkey#200L]
+Output [1]: [o_custkey#7]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/orders]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 ReadSchema: struct<o_custkey:bigint>
 
 (25) BroadcastExchange
-Input [1]: [o_custkey#200L]
-Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=13470]
+Input [1]: [o_custkey#7]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [plan_id=4]
 
 (26) BroadcastHashJoin
-Left keys [1]: [c_custkey#0L]
-Right keys [1]: [o_custkey#200L]
+Left keys [1]: [c_custkey#1]
+Right keys [1]: [o_custkey#7]
 Join type: LeftAnti
 Join condition: None
 
 (27) Project
-Output [2]: [substring(c_phone#4, 1, 2) AS cntrycode#2587, c_acctbal#5]
-Input [3]: [c_custkey#0L, c_phone#4, c_acctbal#5]
+Output [2]: [substring(c_phone#2, 1, 2) AS cntrycode#9, c_acctbal#3]
+Input [3]: [c_custkey#1, c_phone#2, c_acctbal#3]
 
 (28) HashAggregate
-Input [2]: [cntrycode#2587, c_acctbal#5]
-Keys [1]: [cntrycode#2587]
-Functions [2]: [partial_count(1), partial_sum(c_acctbal#5)]
-Aggregate Attributes [3]: [count#2607L, sum#2608, isEmpty#2609]
-Results [4]: [cntrycode#2587, count#2610L, sum#2611, isEmpty#2612]
+Input [2]: [cntrycode#9, c_acctbal#3]
+Keys [1]: [cntrycode#9]
+Functions [2]: [partial_count(1), partial_sum(c_acctbal#3)]
+Aggregate Attributes [3]: [count#10, sum#11, isEmpty#12]
+Results [4]: [cntrycode#9, count#18, sum#19, isEmpty#20]
 
 (29) Exchange
-Input [4]: [cntrycode#2587, count#2610L, sum#2611, isEmpty#2612]
-Arguments: hashpartitioning(cntrycode#2587, 5), ENSURE_REQUIREMENTS, [plan_id=13475]
+Input [4]: [cntrycode#9, count#18, sum#19, isEmpty#20]
+Arguments: hashpartitioning(cntrycode#9, 5), ENSURE_REQUIREMENTS, [plan_id=5]
 
 (30) HashAggregate
-Input [4]: [cntrycode#2587, count#2610L, sum#2611, isEmpty#2612]
-Keys [1]: [cntrycode#2587]
-Functions [2]: [count(1), sum(c_acctbal#5)]
-Aggregate Attributes [2]: [count(1)#2592L, sum(c_acctbal#5)#2603]
-Results [3]: [cntrycode#2587, count(1)#2592L AS numcust#2590L, sum(c_acctbal#5)#2603 AS totacctbal#2591]
+Input [4]: [cntrycode#9, count#18, sum#19, isEmpty#20]
+Keys [1]: [cntrycode#9]
+Functions [2]: [count(1), sum(c_acctbal#3)]
+Aggregate Attributes [2]: [count(1)#14, sum(c_acctbal#3)#15]
+Results [3]: [cntrycode#9, count(1)#14 AS numcust#16, sum(c_acctbal#3)#15 AS totacctbal#17]
 
 (31) Exchange
-Input [3]: [cntrycode#2587, numcust#2590L, totacctbal#2591]
-Arguments: rangepartitioning(cntrycode#2587 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=13478]
+Input [3]: [cntrycode#9, numcust#16, totacctbal#17]
+Arguments: rangepartitioning(cntrycode#9 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=6]
 
 (32) Sort
-Input [3]: [cntrycode#2587, numcust#2590L, totacctbal#2591]
-Arguments: [cntrycode#2587 ASC NULLS FIRST], true, 0
+Input [3]: [cntrycode#9, numcust#16, totacctbal#17]
+Arguments: [cntrycode#9 ASC NULLS FIRST], true, 0
 
 (33) AdaptiveSparkPlan
-Output [3]: [cntrycode#2587, numcust#2590L, totacctbal#2591]
+Output [3]: [cntrycode#9, numcust#16, totacctbal#17]
 Arguments: isFinalPlan=true
 
 ===== Subqueries =====
 
-Subquery:1 Hosting operator id = 3 Hosting Expression = Subquery subquery#2588, [id=#13456]
+Subquery:1 Hosting operator id = 3 Hosting Expression = Subquery subquery#5, [id=#6]
 AdaptiveSparkPlan (49)
 +- == Final Plan ==
    NativeProject (42)
@@ -211,82 +211,82 @@ AdaptiveSparkPlan (49)
 
 
 (34) NativeParquetScan 
-Output [2]: [c_phone#2599, c_acctbal#2600]
-Arguments: FileScan parquet [c_phone#2599,c_acctbal#2600] Batched: true, DataFilters: [isnotnull(c_acctbal#2600), (c_acctbal#2600 > 0.00), substring(c_phone#2599, 1, 2) IN (13,31,23,2..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark..., PartitionFilters: [], PushedFilters: [IsNotNull(c_acctbal), GreaterThan(c_acctbal,0.00)], ReadSchema: struct<c_phone:string,c_acctbal:decimal(12,2)>
+Output [2]: [c_phone#21, c_acctbal#22]
+Arguments: FileScan parquet [c_phone#21,c_acctbal#22] Batched: true, DataFilters: [isnotnull(c_acctbal#22), (c_acctbal#22 > 0.00), substring(c_phone#21, 1, 2) IN (13,31,23,2..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(c_acctbal), GreaterThan(c_acctbal,0.00)], ReadSchema: struct<c_phone:string,c_acctbal:decimal(12,2)>
 
 (35) InputAdapter
-Input [2]: [c_phone#2599, c_acctbal#2600]
-Arguments: [#2599, #2600]
+Input [2]: [c_phone#21, c_acctbal#22]
+Arguments: [#21, #22]
 
 (36) NativeFilter
-Input [2]: [#2599#2599, #2600#2600]
-Arguments: ((isnotnull(c_acctbal#2600) AND (c_acctbal#2600 > 0.00)) AND substring(c_phone#2599, 1, 2) IN (13,31,23,29,30,18,17))
+Input [2]: [#21#21, #22#22]
+Arguments: ((isnotnull(c_acctbal#22) AND (c_acctbal#22 > 0.00)) AND substring(c_phone#21, 1, 2) IN (13,31,23,29,30,18,17))
 
 (37) NativeProject
-Input [2]: [#2599#2599, #2600#2600]
-Arguments: [c_acctbal#2600]
+Input [2]: [#21#21, #22#22]
+Arguments: [c_acctbal#22]
 
 (38) NativeHashAggregate
-Input [1]: [c_acctbal#2600]
+Input [1]: [c_acctbal#22]
 Keys: []
-Functions [1]: [partial_avg(c_acctbal#2600)]
-Aggregate Attributes [2]: [sum#2613, count#2614L]
-Results [1]: [#9223372036854775807#9223372036854775807]
+Functions [1]: [partial_avg(c_acctbal#22)]
+Aggregate Attributes [2]: [sum#23, count#24]
+Results [1]: [#13#13]
 
 (39) NativeShuffleExchange
-Input [1]: [#9223372036854775807#9223372036854775807]
-Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=13604]
+Input [1]: [#13#13]
+Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=7]
 
 (40) ShuffleQueryStage
-Output [1]: [#9223372036854775807#9223372036854775807]
-Arguments: 0
+Output [1]: [#13#13]
+Arguments: X
 
 (41) NativeHashAggregate
-Input [1]: [#9223372036854775807#9223372036854775807]
+Input [1]: [#13#13]
 Keys: []
-Functions [1]: [avg(c_acctbal#2600)]
-Aggregate Attributes [1]: [avg(c_acctbal#2600)#2593]
-Results [1]: [avg(c_acctbal#2600)#2593]
+Functions [1]: [avg(c_acctbal#22)]
+Aggregate Attributes [1]: [avg(c_acctbal#22)#25]
+Results [1]: [avg(c_acctbal#22)#25]
 
 (42) NativeProject
-Input [1]: [avg(c_acctbal#2600)#2593]
-Arguments: [avg(c_acctbal#2600)#2593 AS avg(c_acctbal)#2594]
+Input [1]: [avg(c_acctbal#22)#25]
+Arguments: [avg(c_acctbal#22)#25 AS avg(c_acctbal)#26]
 
 (43) Scan parquet 
-Output [2]: [c_phone#2599, c_acctbal#2600]
+Output [2]: [c_phone#21, c_acctbal#22]
 Batched: true
-Location: InMemoryFileIndex [file:/Users/yew1eb/workspaces/auron-master/spark-extension-shims-spark/target/test-classes/tpch-data-parquet/customer]
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(c_acctbal), GreaterThan(c_acctbal,0.00)]
 ReadSchema: struct<c_phone:string,c_acctbal:decimal(12,2)>
 
 (44) Filter
-Input [2]: [c_phone#2599, c_acctbal#2600]
-Condition : ((isnotnull(c_acctbal#2600) AND (c_acctbal#2600 > 0.00)) AND substring(c_phone#2599, 1, 2) IN (13,31,23,29,30,18,17))
+Input [2]: [c_phone#21, c_acctbal#22]
+Condition : ((isnotnull(c_acctbal#22) AND (c_acctbal#22 > 0.00)) AND substring(c_phone#21, 1, 2) IN (13,31,23,29,30,18,17))
 
 (45) Project
-Output [1]: [c_acctbal#2600]
-Input [2]: [c_phone#2599, c_acctbal#2600]
+Output [1]: [c_acctbal#22]
+Input [2]: [c_phone#21, c_acctbal#22]
 
 (46) HashAggregate
-Input [1]: [c_acctbal#2600]
+Input [1]: [c_acctbal#22]
 Keys: []
-Functions [1]: [partial_avg(c_acctbal#2600)]
-Aggregate Attributes [2]: [sum#2613, count#2614L]
-Results [2]: [sum#2615, count#2616L]
+Functions [1]: [partial_avg(c_acctbal#22)]
+Aggregate Attributes [2]: [sum#23, count#24]
+Results [2]: [sum#27, count#28]
 
 (47) Exchange
-Input [2]: [sum#2615, count#2616L]
-Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=13454]
+Input [2]: [sum#27, count#28]
+Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=8]
 
 (48) HashAggregate
-Input [2]: [sum#2615, count#2616L]
+Input [2]: [sum#27, count#28]
 Keys: []
-Functions [1]: [avg(c_acctbal#2600)]
-Aggregate Attributes [1]: [avg(c_acctbal#2600)#2593]
-Results [1]: [avg(c_acctbal#2600)#2593 AS avg(c_acctbal)#2594]
+Functions [1]: [avg(c_acctbal#22)]
+Aggregate Attributes [1]: [avg(c_acctbal#22)#25]
+Results [1]: [avg(c_acctbal#22)#25 AS avg(c_acctbal)#26]
 
 (49) AdaptiveSparkPlan
-Output [1]: [avg(c_acctbal)#2594]
+Output [1]: [avg(c_acctbal)#26]
 Arguments: isFinalPlan=true
 
 

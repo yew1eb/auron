@@ -220,7 +220,7 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
   }
 
   tpchQueries.foreach { sqlNum =>
-  //Seq("q17").foreach { sqlNum =>
+    //Seq("q17").foreach { sqlNum =>
     test("TPC-H " + sqlNum) {
       val sqlFile = tpchQueriesPath + "/" + sqlNum + ".sql"
       val sqlStr = Source.fromFile(new File(sqlFile), "UTF-8").mkString
