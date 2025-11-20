@@ -50,7 +50,9 @@ AdaptiveSparkPlan (45)
 
 (1) NativeParquetScan 
 Output [1]: [c_custkey#1]
-Arguments: FileScan parquet [c_custkey#1] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [], ReadSchema: struct<c_custkey:bigint>
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+ReadSchema: struct<c_custkey:bigint>
 
 (2) InputAdapter
 Input [1]: [c_custkey#1]
@@ -58,7 +60,10 @@ Arguments: [#2]
 
 (3) NativeParquetScan 
 Output [3]: [o_orderkey#3, o_custkey#4, o_comment#5]
-Arguments: FileScan parquet [o_orderkey#3,o_custkey#4,o_comment#5] Batched: true, DataFilters: [isnotnull(o_comment#5), NOT o_comment#5 LIKE %special%requests%, isnotnull(o_custkey#4)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(o_comment), IsNotNull(o_custkey)], ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_comment:string>
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(o_comment), IsNotNull(o_custkey)]
+ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_comment:string>
 
 (4) InputAdapter
 Input [3]: [o_orderkey#3, o_custkey#4, o_comment#5]

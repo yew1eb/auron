@@ -44,7 +44,10 @@ AdaptiveSparkPlan (39)
 
 (1) NativeParquetScan 
 Output [4]: [s_suppkey#1, s_name#2, s_address#3, s_phone#4]
-Arguments: FileScan parquet [s_suppkey#1,s_name#2,s_address#3,s_phone#4] Batched: true, DataFilters: [isnotnull(s_suppkey#1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(s_suppkey)], ReadSchema: struct<s_suppkey:bigint,s_name:string,s_address:string,s_phone:string>
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(s_suppkey)]
+ReadSchema: struct<s_suppkey:bigint,s_name:string,s_address:string,s_phone:string>
 
 (2) InputAdapter
 Input [4]: [s_suppkey#1, s_name#2, s_address#3, s_phone#4]
@@ -64,7 +67,10 @@ Arguments: X
 
 (6) NativeParquetScan 
 Output [4]: [l_suppkey#6, l_extendedprice#7, l_discount#8, l_shipdate#9]
-Arguments: FileScan parquet [l_suppkey#6,l_extendedprice#7,l_discount#8,l_shipdate#9] Batched: true, DataFilters: [isnotnull(l_shipdate#9), (l_shipdate#9 >= 1996-01-01), (l_shipdate#9 < 1996-04-01), isnotnull..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_shipdate), GreaterThanOrEqual(l_shipdate,1996-01-01), LessThan(l_shipdate,1996-04-01..., ReadSchema: struct<l_suppkey:bigint,l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_shipdate:date>
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(l_shipdate), GreaterThanOrEqual(l_shipdate,1996-01-01), LessThan(l_shipdate,1996-04-01), IsNotNull(l_suppkey)]
+ReadSchema: struct<l_suppkey:bigint,l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_shipdate:date>
 
 (7) InputAdapter
 Input [4]: [l_suppkey#6, l_extendedprice#7, l_discount#8, l_shipdate#9]
@@ -254,7 +260,10 @@ AdaptiveSparkPlan (66)
 
 (40) NativeParquetScan 
 Output [4]: [l_suppkey#22, l_extendedprice#23, l_discount#24, l_shipdate#25]
-Arguments: FileScan parquet [l_suppkey#22,l_extendedprice#23,l_discount#24,l_shipdate#25] Batched: true, DataFilters: [isnotnull(l_shipdate#25), (l_shipdate#25 >= 1996-01-01), (l_shipdate#25 < 1996-04-01)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_shipdate), GreaterThanOrEqual(l_shipdate,1996-01-01), LessThan(l_shipdate,1996-04-01)], ReadSchema: struct<l_suppkey:bigint,l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_shipdate:date>
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(l_shipdate), GreaterThanOrEqual(l_shipdate,1996-01-01), LessThan(l_shipdate,1996-04-01)]
+ReadSchema: struct<l_suppkey:bigint,l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_shipdate:date>
 
 (41) InputAdapter
 Input [4]: [l_suppkey#22, l_extendedprice#23, l_discount#24, l_shipdate#25]

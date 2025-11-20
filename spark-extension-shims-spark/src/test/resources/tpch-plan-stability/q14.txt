@@ -34,7 +34,10 @@ AdaptiveSparkPlan (29)
 
 (1) NativeParquetScan 
 Output [4]: [l_partkey#1, l_extendedprice#2, l_discount#3, l_shipdate#4]
-Arguments: FileScan parquet [l_partkey#1,l_extendedprice#2,l_discount#3,l_shipdate#4] Batched: true, DataFilters: [isnotnull(l_shipdate#4), (l_shipdate#4 >= 1995-09-01), (l_shipdate#4 < 1995-10-01), isnotnull..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_shipdate), GreaterThanOrEqual(l_shipdate,1995-09-01), LessThan(l_shipdate,1995-10-01..., ReadSchema: struct<l_partkey:bigint,l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_shipdate:date>
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(l_shipdate), GreaterThanOrEqual(l_shipdate,1995-09-01), LessThan(l_shipdate,1995-10-01), IsNotNull(l_partkey)]
+ReadSchema: struct<l_partkey:bigint,l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_shipdate:date>
 
 (2) InputAdapter
 Input [4]: [l_partkey#1, l_extendedprice#2, l_discount#3, l_shipdate#4]
@@ -50,7 +53,10 @@ Arguments: [l_partkey#1, l_extendedprice#2, l_discount#3]
 
 (5) NativeParquetScan 
 Output [2]: [p_partkey#6, p_type#7]
-Arguments: FileScan parquet [p_partkey#6,p_type#7] Batched: true, DataFilters: [isnotnull(p_partkey#6)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(p_partkey)], ReadSchema: struct<p_partkey:bigint,p_type:string>
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(p_partkey)]
+ReadSchema: struct<p_partkey:bigint,p_type:string>
 
 (6) InputAdapter
 Input [2]: [p_partkey#6, p_type#7]

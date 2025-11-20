@@ -80,7 +80,10 @@ AdaptiveSparkPlan (75)
 
 (1) NativeParquetScan 
 Output [2]: [c_custkey#1, c_name#2]
-Arguments: FileScan parquet [c_custkey#1,c_name#2] Batched: true, DataFilters: [isnotnull(c_custkey#1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(c_custkey)], ReadSchema: struct<c_custkey:bigint,c_name:string>
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(c_custkey)]
+ReadSchema: struct<c_custkey:bigint,c_name:string>
 
 (2) InputAdapter
 Input [2]: [c_custkey#1, c_name#2]
@@ -100,7 +103,10 @@ Arguments: X
 
 (6) NativeParquetScan 
 Output [4]: [o_orderkey#4, o_custkey#5, o_totalprice#6, o_orderdate#7]
-Arguments: FileScan parquet [o_orderkey#4,o_custkey#5,o_totalprice#6,o_orderdate#7] Batched: true, DataFilters: [isnotnull(o_custkey#5), isnotnull(o_orderkey#4)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(o_custkey), IsNotNull(o_orderkey)], ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_totalprice:decimal(12,2),o_orderdate:date>
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(o_custkey), IsNotNull(o_orderkey)]
+ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_totalprice:decimal(12,2),o_orderdate:date>
 
 (7) InputAdapter
 Input [4]: [o_orderkey#4, o_custkey#5, o_totalprice#6, o_orderdate#7]
@@ -112,7 +118,9 @@ Arguments: (isnotnull(o_custkey#5) AND isnotnull(o_orderkey#4))
 
 (9) NativeParquetScan 
 Output [2]: [l_orderkey#10, l_quantity#11]
-Arguments: FileScan parquet [l_orderkey#10,l_quantity#11] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [], ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
 
 (10) InputAdapter
 Input [2]: [l_orderkey#10, l_quantity#11]
@@ -185,7 +193,10 @@ Arguments: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7]
 
 (25) NativeParquetScan 
 Output [2]: [l_orderkey#19, l_quantity#17]
-Arguments: FileScan parquet [l_orderkey#19,l_quantity#17] Batched: true, DataFilters: [isnotnull(l_orderkey#19)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_orderkey)], ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(l_orderkey)]
+ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
 
 (26) InputAdapter
 Input [2]: [l_orderkey#19, l_quantity#17]

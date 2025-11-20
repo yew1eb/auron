@@ -64,7 +64,10 @@ AdaptiveSparkPlan (59)
 
 (1) NativeParquetScan 
 Output [7]: [c_custkey#1, c_name#2, c_address#3, c_nationkey#4, c_phone#5, c_acctbal#6, c_comment#7]
-Arguments: FileScan parquet [c_custkey#1,c_name#2,c_address#3,c_nationkey#4,c_phone#5,c_acctbal#6,c_comment#7] Batched: true, DataFilters: [isnotnull(c_custkey#1), isnotnull(c_nationkey#4)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(c_custkey), IsNotNull(c_nationkey)], ReadSchema: struct<c_custkey:bigint,c_name:string,c_address:string,c_nationkey:bigint,c_phone:string,c_acctba...
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(c_custkey), IsNotNull(c_nationkey)]
+ReadSchema: struct<c_custkey:bigint,c_name:string,c_address:string,c_nationkey:bigint,c_phone:string,c_acctbal:decimal(12,2),c_comment:string>
 
 (2) InputAdapter
 Input [7]: [c_custkey#1, c_name#2, c_address#3, c_nationkey#4, c_phone#5, c_acctbal#6, c_comment#7]
@@ -76,7 +79,10 @@ Arguments: (isnotnull(c_custkey#1) AND isnotnull(c_nationkey#4))
 
 (4) NativeParquetScan 
 Output [3]: [o_orderkey#10, o_custkey#11, o_orderdate#12]
-Arguments: FileScan parquet [o_orderkey#10,o_custkey#11,o_orderdate#12] Batched: true, DataFilters: [isnotnull(o_orderdate#12), (o_orderdate#12 >= 1993-10-01), (o_orderdate#12 < 1994-01-01), isn..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(o_orderdate), GreaterThanOrEqual(o_orderdate,1993-10-01), LessThan(o_orderdate,1994-01..., ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_orderdate:date>
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(o_orderdate), GreaterThanOrEqual(o_orderdate,1993-10-01), LessThan(o_orderdate,1994-01-01), IsNotNull(o_custkey), IsNotNull(o_orderkey)]
+ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_orderdate:date>
 
 (5) InputAdapter
 Input [3]: [o_orderkey#10, o_custkey#11, o_orderdate#12]
@@ -110,7 +116,10 @@ Arguments: [c_custkey#1, c_name#2, c_address#3, c_nationkey#4, c_phone#5, c_acct
 
 (12) NativeParquetScan 
 Output [4]: [l_orderkey#15, l_extendedprice#16, l_discount#17, l_returnflag#18]
-Arguments: FileScan parquet [l_orderkey#15,l_extendedprice#16,l_discount#17,l_returnflag#18] Batched: true, DataFilters: [isnotnull(l_returnflag#18), (l_returnflag#18 = R), isnotnull(l_orderkey#15)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_returnflag), EqualTo(l_returnflag,R), IsNotNull(l_orderkey)], ReadSchema: struct<l_orderkey:bigint,l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_returnflag:string>
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(l_returnflag), EqualTo(l_returnflag,R), IsNotNull(l_orderkey)]
+ReadSchema: struct<l_orderkey:bigint,l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_returnflag:string>
 
 (13) InputAdapter
 Input [4]: [l_orderkey#15, l_extendedprice#16, l_discount#17, l_returnflag#18]
@@ -144,7 +153,10 @@ Arguments: [c_custkey#1, c_name#2, c_address#3, c_nationkey#4, c_phone#5, c_acct
 
 (20) NativeParquetScan 
 Output [2]: [n_nationkey#20, n_name#21]
-Arguments: FileScan parquet [n_nationkey#20,n_name#21] Batched: true, DataFilters: [isnotnull(n_nationkey#20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(n_nationkey)], ReadSchema: struct<n_nationkey:bigint,n_name:string>
+Batched: true
+Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(n_nationkey)]
+ReadSchema: struct<n_nationkey:bigint,n_name:string>
 
 (21) InputAdapter
 Input [2]: [n_nationkey#20, n_name#21]
