@@ -60,11 +60,9 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
     "q21",
     "q22")
 
-  private lazy val sparkMajorVersion: String = spark.version.replace(".", "").substring(0, 2)
-
   def shouldCheck(): Boolean = {
-    sparkMajorVersion match {
-      case "35" => true
+    Shims.get.shimVersion match {
+      case "spark-3.5" => true
       case _ => false
     }
   }
@@ -228,7 +226,7 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
     }
   }
 
-  if(shouldCheck()) {
+  if (shouldCheck()) {
     tpchQueries.foreach { sqlNum =>
       //Seq("q17").foreach { sqlNum =>
       test("TPC-H " + sqlNum) {
