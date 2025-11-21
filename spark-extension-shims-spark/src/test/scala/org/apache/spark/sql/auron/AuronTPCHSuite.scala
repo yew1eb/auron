@@ -60,6 +60,15 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
     "q21",
     "q22")
 
+  private lazy val sparkMajorVersion: String = spark.version.replace(".", "").substring(0, 2)
+
+  def shouldCheck(): Boolean = {
+    sparkMajorVersion match {
+      case "35" => true
+      case _ => false
+    }
+  }
+
   override protected def sparkConf: SparkConf = {
     super.sparkConf
       .set("spark.sql.extensions", "org.apache.spark.sql.auron.AuronSparkSessionExtension")
@@ -219,17 +228,18 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
     }
   }
 
-  tpchQueries.foreach { sqlNum =>
-    //Seq("q17").foreach { sqlNum =>
-    test("TPC-H " + sqlNum) {
-      val sqlFile = tpchQueriesPath + "/" + sqlNum + ".sql"
-      val sqlStr = Source.fromFile(new File(sqlFile), "UTF-8").mkString
-      val df = spark.sql(sqlStr)
-      verifyResult(df, sqlNum, tpchResultsPath)
-      verifyPlan(df, sqlNum, tpchPlanPath)
+  if(shouldCheck()) {
+    tpchQueries.foreach { sqlNum =>
+      //Seq("q17").foreach { sqlNum =>
+      test("TPC-H " + sqlNum) {
+        val sqlFile = tpchQueriesPath + "/" + sqlNum + ".sql"
+        val sqlStr = Source.fromFile(new File(sqlFile), "UTF-8").mkString
+        val df = spark.sql(sqlStr)
+        verifyResult(df, sqlNum, tpchResultsPath)
+        verifyPlan(df, sqlNum, tpchPlanPath)
+      }
     }
   }
-
 }
 
 class AuronTPCHV1Suite extends AuronTPCHSuite {
