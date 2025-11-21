@@ -6,7 +6,7 @@ AdaptiveSparkPlan (27)
       +- ShuffleQueryStage (4), Statistics(sizeInBytes=0.0 B, rowCount=0)
          +- NativeShuffleExchange (3)
             +- NativeHashAggregate (2)
-               +- AuronConverters$NativeEmptyExec$1 (1)
+               +- NativeEmpty (1)
 +- == Initial Plan ==
    HashAggregate (26)
    +- Exchange (25)
@@ -30,7 +30,7 @@ AdaptiveSparkPlan (27)
                                  +- Scan parquet  (15)
 
 
-(1) AuronConverters$NativeEmptyExec$1
+(1) NativeEmpty
 Output [1]: [l_extendedprice#1]
 Arguments: [l_extendedprice#1], UnknownPartitioning(0)
 

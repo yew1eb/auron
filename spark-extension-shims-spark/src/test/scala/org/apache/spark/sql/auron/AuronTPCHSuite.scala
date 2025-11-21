@@ -202,6 +202,9 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
   }
 
   protected def verifyPlan(df: DataFrame, sqlNum: String, planPath: String): Unit = {
+    if (!shouldCheck()) {
+      return
+    }
     val expectedFile = new File(planPath, s"$sqlNum.txt")
     val expected = FileUtils.readFileToString(expectedFile, StandardCharsets.UTF_8)
     val actual = normalizeFormattedPlan(df.queryExecution.explainString(FormattedMode))
@@ -226,16 +229,13 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
     }
   }
 
-  if (shouldCheck()) {
-    tpchQueries.foreach { sqlNum =>
-      //Seq("q17").foreach { sqlNum =>
-      test("TPC-H " + sqlNum) {
-        val sqlFile = tpchQueriesPath + "/" + sqlNum + ".sql"
-        val sqlStr = Source.fromFile(new File(sqlFile), "UTF-8").mkString
-        val df = spark.sql(sqlStr)
-        verifyResult(df, sqlNum, tpchResultsPath)
-        verifyPlan(df, sqlNum, tpchPlanPath)
-      }
+  tpchQueries.foreach { sqlNum =>
+    test("TPC-H " + sqlNum) {
+      val sqlFile = tpchQueriesPath + "/" + sqlNum + ".sql"
+      val sqlStr = Source.fromFile(new File(sqlFile), "UTF-8").mkString
+      val df = spark.sql(sqlStr)
+      verifyResult(df, sqlNum, tpchResultsPath)
+      verifyPlan(df, sqlNum, tpchPlanPath)
     }
   }
 }
