@@ -18,16 +18,16 @@ package org.apache.spark.sql.auron
 
 import java.io.File
 import java.nio.charset.StandardCharsets
-
 import scala.collection.mutable
 import scala.io.Source
-
 import org.apache.commons.io.FileUtils
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.{DataFrame, QueryTest, Row}
 import org.apache.spark.sql.execution.FormattedMode
 import org.apache.spark.sql.test.SharedSparkSession
 import org.apache.spark.sql.types.DoubleType
+
+import scala.util.matching.Regex
 
 abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
   protected val rootPath: String = getClass.getResource("/").getPath
@@ -156,35 +156,36 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
     }
   }
 
-  private val normalizeRegex = "#\\d+L?".r
-  private val planIdRegex = "plan_id=\\d+".r
 
-  private def normalizeLocation(plan: String): String = {
-    plan.replaceAll("""file:/[^,\s\]\)]+""", "file:/<warehouse_dir>")
-  }
+  private def normalizeExplainPlan(plan: String): String = {
+    val exprIdRegex = "#\\d+L?".r
+    val planIdRegex = "plan_id=\\d+".r
 
-  private def normalizeFormattedPlan(plan: String): String = {
+    // Normalize file location
+    def normalizeLocation(plan: String): String = {
+      plan.replaceAll("""file:/[^,\s\]\)]+""", "file:/<warehouse_dir>")
+    }
 
-    val map = new mutable.HashMap[String, String]()
-    normalizeRegex
-      .findAllMatchIn(plan)
-      .map(_.toString)
-      .foreach(map.getOrElseUpdate(_, (map.size + 1).toString))
-    val exprIdNormalized =
-      normalizeRegex.replaceAllIn(plan, regexMatch => s"#${map(regexMatch.toString)}")
+    // Create a normalized map for regex matches
+    def createNormalizedMap(regex: Regex, plan: String): Map[String, String] = {
+      val map = new mutable.HashMap[String, String]()
+      regex.findAllMatchIn(plan).map(_.toString).foreach(map.getOrElseUpdate(_, (map.size + 1).toString))
+      map.toMap
+    }
 
-    // Normalize the plan id in Exchange nodes. See `Exchange.stringArgs`.
-    val planIdMap = new mutable.HashMap[String, String]()
-    planIdRegex
-      .findAllMatchIn(exprIdNormalized)
-      .map(_.toString)
-      .foreach(planIdMap.getOrElseUpdate(_, (planIdMap.size + 1).toString))
-    val planIdNormalized =
-      planIdRegex.replaceAllIn(
-        exprIdNormalized,
-        regexMatch => s"plan_id=${planIdMap(regexMatch.toString)}")
+    // Replace occurrences in the plan using the normalized map
+    def replaceWithNormalizedValues(plan: String, regex: Regex, normalizedMap: Map[String, String], format: String): String = {
+      regex.replaceAllIn(plan, regexMatch => s"$format${normalizedMap(regexMatch.toString)}")
+    }
 
-    // Spark QueryStageExec will take its id as argument, replace it with X
+    // Normalize the entire plan step by step
+    val exprIdMap = createNormalizedMap(exprIdRegex, plan)
+    val exprIdNormalized = replaceWithNormalizedValues(plan, exprIdRegex, exprIdMap, "#")
+
+    val planIdMap = createNormalizedMap(planIdRegex, exprIdNormalized)
+    val planIdNormalized = replaceWithNormalizedValues(exprIdNormalized, planIdRegex, planIdMap, "plan_id=")
+
+    // QueryStageExec will take its id as argument, replace it with X
     val argumentsNormalized = planIdNormalized
       .replaceAll("Arguments: [0-9]+, [0-9]+", "Arguments: X, X")
       .replaceAll("Arguments: [0-9]+", "Arguments: X")
@@ -207,7 +208,7 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
     }
     val expectedFile = new File(planPath, s"$sqlNum.txt")
     val expected = FileUtils.readFileToString(expectedFile, StandardCharsets.UTF_8)
-    val actual = normalizeFormattedPlan(df.queryExecution.explainString(FormattedMode))
+    val actual = normalizeExplainPlan(df.queryExecution.explainString(FormattedMode))
     val actualFile = new File(FileUtils.getTempDirectory, s"actual.$sqlNum.txt")
     FileUtils.writeStringToFile(actualFile, actual, StandardCharsets.UTF_8)
 
