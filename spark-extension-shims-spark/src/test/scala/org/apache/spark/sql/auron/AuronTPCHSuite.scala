@@ -18,16 +18,17 @@ package org.apache.spark.sql.auron
 
 import java.io.File
 import java.nio.charset.StandardCharsets
+
 import scala.collection.mutable
 import scala.io.Source
+import scala.util.matching.Regex
+
 import org.apache.commons.io.FileUtils
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.{DataFrame, QueryTest, Row}
 import org.apache.spark.sql.execution.FormattedMode
 import org.apache.spark.sql.test.SharedSparkSession
 import org.apache.spark.sql.types.DoubleType
-
-import scala.util.matching.Regex
 
 abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
   protected val rootPath: String = getClass.getResource("/").getPath
@@ -36,36 +37,9 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
   protected val tpchResultsPath: String = rootPath + "/tpch-query-results"
   protected val tpchPlanPath: String = rootPath + "/tpch-plan-stability"
 
-  val tpchQueries: Seq[String] = Seq(
-    "q1",
-    "q2",
-    "q3",
-    "q4",
-    "q5",
-    "q6",
-    "q7",
-    "q8",
-    "q9",
-    "q10",
-    "q11",
-    "q12",
-    "q13",
-    "q14",
-    "q15",
-    "q16",
-    "q17",
-    "q18",
-    "q19",
-    "q20",
-    "q21",
-    "q22")
-
-  def shouldCheck(): Boolean = {
-    Shims.get.shimVersion match {
-      case "spark-3.5" => true
-      case _ => false
-    }
-  }
+  protected val tpchQueries: Seq[String] = (1 to 22).map("q" + _)
+  protected val tpchTables: Seq[String] =
+    Seq("customer", "lineitem", "nation", "orders", "part", "partsupp", "region", "supplier")
 
   override protected def sparkConf: SparkConf = {
     super.sparkConf
@@ -84,11 +58,27 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
   }
 
   protected def createTPCHTables(): Unit = {
-    Seq("customer", "lineitem", "nation", "orders", "part", "partsupp", "region", "supplier")
+    tpchTables
       .foreach { tableName =>
         spark.read.parquet(s"$tpchDataPath/$tableName").createOrReplaceTempView(tableName)
         tableName -> spark.table(tableName).count()
       }
+  }
+
+  def shouldVerifyPlan(): Boolean = {
+    Shims.get.shimVersion match {
+      case "spark-3.5" => true // enable for Spark 3.5
+      case _ => false // TODO: Support for other Spark versions in the future
+    }
+  }
+
+  protected def verifyResult(df: DataFrame, sqlNum: String, resultsPath: String): Unit = {
+    val result = df.collect()
+    if (df.schema.exists(_.dataType == DoubleType)) {
+      compareDoubleResult(sqlNum, result, resultsPath)
+    } else {
+      compareResultStr(sqlNum, result, resultsPath)
+    }
   }
 
   protected def compareResultStr(
@@ -103,12 +93,12 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
 
     if (expectedResult != resultStr.toString) {
       fail(s"""
-         |=== $sqlNum result does NOT match expected ===
-         |[Expected]
-         |${expectedResult}
-         |[Actual]
-         |${resultStr.toString}
-         |""".stripMargin)
+              |=== $sqlNum result does NOT match expected ===
+              |[Expected]
+              |${expectedResult}
+              |[Actual]
+              |${resultStr.toString}
+              |""".stripMargin)
     }
   }
 
@@ -117,45 +107,46 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
       result: Array[Row],
       resultsPath: String): Unit = {
     val expectedResult =
-      Source.fromFile(new File(resultsPath + "/" + sqlNum + ".out"), "UTF-8").getLines()
-    var recordCnt = expectedResult.next().toInt
-    assert(result.size == recordCnt)
-    for (row <- result) {
+      Source.fromFile(new File(s"$resultsPath/$sqlNum.out"), "UTF-8").getLines()
+    val expectedCount = expectedResult.next().toInt
+    assert(result.length == expectedCount)
+
+    result.zipWithIndex.foreach { case (row, rowIndex) =>
       assert(expectedResult.hasNext)
       val expectedRow = expectedResult.next().split("\\|-\\|")
-      var i = 0
-      row.schema.foreach(s => {
-        s match {
-          case d if d.dataType == DoubleType =>
-            val v1 = row.getDouble(i)
-            val v2 = expectedRow(i).toDouble
+
+      row.schema.zipWithIndex.foreach { case (field, idx) =>
+        field.dataType match {
+          case DoubleType =>
+            val actualValue = row.getDouble(idx)
+            val expectedValue = expectedRow(idx).toDouble
             assert(
-              Math.abs(v1 - v2) < 0.00001,
-              s"""
-                 |=== row $i - $sqlNum result does NOT match expected ===
-                 |[Expected]
-                 |${expectedResult}
-                 |[Actual]
-                 |${result.toString}
-                 |""".stripMargin)
+              Math.abs(actualValue - expectedValue) < 0.00001,
+              failureMessage(sqlNum, rowIndex, expectedRow.mkString("|-|"), row.toString))
           case _ =>
-            val v1 = row.get(i).toString
-            val v2 = result(i)
+            val actualValue = row.get(idx).toString
+            val expectedValue = expectedRow(idx)
             assert(
-              v1.equals(v2),
-              s"""
-                 |=== row $i - $sqlNum result does NOT match expected ===
-                 |[Expected]
-                 |${expectedResult}
-                 |[Actual]
-                 |${result.toString}
-                 |""".stripMargin)
+              actualValue.equals(expectedValue),
+              failureMessage(sqlNum, rowIndex, expectedRow.mkString("|-|"), row.toString))
         }
-        i += 1
-      })
+      }
     }
   }
 
+  private def failureMessage(
+      sqlNum: String,
+      rowIndex: Int,
+      expected: String,
+      actual: String): String = {
+    s"""
+       |=== Row $rowIndex - $sqlNum result does NOT match expected ===
+       |[Expected]
+       |$expected
+       |[Actual]
+       |$actual
+       |""".stripMargin
+  }
 
   private def normalizeExplainPlan(plan: String): String = {
     val exprIdRegex = "#\\d+L?".r
@@ -169,12 +160,19 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
     // Create a normalized map for regex matches
     def createNormalizedMap(regex: Regex, plan: String): Map[String, String] = {
       val map = new mutable.HashMap[String, String]()
-      regex.findAllMatchIn(plan).map(_.toString).foreach(map.getOrElseUpdate(_, (map.size + 1).toString))
+      regex
+        .findAllMatchIn(plan)
+        .map(_.toString)
+        .foreach(map.getOrElseUpdate(_, (map.size + 1).toString))
       map.toMap
     }
 
     // Replace occurrences in the plan using the normalized map
-    def replaceWithNormalizedValues(plan: String, regex: Regex, normalizedMap: Map[String, String], format: String): String = {
+    def replaceWithNormalizedValues(
+        plan: String,
+        regex: Regex,
+        normalizedMap: Map[String, String],
+        format: String): String = {
       regex.replaceAllIn(plan, regexMatch => s"$format${normalizedMap(regexMatch.toString)}")
     }
 
@@ -183,7 +181,8 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
     val exprIdNormalized = replaceWithNormalizedValues(plan, exprIdRegex, exprIdMap, "#")
 
     val planIdMap = createNormalizedMap(planIdRegex, exprIdNormalized)
-    val planIdNormalized = replaceWithNormalizedValues(exprIdNormalized, planIdRegex, planIdMap, "plan_id=")
+    val planIdNormalized =
+      replaceWithNormalizedValues(exprIdNormalized, planIdRegex, planIdMap, "plan_id=")
 
     // QueryStageExec will take its id as argument, replace it with X
     val argumentsNormalized = planIdNormalized
@@ -193,47 +192,34 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
     normalizeLocation(argumentsNormalized)
   }
 
-  protected def verifyResult(df: DataFrame, sqlNum: String, resultsPath: String): Unit = {
-    val result = df.collect()
-    if (df.schema.exists(_.dataType == DoubleType)) {
-      compareDoubleResult(sqlNum, result, resultsPath)
-    } else {
-      compareResultStr(sqlNum, result, resultsPath)
-    }
-  }
-
   protected def verifyPlan(df: DataFrame, sqlNum: String, planPath: String): Unit = {
-    if (!shouldCheck()) {
+    if (!shouldVerifyPlan()) {
       return
     }
+
     val expectedFile = new File(planPath, s"$sqlNum.txt")
     val expected = FileUtils.readFileToString(expectedFile, StandardCharsets.UTF_8)
     val actual = normalizeExplainPlan(df.queryExecution.explainString(FormattedMode))
     val actualFile = new File(FileUtils.getTempDirectory, s"actual.$sqlNum.txt")
     FileUtils.writeStringToFile(actualFile, actual, StandardCharsets.UTF_8)
 
-    if (false) {
-      FileUtils.writeStringToFile(expectedFile, actual, StandardCharsets.UTF_8)
-      return
-    }
-
     if (expected != actual) {
       fail(s"""
-           |Plans did not match:: $sqlNum
-           |approved explain plan: ${expectedFile.getAbsolutePath}
-           |
-           |$expected
-           |actual explain plan: ${actualFile.getAbsolutePath}
-           |
-           |$actual
-           |""".stripMargin)
+              |Plans did not match for query: $sqlNum
+              |Expected explain plan: ${expectedFile.getAbsolutePath}
+              |
+              |$expected
+              |Actual explain plan: ${actualFile.getAbsolutePath}
+              |
+              |$actual
+              |""".stripMargin)
     }
   }
 
   tpchQueries.foreach { sqlNum =>
+    // Seq("q17").foreach{ sqlNum =>
     test("TPC-H " + sqlNum) {
-      val sqlFile = tpchQueriesPath + "/" + sqlNum + ".sql"
-      val sqlStr = Source.fromFile(new File(sqlFile), "UTF-8").mkString
+      val sqlStr = Source.fromFile(new File(s"$tpchQueriesPath/$sqlNum.sql"), "UTF-8").mkString
       val df = spark.sql(sqlStr)
       verifyResult(df, sqlNum, tpchResultsPath)
       verifyPlan(df, sqlNum, tpchPlanPath)
