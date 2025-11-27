@@ -155,11 +155,8 @@ object AuronConverters extends Logging {
     enableShuffleExechange && supportedShuffleManager
   }
 
-  private val supportedShuffleManagers: Seq[String] = Seq(
-    "AuronShuffleManager",
-    "AuronUniffleShuffleManager",
-    "AuronCelebornShuffleManager"
-  )
+  private val supportedShuffleManagers: Seq[String] =
+    Seq("AuronShuffleManager", "AuronUniffleShuffleManager", "AuronCelebornShuffleManager")
 
   def supportedShuffleManager: Boolean = {
     val name = SQLConf.get.getConfString(config.SHUFFLE_MANAGER.key)

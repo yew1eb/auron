@@ -16,15 +16,13 @@
  */
 package org.apache.spark.sql.auron
 
-import org.apache.auron.BaseAuronSQLSuite
+import org.apache.spark.sql.{AuronQueryTest, Row}
 import org.apache.spark.sql.catalyst.plans.physical.UnknownPartitioning
-import org.apache.spark.sql.{AuronQueryTest, Row, SparkSession}
 import org.apache.spark.sql.execution.auron.plan.NativeShuffleExchangeExec
-import org.apache.spark.sql.execution.exchange.ShuffleExchangeExec
-import org.scalatest.matchers.must.Matchers.the
 
-class AuronCheckConvertShuffleExchangeSuite
-    extends AuronQueryTest with BaseAuronSQLSuite {
+import org.apache.auron.BaseAuronSQLSuite
+
+class AuronCheckConvertShuffleExchangeSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   test(
     "test set auron shuffle manager convert to native shuffle exchange where set spark.auron.enable is true") {
@@ -33,23 +31,25 @@ class AuronCheckConvertShuffleExchangeSuite
       spark.sql(
         "create table if not exists test_shuffle using parquet PARTITIONED BY (part) as select 1 as c1, 2 as c2, 'test test' as part")
 
-      withSQLConf("spark.shuffle.manager" -> "org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager") {
+      withSQLConf(
+        "spark.shuffle.manager" -> "org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager") {
         val df = spark.sql("select c1, count(1) from test_shuffle group by c1")
         checkAnswer(df, Seq(Row(1, 1)))
-        assert(collectFirst(df.queryExecution.executedPlan) {
-          case e: NativeShuffleExchangeExec => e
+        assert(collectFirst(df.queryExecution.executedPlan) { case e: NativeShuffleExchangeExec =>
+          e
         }.isDefined)
       }
     }
   }
 
   test("fails when non-Auron shuffle manager with set spark.auron.enable is true") {
-      withSQLConf("spark.shuffle.manager" -> "org.apache.spark.shuffle.sort.SortShuffleManager") {
-        val emptyExec = AuronConverters.createEmptyExec(Seq.empty, UnknownPartitioning(1), Seq.empty)
-        // With a non-Auron shuffle manager, preColumnarTransitions should fail fast
-        intercept[AssertionError] {
-          AuronColumnarOverrides(spark).preColumnarTransitions.apply(emptyExec)
-        }
+    withSQLConf("spark.shuffle.manager" -> "org.apache.spark.shuffle.sort.SortShuffleManager") {
+      val emptyExec =
+        AuronConverters.createEmptyExec(Seq.empty, UnknownPartitioning(1), Seq.empty)
+      // With a non-Auron shuffle manager, preColumnarTransitions should fail fast
+      intercept[AssertionError] {
+        AuronColumnarOverrides(spark).preColumnarTransitions.apply(emptyExec)
       }
     }
+  }
 }
