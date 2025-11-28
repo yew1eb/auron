@@ -140,10 +140,7 @@ AdaptiveSparkPlan (135)
 
 (1) NativeParquetScan 
 Output [4]: [s_suppkey#1, s_name#2, s_address#3, s_nationkey#4]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(s_nationkey)]
-ReadSchema: struct<s_suppkey:bigint,s_name:string,s_address:string,s_nationkey:bigint>
+Arguments: FileScan parquet [s_suppkey#1,s_name#2,s_address#3,s_nationkey#4] Batched: true, DataFilters: [isnotnull(s_nationkey#4)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(s_nationkey)], ReadSchema: struct<s_suppkey:bigint,s_name:string,s_address:string,s_nationkey:bigint>
 
 (2) InputAdapter
 Input [4]: [s_suppkey#1, s_name#2, s_address#3, s_nationkey#4]
@@ -174,10 +171,7 @@ Arguments: [s_suppkey#1 ASC NULLS FIRST], false
 
 (9) NativeParquetScan 
 Output [3]: [ps_partkey#7, ps_suppkey#8, ps_availqty#9]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(ps_availqty), IsNotNull(ps_partkey), IsNotNull(ps_suppkey)]
-ReadSchema: struct<ps_partkey:bigint,ps_suppkey:bigint,ps_availqty:int>
+Arguments: FileScan parquet [ps_partkey#7,ps_suppkey#8,ps_availqty#9] Batched: true, DataFilters: [isnotnull(ps_availqty#9), isnotnull(ps_partkey#7), isnotnull(ps_suppkey#8)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ps_availqty), IsNotNull(ps_partkey), IsNotNull(ps_suppkey)], ReadSchema: struct<ps_partkey:bigint,ps_suppkey:bigint,ps_availqty:int>
 
 (10) InputAdapter
 Input [3]: [ps_partkey#7, ps_suppkey#8, ps_availqty#9]
@@ -208,10 +202,7 @@ Arguments: [ps_partkey#7 ASC NULLS FIRST], false
 
 (17) NativeParquetScan 
 Output [2]: [p_partkey#12, p_name#13]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(p_name), StringStartsWith(p_name,forest)]
-ReadSchema: struct<p_partkey:bigint,p_name:string>
+Arguments: FileScan parquet [p_partkey#12,p_name#13] Batched: true, DataFilters: [isnotnull(p_name#13), StartsWith(p_name#13, forest)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(p_name), StringStartsWith(p_name,forest)], ReadSchema: struct<p_partkey:bigint,p_name:string>
 
 (18) InputAdapter
 Input [2]: [p_partkey#12, p_name#13]
@@ -271,10 +262,7 @@ Arguments: [ps_partkey#7 ASC NULLS FIRST, ps_suppkey#8 ASC NULLS FIRST], false
 
 (32) NativeParquetScan 
 Output [4]: [l_partkey#15, l_suppkey#16, l_quantity#17, l_shipdate#18]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(l_shipdate), GreaterThanOrEqual(l_shipdate,1994-01-01), LessThan(l_shipdate,1995-01-01), IsNotNull(l_partkey), IsNotNull(l_suppkey)]
-ReadSchema: struct<l_partkey:bigint,l_suppkey:bigint,l_quantity:decimal(12,2),l_shipdate:date>
+Arguments: FileScan parquet [l_partkey#15,l_suppkey#16,l_quantity#17,l_shipdate#18] Batched: true, DataFilters: [isnotnull(l_shipdate#18), (l_shipdate#18 >= 1994-01-01), (l_shipdate#18 < 1995-01-01), isnotnull..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_shipdate), GreaterThanOrEqual(l_shipdate,1994-01-01), LessThan(l_shipdate,1995-01-01..., ReadSchema: struct<l_partkey:bigint,l_suppkey:bigint,l_quantity:decimal(12,2),l_shipdate:date>
 
 (33) InputAdapter
 Input [4]: [l_partkey#15, l_suppkey#16, l_quantity#17, l_shipdate#18]
@@ -435,10 +423,7 @@ Arguments: [s_nationkey#4 ASC NULLS FIRST], false
 
 (71) NativeParquetScan 
 Output [2]: [n_nationkey#26, n_name#27]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(n_name), EqualTo(n_name,CANADA), IsNotNull(n_nationkey)]
-ReadSchema: struct<n_nationkey:bigint,n_name:string>
+Arguments: FileScan parquet [n_nationkey#26,n_name#27] Batched: true, DataFilters: [isnotnull(n_name#27), (n_name#27 = CANADA), isnotnull(n_nationkey#26)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(n_name), EqualTo(n_name,CANADA), IsNotNull(n_nationkey)], ReadSchema: struct<n_nationkey:bigint,n_name:string>
 
 (72) InputAdapter
 Input [2]: [n_nationkey#26, n_name#27]

@@ -15,7 +15,11 @@
 // specific language governing permissions and limitations
 // under the License.
 
-use std::{any::Any, fmt::Formatter, sync::Arc};
+use std::{
+    any::Any,
+    fmt::{Display, Formatter},
+    sync::Arc,
+};
 
 use arrow::datatypes::{Field, Fields, Schema, SchemaRef};
 use datafusion::{
@@ -139,6 +143,8 @@ impl ExecutionPlan for ProjectExec {
     ) -> Result<SendableRecordBatchStream> {
         let exec_ctx = ExecutionContext::new(context, partition, self.schema(), &self.metrics);
         let exprs: Vec<PhysicalExprRef> = self.expr.iter().map(|(e, _name)| e.clone()).collect();
+        let desc_string = format!("{self}");
+        let desc: &'static str = Box::leak(desc_string.into_boxed_str());
 
         let output = if let Ok(filter_exec) = downcast_any!(self.input, FilterExec) {
             execute_project_with_filtering(
@@ -146,9 +152,16 @@ impl ExecutionPlan for ProjectExec {
                 exec_ctx.clone(),
                 filter_exec.predicates().to_vec(),
                 exprs,
+                desc,
             )?
         } else {
-            execute_project_with_filtering(self.input.clone(), exec_ctx.clone(), vec![], exprs)?
+            execute_project_with_filtering(
+                self.input.clone(),
+                exec_ctx.clone(),
+                vec![],
+                exprs,
+                desc,
+            )?
         };
         Ok(exec_ctx.coalesce_with_default_batch_size(output))
     }
@@ -185,6 +198,7 @@ fn execute_project_with_filtering(
     exec_ctx: Arc<ExecutionContext>,
     filters: Vec<PhysicalExprRef>,
     exprs: Vec<PhysicalExprRef>,
+    desc: &'static str,
 ) -> Result<SendableRecordBatchStream> {
     // execute input with pruning
     let num_exprs = exprs.len();
@@ -209,7 +223,7 @@ fn execute_project_with_filtering(
     let mut input = exec_ctx.execute_projected_with_input_stats(&input, &projection)?;
     Ok(exec_ctx
         .clone()
-        .output_with_sender("Project", move |sender| async move {
+        .output_with_sender(desc, move |sender| async move {
             let elapsed_compute = exec_ctx.baseline_metrics().elapsed_compute().clone();
             let _timer = elapsed_compute.timer();
             sender.exclude_time(&elapsed_compute);

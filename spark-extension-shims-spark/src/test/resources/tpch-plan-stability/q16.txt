@@ -66,10 +66,7 @@ AdaptiveSparkPlan (61)
 
 (1) NativeParquetScan 
 Output [2]: [ps_partkey#1, ps_suppkey#2]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(ps_partkey)]
-ReadSchema: struct<ps_partkey:bigint,ps_suppkey:bigint>
+Arguments: FileScan parquet [ps_partkey#1,ps_suppkey#2] Batched: true, DataFilters: [isnotnull(ps_partkey#1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ps_partkey)], ReadSchema: struct<ps_partkey:bigint,ps_suppkey:bigint>
 
 (2) InputAdapter
 Input [2]: [ps_partkey#1, ps_suppkey#2]
@@ -100,10 +97,7 @@ Arguments: [ps_partkey#1 ASC NULLS FIRST], false
 
 (9) NativeParquetScan 
 Output [4]: [p_partkey#5, p_brand#6, p_type#7, p_size#8]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(p_brand), IsNotNull(p_type), Not(EqualTo(p_brand,Brand#9)), Not(StringStartsWith(p_type,MEDIUM POLISHED)), In(p_size, [14,19,23,3,36,45,49,9]), IsNotNull(p_partkey)]
-ReadSchema: struct<p_partkey:bigint,p_brand:string,p_type:string,p_size:int>
+Arguments: FileScan parquet [p_partkey#5,p_brand#6,p_type#7,p_size#8] Batched: true, DataFilters: [isnotnull(p_brand#6), isnotnull(p_type#7), NOT (p_brand#6 = Brand#9), NOT StartsWith(p_ty..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(p_brand), IsNotNull(p_type), Not(EqualTo(p_brand,Brand#9)), Not(StringStartsWith(p_ty..., ReadSchema: struct<p_partkey:bigint,p_brand:string,p_type:string,p_size:int>
 
 (10) InputAdapter
 Input [4]: [p_partkey#5, p_brand#6, p_type#7, p_size#8]

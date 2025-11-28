@@ -49,10 +49,7 @@ AdaptiveSparkPlan (44)
 
 (1) NativeParquetScan 
 Output [3]: [c_custkey#1, c_phone#2, c_acctbal#3]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(c_acctbal)]
-ReadSchema: struct<c_custkey:bigint,c_phone:string,c_acctbal:decimal(12,2)>
+Arguments: FileScan parquet [c_custkey#1,c_phone#2,c_acctbal#3] Batched: true, DataFilters: [isnotnull(c_acctbal#3), substring(c_phone#2, 1, 2) IN (13,31,23,29,30,18,17)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(c_acctbal)], ReadSchema: struct<c_custkey:bigint,c_phone:string,c_acctbal:decimal(12,2)>
 
 (2) InputAdapter
 Input [3]: [c_custkey#1, c_phone#2, c_acctbal#3]
@@ -83,9 +80,7 @@ Arguments: [c_custkey#1 ASC NULLS FIRST], false
 
 (9) NativeParquetScan 
 Output [1]: [o_custkey#7]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-ReadSchema: struct<o_custkey:bigint>
+Arguments: FileScan parquet [o_custkey#7] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [], ReadSchema: struct<o_custkey:bigint>
 
 (10) InputAdapter
 Input [1]: [o_custkey#7]
@@ -270,10 +265,7 @@ AdaptiveSparkPlan (60)
 
 (45) NativeParquetScan 
 Output [2]: [c_phone#21, c_acctbal#22]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(c_acctbal), GreaterThan(c_acctbal,0.00)]
-ReadSchema: struct<c_phone:string,c_acctbal:decimal(12,2)>
+Arguments: FileScan parquet [c_phone#21,c_acctbal#22] Batched: true, DataFilters: [isnotnull(c_acctbal#22), (c_acctbal#22 > 0.00), substring(c_phone#21, 1, 2) IN (13,31,23,2..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(c_acctbal), GreaterThan(c_acctbal,0.00)], ReadSchema: struct<c_phone:string,c_acctbal:decimal(12,2)>
 
 (46) InputAdapter
 Input [2]: [c_phone#21, c_acctbal#22]

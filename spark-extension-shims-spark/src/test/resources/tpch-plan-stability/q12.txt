@@ -54,10 +54,7 @@ AdaptiveSparkPlan (49)
 
 (1) NativeParquetScan 
 Output [2]: [o_orderkey#1, o_orderpriority#2]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(o_orderkey)]
-ReadSchema: struct<o_orderkey:bigint,o_orderpriority:string>
+Arguments: FileScan parquet [o_orderkey#1,o_orderpriority#2] Batched: true, DataFilters: [isnotnull(o_orderkey#1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(o_orderkey)], ReadSchema: struct<o_orderkey:bigint,o_orderpriority:string>
 
 (2) InputAdapter
 Input [2]: [o_orderkey#1, o_orderpriority#2]
@@ -88,10 +85,7 @@ Arguments: [o_orderkey#1 ASC NULLS FIRST], false
 
 (9) NativeParquetScan 
 Output [5]: [l_orderkey#4, l_shipdate#5, l_commitdate#6, l_receiptdate#7, l_shipmode#8]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(l_commitdate), IsNotNull(l_receiptdate), IsNotNull(l_shipdate), In(l_shipmode, [MAIL,SHIP]), GreaterThanOrEqual(l_receiptdate,1994-01-01), LessThan(l_receiptdate,1995-01-01), IsNotNull(l_orderkey)]
-ReadSchema: struct<l_orderkey:bigint,l_shipdate:date,l_commitdate:date,l_receiptdate:date,l_shipmode:string>
+Arguments: FileScan parquet [l_orderkey#4,l_shipdate#5,l_commitdate#6,l_receiptdate#7,l_shipmode#8] Batched: true, DataFilters: [isnotnull(l_commitdate#6), isnotnull(l_receiptdate#7), isnotnull(l_shipdate#5), l_shipmode#8..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_commitdate), IsNotNull(l_receiptdate), IsNotNull(l_shipdate), In(l_shipmode, [MAIL,S..., ReadSchema: struct<l_orderkey:bigint,l_shipdate:date,l_commitdate:date,l_receiptdate:date,l_shipmode:string>
 
 (10) InputAdapter
 Input [5]: [l_orderkey#4, l_shipdate#5, l_commitdate#6, l_receiptdate#7, l_shipmode#8]

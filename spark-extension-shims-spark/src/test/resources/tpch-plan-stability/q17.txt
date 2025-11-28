@@ -66,10 +66,7 @@ AdaptiveSparkPlan (61)
 
 (1) NativeParquetScan 
 Output [3]: [l_partkey#1, l_quantity#2, l_extendedprice#3]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(l_partkey), IsNotNull(l_quantity)]
-ReadSchema: struct<l_partkey:bigint,l_quantity:decimal(12,2),l_extendedprice:decimal(12,2)>
+Arguments: FileScan parquet [l_partkey#1,l_quantity#2,l_extendedprice#3] Batched: true, DataFilters: [isnotnull(l_partkey#1), isnotnull(l_quantity#2)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_partkey), IsNotNull(l_quantity)], ReadSchema: struct<l_partkey:bigint,l_quantity:decimal(12,2),l_extendedprice:decimal(12,2)>
 
 (2) InputAdapter
 Input [3]: [l_partkey#1, l_quantity#2, l_extendedprice#3]
@@ -100,10 +97,7 @@ Arguments: [l_partkey#1 ASC NULLS FIRST], false
 
 (9) NativeParquetScan 
 Output [3]: [p_partkey#5, p_brand#6, p_container#7]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(p_brand), IsNotNull(p_container), EqualTo(p_brand,Brand#8), EqualTo(p_container,WRAP BAG), IsNotNull(p_partkey)]
-ReadSchema: struct<p_partkey:bigint,p_brand:string,p_container:string>
+Arguments: FileScan parquet [p_partkey#5,p_brand#6,p_container#7] Batched: true, DataFilters: [isnotnull(p_brand#6), isnotnull(p_container#7), (p_brand#6 = Brand#8), (p_container#7 =..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(p_brand), IsNotNull(p_container), EqualTo(p_brand,Brand#8), EqualTo(p_container,WRAP ..., ReadSchema: struct<p_partkey:bigint,p_brand:string,p_container:string>
 
 (10) InputAdapter
 Input [3]: [p_partkey#5, p_brand#6, p_container#7]
@@ -148,10 +142,7 @@ Arguments: [l_quantity#2, l_extendedprice#3, p_partkey#5]
 
 (20) NativeParquetScan 
 Output [2]: [l_partkey#10, l_quantity#11]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(l_partkey)]
-ReadSchema: struct<l_partkey:bigint,l_quantity:decimal(12,2)>
+Arguments: FileScan parquet [l_partkey#10,l_quantity#11] Batched: true, DataFilters: [isnotnull(l_partkey#10)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_partkey)], ReadSchema: struct<l_partkey:bigint,l_quantity:decimal(12,2)>
 
 (21) InputAdapter
 Input [2]: [l_partkey#10, l_quantity#11]

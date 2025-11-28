@@ -22,10 +22,7 @@ AdaptiveSparkPlan (17)
 
 (1) NativeParquetScan 
 Output [4]: [l_quantity#1, l_extendedprice#2, l_discount#3, l_shipdate#4]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(l_shipdate), IsNotNull(l_discount), IsNotNull(l_quantity), GreaterThanOrEqual(l_shipdate,1994-01-01), LessThan(l_shipdate,1995-01-01), GreaterThanOrEqual(l_discount,0.05), LessThanOrEqual(l_discount,0.07), LessThan(l_quantity,24.00)]
-ReadSchema: struct<l_quantity:decimal(12,2),l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_shipdate:date>
+Arguments: FileScan parquet [l_quantity#1,l_extendedprice#2,l_discount#3,l_shipdate#4] Batched: true, DataFilters: [isnotnull(l_shipdate#4), isnotnull(l_discount#3), isnotnull(l_quantity#1), (l_shipdate#4 >= ..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_shipdate), IsNotNull(l_discount), IsNotNull(l_quantity), GreaterThanOrEqual(l_shipda..., ReadSchema: struct<l_quantity:decimal(12,2),l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_shipdate...
 
 (2) InputAdapter
 Input [4]: [l_quantity#1, l_extendedprice#2, l_discount#3, l_shipdate#4]

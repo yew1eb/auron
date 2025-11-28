@@ -43,10 +43,7 @@ AdaptiveSparkPlan (38)
 
 (1) NativeParquetScan 
 Output [6]: [l_partkey#1, l_quantity#2, l_extendedprice#3, l_discount#4, l_shipinstruct#5, l_shipmode#6]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(l_shipinstruct), In(l_shipmode, [AIR,AIR REG]), EqualTo(l_shipinstruct,DELIVER IN PERSON), IsNotNull(l_partkey), Or(Or(And(GreaterThanOrEqual(l_quantity,1.00),LessThanOrEqual(l_quantity,11.00)),And(GreaterThanOrEqual(l_quantity,10.00),LessThanOrEqual(l_quantity,20.00))),And(GreaterThanOrEqual(l_quantity,20.00),LessThanOrEqual(l_quantity,30.00)))]
-ReadSchema: struct<l_partkey:bigint,l_quantity:decimal(12,2),l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_shipinstruct:string,l_shipmode:string>
+Arguments: FileScan parquet [l_partkey#1,l_quantity#2,l_extendedprice#3,l_discount#4,l_shipinstruct#5,l_shipmode#6] Batched: true, DataFilters: [isnotnull(l_shipinstruct#5), l_shipmode#6 IN (AIR,AIR REG), (l_shipinstruct#5 = DELIVER IN PE..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_shipinstruct), In(l_shipmode, [AIR,AIR REG]), EqualTo(l_shipinstruct,DELIVER IN PERS..., ReadSchema: struct<l_partkey:bigint,l_quantity:decimal(12,2),l_extendedprice:decimal(12,2),l_discount:decimal...
 
 (2) InputAdapter
 Input [6]: [l_partkey#1, l_quantity#2, l_extendedprice#3, l_discount#4, l_shipinstruct#5, l_shipmode#6]
@@ -81,47 +78,44 @@ Arguments: [l_partkey#1 ASC NULLS FIRST], false
 
 (10) NativeParquetScan 
 Output [4]: [p_partkey#8, p_brand#9, p_size#10, p_container#11]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(p_size), GreaterThanOrEqual(p_size,1), IsNotNull(p_partkey), Or(Or(And(And(EqualTo(p_brand,Brand#12),In(p_container, [SM BOX,SM CASE,SM PACK,SM PKG])),LessThanOrEqual(p_size,5)),And(And(EqualTo(p_brand,Brand#13),In(p_container, [MED BAG,MED BOX,MED PACK,MED PKG])),LessThanOrEqual(p_size,10))),And(And(EqualTo(p_brand,Brand#14),In(p_container, [LG BOX,LG CASE,LG PACK,LG PKG])),LessThanOrEqual(p_size,15)))]
-ReadSchema: struct<p_partkey:bigint,p_brand:string,p_size:int,p_container:string>
+Arguments: FileScan parquet [p_partkey#8,p_brand#9,p_size#10,p_container#11] Batched: true, DataFilters: [isnotnull(p_size#10), (p_size#10 >= 1), isnotnull(p_partkey#8), (((((p_brand#9 = Brand#12..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(p_size), GreaterThanOrEqual(p_size,1), IsNotNull(p_partkey), Or(Or(And(And(EqualTo(p_b..., ReadSchema: struct<p_partkey:bigint,p_brand:string,p_size:int,p_container:string>
 
 (11) InputAdapter
 Input [4]: [p_partkey#8, p_brand#9, p_size#10, p_container#11]
-Arguments: [#15, #9, #10, #11]
+Arguments: [#13, #9, #10, #11]
 
 (12) NativeFilter
-Input [4]: [#15#8, #9#9, #10#10, #11#11]
-Arguments: (((isnotnull(p_size#10) AND (p_size#10 >= 1)) AND isnotnull(p_partkey#8)) AND (((((p_brand#9 = Brand#12) AND p_container#11 IN (SM CASE,SM BOX,SM PACK,SM PKG)) AND (p_size#10 <= 5)) OR (((p_brand#9 = Brand#13) AND p_container#11 IN (MED BAG,MED BOX,MED PKG,MED PACK)) AND (p_size#10 <= 10))) OR (((p_brand#9 = Brand#14) AND p_container#11 IN (LG CASE,LG BOX,LG PACK,LG PKG)) AND (p_size#10 <= 15))))
+Input [4]: [#13#8, #9#9, #10#10, #11#11]
+Arguments: (((isnotnull(p_size#10) AND (p_size#10 >= 1)) AND isnotnull(p_partkey#8)) AND (((((p_brand#9 = Brand#12) AND p_container#11 IN (SM CASE,SM BOX,SM PACK,SM PKG)) AND (p_size#10 <= 5)) OR (((p_brand#9 = Brand#14) AND p_container#11 IN (MED BAG,MED BOX,MED PKG,MED PACK)) AND (p_size#10 <= 10))) OR (((p_brand#9 = Brand#15) AND p_container#11 IN (LG CASE,LG BOX,LG PACK,LG PKG)) AND (p_size#10 <= 15))))
 
 (13) NativeShuffleExchange
-Input [4]: [#15#8, #9#9, #10#10, #11#11]
+Input [4]: [#13#8, #9#9, #10#10, #11#11]
 Arguments: hashpartitioning(p_partkey#8, 5), ENSURE_REQUIREMENTS, [plan_id=2]
 
 (14) ShuffleQueryStage
-Output [4]: [#15#8, #9#9, #10#10, #11#11]
+Output [4]: [#13#8, #9#9, #10#10, #11#11]
 Arguments: X
 
 (15) AQEShuffleRead
-Input [4]: [#15#8, #9#9, #10#10, #11#11]
+Input [4]: [#13#8, #9#9, #10#10, #11#11]
 Arguments: coalesced
 
 (16) InputAdapter
-Input [4]: [#15#8, #9#9, #10#10, #11#11]
+Input [4]: [#13#8, #9#9, #10#10, #11#11]
 
 (17) NativeSort
-Input [4]: [#15#8, #9#9, #10#10, #11#11]
+Input [4]: [#13#8, #9#9, #10#10, #11#11]
 Arguments: [p_partkey#8 ASC NULLS FIRST], false
 
 (18) SortMergeJoin [codegen id : 1]
 Left keys [1]: [l_partkey#1]
 Right keys [1]: [p_partkey#8]
 Join type: Inner
-Join condition: (((((((p_brand#9 = Brand#12) AND p_container#11 IN (SM CASE,SM BOX,SM PACK,SM PKG)) AND (l_quantity#2 >= 1.00)) AND (l_quantity#2 <= 11.00)) AND (p_size#10 <= 5)) OR (((((p_brand#9 = Brand#13) AND p_container#11 IN (MED BAG,MED BOX,MED PKG,MED PACK)) AND (l_quantity#2 >= 10.00)) AND (l_quantity#2 <= 20.00)) AND (p_size#10 <= 10))) OR (((((p_brand#9 = Brand#14) AND p_container#11 IN (LG CASE,LG BOX,LG PACK,LG PKG)) AND (l_quantity#2 >= 20.00)) AND (l_quantity#2 <= 30.00)) AND (p_size#10 <= 15)))
+Join condition: (((((((p_brand#9 = Brand#12) AND p_container#11 IN (SM CASE,SM BOX,SM PACK,SM PKG)) AND (l_quantity#2 >= 1.00)) AND (l_quantity#2 <= 11.00)) AND (p_size#10 <= 5)) OR (((((p_brand#9 = Brand#14) AND p_container#11 IN (MED BAG,MED BOX,MED PKG,MED PACK)) AND (l_quantity#2 >= 10.00)) AND (l_quantity#2 <= 20.00)) AND (p_size#10 <= 10))) OR (((((p_brand#9 = Brand#15) AND p_container#11 IN (LG CASE,LG BOX,LG PACK,LG PKG)) AND (l_quantity#2 >= 20.00)) AND (l_quantity#2 <= 30.00)) AND (p_size#10 <= 15)))
 
 (19) Project [codegen id : 1]
 Output [2]: [l_extendedprice#3, l_discount#4]
-Input [8]: [l_partkey#1, l_quantity#2, l_extendedprice#3, l_discount#4, #15#8, #9#9, #10#10, #11#11]
+Input [8]: [l_partkey#1, l_quantity#2, l_extendedprice#3, l_discount#4, #13#8, #9#9, #10#10, #11#11]
 
 (20) HashAggregate [codegen id : 1]
 Input [2]: [l_extendedprice#3, l_discount#4]
@@ -172,12 +166,12 @@ Arguments: [l_partkey#1 ASC NULLS FIRST], false, 0
 Output [4]: [p_partkey#8, p_brand#9, p_size#10, p_container#11]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(p_size), GreaterThanOrEqual(p_size,1), IsNotNull(p_partkey), Or(Or(And(And(EqualTo(p_brand,Brand#12),In(p_container, [SM BOX,SM CASE,SM PACK,SM PKG])),LessThanOrEqual(p_size,5)),And(And(EqualTo(p_brand,Brand#13),In(p_container, [MED BAG,MED BOX,MED PACK,MED PKG])),LessThanOrEqual(p_size,10))),And(And(EqualTo(p_brand,Brand#14),In(p_container, [LG BOX,LG CASE,LG PACK,LG PKG])),LessThanOrEqual(p_size,15)))]
+PushedFilters: [IsNotNull(p_size), GreaterThanOrEqual(p_size,1), IsNotNull(p_partkey), Or(Or(And(And(EqualTo(p_brand,Brand#12),In(p_container, [SM BOX,SM CASE,SM PACK,SM PKG])),LessThanOrEqual(p_size,5)),And(And(EqualTo(p_brand,Brand#14),In(p_container, [MED BAG,MED BOX,MED PACK,MED PKG])),LessThanOrEqual(p_size,10))),And(And(EqualTo(p_brand,Brand#15),In(p_container, [LG BOX,LG CASE,LG PACK,LG PKG])),LessThanOrEqual(p_size,15)))]
 ReadSchema: struct<p_partkey:bigint,p_brand:string,p_size:int,p_container:string>
 
 (30) Filter
 Input [4]: [p_partkey#8, p_brand#9, p_size#10, p_container#11]
-Condition : (((isnotnull(p_size#10) AND (p_size#10 >= 1)) AND isnotnull(p_partkey#8)) AND (((((p_brand#9 = Brand#12) AND p_container#11 IN (SM CASE,SM BOX,SM PACK,SM PKG)) AND (p_size#10 <= 5)) OR (((p_brand#9 = Brand#13) AND p_container#11 IN (MED BAG,MED BOX,MED PKG,MED PACK)) AND (p_size#10 <= 10))) OR (((p_brand#9 = Brand#14) AND p_container#11 IN (LG CASE,LG BOX,LG PACK,LG PKG)) AND (p_size#10 <= 15))))
+Condition : (((isnotnull(p_size#10) AND (p_size#10 >= 1)) AND isnotnull(p_partkey#8)) AND (((((p_brand#9 = Brand#12) AND p_container#11 IN (SM CASE,SM BOX,SM PACK,SM PKG)) AND (p_size#10 <= 5)) OR (((p_brand#9 = Brand#14) AND p_container#11 IN (MED BAG,MED BOX,MED PKG,MED PACK)) AND (p_size#10 <= 10))) OR (((p_brand#9 = Brand#15) AND p_container#11 IN (LG CASE,LG BOX,LG PACK,LG PKG)) AND (p_size#10 <= 15))))
 
 (31) Exchange
 Input [4]: [p_partkey#8, p_brand#9, p_size#10, p_container#11]
@@ -191,7 +185,7 @@ Arguments: [p_partkey#8 ASC NULLS FIRST], false, 0
 Left keys [1]: [l_partkey#1]
 Right keys [1]: [p_partkey#8]
 Join type: Inner
-Join condition: (((((((p_brand#9 = Brand#12) AND p_container#11 IN (SM CASE,SM BOX,SM PACK,SM PKG)) AND (l_quantity#2 >= 1.00)) AND (l_quantity#2 <= 11.00)) AND (p_size#10 <= 5)) OR (((((p_brand#9 = Brand#13) AND p_container#11 IN (MED BAG,MED BOX,MED PKG,MED PACK)) AND (l_quantity#2 >= 10.00)) AND (l_quantity#2 <= 20.00)) AND (p_size#10 <= 10))) OR (((((p_brand#9 = Brand#14) AND p_container#11 IN (LG CASE,LG BOX,LG PACK,LG PKG)) AND (l_quantity#2 >= 20.00)) AND (l_quantity#2 <= 30.00)) AND (p_size#10 <= 15)))
+Join condition: (((((((p_brand#9 = Brand#12) AND p_container#11 IN (SM CASE,SM BOX,SM PACK,SM PKG)) AND (l_quantity#2 >= 1.00)) AND (l_quantity#2 <= 11.00)) AND (p_size#10 <= 5)) OR (((((p_brand#9 = Brand#14) AND p_container#11 IN (MED BAG,MED BOX,MED PKG,MED PACK)) AND (l_quantity#2 >= 10.00)) AND (l_quantity#2 <= 20.00)) AND (p_size#10 <= 10))) OR (((((p_brand#9 = Brand#15) AND p_container#11 IN (LG CASE,LG BOX,LG PACK,LG PKG)) AND (l_quantity#2 >= 20.00)) AND (l_quantity#2 <= 30.00)) AND (p_size#10 <= 15)))
 
 (34) Project
 Output [2]: [l_extendedprice#3, l_discount#4]

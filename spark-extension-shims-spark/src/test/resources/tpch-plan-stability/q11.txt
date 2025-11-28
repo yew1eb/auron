@@ -79,10 +79,7 @@ AdaptiveSparkPlan (74)
 
 (1) NativeParquetScan 
 Output [4]: [ps_partkey#1, ps_suppkey#2, ps_availqty#3, ps_supplycost#4]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(ps_suppkey)]
-ReadSchema: struct<ps_partkey:bigint,ps_suppkey:bigint,ps_availqty:int,ps_supplycost:decimal(12,2)>
+Arguments: FileScan parquet [ps_partkey#1,ps_suppkey#2,ps_availqty#3,ps_supplycost#4] Batched: true, DataFilters: [isnotnull(ps_suppkey#2)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ps_suppkey)], ReadSchema: struct<ps_partkey:bigint,ps_suppkey:bigint,ps_availqty:int,ps_supplycost:decimal(12,2)>
 
 (2) InputAdapter
 Input [4]: [ps_partkey#1, ps_suppkey#2, ps_availqty#3, ps_supplycost#4]
@@ -113,10 +110,7 @@ Arguments: [ps_suppkey#2 ASC NULLS FIRST], false
 
 (9) NativeParquetScan 
 Output [2]: [s_suppkey#7, s_nationkey#8]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(s_suppkey), IsNotNull(s_nationkey)]
-ReadSchema: struct<s_suppkey:bigint,s_nationkey:bigint>
+Arguments: FileScan parquet [s_suppkey#7,s_nationkey#8] Batched: true, DataFilters: [isnotnull(s_suppkey#7), isnotnull(s_nationkey#8)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(s_suppkey), IsNotNull(s_nationkey)], ReadSchema: struct<s_suppkey:bigint,s_nationkey:bigint>
 
 (10) InputAdapter
 Input [2]: [s_suppkey#7, s_nationkey#8]
@@ -176,10 +170,7 @@ Arguments: [s_nationkey#8 ASC NULLS FIRST], false
 
 (24) NativeParquetScan 
 Output [2]: [n_nationkey#11, n_name#12]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(n_name), EqualTo(n_name,GERMANY), IsNotNull(n_nationkey)]
-ReadSchema: struct<n_nationkey:bigint,n_name:string>
+Arguments: FileScan parquet [n_nationkey#11,n_name#12] Batched: true, DataFilters: [isnotnull(n_name#12), (n_name#12 = GERMANY), isnotnull(n_nationkey#11)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(n_name), EqualTo(n_name,GERMANY), IsNotNull(n_nationkey)], ReadSchema: struct<n_nationkey:bigint,n_name:string>
 
 (25) InputAdapter
 Input [2]: [n_nationkey#11, n_name#12]
@@ -472,10 +463,7 @@ AdaptiveSparkPlan (132)
 
 (75) NativeParquetScan 
 Output [3]: [ps_suppkey#24, ps_availqty#25, ps_supplycost#26]
-Batched: true
-Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>]
-PushedFilters: [IsNotNull(ps_suppkey)]
-ReadSchema: struct<ps_suppkey:bigint,ps_availqty:int,ps_supplycost:decimal(12,2)>
+Arguments: FileScan parquet [ps_suppkey#24,ps_availqty#25,ps_supplycost#26] Batched: true, DataFilters: [isnotnull(ps_suppkey#24)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ps_suppkey)], ReadSchema: struct<ps_suppkey:bigint,ps_availqty:int,ps_supplycost:decimal(12,2)>
 
 (76) InputAdapter
 Input [3]: [ps_suppkey#24, ps_availqty#25, ps_supplycost#26]
