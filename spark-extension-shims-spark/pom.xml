@@ -112,5 +112,11 @@
       <artifactId>spark-sql_${scalaVersion}</artifactId>
       <type>test-jar</type>
     </dependency>
+
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-reflect</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
