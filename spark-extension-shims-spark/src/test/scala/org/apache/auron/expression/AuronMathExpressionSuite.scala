@@ -16,7 +16,6 @@
  */
 package org.apache.auron.expression
 
-import scala.collection.immutable.Seq
 import scala.util.Random
 
 import org.apache.spark.sql.AuronQueryTest

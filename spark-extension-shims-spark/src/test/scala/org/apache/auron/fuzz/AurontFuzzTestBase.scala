@@ -85,4 +85,500 @@ class AurontFuzzTestBase extends AuronQueryTest with BaseAuronSQLSuite {
     }
   }
 
+  /**
+   {
+   "type" : "struct",
+   "fields" : [ {
+   "name" : "c0",
+   "type" : "boolean",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c1",
+   "type" : "byte",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c2",
+   "type" : "short",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c3",
+   "type" : "integer",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c4",
+   "type" : "long",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c5",
+   "type" : "float",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c6",
+   "type" : "double",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c7",
+   "type" : "decimal(10,2)",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c8",
+   "type" : "decimal(36,18)",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c9",
+   "type" : "date",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c10",
+   "type" : "timestamp",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c11",
+   "type" : "timestamp_ntz",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c12",
+   "type" : "string",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c13",
+   "type" : "binary",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c14",
+   "type" : {
+   "type" : "struct",
+   "fields" : [ {
+   "name" : "c0",
+   "type" : "boolean",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c1",
+   "type" : "byte",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c2",
+   "type" : "short",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c3",
+   "type" : "integer",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c4",
+   "type" : "long",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c5",
+   "type" : "float",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c6",
+   "type" : "double",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c7",
+   "type" : "decimal(10,2)",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c8",
+   "type" : "decimal(36,18)",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c9",
+   "type" : "date",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c10",
+   "type" : "timestamp",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c11",
+   "type" : "timestamp_ntz",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c12",
+   "type" : "string",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c13",
+   "type" : "binary",
+   "nullable" : true,
+   "metadata" : { }
+   } ]
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c15",
+   "type" : {
+   "type" : "struct",
+   "fields" : [ {
+   "name" : "c0",
+   "type" : {
+   "type" : "array",
+   "elementType" : "boolean",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c1",
+   "type" : {
+   "type" : "array",
+   "elementType" : "byte",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c2",
+   "type" : {
+   "type" : "array",
+   "elementType" : "short",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c3",
+   "type" : {
+   "type" : "array",
+   "elementType" : "integer",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c4",
+   "type" : {
+   "type" : "array",
+   "elementType" : "long",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c5",
+   "type" : {
+   "type" : "array",
+   "elementType" : "float",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c6",
+   "type" : {
+   "type" : "array",
+   "elementType" : "double",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c7",
+   "type" : {
+   "type" : "array",
+   "elementType" : "decimal(10,2)",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c8",
+   "type" : {
+   "type" : "array",
+   "elementType" : "decimal(36,18)",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c9",
+   "type" : {
+   "type" : "array",
+   "elementType" : "date",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c10",
+   "type" : {
+   "type" : "array",
+   "elementType" : "timestamp",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c11",
+   "type" : {
+   "type" : "array",
+   "elementType" : "timestamp_ntz",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c12",
+   "type" : {
+   "type" : "array",
+   "elementType" : "string",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c13",
+   "type" : {
+   "type" : "array",
+   "elementType" : "binary",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   } ]
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c16",
+   "type" : {
+   "type" : "array",
+   "elementType" : "boolean",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c17",
+   "type" : {
+   "type" : "array",
+   "elementType" : "byte",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c18",
+   "type" : {
+   "type" : "array",
+   "elementType" : "short",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c19",
+   "type" : {
+   "type" : "array",
+   "elementType" : "integer",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c20",
+   "type" : {
+   "type" : "array",
+   "elementType" : "long",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c21",
+   "type" : {
+   "type" : "array",
+   "elementType" : "float",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c22",
+   "type" : {
+   "type" : "array",
+   "elementType" : "double",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c23",
+   "type" : {
+   "type" : "array",
+   "elementType" : "decimal(10,2)",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c24",
+   "type" : {
+   "type" : "array",
+   "elementType" : "decimal(36,18)",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c25",
+   "type" : {
+   "type" : "array",
+   "elementType" : "date",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c26",
+   "type" : {
+   "type" : "array",
+   "elementType" : "timestamp",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c27",
+   "type" : {
+   "type" : "array",
+   "elementType" : "timestamp_ntz",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c28",
+   "type" : {
+   "type" : "array",
+   "elementType" : "string",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c29",
+   "type" : {
+   "type" : "array",
+   "elementType" : "binary",
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c30",
+   "type" : {
+   "type" : "array",
+   "elementType" : {
+   "type" : "struct",
+   "fields" : [ {
+   "name" : "c0",
+   "type" : "boolean",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c1",
+   "type" : "byte",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c2",
+   "type" : "short",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c3",
+   "type" : "integer",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c4",
+   "type" : "long",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c5",
+   "type" : "float",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c6",
+   "type" : "double",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c7",
+   "type" : "decimal(10,2)",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c8",
+   "type" : "decimal(36,18)",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c9",
+   "type" : "date",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c10",
+   "type" : "timestamp",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c11",
+   "type" : "timestamp_ntz",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c12",
+   "type" : "string",
+   "nullable" : true,
+   "metadata" : { }
+   }, {
+   "name" : "c13",
+   "type" : "binary",
+   "nullable" : true,
+   "metadata" : { }
+   } ]
+   },
+   "containsNull" : true
+   },
+   "nullable" : true,
+   "metadata" : { }
+   } ]
+   }
+   */
 }

@@ -385,6 +385,8 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
     }
   }
 
+  // FIXME
+  // TODO
   test("initcap: word boundaries and punctuation") {
     Seq(
       ("select initcap('hello world')", Row("Hello World")),
@@ -415,7 +417,8 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
       checkSparkAnswerAndOperator("select id, initcap(txt) from initcap_bound_tbl")
     }
   }
-
+  // FIXME
+  // TODO
   test("initcap: mixed cases and edge cases") {
     Seq(
       ("select initcap('a1b2 c3D4')", Row("A1b2 C3d4")),
@@ -439,6 +442,8 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
     }
   }
 
+  // FIXME
+  // TODO
   test("test filter with hour function") {
     withEnvConf("spark.auron.datetime.extract.enabled" -> "true") {
       withTable("t_hour") {
@@ -472,6 +477,8 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
     }
   }
 
+  // FIXME
+  // TODO
   test("test filter with minute function") {
     withEnvConf("spark.auron.datetime.extract.enabled" -> "true") {
       withTable("t_minute") {
@@ -503,6 +510,8 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
     }
   }
 
+  // FIXME
+  // TODO
   test("test filter with second function") {
     withEnvConf("spark.auron.datetime.extract.enabled" -> "true") {
       withTable("t_second") {
@@ -534,6 +543,8 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
     }
   }
 
+  // FIXME
+  // TODO
   // For Date input: hour/minute/second should all be 0
   test("timeparts on Date input return zeros") {
     withEnvConf("spark.auron.datetime.extract.enabled" -> "true") {
@@ -563,7 +574,8 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
       }
     }
   }
-
+  // FIXME
+  // TODO
   test("hour/minute/second respect timezone via from_utc_timestamp") {
     withEnvConf("spark.auron.datetime.extract.enabled" -> "true") {
       withTable("t_tz") {
@@ -577,6 +589,9 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
                                                     |select hour(ts), minute(ts), second(ts)
                                                     |from t_tz
                                                     |""".stripMargin)
+        // 25/11/29 23:47:12 WARN AuronConverters: Falling back exec:
+        // ProjectExec: requirement failed: Literal must have a corresponding value to string, but class String found.
+
 //        checkAnswer(
 //          sql("""
 //                |select hour(ts), minute(ts), second(ts)

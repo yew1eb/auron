@@ -28,9 +28,13 @@ import org.apache.auron.testing.{DataGenOptions, ParquetGenerator, SchemaGenOpti
 import org.apache.auron.testing.FuzzDataGenerator.{doubleNaNLiteral, floatNaNLiteral}
 
 class AuronFuzzTestSuite extends AurontFuzzTestBase {
-
+// FIXME
+// TODO
+// WARN AuronConverters: Falling back exec: FileSourceScanExec:
+// Data type conversion not implemented TimestampNTZType
   test("select *") {
     val df = spark.read.parquet(filename)
+    println(df.schema)
     df.createOrReplaceTempView("t1")
     val sql = "SELECT * FROM t1"
     checkSparkAnswerAndOperator(sql)
@@ -307,11 +311,14 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
       s"GROUP BY $groupCol ORDER BY $groupCol"
     val dfx = checkSparkAnswer(sql)
     val cometPlan = dfx.queryExecution.executedPlan
+    println(cometPlan)
     if (true) {
       assert(1 == collectNativeScans(cometPlan).length)
     }
   }
 
+  // FIXME
+  // TODO
   test("min/max aggregate") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")
@@ -323,6 +330,13 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
       if (true) {
         assert(1 == collectNativeScans(cometPlan).length)
       }
+
+      /**
+       * == Results ==
+       * !== Correct Answer - 1 ==              == Spark Answer - 1 ==
+       * struct<min(c5):float,max(c5):float>   struct<min(c5):float,max(c5):float>
+       * ![-Infinity,NaN]                       [-Infinity,Infinity]
+       */
     }
   }
 
@@ -357,6 +371,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
     }
   }
 
+  //auron测试都通过但是执行太慢了，先ignore
   ignore("Parquet temporal types written as INT96") {
     testParquetTemporalTypes(ParquetOutputTimestampType.INT96)
   }
