@@ -939,4 +939,15 @@ abstract class AuronQueryTest
     }
   }
 
+  def makeDecimalRDD(num: Int, decimal: DecimalType, useDictionary: Boolean): DataFrame = {
+    import testImplicits._
+    val div = if (useDictionary) 5 else num // narrow the space to make it dictionary encoded
+    spark
+      .range(num)
+      .map(_ % div)
+      // Parquet doesn't allow column names with spaces, have to add an alias here.
+      // Minus 500 here so that negative decimals are also tested.
+      .select((($"value" - 500) / 100.0) cast decimal as Symbol("dec"))
+      .coalesce(1)
+  }
 }

@@ -20,10 +20,12 @@
 package org.apache.auron.execution
 
 import org.apache.auron.BaseAuronSQLSuite
+import org.apache.auron.testing.{DataGenOptions, FuzzDataGenerator, ParquetGenerator, SchemaGenOptions}
 import org.apache.hadoop.fs.Path
 import org.apache.spark.sql.catalyst.expressions.Cast
 import org.apache.spark.sql.catalyst.optimizer.EliminateSorts
 import org.apache.spark.sql.execution.adaptive.AdaptiveSparkPlanHelper
+import org.apache.spark.sql.execution.auron.plan.NativeAggBase
 import org.apache.spark.sql.functions.{avg, count_distinct, sum}
 import org.apache.spark.sql.internal.SQLConf
 import org.apache.spark.sql.types.{DataTypes, StructField, StructType}
@@ -55,12 +57,15 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
       assert(spark.sql(s"select * from tbl where cast($col as string) = '0.0'").count() > 0)
       assert(spark.sql(s"select * from tbl where cast($col as string) = '-0.0'").count() > 0)
       for (agg <- Seq("min", "max")) {
-        withSQLConf(COMET_EXEC_STRICT_FLOATING_POINT.key -> "true") {
+        withSQLConf(
+          //COMET_EXEC_STRICT_FLOATING_POINT.key -> "true")
+        )
+        {
           checkSparkAnswerAndFallbackReasons(
             s"select $agg($col) from tbl where cast($col as string) in ('0.0', '-0.0')",
             Set(
               "Unsupported aggregate expression(s)",
-              s"floating-point not supported when ${COMET_EXEC_STRICT_FLOATING_POINT.key}=true"))
+              s"floating-point not supported when COMET_EXEC_STRICT_FLOATING_POINT.key=true"))
         }
         checkSparkAnswer(
           s"select $col, count(*) from tbl " +
@@ -74,7 +79,7 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
       val path = new Path(dir.toURI.toString, "test.parquet")
       val filename = path.toString
       val random = new Random(42)
-      withSQLConf(CometConf.COMET_ENABLED.key -> "false") {
+      withSQLConf("spark.auron.enable" -> "false") {
         ParquetGenerator.makeParquetFile(
           random,
           spark,
@@ -97,7 +102,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
   }
 
   test("stddev_pop should return NaN for some cases") {
-    withSQLConf(CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true") {
+    withSQLConf(
+      //CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true"
+      ) {
       Seq(true, false).foreach { nullOnDivideByZero =>
         withSQLConf("spark.sql.legacy.statisticalAggregate" -> nullOnDivideByZero.toString) {
 
@@ -112,10 +119,11 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
   }
 
   test("count with aggregation filter") {
-    withSQLConf(
-      CometConf.COMET_ENABLED.key -> "true",
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "jvm") {
+    withSQLConf( 
+    // CometConf.COMET_ENABLED.key -> "true",
+    //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+    //  CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
+    ) {
       val df1 = sql("SELECT count(DISTINCT 2), count(DISTINCT 2,3)")
       checkSparkAnswer(df1)
 
@@ -123,12 +131,13 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
       checkSparkAnswer(df2)
     }
   }
-
+  import testImplicits._
   test("multiple column distinct count") {
     withSQLConf(
-      CometConf.COMET_ENABLED.key -> "true",
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "jvm") {
+     // CometConf.COMET_ENABLED.key -> "true",
+     // CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+    //  CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
+    ) {
       val df1 = Seq(
         ("a", "b", "c"),
         ("a", "b", "c"),
@@ -147,9 +156,10 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
     withTempView("lowerCaseData") {
       lowerCaseData.createOrReplaceTempView("lowerCaseData")
       withSQLConf(
-        CometConf.COMET_ENABLED.key -> "true",
-        CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-        CometConf.COMET_SHUFFLE_MODE.key -> "jvm") {
+       // CometConf.COMET_ENABLED.key -> "true",
+      //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+      //  CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
+      ) {
         val df = sql("SELECT LAST(n) FROM lowerCaseData")
         checkSparkAnswer(df)
       }
@@ -162,9 +172,10 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
     withTempView("allNulls") {
       allNulls.createOrReplaceTempView("allNulls")
       withSQLConf(
-        CometConf.COMET_ENABLED.key -> "true",
-        CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-        CometConf.COMET_SHUFFLE_MODE.key -> "jvm") {
+      //  CometConf.COMET_ENABLED.key -> "true",
+      //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+      //  CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
+      ) {
         val df = sql("select sum(a), avg(a) from allNulls")
         checkSparkAnswer(df)
       }
@@ -173,9 +184,10 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   test("Aggregation without aggregate expressions should use correct result expressions") {
     withSQLConf(
-      CometConf.COMET_ENABLED.key -> "true",
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "jvm") {
+     // CometConf.COMET_ENABLED.key -> "true",
+     // CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+    //  CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
+    ) {
       withTempDir { dir =>
         val path = new Path(dir.toURI.toString, "test")
         makeParquetFile(path, 10000, 10, false)
@@ -189,9 +201,10 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   test("Final aggregation should not bind to the input of partial aggregation") {
     withSQLConf(
-      CometConf.COMET_ENABLED.key -> "true",
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "jvm") {
+    //  CometConf.COMET_ENABLED.key -> "true",
+    //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+    //  CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
+    ) {
       Seq(true, false).foreach { dictionaryEnabled =>
         withTempDir { dir =>
           val path = new Path(dir.toURI.toString, "test")
@@ -208,9 +221,10 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
   test("Ensure traversed operators during finding first partial aggregation are all native") {
     withTable("lineitem", "part") {
       withSQLConf(
-        CometConf.COMET_ENABLED.key -> "true",
-        CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-        CometConf.COMET_SHUFFLE_MODE.key -> "jvm") {
+  //      CometConf.COMET_ENABLED.key -> "true",
+ //       CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+//        CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
+) {
 
         sql(
           "CREATE TABLE lineitem(l_extendedprice DOUBLE, l_quantity DOUBLE, l_partkey STRING) USING PARQUET")
@@ -245,9 +259,10 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
   test("SUM decimal supports emit.first") {
     withSQLConf(
       SQLConf.OPTIMIZER_EXCLUDED_RULES.key -> EliminateSorts.ruleName,
-      CometConf.COMET_ENABLED.key -> "true",
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "jvm") {
+      //CometConf.COMET_ENABLED.key -> "true",
+      //CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+      //CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
+      ) {
       Seq(true, false).foreach { dictionaryEnabled =>
         withTempDir { dir =>
           val path = new Path(dir.toURI.toString, "test")
@@ -264,9 +279,10 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
   test("AVG decimal supports emit.first") {
     withSQLConf(
       SQLConf.OPTIMIZER_EXCLUDED_RULES.key -> EliminateSorts.ruleName,
-      CometConf.COMET_ENABLED.key -> "true",
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "jvm") {
+      // CometConf.COMET_ENABLED.key -> "true",
+ //     CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+ //     CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
+) {
       Seq(true, false).foreach { dictionaryEnabled =>
         withTempDir { dir =>
           val path = new Path(dir.toURI.toString, "test")
@@ -284,9 +300,10 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
     val table = "tbl"
     withTable(table) {
       withSQLConf(
-        CometConf.COMET_ENABLED.key -> "true",
-        CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "false",
-        CometConf.COMET_SHUFFLE_MODE.key -> "native") {
+        // CometConf.COMET_ENABLED.key -> "true",
+        //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "false",
+      //  CometConf.COMET_SHUFFLE_MODE.key -> "native"
+      ) {
         withTable(table) {
           sql(s"CREATE TABLE $table(col DECIMAL(5, 2)) USING PARQUET")
           sql(s"INSERT INTO TABLE $table VALUES (CAST(12345.01 AS DECIMAL(5, 2)))")
@@ -298,7 +315,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
   }
 
   test("fix: Decimal Average should not enable native final aggregation") {
-    withSQLConf(CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true") {
+    withSQLConf(
+      //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true"
+    ) {
       Seq(true, false).foreach { dictionaryEnabled =>
         withTempDir { dir =>
           val path = new Path(dir.toURI.toString, "test")
@@ -385,8 +404,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
     Seq(true, false).foreach { nativeShuffleEnabled =>
       Seq(true, false).foreach { dictionaryEnabled =>
         withSQLConf(
-          CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> nativeShuffleEnabled.toString,
-          CometConf.COMET_SHUFFLE_MODE.key -> "native") {
+          //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> nativeShuffleEnabled.toString,
+          //  CometConf.COMET_SHUFFLE_MODE.key -> "native"
+        ) {
           withParquetTable(
             (0 until 100).map(i => (i, (i % 10).toString)),
             "tbl",
@@ -499,7 +519,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
         (-0.0.asInstanceOf[Float], 2),
         (0.0.asInstanceOf[Float], 3),
         (Float.NaN, 4))
-      withSQLConf(CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "false") {
+      withSQLConf(
+        // CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "false"
+        ) {
         withParquetTable(data, "tbl", dictionaryEnabled) {
           checkSparkAnswer("SELECT SUM(_2), MIN(_2), MAX(_2), _1 FROM tbl GROUP BY _1")
           checkSparkAnswer("SELECT MIN(_1), MAX(_1), MIN(_2), MAX(_2) FROM tbl")
@@ -568,8 +590,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
     Seq(true, false).foreach { dictionaryEnabled =>
       Seq(true, false).foreach { nativeShuffleEnabled =>
         withSQLConf(
-          CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> nativeShuffleEnabled.toString,
-          CometConf.COMET_SHUFFLE_MODE.key -> "native") {
+        //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> nativeShuffleEnabled.toString,
+        //  CometConf.COMET_SHUFFLE_MODE.key -> "native"
+        ) {
           withTempDir { dir =>
             val path = new Path(dir.toURI.toString, "test")
             makeParquetFile(path, 1000, 20, dictionaryEnabled)
@@ -626,8 +649,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
       Seq(128, 1024, numValues + 1).foreach { batchSize =>
         Seq(true, false).foreach { dictionaryEnabled =>
           withSQLConf(
-            SQLConf.COALESCE_PARTITIONS_ENABLED.key -> "true",
-            CometConf.COMET_BATCH_SIZE.key -> batchSize.toString) {
+          //  SQLConf.COALESCE_PARTITIONS_ENABLED.key -> "true",
+            "spark.auron.batchSize" -> batchSize.toString
+          ) {
             withParquetTable(
               (0 until numValues).map(i => (i, Random.nextInt() % numGroups)),
               "tbl",
@@ -654,7 +678,7 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
         Seq(true, false).foreach { dictionaryEnabled =>
           withSQLConf(
             SQLConf.COALESCE_PARTITIONS_ENABLED.key -> "true",
-            CometConf.COMET_BATCH_SIZE.key -> batchSize.toString) {
+            "spark.auron.batchSize" -> batchSize.toString) {
             withTempPath { dir =>
               val path = new Path(dir.toURI.toString, "test.parquet")
               makeParquetFile(path, numValues, numGroups, dictionaryEnabled)
@@ -686,7 +710,7 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
         Seq(true, false).foreach { dictionaryEnabled =>
           withSQLConf(
             SQLConf.COALESCE_PARTITIONS_ENABLED.key -> "true",
-            CometConf.COMET_BATCH_SIZE.key -> batchSize.toString) {
+            "spark.auron.batchSize" -> batchSize.toString) {
             withTempPath { dir =>
               val path = new Path(dir.toURI.toString, "test.parquet")
               makeParquetFile(path, numValues, numGroups, dictionaryEnabled)
@@ -715,7 +739,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
     withTable("t") {
       sql("CREATE TABLE t(v VARCHAR(3), i INT) USING PARQUET")
       sql("INSERT INTO t VALUES ('c', 1)")
-      withSQLConf(CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "false") {
+      withSQLConf(
+        //CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "false"
+        ) {
         checkSparkAnswerAndNumOfAggregates("SELECT v, sum(i) FROM t GROUP BY v ORDER BY v", 1)
       }
     }
@@ -730,7 +756,7 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
         Seq(true, false).foreach { dictionaryEnabled =>
           withSQLConf(
             SQLConf.COALESCE_PARTITIONS_ENABLED.key -> "true",
-            CometConf.COMET_BATCH_SIZE.key -> batchSize.toString) {
+            "spark.auron.batchSize" -> batchSize.toString) {
             withTempPath { dir =>
               val path = new Path(dir.toURI.toString, "test.parquet")
               makeParquetFile(path, numValues, numGroups, dictionaryEnabled)
@@ -759,7 +785,7 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
         Seq(true, false).foreach { dictionaryEnabled =>
           withSQLConf(
             SQLConf.COALESCE_PARTITIONS_ENABLED.key -> "true",
-            CometConf.COMET_BATCH_SIZE.key -> batchSize.toString) {
+            "spark.auron.batchSize" -> batchSize.toString) {
             withTempPath { dir =>
               val path = new Path(dir.toURI.toString, "test.parquet")
               makeParquetFile(path, numValues, numGroups, dictionaryEnabled)
@@ -796,8 +822,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
           withParquetTable(path.toUri.toString, "tbl") {
             Seq(128, numValues + 100).foreach { batchSize =>
               withSQLConf(
-                CometConf.COMET_BATCH_SIZE.key -> batchSize.toString,
-                CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "false") {
+                "spark.auron.batchSize" -> batchSize.toString,
+              //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "false"
+              ) {
 
                 // Test all combinations of different aggregation & group-by types
                 (1 to 14).foreach { gCol =>
@@ -822,7 +849,7 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
     withTempDir { dir =>
       val filename = s"${dir.getAbsolutePath}/first_last_ignore_null.parquet"
       data.write.parquet(filename)
-      withSQLConf(CometConf.COMET_BATCH_SIZE.key -> "100") {
+      withSQLConf("spark.auron.batchSize"-> "100") {
         spark.read.parquet(filename).createOrReplaceTempView("t1")
         for (expr <- Seq("first", "last")) {
           // deterministic query that should return one non-null value per group
@@ -845,8 +872,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
           withParquetTable(path.toUri.toString, "tbl") {
             Seq(128, numValues + 100).foreach { batchSize =>
               withSQLConf(
-                CometConf.COMET_BATCH_SIZE.key -> batchSize.toString,
-                CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "false") {
+                "spark.auron.batchSize" -> batchSize.toString,
+              //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "false"
+              ) {
 
                 // Test all combinations of different aggregation & group-by types
                 (1 to 14).foreach { gCol =>
@@ -867,8 +895,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   test("test final count") {
     withSQLConf(
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "native") {
+    //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+    //  CometConf.COMET_SHUFFLE_MODE.key -> "native"
+    ) {
       Seq(false, true).foreach { dictionaryEnabled =>
         withParquetTable((0 until 5).map(i => (i, i % 2)), "tbl", dictionaryEnabled) {
           checkSparkAnswerAndNumOfAggregates("SELECT _2, COUNT(_1) FROM tbl GROUP BY _2", 2)
@@ -884,8 +913,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   test("test final min/max") {
     withSQLConf(
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "native") {
+    //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+    //  CometConf.COMET_SHUFFLE_MODE.key -> "native"
+    ) {
       Seq(true, false).foreach { dictionaryEnabled =>
         withParquetTable((0 until 5).map(i => (i, i % 2)), "tbl", dictionaryEnabled) {
           checkSparkAnswerAndNumOfAggregates(
@@ -905,8 +935,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   test("test final min/max/count with result expressions") {
     withSQLConf(
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "native") {
+    //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+    //  CometConf.COMET_SHUFFLE_MODE.key -> "native"
+    ) {
       Seq(true, false).foreach { dictionaryEnabled =>
         withParquetTable((0 until 5).map(i => (i, i % 2)), "tbl", dictionaryEnabled) {
           checkSparkAnswerAndNumOfAggregates(
@@ -940,8 +971,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   test("test final sum") {
     withSQLConf(
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "native") {
+    //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+    //  CometConf.COMET_SHUFFLE_MODE.key -> "native"
+    ) {
       Seq(false, true).foreach { dictionaryEnabled =>
         withParquetTable((0L until 5L).map(i => (i, i % 2)), "tbl", dictionaryEnabled) {
           checkSparkAnswerAndNumOfAggregates(
@@ -976,8 +1008,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   test("test final avg") {
     withSQLConf(
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "native") {
+    //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+    //  CometConf.COMET_SHUFFLE_MODE.key -> "native"
+    ) {
       Seq(true, false).foreach { dictionaryEnabled =>
         withParquetTable(
           (0 until 5).map(i => (i.toDouble, i.toDouble % 2)),
@@ -998,8 +1031,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   test("final decimal avg") {
     withSQLConf(
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "native") {
+     // CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+    //  CometConf.COMET_SHUFFLE_MODE.key -> "native"
+    ) {
       Seq(true, false).foreach { dictionaryEnabled =>
         withSQLConf("parquet.enable.dictionary" -> dictionaryEnabled.toString) {
           val table = s"final_decimal_avg_$dictionaryEnabled"
@@ -1036,7 +1070,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
         (0 until 5).map(i => (i.toDouble, i.toDouble % 2)),
         "tbl",
         dictionaryEnabled) {
-        withSQLConf(CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "false") {
+        withSQLConf(
+          // CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "false"
+          ) {
           checkSparkAnswerAndNumOfAggregates("SELECT _2 , AVG(_1) FROM tbl GROUP BY _2", 1)
         }
       }
@@ -1045,8 +1081,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   test("avg null handling") {
     withSQLConf(
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "native") {
+    //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+    //  CometConf.COMET_SHUFFLE_MODE.key -> "native"
+    ) {
       val table = "avg_null_handling"
       withTable(table) {
         sql(s"create table $table(a double, b double) using parquet")
@@ -1067,9 +1104,10 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
     Seq(true, false).foreach { dictionaryEnabled =>
       Seq(true, false).foreach { nativeShuffleEnabled =>
         withSQLConf(
-          CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> nativeShuffleEnabled.toString,
-          CometConf.COMET_SHUFFLE_MODE.key -> "native",
-          CometConf.getExprAllowIncompatConfigKey(classOf[Cast]) -> "true") {
+         // CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> nativeShuffleEnabled.toString,
+        //  CometConf.COMET_SHUFFLE_MODE.key -> "native",
+        //  CometConf.getExprAllowIncompatConfigKey(classOf[Cast]) -> "true"
+        ) {
           withTempDir { dir =>
             val path = new Path(dir.toURI.toString, "test")
             makeParquetFile(path, 1000, 20, dictionaryEnabled)
@@ -1080,7 +1118,7 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
                 "SELECT _g2, AVG(_7) FROM tbl GROUP BY _g2",
                 expectedNumOfCometAggregates)
 
-              checkSparkAnswerWithTolerance("SELECT _g3, AVG(_8) FROM tbl GROUP BY _g3")
+              checkSparkAnswerWithTolerance(sql("SELECT _g3, AVG(_8) FROM tbl GROUP BY _g3"), 1e-6)
               assert(getNumCometHashAggregate(
                 sql("SELECT _g3, AVG(_8) FROM tbl GROUP BY _g3")) == expectedNumOfCometAggregates)
 
@@ -1092,7 +1130,7 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
                 "SELECT AVG(_7) FROM tbl",
                 expectedNumOfCometAggregates)
 
-              checkSparkAnswerWithTolerance("SELECT AVG(_8) FROM tbl")
+              checkSparkAnswerWithTolerance(sql("SELECT AVG(_8) FROM tbl"), 1e-6)
               assert(getNumCometHashAggregate(
                 sql("SELECT AVG(_8) FROM tbl")) == expectedNumOfCometAggregates)
 
@@ -1108,9 +1146,13 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   // TODO enable once https://github.com/apache/datafusion-comet/issues/1267 is implemented
   ignore("distinct") {
-    withSQLConf(CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true") {
+    withSQLConf(
+      // CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true"
+      ) {
       Seq("native", "jvm").foreach { cometShuffleMode =>
-        withSQLConf(CometConf.COMET_SHUFFLE_MODE.key -> cometShuffleMode) {
+        withSQLConf(
+          // CometConf.COMET_SHUFFLE_MODE.key -> cometShuffleMode
+          ) {
           Seq(true, false).foreach { dictionary =>
             withSQLConf("parquet.enable.dictionary" -> dictionary.toString) {
               val cometColumnShuffleEnabled = cometShuffleMode == "jvm"
@@ -1166,8 +1208,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
   ignore("first/last") {
     withSQLConf(
       SQLConf.COALESCE_PARTITIONS_ENABLED.key -> "true",
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "jvm") {
+    //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+    //  CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
+    ) {
       Seq(true, false).foreach { dictionary =>
         withSQLConf("parquet.enable.dictionary" -> dictionary.toString) {
           val table = "test"
@@ -1212,9 +1255,13 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
   }
 
   test("test bool_and/bool_or") {
-    withSQLConf(CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true") {
+    withSQLConf(
+      // CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true"
+      ) {
       Seq("native", "jvm").foreach { cometShuffleMode =>
-        withSQLConf(CometConf.COMET_SHUFFLE_MODE.key -> cometShuffleMode) {
+        withSQLConf(
+          // CometConf.COMET_SHUFFLE_MODE.key -> cometShuffleMode
+          ) {
           Seq(true, false).foreach { dictionary =>
             withSQLConf("parquet.enable.dictionary" -> dictionary.toString) {
               val table = "test"
@@ -1238,8 +1285,9 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   test("bitwise aggregate") {
     withSQLConf(
-      CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
-      CometConf.COMET_SHUFFLE_MODE.key -> "jvm") {
+    //  CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true",
+    //  CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
+    ) {
       Seq(true, false).foreach { dictionary =>
         withSQLConf("parquet.enable.dictionary" -> dictionary.toString) {
           val table = "test"
@@ -1314,9 +1362,13 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
   }
 
   test("covariance & correlation") {
-    withSQLConf(CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true") {
+    withSQLConf(
+      //CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true"
+      ) {
       Seq("jvm", "native").foreach { cometShuffleMode =>
-        withSQLConf(CometConf.COMET_SHUFFLE_MODE.key -> cometShuffleMode) {
+        withSQLConf(
+          // CometConf.COMET_SHUFFLE_MODE.key -> cometShuffleMode
+          ) {
           Seq(true, false).foreach { dictionary =>
             withSQLConf("parquet.enable.dictionary" -> dictionary.toString) {
               Seq(true, false).foreach { nullOnDivideByZero =>
@@ -1386,9 +1438,13 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
   }
 
   test("var_pop and var_samp") {
-    withSQLConf(CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true") {
+    withSQLConf(
+      // CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true"
+      ) {
       Seq("native", "jvm").foreach { cometShuffleMode =>
-        withSQLConf(CometConf.COMET_SHUFFLE_MODE.key -> cometShuffleMode) {
+        withSQLConf(
+          // CometConf.COMET_SHUFFLE_MODE.key -> cometShuffleMode
+          ) {
           Seq(true, false).foreach { dictionary =>
             withSQLConf("parquet.enable.dictionary" -> dictionary.toString) {
               Seq(true, false).foreach { nullOnDivideByZero =>
@@ -1425,9 +1481,13 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
   }
 
   test("stddev_pop and stddev_samp") {
-    withSQLConf(CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true") {
+    withSQLConf(
+      // CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true"
+      ) {
       Seq("native", "jvm").foreach { cometShuffleMode =>
-        withSQLConf(CometConf.COMET_SHUFFLE_MODE.key -> cometShuffleMode) {
+        withSQLConf(
+          // CometConf.COMET_SHUFFLE_MODE.key -> cometShuffleMode
+          ) {
           Seq(true, false).foreach { dictionary =>
             withSQLConf("parquet.enable.dictionary" -> dictionary.toString) {
               Seq(true, false).foreach { nullOnDivideByZero =>
@@ -1489,7 +1549,7 @@ class AuronAggregateSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   def getNumCometHashAggregate(df: DataFrame): Int = {
     val sparkPlan = stripAQEPlan(df.queryExecution.executedPlan)
-    sparkPlan.collect { case s: CometHashAggregateExec => s }.size
+    sparkPlan.collect { case s: NativeAggBase => s }.size
   }
 
 }

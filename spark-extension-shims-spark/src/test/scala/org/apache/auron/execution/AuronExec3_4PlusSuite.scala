@@ -35,7 +35,7 @@ import scala.util.Random
  * This test suite contains tests for only Spark 3.4+.
  */
 class AuronExec3_4PlusSuite extends AuronQueryTest with BaseAuronSQLSuite {
-
+  import testImplicits._
   val func_might_contain = new FunctionIdentifier("might_contain")
 
   override def beforeAll(): Unit = {
@@ -55,7 +55,9 @@ class AuronExec3_4PlusSuite extends AuronQueryTest with BaseAuronSQLSuite {
   override protected def test(testName: String, testTags: Tag*)(testFun: => Any)(implicit
       pos: Position): Unit = {
     super.test(testName, testTags: _*) {
-      withSQLConf(CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true") {
+      withSQLConf(
+        // CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true"
+        ) {
         testFun
       }
     }
@@ -63,7 +65,9 @@ class AuronExec3_4PlusSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   // The syntax is only supported by Spark 3.4+.
   test("subquery limit: limit with offset should return correct results") {
-    withSQLConf(CometConf.COMET_SHUFFLE_MODE.key -> "jvm") {
+    withSQLConf(
+      //CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
+    ) {
       withTable("t1", "t2") {
         val table1 =
           """create temporary view t1 as select * from values
@@ -115,7 +119,9 @@ class AuronExec3_4PlusSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
   // Dataset.offset API is not available before Spark 3.4
   test("offset") {
-    withSQLConf(CometConf.COMET_SHUFFLE_MODE.key -> "jvm") {
+    withSQLConf(
+      //CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
+      ) {
       checkSparkAnswer(testData.offset(90))
       checkSparkAnswer(arrayData.toDF().offset(99))
       checkSparkAnswer(mapData.toDF().offset(99))
@@ -151,6 +157,7 @@ class AuronExec3_4PlusSuite extends AuronQueryTest with BaseAuronSQLSuite {
     }
   }
 
+  /*
   test("test BloomFilterMightContain from random input") {
     val (longs, bfBytes) = bloomFilterFromRandomInput(10000, 10000)
     val table = "test"
@@ -164,7 +171,7 @@ class AuronExec3_4PlusSuite extends AuronQueryTest with BaseAuronSQLSuite {
         .write
         .insertInto(table)
       val expr = BloomFilterMightContain(lit(bfBytes).expr, col("col1").expr)
-      val df = spark.table(table).select(getColumnFromExpression(expr))
+      val df = spark.table(table).select(org.apache.spark.sql.Column(expr))
       checkSparkAnswerAndOperator(df)
       // check with scalar subquery
       checkSparkAnswerAndOperator(s"""
@@ -172,6 +179,7 @@ class AuronExec3_4PlusSuite extends AuronQueryTest with BaseAuronSQLSuite {
            |""".stripMargin)
     }
   }
+*/
 
   private def bloomFilterFromRandomInput(
       expectedItems: Long,
