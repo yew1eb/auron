@@ -296,6 +296,36 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
       ("select rpad('Z', 3, 'AB')", Row("ZAB"))).foreach { case (q, expected) =>
       checkAnswer(sql(q), Seq(expected))
     }
+
+    withTable("pad_tbl") {
+      // 创建表并插入数据
+      sql(s"CREATE TABLE pad_tbl(id INT, txt STRING, len INT, pad STRING) USING parquet")
+      sql(
+        s"""
+           |INSERT INTO pad_tbl VALUES
+           | (1, 'abc', 5, ''),
+           | (2, 'abc', 5, ' '),
+           | (3, 'spark', 2, '0'),
+           | (4, 'spark', 2, '0'),
+           | (5, '9', 5, 'ab'),
+           | (6, '9', 5, 'ab'),
+           | (7, 'hi', 5, ''),
+           | (8, 'hi', 5, ''),
+           | (9, 'x', 0, 'a'),
+           | (10,'x', -1, 'a'),
+           | (11,'Z', 3, '++'),
+           | (12,'Z', 3, 'AB')
+      """.stripMargin)
+      checkSparkAnswerAndOperator("SELECT LPAD(txt, len, pad), rpad(txt, len, pad) FROM pad_tbl")
+      // FIXME
+      // TODO
+      /*
+      Caused by: java.lang.RuntimeException: java.lang.RuntimeException: poll record batch error:
+      Execution error: native execution panics: Execution error: Execution error: output_with_sender[Project] error:
+      Execution error: output_with_sender[Project]: output() returns error:
+      Internal error: could not cast array of type Int32 to arrow_array::array::primitive_array::PrimitiveArray<arrow_array::types::Int64Type>.
+       */
+    }
   }
 
   test("reverse basic") {
@@ -309,6 +339,25 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
       ("select reverse('hello' || ' world')", Row("dlrow olleh"))).foreach { case (q, expected) =>
       checkAnswer(sql(q), Seq(expected))
     }
+
+      withTable("rev_tbl") {
+        // 创建表并插入测试数据
+        sql(s"CREATE TABLE rev_tbl(id INT, txt STRING) USING parquet")
+        sql(
+          s"""
+             |INSERT INTO rev_tbl VALUES
+             | (1, 'abc'),
+             | (2, 'spark'),
+             | (3, 'hello world'),
+             | (4, '12345'),
+             | (5, 'a'), -- single character
+             | (6, ''), -- empty string
+             | (7, 'hello'), -- 将与常量拼接测试
+             | (8, ' world') -- 与 id=7 组合后形成 "hello world"
+""".stripMargin)
+
+        checkSparkAnswerAndOperator("select id, reverse(txt) from rev_tbl")
+      }
   }
 
   test("initcap basic") {
@@ -319,6 +368,20 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
       ("select initcap('')", Row("")),
       ("select initcap(null)", Row(null))).foreach { case (q, expected) =>
       checkAnswer(sql(q), Seq(expected))
+    }
+
+    withTable("initcap_basic_tbl") {
+      sql(s"CREATE TABLE initcap_basic_tbl(id INT, txt STRING) USING parquet")
+      sql(
+        s"""
+           |INSERT INTO initcap_basic_tbl VALUES
+           | (1, 'spark sql'),
+           | (2, 'SPARK'),
+           | (3, 'sPaRk'),
+           | (4, ''),
+           | (5, NULL)
+        """.stripMargin)
+      checkSparkAnswerAndOperator("select id, initcap(txt) from initcap_basic_tbl")
     }
   }
 
@@ -334,6 +397,23 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
       ("select initcap('hi\\nthere')", Row("Hi\nthere"))).foreach { case (q, expected) =>
       checkAnswer(sql(q), Seq(expected))
     }
+
+    withTable("initcap_bound_tbl") {
+      sql(s"CREATE TABLE initcap_bound_tbl(id INT, txt STRING) USING parquet")
+      sql(
+        s"""
+           |INSERT INTO initcap_bound_tbl VALUES
+           | (1, 'hello world'),
+           | (2, 'hello_world'),
+           | (3, 'über-alles'),
+           | (4, 'foo.bar/baz'),
+           | (5, 'v2Ray is COOL'),
+           | (6, 'rock''n''roll'),
+           | (7, 'hi\tthere'),
+           | (8, 'hi\nthere')
+        """.stripMargin)
+      checkSparkAnswerAndOperator("select id, initcap(txt) from initcap_bound_tbl")
+    }
   }
 
   test("initcap: mixed cases and edge cases") {
@@ -344,7 +424,21 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
       case (q, expected) =>
         checkAnswer(sql(q), Seq(expected))
     }
+
+    withTable("initcap_mixed_tbl") {
+      sql(s"CREATE TABLE initcap_mixed_tbl(id INT, txt STRING) USING parquet")
+      sql(
+        s"""
+           |INSERT INTO initcap_mixed_tbl VALUES
+           | (1, 'a1b2 c3D4'),
+           | (2, '---abc---'),
+           | (3, ' multiple spaces ')
+        """.stripMargin)
+
+      checkSparkAnswerAndOperator("select id, initcap(txt) from initcap_mixed_tbl")
+    }
   }
+
   test("test filter with hour function") {
     withEnvConf("spark.auron.datetime.extract.enabled" -> "true") {
       withTable("t_hour") {
@@ -356,15 +450,24 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
               |""".stripMargin)
 
         // Keep rows where HOUR >= 8, then group by hour
-        checkAnswer(
-          sql("""
-                |select h, count(*)
-                |from (select hour(event_time) as h from t_hour) t
-                |where h >= 8
-                |group by h
-                |order by h
-                |""".stripMargin),
-          Seq(Row(8, 2)))
+        checkSparkAnswerAndOperator(
+          """
+            |select h, count(*)
+            |from (select hour(event_time) as h from t_hour) t
+            |where h >= 8
+            |group by h
+            |order by h
+            |""".stripMargin
+        )
+//        checkAnswer(
+//          sql("""
+//                |select h, count(*)
+//                |from (select hour(event_time) as h from t_hour) t
+//                |where h >= 8
+//                |group by h
+//                |order by h
+//                |""".stripMargin),
+//          Seq(Row(8, 2)))
       }
     }
   }
@@ -380,14 +483,22 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
               |""".stripMargin)
 
         // Keep rows where MINUTE = 30, then group by minute
-        checkAnswer(
-          sql("""
-                |select m, count(*)
-                |from (select minute(event_time) as m from t_minute) t
-                |where m = 30
-                |group by m
-                |""".stripMargin),
-          Seq(Row(30, 2)))
+        checkSparkAnswerAndOperator(
+          s"""
+                  |select m, count(*)
+                  |from (select minute(event_time) as m from t_minute) t
+                  |where m = 30
+                  |group by m
+                  |""".stripMargin
+        )
+//        checkAnswer(
+//          sql("""
+//                |select m, count(*)
+//                |from (select minute(event_time) as m from t_minute) t
+//                |where m = 30
+//                |group by m
+//                |""".stripMargin),
+//          Seq(Row(30, 2)))
       }
     }
   }
@@ -403,14 +514,22 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
               |""".stripMargin)
 
         // Keep rows where SECOND = 0, then group by second
-        checkAnswer(
-          sql("""
-                |select s, count(*)
-                |from (select second(event_time) as s from t_second) t
-                |where s = 0
-                |group by s
-                |""".stripMargin),
-          Seq(Row(0, 2)))
+        checkSparkAnswerAndOperator(
+          s"""
+            |select s, count(*)
+            |from (select second(event_time) as s from t_second) t
+            |where s = 0
+            |group by s
+            |""".stripMargin
+        )
+//        checkAnswer(
+//          sql("""
+//                |select s, count(*)
+//                |from (select second(event_time) as s from t_second) t
+//                |where s = 0
+//                |group by s
+//                |""".stripMargin),
+//          Seq(Row(0, 2)))
       }
     }
   }
@@ -421,16 +540,26 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
       withTable("t_date_parts") {
         sql(
           "create table t_date_parts using parquet as select date'2024-12-18' as d union all select date'2024-12-19'")
-        checkAnswer(
-          sql("""
-                |select
-                |  hour(d)   as h,
-                |  minute(d) as m,
-                |  second(d) as s
-                |from t_date_parts
-                |order by d
-                |""".stripMargin),
-          Seq(Row(0, 0, 0), Row(0, 0, 0)))
+        checkSparkAnswerAndOperator(
+          s"""
+            |select
+            |  hour(d)   as h,
+            |  minute(d) as m,
+            |  second(d) as s
+            |from t_date_parts
+            |order by d
+            |""".stripMargin
+        )
+//          checkAnswer(
+//          sql("""
+//                |select
+//                |  hour(d)   as h,
+//                |  minute(d) as m,
+//                |  second(d) as s
+//                |from t_date_parts
+//                |order by d
+//                |""".stripMargin),
+//          Seq(Row(0, 0, 0), Row(0, 0, 0)))
       }
     }
   }
@@ -444,16 +573,22 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
               |select from_utc_timestamp(to_timestamp('1970-01-01 00:00:00'), 'Asia/Shanghai') as ts
               |""".stripMargin)
 
-        checkAnswer(
-          sql("""
-                |select hour(ts), minute(ts), second(ts)
-                |from t_tz
-                |""".stripMargin),
-          Seq(Row(8, 0, 0)))
+        checkSparkAnswerAndOperator(          s"""
+                                                    |select hour(ts), minute(ts), second(ts)
+                                                    |from t_tz
+                                                    |""".stripMargin)
+//        checkAnswer(
+//          sql("""
+//                |select hour(ts), minute(ts), second(ts)
+//                |from t_tz
+//                |""".stripMargin),
+//          Seq(Row(8, 0, 0)))
       }
     }
   }
 
+  // FIXME
+  // TODO
   test("minute/second with non-whole-hour offsets") {
     withEnvConf("spark.auron.datetime.extract.enabled" -> "true") {
       withTable("t_tz2") {
@@ -464,9 +599,10 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
               |""".stripMargin)
 
         // Kolkata -> 05:30:00; Kathmandu -> 05:45:00
-        checkAnswer(
-          sql("select minute(ts1), second(ts1), minute(ts2), second(ts2) from t_tz2"),
-          Seq(Row(30, 0, 45, 0)))
+        checkSparkAnswerAndOperator("select minute(ts1), second(ts1), minute(ts2), second(ts2) from t_tz2")
+        //checkAnswer(
+        //  sql("select minute(ts1), second(ts1), minute(ts2), second(ts2) from t_tz2"),
+          //Seq(Row(30, 0, 45, 0)))
       }
     }
   }
