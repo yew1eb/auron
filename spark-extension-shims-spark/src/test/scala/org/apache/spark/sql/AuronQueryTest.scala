@@ -16,6 +16,12 @@
  */
 package org.apache.spark.sql
 
+import java.util.concurrent.atomic.AtomicInteger
+
+import scala.reflect.ClassTag
+import scala.reflect.runtime.universe.TypeTag
+import scala.util.{Success, Try}
+
 import org.apache.hadoop.fs.Path
 import org.apache.parquet.column.ParquetProperties
 import org.apache.parquet.example.data.Group
@@ -23,10 +29,6 @@ import org.apache.parquet.example.data.simple.{SimpleGroup, SimpleGroupFactory}
 import org.apache.parquet.hadoop.ParquetWriter
 import org.apache.parquet.hadoop.example.{ExampleParquetWriter, GroupWriteSupport}
 import org.apache.parquet.schema.{MessageType, MessageTypeParser}
-
-import scala.reflect.ClassTag
-import scala.reflect.runtime.universe.TypeTag
-import scala.util.{Success, Try}
 import org.apache.spark.sql.auron.NativeSupports
 import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
 import org.apache.spark.sql.execution.{LeafExecNode, SparkPlan, UnaryExecNode}
@@ -34,8 +36,6 @@ import org.apache.spark.sql.execution.adaptive.AdaptiveSparkPlanHelper
 import org.apache.spark.sql.test.SQLTestUtils
 import org.apache.spark.sql.types.{ArrayType, DataType, DecimalType, MapType, StructType}
 import org.scalatest.BeforeAndAfterEach
-
-import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Base test class under org.apache.spark.sql to use package-private [[SQLTestUtils]]; extends
@@ -117,33 +117,32 @@ abstract class AuronQueryTest
 
   /** Check for the correct results as well as the expected fallback reason */
   protected def checkSparkAnswerAndFallbackReason(
-                                                   query: String,
-                                                   fallbackReason: String): (SparkPlan, SparkPlan) = {
+      query: String,
+      fallbackReason: String): (SparkPlan, SparkPlan) = {
     checkSparkAnswerAndFallbackReasons(sql(query), Set(fallbackReason))
   }
 
   /** Check for the correct results as well as the expected fallback reason */
   protected def checkSparkAnswerAndFallbackReason(
-                                                   df: => DataFrame,
-                                                   fallbackReason: String): (SparkPlan, SparkPlan) = {
+      df: => DataFrame,
+      fallbackReason: String): (SparkPlan, SparkPlan) = {
     checkSparkAnswerAndFallbackReasons(df, Set(fallbackReason))
   }
 
   /** Check for the correct results as well as the expected fallback reasons */
   protected def checkSparkAnswerAndFallbackReasons(
-                                                    query: String,
-                                                    fallbackReasons: Set[String]): (SparkPlan, SparkPlan) = {
+      query: String,
+      fallbackReasons: Set[String]): (SparkPlan, SparkPlan) = {
     checkSparkAnswerAndFallbackReasons(sql(query), fallbackReasons)
   }
 
   /** Check for the correct results as well as the expected fallback reasons */
   protected def checkSparkAnswerAndFallbackReasons(
-                                                    df: => DataFrame,
-                                                    fallbackReasons: Set[String]): (SparkPlan, SparkPlan) = {
+      df: => DataFrame,
+      fallbackReasons: Set[String]): (SparkPlan, SparkPlan) = {
     checkSparkAnswer(df)
     (df.queryExecution.executedPlan, df.queryExecution.executedPlan)
   }
-
 
   protected def checkSparkAnswerMaybeThrows(
       df: => DataFrame): (Option[Throwable], Option[Throwable]) = {
@@ -163,7 +162,6 @@ abstract class AuronQueryTest
     }
   }
 
-
   protected def readResourceParquetFile(name: String): DataFrame = {
     spark.read.parquet(getResourceParquetFilePath(name))
   }
@@ -173,16 +171,16 @@ abstract class AuronQueryTest
   }
 
   protected def withParquetDataFrame[T <: Product: ClassTag: TypeTag](
-                                                                       data: Seq[T],
-                                                                       withDictionary: Boolean = true,
-                                                                       schema: Option[StructType] = None)(f: DataFrame => Unit): Unit = {
+      data: Seq[T],
+      withDictionary: Boolean = true,
+      schema: Option[StructType] = None)(f: DataFrame => Unit): Unit = {
     withParquetFile(data, withDictionary)(path => readParquetFile(path, schema)(f))
   }
 
   protected def withParquetTable[T <: Product: ClassTag: TypeTag](
-                                                                   data: Seq[T],
-                                                                   tableName: String,
-                                                                   withDictionary: Boolean = true)(f: => Unit): Unit = {
+      data: Seq[T],
+      tableName: String,
+      withDictionary: Boolean = true)(f: => Unit): Unit = {
     withParquetDataFrame(data, withDictionary) { df =>
       df.createOrReplaceTempView(tableName)
       withTempView(tableName)(f)
@@ -200,8 +198,8 @@ abstract class AuronQueryTest
   }
 
   protected def withParquetFile[T <: Product: ClassTag: TypeTag](
-                                                                  data: Seq[T],
-                                                                  withDictionary: Boolean = true)(f: String => Unit): Unit = {
+      data: Seq[T],
+      withDictionary: Boolean = true)(f: String => Unit): Unit = {
     withTempPath { file =>
       spark
         .createDataFrame(data)
@@ -213,19 +211,19 @@ abstract class AuronQueryTest
   }
 
   protected def readParquetFile(path: String, schema: Option[StructType] = None)(
-    f: DataFrame => Unit): Unit = schema match {
+      f: DataFrame => Unit): Unit = schema match {
     case Some(s) => f(spark.read.format("parquet").schema(s).load(path))
     case None => f(spark.read.format("parquet").load(path))
   }
 
   protected def createParquetWriter(
-                                     schema: MessageType,
-                                     path: Path,
-                                     dictionaryEnabled: Boolean = false,
-                                     pageSize: Int = 1024,
-                                     dictionaryPageSize: Int = 1024,
-                                     pageRowCountLimit: Int = ParquetProperties.DEFAULT_PAGE_ROW_COUNT_LIMIT,
-                                     rowGroupSize: Long = 1024 * 1024L): ParquetWriter[Group] = {
+      schema: MessageType,
+      path: Path,
+      dictionaryEnabled: Boolean = false,
+      pageSize: Int = 1024,
+      dictionaryPageSize: Int = 1024,
+      pageRowCountLimit: Int = ParquetProperties.DEFAULT_PAGE_ROW_COUNT_LIMIT,
+      rowGroupSize: Long = 1024 * 1024L): ParquetWriter[Group] = {
     val hadoopConf = spark.sessionState.newHadoopConf()
 
     ExampleParquetWriter
@@ -253,7 +251,7 @@ abstract class AuronQueryTest
   }
 
   def getPrimitiveTypesParquetSchema: String = {
-      s"""
+    s"""
         |message root {
         |  optional boolean                  _1;
         |  optional int32                    _2(INT_8);
@@ -282,13 +280,13 @@ abstract class AuronQueryTest
   }
 
   def makeParquetFileAllPrimitiveTypes(
-                                        path: Path,
-                                        dictionaryEnabled: Boolean,
-                                        begin: Int,
-                                        end: Int,
-                                        nullEnabled: Boolean = true,
-                                        pageSize: Int = 128,
-                                        randomSize: Int = 0): Unit = {
+      path: Path,
+      dictionaryEnabled: Boolean,
+      begin: Int,
+      end: Int,
+      nullEnabled: Boolean = true,
+      pageSize: Int = 128,
+      randomSize: Int = 0): Unit = {
     // alwaysIncludeUnsignedIntTypes means we include unsignedIntTypes in the test even if the
     // reader does not support them
     val schemaStr = getPrimitiveTypesParquetSchema
@@ -373,10 +371,10 @@ abstract class AuronQueryTest
   }
 
   protected def makeRawTimeParquetFileColumns(
-                                               path: Path,
-                                               dictionaryEnabled: Boolean,
-                                               n: Int,
-                                               rowGroupSize: Long = 1024 * 1024L): Seq[Option[Long]] = {
+      path: Path,
+      dictionaryEnabled: Boolean,
+      n: Int,
+      rowGroupSize: Long = 1024 * 1024L): Seq[Option[Long]] = {
     val schemaStr =
       """
         |message root {
@@ -426,10 +424,10 @@ abstract class AuronQueryTest
 
   // Creates Parquet file of timestamp values
   protected def makeRawTimeParquetFile(
-                                        path: Path,
-                                        dictionaryEnabled: Boolean,
-                                        n: Int,
-                                        rowGroupSize: Long = 1024 * 1024L): Seq[Option[Long]] = {
+      path: Path,
+      dictionaryEnabled: Boolean,
+      n: Int,
+      rowGroupSize: Long = 1024 * 1024L): Seq[Option[Long]] = {
     val schemaStr =
       """
         |message root {
@@ -481,9 +479,9 @@ abstract class AuronQueryTest
 
   // Generate a file based on a complex schema. Schema derived from https://arrow.apache.org/blog/2022/10/17/arrow-parquet-encoding-part-3/
   def makeParquetFileComplexTypes(
-                                   path: Path,
-                                   dictionaryEnabled: Boolean,
-                                   numRows: Integer = 10000): Unit = {
+      path: Path,
+      dictionaryEnabled: Boolean,
+      numRows: Integer = 10000): Unit = {
     val schemaString =
       """
       message ComplexDataSchema {
@@ -605,10 +603,10 @@ abstract class AuronQueryTest
   }
 
   protected def makeDateTimeWithFormatTable(
-                                             path: Path,
-                                             dictionaryEnabled: Boolean,
-                                             n: Int,
-                                             rowGroupSize: Long = 1024 * 1024L): Seq[Option[Long]] = {
+      path: Path,
+      dictionaryEnabled: Boolean,
+      n: Int,
+      rowGroupSize: Long = 1024 * 1024L): Seq[Option[Long]] = {
     val schemaStr =
       """
         |message root {
@@ -695,7 +693,7 @@ abstract class AuronQueryTest
    * Example:
    *
    * {{{
-   *  test("native reader - read simple ARRAY fields with SHORT field") {
+   *   test("native reader - read simple ARRAY fields with SHORT field") {
    *     testSingleLineQuery(
    *       """
    *         |select array(cast(1 as short)) arr
@@ -727,14 +725,14 @@ abstract class AuronQueryTest
    *   optional debug access to DataFrame for `testQuery`
    */
   def testSingleLineQuery(
-                           prepareQuery: String,
-                           testQuery: String,
-                           testName: String = "test",
-                           tableName: String = "tbl",
-                           sqlConf: Seq[(String, String)] = Seq.empty,
-                           readSchema: Option[StructType] = None,
-                           debugCometDF: DataFrame => Unit = _ => (),
-                           checkCometOperator: Boolean = true): Unit = {
+      prepareQuery: String,
+      testQuery: String,
+      testName: String = "test",
+      tableName: String = "tbl",
+      sqlConf: Seq[(String, String)] = Seq.empty,
+      readSchema: Option[StructType] = None,
+      debugCometDF: DataFrame => Unit = _ => (),
+      checkCometOperator: Boolean = true): Unit = {
 
     withTempDir { dir =>
       val path = new Path(dir.toURI.toString, testName).toUri.toString
@@ -762,18 +760,18 @@ abstract class AuronQueryTest
   }
 
   def showString[T](
-                     df: Dataset[T],
-                     _numRows: Int,
-                     truncate: Int = 20,
-                     vertical: Boolean = false): String = {
+      df: Dataset[T],
+      _numRows: Int,
+      truncate: Int = 20,
+      vertical: Boolean = false): String = {
     df.showString(_numRows, truncate, vertical)
   }
 
   def makeParquetFile(
-                       path: Path,
-                       total: Int,
-                       numGroups: Int,
-                       dictionaryEnabled: Boolean): Unit = {
+      path: Path,
+      total: Int,
+      numGroups: Int,
+      dictionaryEnabled: Boolean): Unit = {
     val schemaStr =
       """
         |message root {
@@ -862,17 +860,17 @@ abstract class AuronQueryTest
   }
 
   protected def checkSparkAnswerWithTolerance(
-                                               df: => DataFrame,
-                                               absTol: Double): (SparkPlan, SparkPlan) = {
+      df: => DataFrame,
+      absTol: Double): (SparkPlan, SparkPlan) = {
     internalCheckSparkAnswer(df, assertCometNative = false, withTol = Some(absTol))
   }
 
   protected def internalCheckSparkAnswer(
-                                          df: => DataFrame,
-                                          assertCometNative: Boolean,
-                                          includeClasses: Seq[Class[_]] = Seq.empty,
-                                          excludedClasses: Seq[Class[_]] = Seq.empty,
-                                          withTol: Option[Double] = None): (SparkPlan, SparkPlan) = {
+      df: => DataFrame,
+      assertCometNative: Boolean,
+      includeClasses: Seq[Class[_]] = Seq.empty,
+      excludedClasses: Seq[Class[_]] = Seq.empty,
+      withTol: Option[Double] = None): (SparkPlan, SparkPlan) = {
 
     var expected: Array[Row] = Array.empty
     var sparkPlan = null.asInstanceOf[SparkPlan]
@@ -891,9 +889,9 @@ abstract class AuronQueryTest
     (sparkPlan, dfComet.queryExecution.executedPlan)
   }
   private def checkAnswerWithTolerance(
-                                        dataFrame: DataFrame,
-                                        expectedAnswer: Seq[Row],
-                                        absTol: Double): Unit = {
+      dataFrame: DataFrame,
+      expectedAnswer: Seq[Row],
+      absTol: Double): Unit = {
     val actualAnswer = dataFrame.collect()
     require(
       actualAnswer.length == expectedAnswer.length,
@@ -908,9 +906,9 @@ abstract class AuronQueryTest
    * Compares two answers and makes sure the answer is within absTol of the expected result.
    */
   private def checkAnswerRowWithTolerance(
-                                        actualAnswer: Row,
-                                        expectedAnswer: Row,
-                                        absTol: Double): Unit = {
+      actualAnswer: Row,
+      expectedAnswer: Row,
+      absTol: Double): Unit = {
     require(
       actualAnswer.length == expectedAnswer.length,
       s"actual answer length ${actualAnswer.length} != " +

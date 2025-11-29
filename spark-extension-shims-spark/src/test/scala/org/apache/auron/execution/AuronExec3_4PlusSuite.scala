@@ -1,35 +1,33 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apache.auron.execution
 
-import org.apache.auron.BaseAuronSQLSuite
+import java.io.ByteArrayOutputStream
+
+import scala.util.Random
+
 import org.apache.spark.sql.AuronQueryTest
 import org.apache.spark.sql.catalyst.FunctionIdentifier
 import org.apache.spark.sql.catalyst.expressions.{BloomFilterMightContain, Expression, ExpressionInfo}
-import org.apache.spark.sql.functions.{col, lit}
 import org.apache.spark.util.sketch.BloomFilter
 import org.scalactic.source.Position
 import org.scalatest.Tag
 
-import java.io.ByteArrayOutputStream
-import scala.util.Random
+import org.apache.auron.BaseAuronSQLSuite
 
 /**
  * This test suite contains tests for only Spark 3.4+.
@@ -57,7 +55,7 @@ class AuronExec3_4PlusSuite extends AuronQueryTest with BaseAuronSQLSuite {
     super.test(testName, testTags: _*) {
       withSQLConf(
         // CometConf.COMET_EXEC_SHUFFLE_ENABLED.key -> "true"
-        ) {
+      ) {
         testFun
       }
     }
@@ -121,7 +119,7 @@ class AuronExec3_4PlusSuite extends AuronQueryTest with BaseAuronSQLSuite {
   test("offset") {
     withSQLConf(
       //CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
-      ) {
+    ) {
       checkSparkAnswer(testData.offset(90))
       checkSparkAnswer(arrayData.toDF().offset(99))
       checkSparkAnswer(mapData.toDF().offset(99))
@@ -179,7 +177,7 @@ class AuronExec3_4PlusSuite extends AuronQueryTest with BaseAuronSQLSuite {
            |""".stripMargin)
     }
   }
-*/
+   */
 
   private def bloomFilterFromRandomInput(
       expectedItems: Long,

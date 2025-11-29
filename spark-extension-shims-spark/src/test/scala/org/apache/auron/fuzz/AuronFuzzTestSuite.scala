@@ -1,22 +1,39 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.auron.fuzz
 
-import org.apache.auron.testing.FuzzDataGenerator.{doubleNaNLiteral, floatNaNLiteral}
-import org.apache.auron.testing.{DataGenOptions, ParquetGenerator, SchemaGenOptions}
+import scala.util.Random
+
 import org.apache.commons.codec.binary.Hex
 import org.apache.spark.sql.execution.adaptive.AdaptiveSparkPlanExec
 import org.apache.spark.sql.internal.SQLConf
 import org.apache.spark.sql.internal.SQLConf.ParquetOutputTimestampType
 import org.apache.spark.sql.types.{ArrayType, BinaryType, DataType, DataTypes, DecimalType, IntegerType, LongType, StringType, StructType}
 
-import scala.util.Random
+import org.apache.auron.testing.{DataGenOptions, ParquetGenerator, SchemaGenOptions}
+import org.apache.auron.testing.FuzzDataGenerator.{doubleNaNLiteral, floatNaNLiteral}
 
-class AuronFuzzTestSuite extends AurontFuzzTestBase  {
+class AuronFuzzTestSuite extends AurontFuzzTestBase {
 
   test("select *") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")
     val sql = "SELECT * FROM t1"
-      checkSparkAnswerAndOperator(sql)
+    checkSparkAnswerAndOperator(sql)
   }
 
   test("select * with limit") {
@@ -168,8 +185,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase  {
     for (col <- df.columns) {
       // cannot run fully native due to HashAggregate
       val sql = s"SELECT count(*) FROM t1 JOIN t2 ON t1.$col = t2.$col"
-      println(
-        s"""join key: ${col.toString}, "schema.fields: ${df.schema.fields.map(field => field.toString()).mkString(",")}
+      println(s"""join key: ${col.toString}, "schema.fields: ${df.schema.fields.map(field => field.toString()).mkString(",")}
            |sql: ${sql}
            |""".stripMargin)
       val dfx = checkSparkAnswer(sql)
@@ -180,14 +196,12 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase  {
     }
   }
 
-
-
   test("count distinct - simple columns") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")
     for (col <- df.schema.fields.filterNot(f => isComplexType(f.dataType)).map(_.name)) {
       val sql = s"SELECT count(distinct $col) FROM t1"
-      val dfx =  checkSparkAnswer(sql)
+      val dfx = checkSparkAnswer(sql)
       val cometPlan = dfx.queryExecution.executedPlan
       if (true) {
         assert(1 == collectNativeScans(cometPlan).length)
@@ -204,7 +218,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase  {
     df.createOrReplaceTempView("t1")
     for (col <- df.schema.fields.filter(f => isComplexType(f.dataType)).map(_.name)) {
       val sql = s"SELECT count(distinct $col) FROM t1"
-      val dfx =  checkSparkAnswer(sql)
+      val dfx = checkSparkAnswer(sql)
       val cometPlan = dfx.queryExecution.executedPlan
       if (true) {
         assert(1 == collectNativeScans(cometPlan).length)
@@ -217,7 +231,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase  {
     df.createOrReplaceTempView("t1")
     for (col <- df.schema.fields.filterNot(f => isComplexType(f.dataType)).map(_.name)) {
       val sql = s"SELECT c1, c2, c3, count(distinct $col) FROM t1 group by c1, c2, c3"
-      val dfx =  checkSparkAnswer(sql)
+      val dfx = checkSparkAnswer(sql)
       val cometPlan = dfx.queryExecution.executedPlan
       if (true) {
         assert(1 == collectNativeScans(cometPlan).length)
@@ -234,7 +248,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase  {
     df.createOrReplaceTempView("t1")
     for (col <- df.schema.fields.filter(f => isComplexType(f.dataType)).map(_.name)) {
       val sql = s"SELECT c1, c2, c3, count(distinct $col) FROM t1 group by c1, c2, c3"
-      val dfx =  checkSparkAnswer(sql)
+      val dfx = checkSparkAnswer(sql)
       val cometPlan = dfx.queryExecution.executedPlan
       if (true) {
         assert(1 == collectNativeScans(cometPlan).length)
@@ -249,7 +263,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase  {
     df.createOrReplaceTempView("t1")
     for (col <- df.columns) {
       val sql = s"SELECT c1, c2, c3, count(distinct $col, c4, c5) FROM t1 group by c1, c2, c3"
-      val dfx =  checkSparkAnswer(sql)
+      val dfx = checkSparkAnswer(sql)
       val cometPlan = dfx.queryExecution.executedPlan
       if (true) {
         assert(1 == collectNativeScans(cometPlan).length)
@@ -262,7 +276,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase  {
     df.createOrReplaceTempView("t1")
     for (col <- df.columns) {
       val sql = s"SELECT $col, count(*) FROM t1 GROUP BY $col ORDER BY $col"
-      val dfx =  checkSparkAnswer(sql)
+      val dfx = checkSparkAnswer(sql)
       val cometPlan = dfx.queryExecution.executedPlan
       if (true) {
         assert(1 == collectNativeScans(cometPlan).length)
@@ -276,7 +290,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase  {
     val groupCol = df.columns.head
     for (col <- df.columns.drop(1)) {
       val sql = s"SELECT $groupCol, count($col) FROM t1 GROUP BY $groupCol ORDER BY $groupCol"
-      val dfx =  checkSparkAnswer(sql)
+      val dfx = checkSparkAnswer(sql)
       val cometPlan = dfx.queryExecution.executedPlan
       if (true) {
         assert(1 == collectNativeScans(cometPlan).length)
@@ -291,7 +305,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase  {
     val otherCol = df.columns.drop(1)
     val sql = s"SELECT $groupCol, count(${otherCol.mkString(", ")}) FROM t1 " +
       s"GROUP BY $groupCol ORDER BY $groupCol"
-    val dfx =  checkSparkAnswer(sql)
+    val dfx = checkSparkAnswer(sql)
     val cometPlan = dfx.queryExecution.executedPlan
     if (true) {
       assert(1 == collectNativeScans(cometPlan).length)
@@ -304,14 +318,13 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase  {
     for (col <- df.columns) {
       // cannot run fully native due to HashAggregate
       val sql = s"SELECT min($col), max($col) FROM t1"
-      val dfx =  checkSparkAnswer(sql)
+      val dfx = checkSparkAnswer(sql)
       val cometPlan = dfx.queryExecution.executedPlan
       if (true) {
         assert(1 == collectNativeScans(cometPlan).length)
       }
     }
   }
-
 
   test("decode") {
     val df = spark.read.parquet(filename)
@@ -329,7 +342,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase  {
   }
 
   test("regexp_replace") {
-    withSQLConf( ) {
+    withSQLConf() {
       val df = spark.read.parquet(filename)
       df.createOrReplaceTempView("t1")
       // We want to make sure that the schema generator wasn't modified to accidentally omit
@@ -357,9 +370,9 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase  {
   }
 
   private def testParquetTemporalTypes(
-                                        outputTimestampType: ParquetOutputTimestampType.Value,
-                                        generateArray: Boolean = true,
-                                        generateStruct: Boolean = true): Unit = {
+      outputTimestampType: ParquetOutputTimestampType.Value,
+      generateArray: Boolean = true,
+      generateStruct: Boolean = true): Unit = {
 
     val schemaGenOptions =
       SchemaGenOptions(generateArray = generateArray, generateStruct = generateStruct)
@@ -386,7 +399,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase  {
           Seq(true, false).foreach { int96TimestampConversion =>
             Seq(true, false).foreach { int96AsTimestamp =>
               withSQLConf(
-                "spark.auron.enable"  -> "true",
+                "spark.auron.enable" -> "true",
                 SQLConf.SESSION_LOCAL_TIMEZONE.key -> tz,
                 SQLConf.PARQUET_INT96_AS_TIMESTAMP.key -> int96AsTimestamp.toString,
                 SQLConf.PARQUET_INT96_TIMESTAMP_CONVERSION.key -> int96TimestampConversion.toString,
@@ -397,7 +410,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase  {
 
                 def hasTemporalType(t: DataType): Boolean = t match {
                   case DataTypes.DateType | DataTypes.TimestampType |
-                       DataTypes.TimestampNTZType =>
+                      DataTypes.TimestampNTZType =>
                     true
                   case t: StructType => t.exists(f => hasTemporalType(f.dataType))
                   case t: ArrayType => hasTemporalType(t.elementType)

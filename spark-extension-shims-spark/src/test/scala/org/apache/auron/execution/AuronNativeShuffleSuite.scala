@@ -1,14 +1,31 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.auron.execution
-
-import org.apache.auron.BaseAuronSQLSuite
-import org.apache.hadoop.fs.Path
-import org.apache.spark.SparkEnv
-import org.apache.spark.sql.execution.auron.plan.NativeShuffleExchangeExec
-import org.apache.spark.sql.functions.col
-import org.apache.spark.sql.{AuronQueryTest, DataFrame, Dataset, Row}
 
 import scala.concurrent.duration.DurationInt
 import scala.util.Random
+
+import org.apache.hadoop.fs.Path
+import org.apache.spark.SparkEnv
+import org.apache.spark.sql.{AuronQueryTest, DataFrame, Dataset, Row}
+import org.apache.spark.sql.execution.auron.plan.NativeShuffleExchangeExec
+import org.apache.spark.sql.functions.col
+
+import org.apache.auron.BaseAuronSQLSuite
 
 class AuronNativeShuffleSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
@@ -39,7 +56,7 @@ class AuronNativeShuffleSuite extends AuronQueryTest with BaseAuronSQLSuite {
           var allTypes: Seq[Int] = (1 to 20)
           allTypes.map(i => s"_$i").foreach { c =>
             withSQLConf(
-              "spark.auron.enable"  -> execEnabled.toString,
+              "spark.auron.enable" -> execEnabled.toString,
               "parquet.enable.dictionary" -> dictionaryEnabled.toString) {
               readParquetFile(path.toString) { df =>
                 val shuffled = df
@@ -58,28 +75,28 @@ class AuronNativeShuffleSuite extends AuronQueryTest with BaseAuronSQLSuite {
     Seq("false", "true").foreach { _ =>
       Seq(10, 201).foreach { numPartitions =>
         // Seq("1.0", "10.0").foreach { ratio =>
-          withSQLConf(
+        withSQLConf(
           //  CometConf.COMET_SHUFFLE_PREFER_DICTIONARY_RATIO.key -> ratio,
           //  CometConf.COMET_NATIVE_SCAN_IMPL.key -> "native_datafusion"
-          ) {
-            withParquetTable(
-              (0 until 50).map(i => (i, Seq(Seq(i + 1), Seq(i + 2), Seq(i + 3)), i + 1)),
-              "tbl") {
-              var df = sql("SELECT * FROM tbl")
-                .filter($"_3" > 10)
-                .repartition(numPartitions, $"_2")
+        ) {
+          withParquetTable(
+            (0 until 50).map(i => (i, Seq(Seq(i + 1), Seq(i + 2), Seq(i + 3)), i + 1)),
+            "tbl") {
+            var df = sql("SELECT * FROM tbl")
+              .filter($"_3" > 10)
+              .repartition(numPartitions, $"_2")
 
-              // Partitioning on nested array falls back to Spark
-              checkShuffleAnswer(df, 0)
+            // Partitioning on nested array falls back to Spark
+            checkShuffleAnswer(df, 0)
 
-              df = sql("SELECT * FROM tbl")
-                .filter($"_3" > 10)
-                .repartition(numPartitions, $"_1")
+            df = sql("SELECT * FROM tbl")
+              .filter($"_3" > 10)
+              .repartition(numPartitions, $"_1")
 
-              // Partitioning on primitive type, with nested array in other cols works with native.
-              checkShuffleAnswer(df, 1)
-            }
+            // Partitioning on primitive type, with nested array in other cols works with native.
+            checkShuffleAnswer(df, 1)
           }
+        }
         // }
       }
     }
@@ -126,24 +143,24 @@ class AuronNativeShuffleSuite extends AuronQueryTest with BaseAuronSQLSuite {
     //    CometConf.COMET_EXEC_SHUFFLE_WITH_HASH_PARTITIONING_ENABLED.key -> partitioning._1,
     //    CometConf.COMET_EXEC_SHUFFLE_WITH_RANGE_PARTITIONING_ENABLED.key -> partitioning._2
     //  ) {
-        withParquetTable((0 until 5).map(i => (i, (i + 1).toLong)), "tbl") {
-          val df = sql("SELECT * FROM tbl")
+    withParquetTable((0 until 5).map(i => (i, (i + 1).toLong)), "tbl") {
+      val df = sql("SELECT * FROM tbl")
 
-          val shuffled = df
-            .repartition(10, $"_2")
-            .select($"_1", $"_1" + 1, $"_2" + 2)
-            .repartition(10, $"_1")
-            .filter($"_1" > 1)
+      val shuffled = df
+        .repartition(10, $"_2")
+        .select($"_1", $"_1" + 1, $"_2" + 2)
+        .repartition(10, $"_1")
+        .filter($"_1" > 1)
 
-          // We expect a hash and range partitioned exchanges. If both are true, we'll get two
-          // native exchanges. Otherwise both will fall back.
-     //     if (partitioning._1 == "true" && partitioning._2 == "true") {
-            checkShuffleAnswer(shuffled, 2)
-     //     } else {
-     //       checkShuffleAnswer(shuffled, 0)
-          }
-       // }
-     // }
+      // We expect a hash and range partitioned exchanges. If both are true, we'll get two
+      // native exchanges. Otherwise both will fall back.
+      //     if (partitioning._1 == "true" && partitioning._2 == "true") {
+      checkShuffleAnswer(shuffled, 2)
+      //     } else {
+      //       checkShuffleAnswer(shuffled, 0)
+    }
+    // }
+    // }
     // }
   }
 
@@ -301,47 +318,47 @@ class AuronNativeShuffleSuite extends AuronQueryTest with BaseAuronSQLSuite {
   // This adapts the PySpark example in https://github.com/apache/datafusion-comet/issues/1906 to
   // test for incorrect partition values after native RangePartitioning
   test("fix: range partitioning #1906") {
-   // withSQLConf(CometConf.COMET_EXEC_SHUFFLE_WITH_RANGE_PARTITIONING_ENABLED.key -> "true") {
-      withParquetTable((0 until 100000).map(i => (i, i + 1)), "tbl") {
-        val df = sql("SELECT * from tbl")
+    // withSQLConf(CometConf.COMET_EXEC_SHUFFLE_WITH_RANGE_PARTITIONING_ENABLED.key -> "true") {
+    withParquetTable((0 until 100000).map(i => (i, i + 1)), "tbl") {
+      val df = sql("SELECT * from tbl")
 
-        // Repartition with two sort columns
-        val repartitioned_df = df.repartitionByRange(10, df.col("_1"))
-        checkSparkAnswerAndOperator(repartitioned_df)
-        checkRangePartitionedDataset(repartitioned_df)
-      }
+      // Repartition with two sort columns
+      val repartitioned_df = df.repartitionByRange(10, df.col("_1"))
+      checkSparkAnswerAndOperator(repartitioned_df)
+      checkRangePartitionedDataset(repartitioned_df)
+    }
     // }
   }
 
   // This adapts the PySpark example in https://github.com/apache/datafusion-comet/issues/1906 to
   // test for incorrect partition values after native RangePartitioning
   test("fix: range partitioning #1906, two columns") {
-   // withSQLConf(CometConf.COMET_EXEC_SHUFFLE_WITH_RANGE_PARTITIONING_ENABLED.key -> "true") {
-      withParquetTable((0 until 100000).map(i => (i, i + 1)), "tbl") {
-        val df = sql("SELECT * from tbl")
+    // withSQLConf(CometConf.COMET_EXEC_SHUFFLE_WITH_RANGE_PARTITIONING_ENABLED.key -> "true") {
+    withParquetTable((0 until 100000).map(i => (i, i + 1)), "tbl") {
+      val df = sql("SELECT * from tbl")
 
-        // Repartition with two sort columns
-        val repartitioned_df = df.repartitionByRange(10, df.col("_1"), df.col("_2"))
-        checkSparkAnswerAndOperator(repartitioned_df)
-        checkRangePartitionedDataset(repartitioned_df)
-      }
+      // Repartition with two sort columns
+      val repartitioned_df = df.repartitionByRange(10, df.col("_1"), df.col("_2"))
+      checkSparkAnswerAndOperator(repartitioned_df)
+      checkRangePartitionedDataset(repartitioned_df)
+    }
     // }
   }
 
   // This adapts the PySpark example in https://github.com/apache/datafusion-comet/issues/1906 to
   // test for incorrect partition values after native RangePartitioning
   test("fix: range partitioning #1906, random sort column with duplicates") {
-   // withSQLConf(CometConf.COMET_EXEC_SHUFFLE_WITH_RANGE_PARTITIONING_ENABLED.key -> "true") {
-      val random = new Random(42)
-      withParquetTable((0 until 100000).map(i => (random.nextInt(10000), i)), "tbl") {
-        val df = sql("SELECT * from tbl")
+    // withSQLConf(CometConf.COMET_EXEC_SHUFFLE_WITH_RANGE_PARTITIONING_ENABLED.key -> "true") {
+    val random = new Random(42)
+    withParquetTable((0 until 100000).map(i => (random.nextInt(10000), i)), "tbl") {
+      val df = sql("SELECT * from tbl")
 
-        // Repartition with two sort columns
-        val repartitioned_df = df.repartitionByRange(10, df.col("_1"))
-        checkSparkAnswerAndOperator(repartitioned_df)
-        checkRangePartitionedDataset(repartitioned_df)
-      }
-   // }
+      // Repartition with two sort columns
+      val repartitioned_df = df.repartitionByRange(10, df.col("_1"))
+      checkSparkAnswerAndOperator(repartitioned_df)
+      checkRangePartitionedDataset(repartitioned_df)
+    }
+    // }
   }
 
   /**
@@ -350,9 +367,9 @@ class AuronNativeShuffleSuite extends AuronQueryTest with BaseAuronSQLSuite {
    * used by `df` are Comet native operators.
    */
   private def checkShuffleAnswer(
-                                  df: DataFrame,
-                                  expectedNum: Int,
-                                  checkNativeOperators: Boolean = false): Unit = {
+      df: DataFrame,
+      expectedNum: Int,
+      checkNativeOperators: Boolean = false): Unit = {
     //checkCometExchange(df, expectedNum, true)
     if (checkNativeOperators) {
       checkSparkAnswerAndOperator(df)

@@ -55,9 +55,9 @@ class AuronMathExpressionSuite extends AuronQueryTest with BaseAuronSQLSuite {
         val col = field.name
         checkSparkAnswerMaybeThrows(sql(s"SELECT $col, abs($col) FROM tbl ORDER BY $col")) match {
           case (Some(sparkExc), Some(cometExc)) =>
-         //   val cometErrorPattern =
-         //     """.+[ARITHMETIC_OVERFLOW].+overflow. If necessary set "spark.sql.ansi.enabled" to "false" to bypass this error.""".r
-         //   assert(cometErrorPattern.findFirstIn(cometExc.getMessage).isDefined)
+            //   val cometErrorPattern =
+            //     """.+[ARITHMETIC_OVERFLOW].+overflow. If necessary set "spark.sql.ansi.enabled" to "false" to bypass this error.""".r
+            //   assert(cometErrorPattern.findFirstIn(cometExc.getMessage).isDefined)
             assert(sparkExc.getMessage.contains("overflow"))
           case (Some(_), None) =>
             fail("Exception should be thrown")
