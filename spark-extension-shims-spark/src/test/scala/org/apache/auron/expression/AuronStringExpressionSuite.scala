@@ -282,7 +282,7 @@ class AuronStringExpressionSuite extends AuronQueryTest with BaseAuronSQLSuite {
     val table = "names"
     withTable(table) {
       sql(s"create table $table(id int, name varchar(20)) using parquet")
-      sql(s"insert into $table values(1, 'James'), (2, 'Smith'), (3, 'Smith')")
+      sql(s"insert into $table values(1, 'James'), (2, 'Smith'), (-3, 'Smith')")
       checkSparkAnswerAndOperator(s"SELECT repeat(name, 3) FROM $table")
     }
   }
