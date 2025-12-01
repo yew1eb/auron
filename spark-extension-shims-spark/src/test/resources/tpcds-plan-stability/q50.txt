@@ -116,9 +116,12 @@ AdaptiveSparkPlan (113)
                               +- Scan parquet  (102)
 
 
-(1) NativeParquetScan 
+(74) Scan parquet 
 Output [5]: [ss_sold_date_sk#1, ss_item_sk#2, ss_customer_sk#3, ss_store_sk#4, ss_ticket_number#5]
-Arguments: FileScan parquet [ss_sold_date_sk#1,ss_item_sk#2,ss_customer_sk#3,ss_store_sk#4,ss_ticket_number#5] Batched: true, DataFilters: [isnotnull(ss_ticket_number#5), isnotnull(ss_item_sk#2), isnotnull(ss_customer_sk#3), isnot..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ss_ticket_number), IsNotNull(ss_item_sk), IsNotNull(ss_customer_sk), IsNotNull(ss_stor..., ReadSchema: struct<ss_sold_date_sk:int,ss_item_sk:int,ss_customer_sk:int,ss_store_sk:int,ss_ticket_number:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(ss_ticket_number), IsNotNull(ss_item_sk), IsNotNull(ss_customer_sk), IsNotNull(ss_store_sk), IsNotNull(ss_sold_date_sk)]
+ReadSchema: struct<ss_sold_date_sk:int,ss_item_sk:int,ss_customer_sk:int,ss_store_sk:int,ss_ticket_number:int>
 
 (2) InputAdapter
 Input [5]: [ss_sold_date_sk#1, ss_item_sk#2, ss_customer_sk#3, ss_store_sk#4, ss_ticket_number#5]
@@ -126,7 +129,7 @@ Arguments: [#1, #2, #3, #4, #5]
 
 (3) NativeFilter
 Input [5]: [#1#1, #2#2, #3#3, #4#4, #5#5]
-Arguments: ((((isnotnull(ss_ticket_number#5) AND isnotnull(ss_item_sk#2)) AND isnotnull(ss_customer_sk#3)) AND isnotnull(ss_store_sk#4)) AND isnotnull(ss_sold_date_sk#1))
+Condition : ((((isnotnull(ss_ticket_number#5) AND isnotnull(ss_item_sk#2)) AND isnotnull(ss_customer_sk#3)) AND isnotnull(ss_store_sk#4)) AND isnotnull(ss_sold_date_sk#1))
 
 (4) NativeShuffleExchange
 Input [5]: [#1#1, #2#2, #3#3, #4#4, #5#5]
@@ -147,9 +150,12 @@ Input [5]: [#1#1, #2#2, #3#3, #4#4, #5#5]
 Input [5]: [#1#1, #2#2, #3#3, #4#4, #5#5]
 Arguments: [ss_ticket_number#5 ASC NULLS FIRST, ss_item_sk#2 ASC NULLS FIRST, ss_customer_sk#3 ASC NULLS FIRST], false
 
-(9) NativeParquetScan 
+(78) Scan parquet 
 Output [4]: [sr_returned_date_sk#6, sr_item_sk#7, sr_customer_sk#8, sr_ticket_number#9]
-Arguments: FileScan parquet [sr_returned_date_sk#6,sr_item_sk#7,sr_customer_sk#8,sr_ticket_number#9] Batched: true, DataFilters: [isnotnull(sr_ticket_number#9), isnotnull(sr_item_sk#7), isnotnull(sr_customer_sk#8), isnot..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(sr_ticket_number), IsNotNull(sr_item_sk), IsNotNull(sr_customer_sk), IsNotNull(sr_retu..., ReadSchema: struct<sr_returned_date_sk:int,sr_item_sk:int,sr_customer_sk:int,sr_ticket_number:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(sr_ticket_number), IsNotNull(sr_item_sk), IsNotNull(sr_customer_sk), IsNotNull(sr_returned_date_sk)]
+ReadSchema: struct<sr_returned_date_sk:int,sr_item_sk:int,sr_customer_sk:int,sr_ticket_number:int>
 
 (10) InputAdapter
 Input [4]: [sr_returned_date_sk#6, sr_item_sk#7, sr_customer_sk#8, sr_ticket_number#9]
@@ -157,7 +163,7 @@ Arguments: [#6, #7, #8, #9]
 
 (11) NativeFilter
 Input [4]: [#6#6, #7#7, #8#8, #9#9]
-Arguments: (((isnotnull(sr_ticket_number#9) AND isnotnull(sr_item_sk#7)) AND isnotnull(sr_customer_sk#8)) AND isnotnull(sr_returned_date_sk#6))
+Condition : (((isnotnull(sr_ticket_number#9) AND isnotnull(sr_item_sk#7)) AND isnotnull(sr_customer_sk#8)) AND isnotnull(sr_returned_date_sk#6))
 
 (12) NativeShuffleExchange
 Input [4]: [#6#6, #7#7, #8#8, #9#9]
@@ -185,8 +191,8 @@ Join type: Inner
 Join condition: None
 
 (18) NativeProject
+Output [3]: [ss_sold_date_sk#1, ss_store_sk#4, sr_returned_date_sk#6]
 Input [9]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6, #7#7, #8#8, #9#9]
-Arguments: [ss_sold_date_sk#1, ss_store_sk#4, sr_returned_date_sk#6]
 
 (19) NativeShuffleExchange
 Input [3]: [ss_sold_date_sk#1, ss_store_sk#4, sr_returned_date_sk#6]
@@ -207,9 +213,12 @@ Input [3]: [ss_sold_date_sk#1, ss_store_sk#4, sr_returned_date_sk#6]
 Input [3]: [ss_sold_date_sk#1, ss_store_sk#4, sr_returned_date_sk#6]
 Arguments: [ss_store_sk#4 ASC NULLS FIRST], false
 
-(24) NativeParquetScan 
+(86) Scan parquet 
 Output [11]: [s_store_sk#10, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20]
-Arguments: FileScan parquet [s_store_sk#10,s_store_name#11,s_company_id#12,s_street_number#13,s_street_name#14,s_street_type#15,s_suite_number#16,s_city#17,s_county#18,s_state#19,s_zip#20] Batched: true, DataFilters: [isnotnull(s_store_sk#10)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(s_store_sk)], ReadSchema: struct<s_store_sk:int,s_store_name:string,s_company_id:int,s_street_number:string,s_street_name:s...
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(s_store_sk)]
+ReadSchema: struct<s_store_sk:int,s_store_name:string,s_company_id:int,s_street_number:string,s_street_name:string,s_street_type:string,s_suite_number:string,s_city:string,s_county:string,s_state:string,s_zip:string>
 
 (25) InputAdapter
 Input [11]: [s_store_sk#10, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20]
@@ -217,7 +226,7 @@ Arguments: [#10, #11, #12, #13, #14, #15, #16, #17, #18, #19, #20]
 
 (26) NativeFilter
 Input [11]: [#10#10, #11#11, #12#12, #13#13, #14#14, #15#15, #16#16, #17#17, #18#18, #19#19, #20#20]
-Arguments: isnotnull(s_store_sk#10)
+Condition : isnotnull(s_store_sk#10)
 
 (27) NativeShuffleExchange
 Input [11]: [#10#10, #11#11, #12#12, #13#13, #14#14, #15#15, #16#16, #17#17, #18#18, #19#19, #20#20]
@@ -245,8 +254,8 @@ Join type: Inner
 Join condition: None
 
 (33) NativeProject
+Output [12]: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20]
 Input [14]: [ss_sold_date_sk#1, ss_store_sk#4, sr_returned_date_sk#6, #10#10, #11#11, #12#12, #13#13, #14#14, #15#15, #16#16, #17#17, #18#18, #19#19, #20#20]
-Arguments: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20]
 
 (34) NativeShuffleExchange
 Input [12]: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20]
@@ -267,9 +276,12 @@ Input [12]: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_compan
 Input [12]: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20]
 Arguments: [ss_sold_date_sk#1 ASC NULLS FIRST], false
 
-(39) NativeParquetScan 
+(94) Scan parquet 
 Output [1]: [d_date_sk#21]
-Arguments: FileScan parquet [d_date_sk#21] Batched: true, DataFilters: [isnotnull(d_date_sk#21)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(d_date_sk)]
+ReadSchema: struct<d_date_sk:int>
 
 (40) InputAdapter
 Input [1]: [d_date_sk#21]
@@ -277,7 +289,7 @@ Arguments: [#21]
 
 (41) NativeFilter
 Input [1]: [#21#21]
-Arguments: isnotnull(d_date_sk#21)
+Condition : isnotnull(d_date_sk#21)
 
 (42) NativeShuffleExchange
 Input [1]: [#21#21]
@@ -305,8 +317,8 @@ Join type: Inner
 Join condition: None
 
 (48) NativeProject
+Output [12]: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20]
 Input [13]: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20, #21#21]
-Arguments: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20]
 
 (49) NativeShuffleExchange
 Input [12]: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20]
@@ -327,9 +339,12 @@ Input [12]: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_compan
 Input [12]: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20]
 Arguments: [sr_returned_date_sk#6 ASC NULLS FIRST], false
 
-(54) NativeParquetScan 
+(102) Scan parquet 
 Output [3]: [d_date_sk#22, d_year#23, d_moy#24]
-Arguments: FileScan parquet [d_date_sk#22,d_year#23,d_moy#24] Batched: true, DataFilters: [isnotnull(d_year#23), isnotnull(d_moy#24), (d_year#23 = 2001), (d_moy#24 = 8), isnot..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(d_year), IsNotNull(d_moy), EqualTo(d_year,2001), EqualTo(d_moy,8), IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_year:int,d_moy:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(d_year), IsNotNull(d_moy), EqualTo(d_year,2001), EqualTo(d_moy,8), IsNotNull(d_date_sk)]
+ReadSchema: struct<d_date_sk:int,d_year:int,d_moy:int>
 
 (55) InputAdapter
 Input [3]: [d_date_sk#22, d_year#23, d_moy#24]
@@ -337,11 +352,11 @@ Arguments: [#22, #23, #24]
 
 (56) NativeFilter
 Input [3]: [#22#22, #23#23, #24#24]
-Arguments: ((((isnotnull(d_year#23) AND isnotnull(d_moy#24)) AND (d_year#23 = 2001)) AND (d_moy#24 = 8)) AND isnotnull(d_date_sk#22))
+Condition : ((((isnotnull(d_year#23) AND isnotnull(d_moy#24)) AND (d_year#23 = 2001)) AND (d_moy#24 = 8)) AND isnotnull(d_date_sk#22))
 
 (57) NativeProject
+Output [1]: [d_date_sk#22]
 Input [3]: [#22#22, #23#23, #24#24]
-Arguments: [d_date_sk#22]
 
 (58) NativeShuffleExchange
 Input [1]: [d_date_sk#22]
@@ -369,12 +384,12 @@ Join type: Inner
 Join condition: None
 
 (64) NativeProject
+Output [12]: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20]
 Input [13]: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20, d_date_sk#22]
-Arguments: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20]
 
 (65) NativeProject
+Output [15]: [s_store_name#11 AS s_store_name#11, s_company_id#12 AS s_company_id#12, s_street_number#13 AS s_street_number#13, s_street_name#14 AS s_street_name#14, s_street_type#15 AS s_street_type#15, s_suite_number#16 AS s_suite_number#16, s_city#17 AS s_city#17, s_county#18 AS s_county#18, s_state#19 AS s_state#19, s_zip#20 AS s_zip#20, CASE WHEN ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 30) THEN 1 ELSE 0 END AS _c10#25, CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 30) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 60)) THEN 1 ELSE 0 END AS _c11#26, CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 60) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 90)) THEN 1 ELSE 0 END AS _c12#27, CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 90) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 120)) THEN 1 ELSE 0 END AS _c13#28, CASE WHEN ((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 120) THEN 1 ELSE 0 END AS _c14#29]
 Input [12]: [ss_sold_date_sk#1, sr_returned_date_sk#6, s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20]
-Arguments: [s_store_name#11 AS s_store_name#11, s_company_id#12 AS s_company_id#12, s_street_number#13 AS s_street_number#13, s_street_name#14 AS s_street_name#14, s_street_type#15 AS s_street_type#15, s_suite_number#16 AS s_suite_number#16, s_city#17 AS s_city#17, s_county#18 AS s_county#18, s_state#19 AS s_state#19, s_zip#20 AS s_zip#20, CASE WHEN ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 30) THEN 1 ELSE 0 END AS _c10#25, CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 30) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 60)) THEN 1 ELSE 0 END AS _c11#26, CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 60) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 90)) THEN 1 ELSE 0 END AS _c12#27, CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 90) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 120)) THEN 1 ELSE 0 END AS _c13#28, CASE WHEN ((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 120) THEN 1 ELSE 0 END AS _c14#29]
 
 (66) NativeHashAggregate
 Input [15]: [s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20, _c10#25, _c11#26, _c12#27, _c13#28, _c14#29]
@@ -406,8 +421,8 @@ Aggregate Attributes [5]: [sum(CASE WHEN ((sr_returned_date_sk#6 - ss_sold_date_
 Results [15]: [s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20, sum(CASE WHEN ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 30) THEN 1 ELSE 0 END)#36, sum(CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 30) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 60)) THEN 1 ELSE 0 END)#37, sum(CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 60) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 90)) THEN 1 ELSE 0 END)#38, sum(CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 90) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 120)) THEN 1 ELSE 0 END)#39, sum(CASE WHEN ((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 120) THEN 1 ELSE 0 END)#40]
 
 (72) NativeProject
+Output [15]: [s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20, sum(CASE WHEN ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 30) THEN 1 ELSE 0 END)#36 AS 30 days #41, sum(CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 30) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 60)) THEN 1 ELSE 0 END)#37 AS 31 - 60 days #42, sum(CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 60) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 90)) THEN 1 ELSE 0 END)#38 AS 61 - 90 days #43, sum(CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 90) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 120)) THEN 1 ELSE 0 END)#39 AS 91 - 120 days #44, sum(CASE WHEN ((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 120) THEN 1 ELSE 0 END)#40 AS >120 days #45]
 Input [15]: [s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20, sum(CASE WHEN ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 30) THEN 1 ELSE 0 END)#36, sum(CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 30) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 60)) THEN 1 ELSE 0 END)#37, sum(CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 60) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 90)) THEN 1 ELSE 0 END)#38, sum(CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 90) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 120)) THEN 1 ELSE 0 END)#39, sum(CASE WHEN ((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 120) THEN 1 ELSE 0 END)#40]
-Arguments: [s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20, sum(CASE WHEN ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 30) THEN 1 ELSE 0 END)#36 AS 30 days #41, sum(CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 30) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 60)) THEN 1 ELSE 0 END)#37 AS 31 - 60 days #42, sum(CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 60) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 90)) THEN 1 ELSE 0 END)#38 AS 61 - 90 days #43, sum(CASE WHEN (((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 90) AND ((sr_returned_date_sk#6 - ss_sold_date_sk#1) <= 120)) THEN 1 ELSE 0 END)#39 AS 91 - 120 days #44, sum(CASE WHEN ((sr_returned_date_sk#6 - ss_sold_date_sk#1) > 120) THEN 1 ELSE 0 END)#40 AS >120 days #45]
 
 (73) NativeTakeOrdered
 Input [15]: [s_store_name#11, s_company_id#12, s_street_number#13, s_street_name#14, s_street_type#15, s_suite_number#16, s_city#17, s_county#18, s_state#19, s_zip#20, 30 days #41, 31 - 60 days #42, 61 - 90 days #43, 91 - 120 days #44, >120 days #45]

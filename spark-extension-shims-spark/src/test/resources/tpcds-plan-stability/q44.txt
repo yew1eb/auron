@@ -127,9 +127,12 @@ AdaptiveSparkPlan (124)
                   +- Scan parquet  (117)
 
 
-(1) NativeParquetScan 
+(73) Scan parquet 
 Output [3]: [ss_item_sk#1, ss_store_sk#2, ss_net_profit#3]
-Arguments: FileScan parquet [ss_item_sk#1,ss_store_sk#2,ss_net_profit#3] Batched: true, DataFilters: [isnotnull(ss_store_sk#2), (ss_store_sk#2 = 4)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ss_store_sk), EqualTo(ss_store_sk,4)], ReadSchema: struct<ss_item_sk:int,ss_store_sk:int,ss_net_profit:decimal(7,2)>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(ss_store_sk), EqualTo(ss_store_sk,4)]
+ReadSchema: struct<ss_item_sk:int,ss_store_sk:int,ss_net_profit:decimal(7,2)>
 
 (2) InputAdapter
 Input [3]: [ss_item_sk#1, ss_store_sk#2, ss_net_profit#3]
@@ -137,15 +140,15 @@ Arguments: [#1, #2, #3]
 
 (3) NativeFilter
 Input [3]: [#1#1, #2#2, #3#3]
-Arguments: (isnotnull(ss_store_sk#2) AND (ss_store_sk#2 = 4))
+Condition : (isnotnull(ss_store_sk#2) AND (ss_store_sk#2 = 4))
 
 (4) NativeProject
+Output [2]: [ss_item_sk#1, ss_net_profit#3]
 Input [3]: [#1#1, #2#2, #3#3]
-Arguments: [ss_item_sk#1, ss_net_profit#3]
 
 (5) NativeProject
+Output [2]: [ss_item_sk#1 AS ss_item_sk#1, UnscaledValue(ss_net_profit#3) AS _c1#4]
 Input [2]: [ss_item_sk#1, ss_net_profit#3]
-Arguments: [ss_item_sk#1 AS ss_item_sk#1, UnscaledValue(ss_net_profit#3) AS _c1#4]
 
 (6) NativeHashAggregate
 Input [2]: [ss_item_sk#1, _c1#4]
@@ -177,12 +180,12 @@ Aggregate Attributes [1]: [avg(UnscaledValue(ss_net_profit#3))#8]
 Results [2]: [ss_item_sk#1, avg(UnscaledValue(ss_net_profit#3))#8]
 
 (12) NativeProject
+Output [2]: [ss_item_sk#1 AS item_sk#9, cast((avg(UnscaledValue(ss_net_profit#3))#8 / 100.0) as decimal(11,6)) AS rank_col#10]
 Input [2]: [ss_item_sk#1, avg(UnscaledValue(ss_net_profit#3))#8]
-Arguments: [ss_item_sk#1 AS item_sk#9, cast((avg(UnscaledValue(ss_net_profit#3))#8 / 100.0) as decimal(11,6)) AS rank_col#10]
 
 (13) NativeFilter
 Input [2]: [item_sk#9, rank_col#10]
-Arguments: (isnotnull(rank_col#10) AND (cast(rank_col#10 as decimal(13,7)) > (0.9 * Subquery subquery#11, [id=#12])))
+Condition : (isnotnull(rank_col#10) AND (cast(rank_col#10 as decimal(13,7)) > (0.9 * Subquery subquery#11, [id=#12])))
 
 (14) NativeSort
 Input [2]: [item_sk#9, rank_col#10]
@@ -214,11 +217,11 @@ Arguments: [rank(rank_col#10) windowspecdefinition(rank_col#10 ASC NULLS FIRST, 
 
 (21) NativeFilter
 Input [3]: [item_sk#9, rank_col#10, rnk#15]
-Arguments: ((rnk#15 < 11) AND isnotnull(item_sk#9))
+Condition : ((rnk#15 < 11) AND isnotnull(item_sk#9))
 
 (22) NativeProject
+Output [2]: [item_sk#9, rnk#15]
 Input [3]: [item_sk#9, rank_col#10, rnk#15]
-Arguments: [item_sk#9, rnk#15]
 
 (23) NativeSort
 Input [2]: [item_sk#9, rnk#15]
@@ -250,12 +253,12 @@ Aggregate Attributes [1]: [avg(UnscaledValue(ss_net_profit#20))#21]
 Results [2]: [ss_item_sk#16, avg(UnscaledValue(ss_net_profit#20))#21]
 
 (30) NativeProject
+Output [2]: [ss_item_sk#16 AS item_sk#22, cast((avg(UnscaledValue(ss_net_profit#20))#21 / 100.0) as decimal(11,6)) AS rank_col#23]
 Input [2]: [ss_item_sk#16, avg(UnscaledValue(ss_net_profit#20))#21]
-Arguments: [ss_item_sk#16 AS item_sk#22, cast((avg(UnscaledValue(ss_net_profit#20))#21 / 100.0) as decimal(11,6)) AS rank_col#23]
 
 (31) NativeFilter
 Input [2]: [item_sk#22, rank_col#23]
-Arguments: (isnotnull(rank_col#23) AND (cast(rank_col#23 as decimal(13,7)) > (0.9 * ReusedSubquery Subquery subquery#11, [id=#12])))
+Condition : (isnotnull(rank_col#23) AND (cast(rank_col#23 as decimal(13,7)) > (0.9 * ReusedSubquery Subquery subquery#11, [id=#12])))
 
 (32) NativeSort
 Input [2]: [item_sk#22, rank_col#23]
@@ -287,11 +290,11 @@ Arguments: [rank(rank_col#23) windowspecdefinition(rank_col#23 DESC NULLS LAST, 
 
 (39) NativeFilter
 Input [3]: [item_sk#22, rank_col#23, rnk#26]
-Arguments: ((rnk#26 < 11) AND isnotnull(item_sk#22))
+Condition : ((rnk#26 < 11) AND isnotnull(item_sk#22))
 
 (40) NativeProject
+Output [2]: [item_sk#22, rnk#26]
 Input [3]: [item_sk#22, rank_col#23, rnk#26]
-Arguments: [item_sk#22, rnk#26]
 
 (41) NativeSort
 Input [2]: [item_sk#22, rnk#26]
@@ -304,8 +307,8 @@ Join type: Inner
 Join condition: None
 
 (43) NativeProject
+Output [3]: [item_sk#9, rnk#15, item_sk#22]
 Input [4]: [item_sk#9, rnk#15, item_sk#22, rnk#26]
-Arguments: [item_sk#9, rnk#15, item_sk#22]
 
 (44) NativeShuffleExchange
 Input [3]: [item_sk#9, rnk#15, item_sk#22]
@@ -326,9 +329,12 @@ Input [3]: [item_sk#9, rnk#15, item_sk#22]
 Input [3]: [item_sk#9, rnk#15, item_sk#22]
 Arguments: [item_sk#9 ASC NULLS FIRST], false
 
-(49) NativeParquetScan 
+(109) Scan parquet 
 Output [2]: [i_item_sk#27, i_product_name#28]
-Arguments: FileScan parquet [i_item_sk#27,i_product_name#28] Batched: true, DataFilters: [isnotnull(i_item_sk#27)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(i_item_sk)], ReadSchema: struct<i_item_sk:int,i_product_name:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(i_item_sk)]
+ReadSchema: struct<i_item_sk:int,i_product_name:string>
 
 (50) InputAdapter
 Input [2]: [i_item_sk#27, i_product_name#28]
@@ -336,7 +342,7 @@ Arguments: [#27, #28]
 
 (51) NativeFilter
 Input [2]: [#27#27, #28#28]
-Arguments: isnotnull(i_item_sk#27)
+Condition : isnotnull(i_item_sk#27)
 
 (52) NativeShuffleExchange
 Input [2]: [#27#27, #28#28]
@@ -364,8 +370,8 @@ Join type: Inner
 Join condition: None
 
 (58) NativeProject
+Output [3]: [rnk#15, item_sk#22, i_product_name#28]
 Input [5]: [item_sk#9, rnk#15, item_sk#22, #27#27, #28#28]
-Arguments: [rnk#15, item_sk#22, i_product_name#28]
 
 (59) NativeShuffleExchange
 Input [3]: [rnk#15, item_sk#22, i_product_name#28]
@@ -415,8 +421,8 @@ Join type: Inner
 Join condition: None
 
 (71) NativeProject
+Output [3]: [rnk#15, i_product_name#28 AS best_performing#31, i_product_name#30 AS worst_performing#32]
 Input [5]: [rnk#15, item_sk#22, i_product_name#28, #29#29, #30#30]
-Arguments: [rnk#15, i_product_name#28 AS best_performing#31, i_product_name#30 AS worst_performing#32]
 
 (72) NativeTakeOrdered
 Input [3]: [rnk#15, best_performing#31, worst_performing#32]
@@ -686,9 +692,12 @@ AdaptiveSparkPlan (143)
                +- Scan parquet  (137)
 
 
-(125) NativeParquetScan 
+(137) Scan parquet 
 Output [3]: [ss_addr_sk#40, ss_store_sk#41, ss_net_profit#42]
-Arguments: FileScan parquet [ss_addr_sk#40,ss_store_sk#41,ss_net_profit#42] Batched: true, DataFilters: [isnotnull(ss_store_sk#41), (ss_store_sk#41 = 4), isnull(ss_addr_sk#40)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ss_store_sk), EqualTo(ss_store_sk,4), IsNull(ss_addr_sk)], ReadSchema: struct<ss_addr_sk:int,ss_store_sk:int,ss_net_profit:decimal(7,2)>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(ss_store_sk), EqualTo(ss_store_sk,4), IsNull(ss_addr_sk)]
+ReadSchema: struct<ss_addr_sk:int,ss_store_sk:int,ss_net_profit:decimal(7,2)>
 
 (126) InputAdapter
 Input [3]: [ss_addr_sk#40, ss_store_sk#41, ss_net_profit#42]
@@ -696,15 +705,15 @@ Arguments: [#40, #41, #42]
 
 (127) NativeFilter
 Input [3]: [#40#40, #41#41, #42#42]
-Arguments: ((isnotnull(ss_store_sk#41) AND (ss_store_sk#41 = 4)) AND isnull(ss_addr_sk#40))
+Condition : ((isnotnull(ss_store_sk#41) AND (ss_store_sk#41 = 4)) AND isnull(ss_addr_sk#40))
 
 (128) NativeProject
+Output [2]: [ss_store_sk#41, ss_net_profit#42]
 Input [3]: [#40#40, #41#41, #42#42]
-Arguments: [ss_store_sk#41, ss_net_profit#42]
 
 (129) NativeProject
+Output [2]: [ss_store_sk#41 AS ss_store_sk#41, UnscaledValue(ss_net_profit#42) AS _c1#43]
 Input [2]: [ss_store_sk#41, ss_net_profit#42]
-Arguments: [ss_store_sk#41 AS ss_store_sk#41, UnscaledValue(ss_net_profit#42) AS _c1#43]
 
 (130) NativeHashAggregate
 Input [2]: [ss_store_sk#41, _c1#43]
@@ -736,8 +745,8 @@ Aggregate Attributes [1]: [avg(UnscaledValue(ss_net_profit#42))#46]
 Results [2]: [ss_store_sk#41, avg(UnscaledValue(ss_net_profit#42))#46]
 
 (136) NativeProject
+Output [1]: [cast((avg(UnscaledValue(ss_net_profit#42))#46 / 100.0) as decimal(11,6)) AS rank_col#47]
 Input [2]: [ss_store_sk#41, avg(UnscaledValue(ss_net_profit#42))#46]
-Arguments: [cast((avg(UnscaledValue(ss_net_profit#42))#46 / 100.0) as decimal(11,6)) AS rank_col#47]
 
 (137) Scan parquet 
 Output [3]: [ss_addr_sk#40, ss_store_sk#41, ss_net_profit#42]

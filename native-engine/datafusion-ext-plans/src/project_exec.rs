@@ -98,6 +98,12 @@ impl DisplayAs for ProjectExec {
     }
 }
 
+impl Display for ProjectExec {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        self.fmt_as(DisplayFormatType::Default, f)
+    }
+}
+
 impl ExecutionPlan for ProjectExec {
     fn name(&self) -> &str {
         "ProjectExec"

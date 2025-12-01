@@ -92,9 +92,12 @@ AdaptiveSparkPlan (89)
                            +- Scan parquet  (79)
 
 
-(1) NativeParquetScan 
+(57) Scan parquet 
 Output [3]: [ss_sold_time_sk#1, ss_hdemo_sk#2, ss_store_sk#3]
-Arguments: FileScan parquet [ss_sold_time_sk#1,ss_hdemo_sk#2,ss_store_sk#3] Batched: true, DataFilters: [isnotnull(ss_hdemo_sk#2), isnotnull(ss_sold_time_sk#1), isnotnull(ss_store_sk#3)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ss_hdemo_sk), IsNotNull(ss_sold_time_sk), IsNotNull(ss_store_sk)], ReadSchema: struct<ss_sold_time_sk:int,ss_hdemo_sk:int,ss_store_sk:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(ss_hdemo_sk), IsNotNull(ss_sold_time_sk), IsNotNull(ss_store_sk)]
+ReadSchema: struct<ss_sold_time_sk:int,ss_hdemo_sk:int,ss_store_sk:int>
 
 (2) InputAdapter
 Input [3]: [ss_sold_time_sk#1, ss_hdemo_sk#2, ss_store_sk#3]
@@ -102,7 +105,7 @@ Arguments: [#1, #2, #3]
 
 (3) NativeFilter
 Input [3]: [#1#1, #2#2, #3#3]
-Arguments: ((isnotnull(ss_hdemo_sk#2) AND isnotnull(ss_sold_time_sk#1)) AND isnotnull(ss_store_sk#3))
+Condition : ((isnotnull(ss_hdemo_sk#2) AND isnotnull(ss_sold_time_sk#1)) AND isnotnull(ss_store_sk#3))
 
 (4) NativeShuffleExchange
 Input [3]: [#1#1, #2#2, #3#3]
@@ -123,9 +126,12 @@ Input [3]: [#1#1, #2#2, #3#3]
 Input [3]: [#1#1, #2#2, #3#3]
 Arguments: [ss_hdemo_sk#2 ASC NULLS FIRST], false
 
-(9) NativeParquetScan 
+(61) Scan parquet 
 Output [2]: [hd_demo_sk#4, hd_dep_count#5]
-Arguments: FileScan parquet [hd_demo_sk#4,hd_dep_count#5] Batched: true, DataFilters: [isnotnull(hd_dep_count#5), (hd_dep_count#5 = 7), isnotnull(hd_demo_sk#4)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(hd_dep_count), EqualTo(hd_dep_count,7), IsNotNull(hd_demo_sk)], ReadSchema: struct<hd_demo_sk:int,hd_dep_count:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(hd_dep_count), EqualTo(hd_dep_count,7), IsNotNull(hd_demo_sk)]
+ReadSchema: struct<hd_demo_sk:int,hd_dep_count:int>
 
 (10) InputAdapter
 Input [2]: [hd_demo_sk#4, hd_dep_count#5]
@@ -133,11 +139,11 @@ Arguments: [#4, #5]
 
 (11) NativeFilter
 Input [2]: [#4#4, #5#5]
-Arguments: ((isnotnull(hd_dep_count#5) AND (hd_dep_count#5 = 7)) AND isnotnull(hd_demo_sk#4))
+Condition : ((isnotnull(hd_dep_count#5) AND (hd_dep_count#5 = 7)) AND isnotnull(hd_demo_sk#4))
 
 (12) NativeProject
+Output [1]: [hd_demo_sk#4]
 Input [2]: [#4#4, #5#5]
-Arguments: [hd_demo_sk#4]
 
 (13) NativeShuffleExchange
 Input [1]: [hd_demo_sk#4]
@@ -165,8 +171,8 @@ Join type: Inner
 Join condition: None
 
 (19) NativeProject
+Output [2]: [ss_sold_time_sk#1, ss_store_sk#3]
 Input [4]: [#1#1, #2#2, #3#3, hd_demo_sk#4]
-Arguments: [ss_sold_time_sk#1, ss_store_sk#3]
 
 (20) NativeShuffleExchange
 Input [2]: [ss_sold_time_sk#1, ss_store_sk#3]
@@ -187,9 +193,12 @@ Input [2]: [ss_sold_time_sk#1, ss_store_sk#3]
 Input [2]: [ss_sold_time_sk#1, ss_store_sk#3]
 Arguments: [ss_sold_time_sk#1 ASC NULLS FIRST], false
 
-(25) NativeParquetScan 
+(70) Scan parquet 
 Output [3]: [t_time_sk#6, t_hour#7, t_minute#8]
-Arguments: FileScan parquet [t_time_sk#6,t_hour#7,t_minute#8] Batched: true, DataFilters: [isnotnull(t_hour#7), isnotnull(t_minute#8), (t_hour#7 = 20), (t_minute#8 >= 30), isnotnu..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(t_hour), IsNotNull(t_minute), EqualTo(t_hour,20), GreaterThanOrEqual(t_minute,30), IsN..., ReadSchema: struct<t_time_sk:int,t_hour:int,t_minute:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(t_hour), IsNotNull(t_minute), EqualTo(t_hour,20), GreaterThanOrEqual(t_minute,30), IsNotNull(t_time_sk)]
+ReadSchema: struct<t_time_sk:int,t_hour:int,t_minute:int>
 
 (26) InputAdapter
 Input [3]: [t_time_sk#6, t_hour#7, t_minute#8]
@@ -197,11 +206,11 @@ Arguments: [#6, #7, #8]
 
 (27) NativeFilter
 Input [3]: [#6#6, #7#7, #8#8]
-Arguments: ((((isnotnull(t_hour#7) AND isnotnull(t_minute#8)) AND (t_hour#7 = 20)) AND (t_minute#8 >= 30)) AND isnotnull(t_time_sk#6))
+Condition : ((((isnotnull(t_hour#7) AND isnotnull(t_minute#8)) AND (t_hour#7 = 20)) AND (t_minute#8 >= 30)) AND isnotnull(t_time_sk#6))
 
 (28) NativeProject
+Output [1]: [t_time_sk#6]
 Input [3]: [#6#6, #7#7, #8#8]
-Arguments: [t_time_sk#6]
 
 (29) NativeShuffleExchange
 Input [1]: [t_time_sk#6]
@@ -229,8 +238,8 @@ Join type: Inner
 Join condition: None
 
 (35) NativeProject
+Output [1]: [ss_store_sk#3]
 Input [3]: [ss_sold_time_sk#1, ss_store_sk#3, t_time_sk#6]
-Arguments: [ss_store_sk#3]
 
 (36) NativeShuffleExchange
 Input [1]: [ss_store_sk#3]
@@ -251,9 +260,12 @@ Input [1]: [ss_store_sk#3]
 Input [1]: [ss_store_sk#3]
 Arguments: [ss_store_sk#3 ASC NULLS FIRST], false
 
-(41) NativeParquetScan 
+(79) Scan parquet 
 Output [2]: [s_store_sk#9, s_store_name#10]
-Arguments: FileScan parquet [s_store_sk#9,s_store_name#10] Batched: true, DataFilters: [isnotnull(s_store_name#10), (s_store_name#10 = ese), isnotnull(s_store_sk#9)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(s_store_name), EqualTo(s_store_name,ese), IsNotNull(s_store_sk)], ReadSchema: struct<s_store_sk:int,s_store_name:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(s_store_name), EqualTo(s_store_name,ese), IsNotNull(s_store_sk)]
+ReadSchema: struct<s_store_sk:int,s_store_name:string>
 
 (42) InputAdapter
 Input [2]: [s_store_sk#9, s_store_name#10]
@@ -261,11 +273,11 @@ Arguments: [#9, #10]
 
 (43) NativeFilter
 Input [2]: [#9#9, #10#10]
-Arguments: ((isnotnull(s_store_name#10) AND (s_store_name#10 = ese)) AND isnotnull(s_store_sk#9))
+Condition : ((isnotnull(s_store_name#10) AND (s_store_name#10 = ese)) AND isnotnull(s_store_sk#9))
 
 (44) NativeProject
+Output [1]: [s_store_sk#9]
 Input [2]: [#9#9, #10#10]
-Arguments: [s_store_sk#9]
 
 (45) NativeShuffleExchange
 Input [1]: [s_store_sk#9]
@@ -293,6 +305,7 @@ Join type: Inner
 Join condition: None
 
 (51) NativeProject
+Output: []
 Input [2]: [ss_store_sk#3, s_store_sk#9]
 
 (52) NativeHashAggregate
@@ -318,8 +331,8 @@ Aggregate Attributes [1]: [count(1)#13]
 Results [1]: [count(1)#13]
 
 (56) NativeProject
+Output [1]: [count(1)#13 AS count(1)#14]
 Input [1]: [count(1)#13]
-Arguments: [count(1)#13 AS count(1)#14]
 
 (57) Scan parquet 
 Output [3]: [ss_sold_time_sk#1, ss_hdemo_sk#2, ss_store_sk#3]

@@ -72,9 +72,12 @@ AdaptiveSparkPlan (69)
                               +- Scan parquet  (58)
 
 
-(1) NativeParquetScan 
+(45) Scan parquet 
 Output [3]: [d_date_sk#1, d_year#2, d_day_name#3]
-Arguments: FileScan parquet [d_date_sk#1,d_year#2,d_day_name#3] Batched: true, DataFilters: [isnotnull(d_year#2), (d_year#2 = 2000), isnotnull(d_date_sk#1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(d_year), EqualTo(d_year,2000), IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_year:int,d_day_name:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(d_year), EqualTo(d_year,2000), IsNotNull(d_date_sk)]
+ReadSchema: struct<d_date_sk:int,d_year:int,d_day_name:string>
 
 (2) InputAdapter
 Input [3]: [d_date_sk#1, d_year#2, d_day_name#3]
@@ -82,11 +85,11 @@ Arguments: [#1, #2, #3]
 
 (3) NativeFilter
 Input [3]: [#1#1, #2#2, #3#3]
-Arguments: ((isnotnull(d_year#2) AND (d_year#2 = 2000)) AND isnotnull(d_date_sk#1))
+Condition : ((isnotnull(d_year#2) AND (d_year#2 = 2000)) AND isnotnull(d_date_sk#1))
 
 (4) NativeProject
+Output [2]: [d_date_sk#1, d_day_name#3]
 Input [3]: [#1#1, #2#2, #3#3]
-Arguments: [d_date_sk#1, d_day_name#3]
 
 (5) NativeShuffleExchange
 Input [2]: [d_date_sk#1, d_day_name#3]
@@ -107,9 +110,12 @@ Input [2]: [d_date_sk#1, d_day_name#3]
 Input [2]: [d_date_sk#1, d_day_name#3]
 Arguments: [d_date_sk#1 ASC NULLS FIRST], false
 
-(10) NativeParquetScan 
+(50) Scan parquet 
 Output [3]: [ss_sold_date_sk#4, ss_store_sk#5, ss_sales_price#6]
-Arguments: FileScan parquet [ss_sold_date_sk#4,ss_store_sk#5,ss_sales_price#6] Batched: true, DataFilters: [isnotnull(ss_sold_date_sk#4), isnotnull(ss_store_sk#5)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ss_sold_date_sk), IsNotNull(ss_store_sk)], ReadSchema: struct<ss_sold_date_sk:int,ss_store_sk:int,ss_sales_price:decimal(7,2)>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(ss_sold_date_sk), IsNotNull(ss_store_sk)]
+ReadSchema: struct<ss_sold_date_sk:int,ss_store_sk:int,ss_sales_price:decimal(7,2)>
 
 (11) InputAdapter
 Input [3]: [ss_sold_date_sk#4, ss_store_sk#5, ss_sales_price#6]
@@ -117,7 +123,7 @@ Arguments: [#4, #5, #6]
 
 (12) NativeFilter
 Input [3]: [#4#4, #5#5, #6#6]
-Arguments: (isnotnull(ss_sold_date_sk#4) AND isnotnull(ss_store_sk#5))
+Condition : (isnotnull(ss_sold_date_sk#4) AND isnotnull(ss_store_sk#5))
 
 (13) NativeShuffleExchange
 Input [3]: [#4#4, #5#5, #6#6]
@@ -145,8 +151,8 @@ Join type: Inner
 Join condition: None
 
 (19) NativeProject
+Output [3]: [d_day_name#3, ss_store_sk#5, ss_sales_price#6]
 Input [5]: [d_date_sk#1, d_day_name#3, #4#4, #5#5, #6#6]
-Arguments: [d_day_name#3, ss_store_sk#5, ss_sales_price#6]
 
 (20) NativeShuffleExchange
 Input [3]: [d_day_name#3, ss_store_sk#5, ss_sales_price#6]
@@ -167,9 +173,12 @@ Input [3]: [d_day_name#3, ss_store_sk#5, ss_sales_price#6]
 Input [3]: [d_day_name#3, ss_store_sk#5, ss_sales_price#6]
 Arguments: [ss_store_sk#5 ASC NULLS FIRST], false
 
-(25) NativeParquetScan 
+(58) Scan parquet 
 Output [4]: [s_store_sk#7, s_store_id#8, s_store_name#9, s_gmt_offset#10]
-Arguments: FileScan parquet [s_store_sk#7,s_store_id#8,s_store_name#9,s_gmt_offset#10] Batched: true, DataFilters: [isnotnull(s_gmt_offset#10), (s_gmt_offset#10 = -5.00), isnotnull(s_store_sk#7)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(s_gmt_offset), EqualTo(s_gmt_offset,-5.00), IsNotNull(s_store_sk)], ReadSchema: struct<s_store_sk:int,s_store_id:string,s_store_name:string,s_gmt_offset:decimal(5,2)>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(s_gmt_offset), EqualTo(s_gmt_offset,-5.00), IsNotNull(s_store_sk)]
+ReadSchema: struct<s_store_sk:int,s_store_id:string,s_store_name:string,s_gmt_offset:decimal(5,2)>
 
 (26) InputAdapter
 Input [4]: [s_store_sk#7, s_store_id#8, s_store_name#9, s_gmt_offset#10]
@@ -177,11 +186,11 @@ Arguments: [#7, #8, #9, #10]
 
 (27) NativeFilter
 Input [4]: [#7#7, #8#8, #9#9, #10#10]
-Arguments: ((isnotnull(s_gmt_offset#10) AND (s_gmt_offset#10 = -5.00)) AND isnotnull(s_store_sk#7))
+Condition : ((isnotnull(s_gmt_offset#10) AND (s_gmt_offset#10 = -5.00)) AND isnotnull(s_store_sk#7))
 
 (28) NativeProject
+Output [3]: [s_store_sk#7, s_store_id#8, s_store_name#9]
 Input [4]: [#7#7, #8#8, #9#9, #10#10]
-Arguments: [s_store_sk#7, s_store_id#8, s_store_name#9]
 
 (29) NativeShuffleExchange
 Input [3]: [s_store_sk#7, s_store_id#8, s_store_name#9]
@@ -209,12 +218,12 @@ Join type: Inner
 Join condition: None
 
 (35) NativeProject
+Output [4]: [d_day_name#3, ss_sales_price#6, s_store_id#8, s_store_name#9]
 Input [6]: [d_day_name#3, ss_store_sk#5, ss_sales_price#6, s_store_sk#7, s_store_id#8, s_store_name#9]
-Arguments: [d_day_name#3, ss_sales_price#6, s_store_id#8, s_store_name#9]
 
 (36) NativeProject
+Output [9]: [s_store_name#9 AS s_store_name#9, s_store_id#8 AS s_store_id#8, UnscaledValue(CASE WHEN (d_day_name#3 = Sunday) THEN ss_sales_price#6 END) AS _c2#11, UnscaledValue(CASE WHEN (d_day_name#3 = Monday) THEN ss_sales_price#6 END) AS _c3#12, UnscaledValue(CASE WHEN (d_day_name#3 = Tuesday) THEN ss_sales_price#6 END) AS _c4#13, UnscaledValue(CASE WHEN (d_day_name#3 = Wednesday) THEN ss_sales_price#6 END) AS _c5#14, UnscaledValue(CASE WHEN (d_day_name#3 = Thursday) THEN ss_sales_price#6 END) AS _c6#15, UnscaledValue(CASE WHEN (d_day_name#3 = Friday) THEN ss_sales_price#6 END) AS _c7#16, UnscaledValue(CASE WHEN (d_day_name#3 = Saturday) THEN ss_sales_price#6 END) AS _c8#17]
 Input [4]: [d_day_name#3, ss_sales_price#6, s_store_id#8, s_store_name#9]
-Arguments: [s_store_name#9 AS s_store_name#9, s_store_id#8 AS s_store_id#8, UnscaledValue(CASE WHEN (d_day_name#3 = Sunday) THEN ss_sales_price#6 END) AS _c2#11, UnscaledValue(CASE WHEN (d_day_name#3 = Monday) THEN ss_sales_price#6 END) AS _c3#12, UnscaledValue(CASE WHEN (d_day_name#3 = Tuesday) THEN ss_sales_price#6 END) AS _c4#13, UnscaledValue(CASE WHEN (d_day_name#3 = Wednesday) THEN ss_sales_price#6 END) AS _c5#14, UnscaledValue(CASE WHEN (d_day_name#3 = Thursday) THEN ss_sales_price#6 END) AS _c6#15, UnscaledValue(CASE WHEN (d_day_name#3 = Friday) THEN ss_sales_price#6 END) AS _c7#16, UnscaledValue(CASE WHEN (d_day_name#3 = Saturday) THEN ss_sales_price#6 END) AS _c8#17]
 
 (37) NativeHashAggregate
 Input [9]: [s_store_name#9, s_store_id#8, _c2#11, _c3#12, _c4#13, _c5#14, _c6#15, _c7#16, _c8#17]
@@ -246,8 +255,8 @@ Aggregate Attributes [7]: [sum(UnscaledValue(CASE WHEN (d_day_name#3 = Sunday) T
 Results [9]: [s_store_name#9, s_store_id#8, sum(UnscaledValue(CASE WHEN (d_day_name#3 = Sunday) THEN ss_sales_price#6 END))#26, sum(UnscaledValue(CASE WHEN (d_day_name#3 = Monday) THEN ss_sales_price#6 END))#27, sum(UnscaledValue(CASE WHEN (d_day_name#3 = Tuesday) THEN ss_sales_price#6 END))#28, sum(UnscaledValue(CASE WHEN (d_day_name#3 = Wednesday) THEN ss_sales_price#6 END))#29, sum(UnscaledValue(CASE WHEN (d_day_name#3 = Thursday) THEN ss_sales_price#6 END))#30, sum(UnscaledValue(CASE WHEN (d_day_name#3 = Friday) THEN ss_sales_price#6 END))#31, sum(UnscaledValue(CASE WHEN (d_day_name#3 = Saturday) THEN ss_sales_price#6 END))#32]
 
 (43) NativeProject
+Output [9]: [s_store_name#9, s_store_id#8, MakeDecimal(sum(UnscaledValue(CASE WHEN (d_day_name#3 = Sunday) THEN ss_sales_price#6 END))#26,17,2) AS sun_sales#33, MakeDecimal(sum(UnscaledValue(CASE WHEN (d_day_name#3 = Monday) THEN ss_sales_price#6 END))#27,17,2) AS mon_sales#34, MakeDecimal(sum(UnscaledValue(CASE WHEN (d_day_name#3 = Tuesday) THEN ss_sales_price#6 END))#28,17,2) AS tue_sales#35, MakeDecimal(sum(UnscaledValue(CASE WHEN (d_day_name#3 = Wednesday) THEN ss_sales_price#6 END))#29,17,2) AS wed_sales#36, MakeDecimal(sum(UnscaledValue(CASE WHEN (d_day_name#3 = Thursday) THEN ss_sales_price#6 END))#30,17,2) AS thu_sales#37, MakeDecimal(sum(UnscaledValue(CASE WHEN (d_day_name#3 = Friday) THEN ss_sales_price#6 END))#31,17,2) AS fri_sales#38, MakeDecimal(sum(UnscaledValue(CASE WHEN (d_day_name#3 = Saturday) THEN ss_sales_price#6 END))#32,17,2) AS sat_sales#39]
 Input [9]: [s_store_name#9, s_store_id#8, sum(UnscaledValue(CASE WHEN (d_day_name#3 = Sunday) THEN ss_sales_price#6 END))#26, sum(UnscaledValue(CASE WHEN (d_day_name#3 = Monday) THEN ss_sales_price#6 END))#27, sum(UnscaledValue(CASE WHEN (d_day_name#3 = Tuesday) THEN ss_sales_price#6 END))#28, sum(UnscaledValue(CASE WHEN (d_day_name#3 = Wednesday) THEN ss_sales_price#6 END))#29, sum(UnscaledValue(CASE WHEN (d_day_name#3 = Thursday) THEN ss_sales_price#6 END))#30, sum(UnscaledValue(CASE WHEN (d_day_name#3 = Friday) THEN ss_sales_price#6 END))#31, sum(UnscaledValue(CASE WHEN (d_day_name#3 = Saturday) THEN ss_sales_price#6 END))#32]
-Arguments: [s_store_name#9, s_store_id#8, MakeDecimal(sum(UnscaledValue(CASE WHEN (d_day_name#3 = Sunday) THEN ss_sales_price#6 END))#26,17,2) AS sun_sales#33, MakeDecimal(sum(UnscaledValue(CASE WHEN (d_day_name#3 = Monday) THEN ss_sales_price#6 END))#27,17,2) AS mon_sales#34, MakeDecimal(sum(UnscaledValue(CASE WHEN (d_day_name#3 = Tuesday) THEN ss_sales_price#6 END))#28,17,2) AS tue_sales#35, MakeDecimal(sum(UnscaledValue(CASE WHEN (d_day_name#3 = Wednesday) THEN ss_sales_price#6 END))#29,17,2) AS wed_sales#36, MakeDecimal(sum(UnscaledValue(CASE WHEN (d_day_name#3 = Thursday) THEN ss_sales_price#6 END))#30,17,2) AS thu_sales#37, MakeDecimal(sum(UnscaledValue(CASE WHEN (d_day_name#3 = Friday) THEN ss_sales_price#6 END))#31,17,2) AS fri_sales#38, MakeDecimal(sum(UnscaledValue(CASE WHEN (d_day_name#3 = Saturday) THEN ss_sales_price#6 END))#32,17,2) AS sat_sales#39]
 
 (44) NativeTakeOrdered
 Input [9]: [s_store_name#9, s_store_id#8, sun_sales#33, mon_sales#34, tue_sales#35, wed_sales#36, thu_sales#37, fri_sales#38, sat_sales#39]

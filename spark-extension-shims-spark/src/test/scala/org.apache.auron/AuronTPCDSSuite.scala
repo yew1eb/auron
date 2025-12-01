@@ -413,7 +413,7 @@ abstract class AuronTPCDSSuite extends AuronQueryTest with SharedSparkSession {
   }
 
   // check query result and query plan
-  if (false) {
+  if (true) {
     tpcdsQueries.foreach { sqlNum =>
       test(s"TPC-DS: ${sqlNum}") {
         val sqlStr = FileUtils.readFileToString(
@@ -427,7 +427,7 @@ abstract class AuronTPCDSSuite extends AuronQueryTest with SharedSparkSession {
   }
 
   //only compare query result with spark
-  if (true) {
+  if (false) {
     tpcdsQueries.foreach { sqlNum =>
       test(s"[compare result with spark] TPC-DS: ${sqlNum}") {
         val sqlStr = FileUtils.readFileToString(

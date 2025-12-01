@@ -121,9 +121,12 @@ AdaptiveSparkPlan (118)
                   +- Scan parquet  (111)
 
 
-(1) NativeParquetScan 
+(77) Scan parquet 
 Output [8]: [ss_sold_date_sk#1, ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_store_sk#5, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8]
-Arguments: FileScan parquet [ss_sold_date_sk#1,ss_customer_sk#2,ss_hdemo_sk#3,ss_addr_sk#4,ss_store_sk#5,ss_ticket_number#6,ss_coupon_amt#7,ss_net_profit#8] Batched: true, DataFilters: [isnotnull(ss_sold_date_sk#1), isnotnull(ss_store_sk#5), isnotnull(ss_hdemo_sk#3), isnotnul..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ss_sold_date_sk), IsNotNull(ss_store_sk), IsNotNull(ss_hdemo_sk), IsNotNull(ss_custome..., ReadSchema: struct<ss_sold_date_sk:int,ss_customer_sk:int,ss_hdemo_sk:int,ss_addr_sk:int,ss_store_sk:int,ss_t...
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(ss_sold_date_sk), IsNotNull(ss_store_sk), IsNotNull(ss_hdemo_sk), IsNotNull(ss_customer_sk)]
+ReadSchema: struct<ss_sold_date_sk:int,ss_customer_sk:int,ss_hdemo_sk:int,ss_addr_sk:int,ss_store_sk:int,ss_ticket_number:int,ss_coupon_amt:decimal(7,2),ss_net_profit:decimal(7,2)>
 
 (2) InputAdapter
 Input [8]: [ss_sold_date_sk#1, ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_store_sk#5, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8]
@@ -131,7 +134,7 @@ Arguments: [#1, #2, #3, #4, #5, #6, #7, #8]
 
 (3) NativeFilter
 Input [8]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6, #7#7, #8#8]
-Arguments: (((isnotnull(ss_sold_date_sk#1) AND isnotnull(ss_store_sk#5)) AND isnotnull(ss_hdemo_sk#3)) AND isnotnull(ss_customer_sk#2))
+Condition : (((isnotnull(ss_sold_date_sk#1) AND isnotnull(ss_store_sk#5)) AND isnotnull(ss_hdemo_sk#3)) AND isnotnull(ss_customer_sk#2))
 
 (4) NativeShuffleExchange
 Input [8]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6, #7#7, #8#8]
@@ -152,9 +155,12 @@ Input [8]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6, #7#7, #8#8]
 Input [8]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6, #7#7, #8#8]
 Arguments: [ss_sold_date_sk#1 ASC NULLS FIRST], false
 
-(9) NativeParquetScan 
+(81) Scan parquet 
 Output [3]: [d_date_sk#9, d_year#10, d_dow#11]
-Arguments: FileScan parquet [d_date_sk#9,d_year#10,d_dow#11] Batched: true, DataFilters: [isnotnull(d_dow#11), (d_dow#11 = 1), d_year#10 IN (1999,2000,2001), isnotnull(d_date_sk#9)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(d_dow), EqualTo(d_dow,1), In(d_year, [1999,2000,2001]), IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_year:int,d_dow:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(d_dow), EqualTo(d_dow,1), In(d_year, [1999,2000,2001]), IsNotNull(d_date_sk)]
+ReadSchema: struct<d_date_sk:int,d_year:int,d_dow:int>
 
 (10) InputAdapter
 Input [3]: [d_date_sk#9, d_year#10, d_dow#11]
@@ -162,11 +168,11 @@ Arguments: [#9, #10, #11]
 
 (11) NativeFilter
 Input [3]: [#9#9, #10#10, #11#11]
-Arguments: (((isnotnull(d_dow#11) AND (d_dow#11 = 1)) AND d_year#10 IN (1999,2000,2001)) AND isnotnull(d_date_sk#9))
+Condition : (((isnotnull(d_dow#11) AND (d_dow#11 = 1)) AND d_year#10 IN (1999,2000,2001)) AND isnotnull(d_date_sk#9))
 
 (12) NativeProject
+Output [1]: [d_date_sk#9]
 Input [3]: [#9#9, #10#10, #11#11]
-Arguments: [d_date_sk#9]
 
 (13) NativeShuffleExchange
 Input [1]: [d_date_sk#9]
@@ -194,8 +200,8 @@ Join type: Inner
 Join condition: None
 
 (19) NativeProject
+Output [7]: [ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_store_sk#5, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8]
 Input [9]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6, #7#7, #8#8, d_date_sk#9]
-Arguments: [ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_store_sk#5, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8]
 
 (20) NativeShuffleExchange
 Input [7]: [ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_store_sk#5, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8]
@@ -216,9 +222,12 @@ Input [7]: [ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_store_sk#5, ss_tic
 Input [7]: [ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_store_sk#5, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8]
 Arguments: [ss_store_sk#5 ASC NULLS FIRST], false
 
-(25) NativeParquetScan 
+(90) Scan parquet 
 Output [3]: [s_store_sk#12, s_number_employees#13, s_city#14]
-Arguments: FileScan parquet [s_store_sk#12,s_number_employees#13,s_city#14] Batched: true, DataFilters: [isnotnull(s_number_employees#13), (s_number_employees#13 >= 200), (s_number_employees#13 <= 2..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(s_number_employees), GreaterThanOrEqual(s_number_employees,200), LessThanOrEqual(s_num..., ReadSchema: struct<s_store_sk:int,s_number_employees:int,s_city:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(s_number_employees), GreaterThanOrEqual(s_number_employees,200), LessThanOrEqual(s_number_employees,295), IsNotNull(s_store_sk)]
+ReadSchema: struct<s_store_sk:int,s_number_employees:int,s_city:string>
 
 (26) InputAdapter
 Input [3]: [s_store_sk#12, s_number_employees#13, s_city#14]
@@ -226,11 +235,11 @@ Arguments: [#12, #13, #14]
 
 (27) NativeFilter
 Input [3]: [#12#12, #13#13, #14#14]
-Arguments: (((isnotnull(s_number_employees#13) AND (s_number_employees#13 >= 200)) AND (s_number_employees#13 <= 295)) AND isnotnull(s_store_sk#12))
+Condition : (((isnotnull(s_number_employees#13) AND (s_number_employees#13 >= 200)) AND (s_number_employees#13 <= 295)) AND isnotnull(s_store_sk#12))
 
 (28) NativeProject
+Output [2]: [s_store_sk#12, s_city#14]
 Input [3]: [#12#12, #13#13, #14#14]
-Arguments: [s_store_sk#12, s_city#14]
 
 (29) NativeShuffleExchange
 Input [2]: [s_store_sk#12, s_city#14]
@@ -258,8 +267,8 @@ Join type: Inner
 Join condition: None
 
 (35) NativeProject
+Output [7]: [ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8, s_city#14]
 Input [9]: [ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_store_sk#5, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8, s_store_sk#12, s_city#14]
-Arguments: [ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8, s_city#14]
 
 (36) NativeShuffleExchange
 Input [7]: [ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8, s_city#14]
@@ -280,9 +289,12 @@ Input [7]: [ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_ticket_number#6, s
 Input [7]: [ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8, s_city#14]
 Arguments: [ss_hdemo_sk#3 ASC NULLS FIRST], false
 
-(41) NativeParquetScan 
+(99) Scan parquet 
 Output [3]: [hd_demo_sk#15, hd_dep_count#16, hd_vehicle_count#17]
-Arguments: FileScan parquet [hd_demo_sk#15,hd_dep_count#16,hd_vehicle_count#17] Batched: true, DataFilters: [((hd_dep_count#16 = 6) OR (hd_vehicle_count#17 > 2)), isnotnull(hd_demo_sk#15)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [Or(EqualTo(hd_dep_count,6),GreaterThan(hd_vehicle_count,2)), IsNotNull(hd_demo_sk)], ReadSchema: struct<hd_demo_sk:int,hd_dep_count:int,hd_vehicle_count:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [Or(EqualTo(hd_dep_count,6),GreaterThan(hd_vehicle_count,2)), IsNotNull(hd_demo_sk)]
+ReadSchema: struct<hd_demo_sk:int,hd_dep_count:int,hd_vehicle_count:int>
 
 (42) InputAdapter
 Input [3]: [hd_demo_sk#15, hd_dep_count#16, hd_vehicle_count#17]
@@ -290,11 +302,11 @@ Arguments: [#15, #16, #17]
 
 (43) NativeFilter
 Input [3]: [#15#15, #16#16, #17#17]
-Arguments: (((hd_dep_count#16 = 6) OR (hd_vehicle_count#17 > 2)) AND isnotnull(hd_demo_sk#15))
+Condition : (((hd_dep_count#16 = 6) OR (hd_vehicle_count#17 > 2)) AND isnotnull(hd_demo_sk#15))
 
 (44) NativeProject
+Output [1]: [hd_demo_sk#15]
 Input [3]: [#15#15, #16#16, #17#17]
-Arguments: [hd_demo_sk#15]
 
 (45) NativeShuffleExchange
 Input [1]: [hd_demo_sk#15]
@@ -322,12 +334,12 @@ Join type: Inner
 Join condition: None
 
 (51) NativeProject
+Output [6]: [ss_customer_sk#2, ss_addr_sk#4, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8, s_city#14]
 Input [8]: [ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8, s_city#14, hd_demo_sk#15]
-Arguments: [ss_customer_sk#2, ss_addr_sk#4, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8, s_city#14]
 
 (52) NativeProject
+Output [6]: [ss_ticket_number#6 AS ss_ticket_number#6, ss_customer_sk#2 AS ss_customer_sk#2, ss_addr_sk#4 AS ss_addr_sk#4, s_city#14 AS s_city#14, UnscaledValue(ss_coupon_amt#7) AS _c4#18, UnscaledValue(ss_net_profit#8) AS _c5#19]
 Input [6]: [ss_customer_sk#2, ss_addr_sk#4, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8, s_city#14]
-Arguments: [ss_ticket_number#6 AS ss_ticket_number#6, ss_customer_sk#2 AS ss_customer_sk#2, ss_addr_sk#4 AS ss_addr_sk#4, s_city#14 AS s_city#14, UnscaledValue(ss_coupon_amt#7) AS _c4#18, UnscaledValue(ss_net_profit#8) AS _c5#19]
 
 (53) NativeHashAggregate
 Input [6]: [ss_ticket_number#6, ss_customer_sk#2, ss_addr_sk#4, s_city#14, _c4#18, _c5#19]
@@ -359,8 +371,8 @@ Aggregate Attributes [2]: [sum(UnscaledValue(ss_coupon_amt#7))#23, sum(UnscaledV
 Results [6]: [ss_ticket_number#6, ss_customer_sk#2, ss_addr_sk#4, s_city#14, sum(UnscaledValue(ss_coupon_amt#7))#23, sum(UnscaledValue(ss_net_profit#8))#24]
 
 (59) NativeProject
+Output [5]: [ss_ticket_number#6, ss_customer_sk#2, s_city#14, MakeDecimal(sum(UnscaledValue(ss_coupon_amt#7))#23,17,2) AS amt#25, MakeDecimal(sum(UnscaledValue(ss_net_profit#8))#24,17,2) AS profit#26]
 Input [6]: [ss_ticket_number#6, ss_customer_sk#2, ss_addr_sk#4, s_city#14, sum(UnscaledValue(ss_coupon_amt#7))#23, sum(UnscaledValue(ss_net_profit#8))#24]
-Arguments: [ss_ticket_number#6, ss_customer_sk#2, s_city#14, MakeDecimal(sum(UnscaledValue(ss_coupon_amt#7))#23,17,2) AS amt#25, MakeDecimal(sum(UnscaledValue(ss_net_profit#8))#24,17,2) AS profit#26]
 
 (60) NativeShuffleExchange
 Input [5]: [ss_ticket_number#6, ss_customer_sk#2, s_city#14, amt#25, profit#26]
@@ -381,9 +393,12 @@ Input [5]: [ss_ticket_number#6, ss_customer_sk#2, s_city#14, amt#25, profit#26]
 Input [5]: [ss_ticket_number#6, ss_customer_sk#2, s_city#14, amt#25, profit#26]
 Arguments: [ss_customer_sk#2 ASC NULLS FIRST], false
 
-(65) NativeParquetScan 
+(111) Scan parquet 
 Output [3]: [c_customer_sk#27, c_first_name#28, c_last_name#29]
-Arguments: FileScan parquet [c_customer_sk#27,c_first_name#28,c_last_name#29] Batched: true, DataFilters: [isnotnull(c_customer_sk#27)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(c_customer_sk)], ReadSchema: struct<c_customer_sk:int,c_first_name:string,c_last_name:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(c_customer_sk)]
+ReadSchema: struct<c_customer_sk:int,c_first_name:string,c_last_name:string>
 
 (66) InputAdapter
 Input [3]: [c_customer_sk#27, c_first_name#28, c_last_name#29]
@@ -391,7 +406,7 @@ Arguments: [#27, #28, #29]
 
 (67) NativeFilter
 Input [3]: [#27#27, #28#28, #29#29]
-Arguments: isnotnull(c_customer_sk#27)
+Condition : isnotnull(c_customer_sk#27)
 
 (68) NativeShuffleExchange
 Input [3]: [#27#27, #28#28, #29#29]
@@ -419,16 +434,16 @@ Join type: Inner
 Join condition: None
 
 (74) NativeProject
+Output [7]: [c_last_name#29, c_first_name#28, substr(s_city#14, 1, 30) AS substr(s_city, 1, 30)#30, ss_ticket_number#6, amt#25, profit#26, s_city#14]
 Input [8]: [ss_ticket_number#6, ss_customer_sk#2, s_city#14, amt#25, profit#26, #27#27, #28#28, #29#29]
-Arguments: [c_last_name#29, c_first_name#28, substr(s_city#14, 1, 30) AS substr(s_city, 1, 30)#30, ss_ticket_number#6, amt#25, profit#26, s_city#14]
 
 (75) NativeTakeOrdered
 Input [7]: [c_last_name#29, c_first_name#28, substr(s_city, 1, 30)#30, ss_ticket_number#6, amt#25, profit#26, s_city#14]
 Arguments: X, [c_last_name#29 ASC NULLS FIRST, c_first_name#28 ASC NULLS FIRST, substr(s_city#14, 1, 30) ASC NULLS FIRST, profit#26 ASC NULLS FIRST]
 
 (76) NativeProject
+Output [6]: [c_last_name#29, c_first_name#28, substr(s_city, 1, 30)#30, ss_ticket_number#6, amt#25, profit#26]
 Input [7]: [c_last_name#29, c_first_name#28, substr(s_city, 1, 30)#30, ss_ticket_number#6, amt#25, profit#26, s_city#14]
-Arguments: [c_last_name#29, c_first_name#28, substr(s_city, 1, 30)#30, ss_ticket_number#6, amt#25, profit#26]
 
 (77) Scan parquet 
 Output [8]: [ss_sold_date_sk#1, ss_customer_sk#2, ss_hdemo_sk#3, ss_addr_sk#4, ss_store_sk#5, ss_ticket_number#6, ss_coupon_amt#7, ss_net_profit#8]

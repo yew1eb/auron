@@ -31,7 +31,7 @@ import org.apache.spark.sql.types.DoubleType
 
 abstract class AuronTPCHSuite extends AuronQueryTest with SharedSparkSession {
 
-  protected val RE_GENERATE: Boolean = (sys.env.getOrElse("SPARK_TPCDS_REGENERATE", "0") == "1")
+  protected val RE_GENERATE: Boolean = (sys.env.getOrElse("SPARK_TPCH_REGENERATE", "0") == "1")
 
   protected val rootPath: String = getClass.getResource("/").getPath
   protected val tpchDataPath: String = rootPath + "/tpch-data-parquet"

@@ -189,9 +189,12 @@ AdaptiveSparkPlan (186)
                            +- Scan parquet  (176)
 
 
-(1) NativeParquetScan 
+(122) Scan parquet 
 Output [7]: [ws_sold_date_sk#1, ws_item_sk#2, ws_web_page_sk#3, ws_order_number#4, ws_quantity#5, ws_sales_price#6, ws_net_profit#7]
-Arguments: FileScan parquet [ws_sold_date_sk#1,ws_item_sk#2,ws_web_page_sk#3,ws_order_number#4,ws_quantity#5,ws_sales_price#6,ws_net_profit#7] Batched: true, DataFilters: [isnotnull(ws_item_sk#2), isnotnull(ws_order_number#4), isnotnull(ws_web_page_sk#3), isnotn..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ws_item_sk), IsNotNull(ws_order_number), IsNotNull(ws_web_page_sk), IsNotNull(ws_sold_..., ReadSchema: struct<ws_sold_date_sk:int,ws_item_sk:int,ws_web_page_sk:int,ws_order_number:int,ws_quantity:int,...
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(ws_item_sk), IsNotNull(ws_order_number), IsNotNull(ws_web_page_sk), IsNotNull(ws_sold_date_sk), Or(Or(And(GreaterThanOrEqual(ws_sales_price,100.00),LessThanOrEqual(ws_sales_price,150.00)),And(GreaterThanOrEqual(ws_sales_price,50.00),LessThanOrEqual(ws_sales_price,100.00))),And(GreaterThanOrEqual(ws_sales_price,150.00),LessThanOrEqual(ws_sales_price,200.00))), Or(Or(And(GreaterThanOrEqual(ws_net_profit,100.00),LessThanOrEqual(ws_net_profit,200.00)),And(GreaterThanOrEqual(ws_net_profit,150.00),LessThanOrEqual(ws_net_profit,300.00))),And(GreaterThanOrEqual(ws_net_profit,50.00),LessThanOrEqual(ws_net_profit,250.00)))]
+ReadSchema: struct<ws_sold_date_sk:int,ws_item_sk:int,ws_web_page_sk:int,ws_order_number:int,ws_quantity:int,ws_sales_price:decimal(7,2),ws_net_profit:decimal(7,2)>
 
 (2) InputAdapter
 Input [7]: [ws_sold_date_sk#1, ws_item_sk#2, ws_web_page_sk#3, ws_order_number#4, ws_quantity#5, ws_sales_price#6, ws_net_profit#7]
@@ -199,7 +202,7 @@ Arguments: [#1, #2, #3, #4, #5, #6, #7]
 
 (3) NativeFilter
 Input [7]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6, #7#7]
-Arguments: (((((isnotnull(ws_item_sk#2) AND isnotnull(ws_order_number#4)) AND isnotnull(ws_web_page_sk#3)) AND isnotnull(ws_sold_date_sk#1)) AND ((((ws_sales_price#6 >= 100.00) AND (ws_sales_price#6 <= 150.00)) OR ((ws_sales_price#6 >= 50.00) AND (ws_sales_price#6 <= 100.00))) OR ((ws_sales_price#6 >= 150.00) AND (ws_sales_price#6 <= 200.00)))) AND ((((ws_net_profit#7 >= 100.00) AND (ws_net_profit#7 <= 200.00)) OR ((ws_net_profit#7 >= 150.00) AND (ws_net_profit#7 <= 300.00))) OR ((ws_net_profit#7 >= 50.00) AND (ws_net_profit#7 <= 250.00))))
+Condition : (((((isnotnull(ws_item_sk#2) AND isnotnull(ws_order_number#4)) AND isnotnull(ws_web_page_sk#3)) AND isnotnull(ws_sold_date_sk#1)) AND ((((ws_sales_price#6 >= 100.00) AND (ws_sales_price#6 <= 150.00)) OR ((ws_sales_price#6 >= 50.00) AND (ws_sales_price#6 <= 100.00))) OR ((ws_sales_price#6 >= 150.00) AND (ws_sales_price#6 <= 200.00)))) AND ((((ws_net_profit#7 >= 100.00) AND (ws_net_profit#7 <= 200.00)) OR ((ws_net_profit#7 >= 150.00) AND (ws_net_profit#7 <= 300.00))) OR ((ws_net_profit#7 >= 50.00) AND (ws_net_profit#7 <= 250.00))))
 
 (4) NativeShuffleExchange
 Input [7]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6, #7#7]
@@ -220,9 +223,12 @@ Input [7]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6, #7#7]
 Input [7]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6, #7#7]
 Arguments: [ws_item_sk#2 ASC NULLS FIRST, ws_order_number#4 ASC NULLS FIRST], false
 
-(9) NativeParquetScan 
+(126) Scan parquet 
 Output [8]: [wr_item_sk#8, wr_refunded_cdemo_sk#9, wr_refunded_addr_sk#10, wr_returning_cdemo_sk#11, wr_reason_sk#12, wr_order_number#13, wr_fee#14, wr_refunded_cash#15]
-Arguments: FileScan parquet [wr_item_sk#8,wr_refunded_cdemo_sk#9,wr_refunded_addr_sk#10,wr_returning_cdemo_sk#11,wr_reason_sk#12,wr_order_number#13,wr_fee#14,wr_refunded_cash#15] Batched: true, DataFilters: [isnotnull(wr_item_sk#8), isnotnull(wr_order_number#13), isnotnull(wr_refunded_cdemo_sk#9), ..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(wr_item_sk), IsNotNull(wr_order_number), IsNotNull(wr_refunded_cdemo_sk), IsNotNull(wr..., ReadSchema: struct<wr_item_sk:int,wr_refunded_cdemo_sk:int,wr_refunded_addr_sk:int,wr_returning_cdemo_sk:int,...
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(wr_item_sk), IsNotNull(wr_order_number), IsNotNull(wr_refunded_cdemo_sk), IsNotNull(wr_returning_cdemo_sk), IsNotNull(wr_refunded_addr_sk), IsNotNull(wr_reason_sk)]
+ReadSchema: struct<wr_item_sk:int,wr_refunded_cdemo_sk:int,wr_refunded_addr_sk:int,wr_returning_cdemo_sk:int,wr_reason_sk:int,wr_order_number:int,wr_fee:decimal(7,2),wr_refunded_cash:decimal(7,2)>
 
 (10) InputAdapter
 Input [8]: [wr_item_sk#8, wr_refunded_cdemo_sk#9, wr_refunded_addr_sk#10, wr_returning_cdemo_sk#11, wr_reason_sk#12, wr_order_number#13, wr_fee#14, wr_refunded_cash#15]
@@ -230,7 +236,7 @@ Arguments: [#8, #9, #10, #11, #12, #13, #14, #15]
 
 (11) NativeFilter
 Input [8]: [#8#8, #9#9, #10#10, #11#11, #12#12, #13#13, #14#14, #15#15]
-Arguments: (((((isnotnull(wr_item_sk#8) AND isnotnull(wr_order_number#13)) AND isnotnull(wr_refunded_cdemo_sk#9)) AND isnotnull(wr_returning_cdemo_sk#11)) AND isnotnull(wr_refunded_addr_sk#10)) AND isnotnull(wr_reason_sk#12))
+Condition : (((((isnotnull(wr_item_sk#8) AND isnotnull(wr_order_number#13)) AND isnotnull(wr_refunded_cdemo_sk#9)) AND isnotnull(wr_returning_cdemo_sk#11)) AND isnotnull(wr_refunded_addr_sk#10)) AND isnotnull(wr_reason_sk#12))
 
 (12) NativeShuffleExchange
 Input [8]: [#8#8, #9#9, #10#10, #11#11, #12#12, #13#13, #14#14, #15#15]
@@ -258,8 +264,8 @@ Join type: Inner
 Join condition: None
 
 (18) NativeProject
+Output [11]: [ws_sold_date_sk#1, ws_web_page_sk#3, ws_quantity#5, ws_sales_price#6, ws_net_profit#7, wr_refunded_cdemo_sk#9, wr_refunded_addr_sk#10, wr_returning_cdemo_sk#11, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
 Input [15]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6, #7#7, #8#8, #9#9, #10#10, #11#11, #12#12, #13#13, #14#14, #15#15]
-Arguments: [ws_sold_date_sk#1, ws_web_page_sk#3, ws_quantity#5, ws_sales_price#6, ws_net_profit#7, wr_refunded_cdemo_sk#9, wr_refunded_addr_sk#10, wr_returning_cdemo_sk#11, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
 
 (19) NativeShuffleExchange
 Input [11]: [ws_sold_date_sk#1, ws_web_page_sk#3, ws_quantity#5, ws_sales_price#6, ws_net_profit#7, wr_refunded_cdemo_sk#9, wr_refunded_addr_sk#10, wr_returning_cdemo_sk#11, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
@@ -280,9 +286,12 @@ Input [11]: [ws_sold_date_sk#1, ws_web_page_sk#3, ws_quantity#5, ws_sales_price#
 Input [11]: [ws_sold_date_sk#1, ws_web_page_sk#3, ws_quantity#5, ws_sales_price#6, ws_net_profit#7, wr_refunded_cdemo_sk#9, wr_refunded_addr_sk#10, wr_returning_cdemo_sk#11, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
 Arguments: [ws_web_page_sk#3 ASC NULLS FIRST], false
 
-(24) NativeParquetScan 
+(134) Scan parquet 
 Output [1]: [wp_web_page_sk#16]
-Arguments: FileScan parquet [wp_web_page_sk#16] Batched: true, DataFilters: [isnotnull(wp_web_page_sk#16)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(wp_web_page_sk)], ReadSchema: struct<wp_web_page_sk:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(wp_web_page_sk)]
+ReadSchema: struct<wp_web_page_sk:int>
 
 (25) InputAdapter
 Input [1]: [wp_web_page_sk#16]
@@ -290,7 +299,7 @@ Arguments: [#16]
 
 (26) NativeFilter
 Input [1]: [#16#16]
-Arguments: isnotnull(wp_web_page_sk#16)
+Condition : isnotnull(wp_web_page_sk#16)
 
 (27) NativeShuffleExchange
 Input [1]: [#16#16]
@@ -318,8 +327,8 @@ Join type: Inner
 Join condition: None
 
 (33) NativeProject
+Output [10]: [ws_sold_date_sk#1, ws_quantity#5, ws_sales_price#6, ws_net_profit#7, wr_refunded_cdemo_sk#9, wr_refunded_addr_sk#10, wr_returning_cdemo_sk#11, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
 Input [12]: [ws_sold_date_sk#1, ws_web_page_sk#3, ws_quantity#5, ws_sales_price#6, ws_net_profit#7, wr_refunded_cdemo_sk#9, wr_refunded_addr_sk#10, wr_returning_cdemo_sk#11, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, #16#16]
-Arguments: [ws_sold_date_sk#1, ws_quantity#5, ws_sales_price#6, ws_net_profit#7, wr_refunded_cdemo_sk#9, wr_refunded_addr_sk#10, wr_returning_cdemo_sk#11, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
 
 (34) NativeShuffleExchange
 Input [10]: [ws_sold_date_sk#1, ws_quantity#5, ws_sales_price#6, ws_net_profit#7, wr_refunded_cdemo_sk#9, wr_refunded_addr_sk#10, wr_returning_cdemo_sk#11, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
@@ -340,9 +349,12 @@ Input [10]: [ws_sold_date_sk#1, ws_quantity#5, ws_sales_price#6, ws_net_profit#7
 Input [10]: [ws_sold_date_sk#1, ws_quantity#5, ws_sales_price#6, ws_net_profit#7, wr_refunded_cdemo_sk#9, wr_refunded_addr_sk#10, wr_returning_cdemo_sk#11, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
 Arguments: [wr_refunded_cdemo_sk#9 ASC NULLS FIRST], false
 
-(39) NativeParquetScan 
+(142) Scan parquet 
 Output [3]: [cd_demo_sk#17, cd_marital_status#18, cd_education_status#19]
-Arguments: FileScan parquet [cd_demo_sk#17,cd_marital_status#18,cd_education_status#19] Batched: true, DataFilters: [isnotnull(cd_demo_sk#17), isnotnull(cd_marital_status#18), isnotnull(cd_education_status#19),..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(cd_demo_sk), IsNotNull(cd_marital_status), IsNotNull(cd_education_status), Or(Or(And(E..., ReadSchema: struct<cd_demo_sk:int,cd_marital_status:string,cd_education_status:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(cd_demo_sk), IsNotNull(cd_marital_status), IsNotNull(cd_education_status), Or(Or(And(EqualTo(cd_marital_status,M),EqualTo(cd_education_status,Advanced Degree)),And(EqualTo(cd_marital_status,S),EqualTo(cd_education_status,College))),And(EqualTo(cd_marital_status,W),EqualTo(cd_education_status,2 yr Degree)))]
+ReadSchema: struct<cd_demo_sk:int,cd_marital_status:string,cd_education_status:string>
 
 (40) InputAdapter
 Input [3]: [cd_demo_sk#17, cd_marital_status#18, cd_education_status#19]
@@ -350,7 +362,7 @@ Arguments: [#17, #18, #19]
 
 (41) NativeFilter
 Input [3]: [#17#17, #18#18, #19#19]
-Arguments: (((isnotnull(cd_demo_sk#17) AND isnotnull(cd_marital_status#18)) AND isnotnull(cd_education_status#19)) AND ((((cd_marital_status#18 = M) AND (cd_education_status#19 = Advanced Degree)) OR ((cd_marital_status#18 = S) AND (cd_education_status#19 = College))) OR ((cd_marital_status#18 = W) AND (cd_education_status#19 = 2 yr Degree))))
+Condition : (((isnotnull(cd_demo_sk#17) AND isnotnull(cd_marital_status#18)) AND isnotnull(cd_education_status#19)) AND ((((cd_marital_status#18 = M) AND (cd_education_status#19 = Advanced Degree)) OR ((cd_marital_status#18 = S) AND (cd_education_status#19 = College))) OR ((cd_marital_status#18 = W) AND (cd_education_status#19 = 2 yr Degree))))
 
 (42) NativeShuffleExchange
 Input [3]: [#17#17, #18#18, #19#19]
@@ -403,9 +415,12 @@ Input [10]: [ws_sold_date_sk#1, ws_quantity#5, ws_net_profit#7, wr_refunded_addr
 Input [10]: [ws_sold_date_sk#1, ws_quantity#5, ws_net_profit#7, wr_refunded_addr_sk#10, wr_returning_cdemo_sk#11, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, cd_marital_status#18, cd_education_status#19]
 Arguments: [wr_returning_cdemo_sk#11 ASC NULLS FIRST, cd_marital_status#18 ASC NULLS FIRST, cd_education_status#19 ASC NULLS FIRST], false
 
-(55) NativeParquetScan 
+(150) Scan parquet 
 Output [3]: [cd_demo_sk#20, cd_marital_status#21, cd_education_status#22]
-Arguments: FileScan parquet [cd_demo_sk#20,cd_marital_status#21,cd_education_status#22] Batched: true, DataFilters: [isnotnull(cd_demo_sk#20), isnotnull(cd_marital_status#21), isnotnull(cd_education_status#23..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(cd_demo_sk), IsNotNull(cd_marital_status), IsNotNull(cd_education_status)], ReadSchema: struct<cd_demo_sk:int,cd_marital_status:string,cd_education_status:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(cd_demo_sk), IsNotNull(cd_marital_status), IsNotNull(cd_education_status)]
+ReadSchema: struct<cd_demo_sk:int,cd_marital_status:string,cd_education_status:string>
 
 (56) InputAdapter
 Input [3]: [cd_demo_sk#20, cd_marital_status#21, cd_education_status#22]
@@ -413,7 +428,7 @@ Arguments: [#20, #21, #22]
 
 (57) NativeFilter
 Input [3]: [#20#20, #21#21, #22#22]
-Arguments: ((isnotnull(cd_demo_sk#20) AND isnotnull(cd_marital_status#21)) AND isnotnull(cd_education_status#22))
+Condition : ((isnotnull(cd_demo_sk#20) AND isnotnull(cd_marital_status#21)) AND isnotnull(cd_education_status#22))
 
 (58) NativeShuffleExchange
 Input [3]: [#20#20, #21#21, #22#22]
@@ -441,8 +456,8 @@ Join type: Inner
 Join condition: None
 
 (64) NativeProject
+Output [7]: [ws_sold_date_sk#1, ws_quantity#5, ws_net_profit#7, wr_refunded_addr_sk#10, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
 Input [13]: [ws_sold_date_sk#1, ws_quantity#5, ws_net_profit#7, wr_refunded_addr_sk#10, wr_returning_cdemo_sk#11, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, cd_marital_status#18, cd_education_status#19, #20#20, #21#21, #22#22]
-Arguments: [ws_sold_date_sk#1, ws_quantity#5, ws_net_profit#7, wr_refunded_addr_sk#10, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
 
 (65) NativeShuffleExchange
 Input [7]: [ws_sold_date_sk#1, ws_quantity#5, ws_net_profit#7, wr_refunded_addr_sk#10, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
@@ -463,50 +478,53 @@ Input [7]: [ws_sold_date_sk#1, ws_quantity#5, ws_net_profit#7, wr_refunded_addr_
 Input [7]: [ws_sold_date_sk#1, ws_quantity#5, ws_net_profit#7, wr_refunded_addr_sk#10, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
 Arguments: [wr_refunded_addr_sk#10 ASC NULLS FIRST], false
 
-(70) NativeParquetScan 
-Output [3]: [ca_address_sk#24, ca_state#25, ca_country#26]
-Arguments: FileScan parquet [ca_address_sk#24,ca_state#25,ca_country#26] Batched: true, DataFilters: [isnotnull(ca_country#26), (ca_country#26 = United States), isnotnull(ca_address_sk#24), ((ca_..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ca_country), EqualTo(ca_country,United States), IsNotNull(ca_address_sk), Or(Or(In(ca_..., ReadSchema: struct<ca_address_sk:int,ca_state:string,ca_country:string>
+(158) Scan parquet 
+Output [3]: [ca_address_sk#23, ca_state#24, ca_country#25]
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(ca_country), EqualTo(ca_country,United States), IsNotNull(ca_address_sk), Or(Or(In(ca_state, [IN,NJ,OH]),In(ca_state, [CT,KY,WI])),In(ca_state, [AR,IA,LA]))]
+ReadSchema: struct<ca_address_sk:int,ca_state:string,ca_country:string>
 
 (71) InputAdapter
-Input [3]: [ca_address_sk#24, ca_state#25, ca_country#26]
-Arguments: [#24, #25, #26]
+Input [3]: [ca_address_sk#23, ca_state#24, ca_country#25]
+Arguments: [#23, #24, #25]
 
 (72) NativeFilter
-Input [3]: [#24#24, #25#25, #26#26]
-Arguments: (((isnotnull(ca_country#26) AND (ca_country#26 = United States)) AND isnotnull(ca_address_sk#24)) AND ((ca_state#25 IN (IN,OH,NJ) OR ca_state#25 IN (WI,CT,KY)) OR ca_state#25 IN (LA,IA,AR)))
+Input [3]: [#23#23, #24#24, #25#25]
+Condition : (((isnotnull(ca_country#25) AND (ca_country#25 = United States)) AND isnotnull(ca_address_sk#23)) AND ((ca_state#24 IN (IN,OH,NJ) OR ca_state#24 IN (WI,CT,KY)) OR ca_state#24 IN (LA,IA,AR)))
 
 (73) NativeProject
-Input [3]: [#24#24, #25#25, #26#26]
-Arguments: [ca_address_sk#24, ca_state#25]
+Output [2]: [ca_address_sk#23, ca_state#24]
+Input [3]: [#23#23, #24#24, #25#25]
 
 (74) NativeShuffleExchange
-Input [2]: [ca_address_sk#24, ca_state#25]
-Arguments: hashpartitioning(ca_address_sk#24, 5), ENSURE_REQUIREMENTS, [plan_id=10]
+Input [2]: [ca_address_sk#23, ca_state#24]
+Arguments: hashpartitioning(ca_address_sk#23, 5), ENSURE_REQUIREMENTS, [plan_id=10]
 
 (75) ShuffleQueryStage
-Output [2]: [ca_address_sk#24, ca_state#25]
+Output [2]: [ca_address_sk#23, ca_state#24]
 Arguments: X
 
 (76) AQEShuffleRead
-Input [2]: [ca_address_sk#24, ca_state#25]
+Input [2]: [ca_address_sk#23, ca_state#24]
 Arguments: coalesced
 
 (77) InputAdapter
-Input [2]: [ca_address_sk#24, ca_state#25]
+Input [2]: [ca_address_sk#23, ca_state#24]
 
 (78) NativeSort
-Input [2]: [ca_address_sk#24, ca_state#25]
-Arguments: [ca_address_sk#24 ASC NULLS FIRST], false
+Input [2]: [ca_address_sk#23, ca_state#24]
+Arguments: [ca_address_sk#23 ASC NULLS FIRST], false
 
 (79) SortMergeJoin [codegen id : 2]
 Left keys [1]: [wr_refunded_addr_sk#10]
-Right keys [1]: [ca_address_sk#24]
+Right keys [1]: [ca_address_sk#23]
 Join type: Inner
-Join condition: ((((ca_state#25 IN (IN,OH,NJ) AND (ws_net_profit#7 >= 100.00)) AND (ws_net_profit#7 <= 200.00)) OR ((ca_state#25 IN (WI,CT,KY) AND (ws_net_profit#7 >= 150.00)) AND (ws_net_profit#7 <= 300.00))) OR ((ca_state#25 IN (LA,IA,AR) AND (ws_net_profit#7 >= 50.00)) AND (ws_net_profit#7 <= 250.00)))
+Join condition: ((((ca_state#24 IN (IN,OH,NJ) AND (ws_net_profit#7 >= 100.00)) AND (ws_net_profit#7 <= 200.00)) OR ((ca_state#24 IN (WI,CT,KY) AND (ws_net_profit#7 >= 150.00)) AND (ws_net_profit#7 <= 300.00))) OR ((ca_state#24 IN (LA,IA,AR) AND (ws_net_profit#7 >= 50.00)) AND (ws_net_profit#7 <= 250.00)))
 
 (80) Project [codegen id : 2]
 Output [5]: [ws_sold_date_sk#1, ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
-Input [9]: [ws_sold_date_sk#1, ws_quantity#5, ws_net_profit#7, wr_refunded_addr_sk#10, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, ca_address_sk#24, ca_state#25]
+Input [9]: [ws_sold_date_sk#1, ws_quantity#5, ws_net_profit#7, wr_refunded_addr_sk#10, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, ca_address_sk#23, ca_state#24]
 
 (81) ConvertToNative
 Input [5]: [ws_sold_date_sk#1, ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
@@ -530,50 +548,53 @@ Input [5]: [ws_sold_date_sk#1, ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_ref
 Input [5]: [ws_sold_date_sk#1, ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
 Arguments: [ws_sold_date_sk#1 ASC NULLS FIRST], false
 
-(87) NativeParquetScan 
-Output [2]: [d_date_sk#27, d_year#28]
-Arguments: FileScan parquet [d_date_sk#27,d_year#28] Batched: true, DataFilters: [isnotnull(d_year#28), (d_year#28 = 2000), isnotnull(d_date_sk#27)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(d_year), EqualTo(d_year,2000), IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_year:int>
+(167) Scan parquet 
+Output [2]: [d_date_sk#26, d_year#27]
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(d_year), EqualTo(d_year,2000), IsNotNull(d_date_sk)]
+ReadSchema: struct<d_date_sk:int,d_year:int>
 
 (88) InputAdapter
-Input [2]: [d_date_sk#27, d_year#28]
-Arguments: [#27, #28]
+Input [2]: [d_date_sk#26, d_year#27]
+Arguments: [#26, #27]
 
 (89) NativeFilter
-Input [2]: [#27#27, #28#28]
-Arguments: ((isnotnull(d_year#28) AND (d_year#28 = 2000)) AND isnotnull(d_date_sk#27))
+Input [2]: [#26#26, #27#27]
+Condition : ((isnotnull(d_year#27) AND (d_year#27 = 2000)) AND isnotnull(d_date_sk#26))
 
 (90) NativeProject
-Input [2]: [#27#27, #28#28]
-Arguments: [d_date_sk#27]
+Output [1]: [d_date_sk#26]
+Input [2]: [#26#26, #27#27]
 
 (91) NativeShuffleExchange
-Input [1]: [d_date_sk#27]
-Arguments: hashpartitioning(d_date_sk#27, 5), ENSURE_REQUIREMENTS, [plan_id=12]
+Input [1]: [d_date_sk#26]
+Arguments: hashpartitioning(d_date_sk#26, 5), ENSURE_REQUIREMENTS, [plan_id=12]
 
 (92) ShuffleQueryStage
-Output [1]: [d_date_sk#27]
+Output [1]: [d_date_sk#26]
 Arguments: X
 
 (93) AQEShuffleRead
-Input [1]: [d_date_sk#27]
+Input [1]: [d_date_sk#26]
 Arguments: coalesced
 
 (94) InputAdapter
-Input [1]: [d_date_sk#27]
+Input [1]: [d_date_sk#26]
 
 (95) NativeSort
-Input [1]: [d_date_sk#27]
-Arguments: [d_date_sk#27 ASC NULLS FIRST], false
+Input [1]: [d_date_sk#26]
+Arguments: [d_date_sk#26 ASC NULLS FIRST], false
 
 (96) NativeSortMergeJoin
 Left keys [1]: [ws_sold_date_sk#1]
-Right keys [1]: [d_date_sk#27]
+Right keys [1]: [d_date_sk#26]
 Join type: Inner
 Join condition: None
 
 (97) NativeProject
-Input [6]: [ws_sold_date_sk#1, ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, d_date_sk#27]
-Arguments: [ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
+Output [4]: [ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
+Input [6]: [ws_sold_date_sk#1, ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, d_date_sk#26]
 
 (98) NativeShuffleExchange
 Input [4]: [ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
@@ -594,87 +615,90 @@ Input [4]: [ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
 Input [4]: [ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
 Arguments: [wr_reason_sk#12 ASC NULLS FIRST], false
 
-(103) NativeParquetScan 
-Output [2]: [r_reason_sk#29, r_reason_desc#30]
-Arguments: FileScan parquet [r_reason_sk#29,r_reason_desc#30] Batched: true, DataFilters: [isnotnull(r_reason_sk#29)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(r_reason_sk)], ReadSchema: struct<r_reason_sk:int,r_reason_desc:string>
+(176) Scan parquet 
+Output [2]: [r_reason_sk#28, r_reason_desc#29]
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(r_reason_sk)]
+ReadSchema: struct<r_reason_sk:int,r_reason_desc:string>
 
 (104) InputAdapter
-Input [2]: [r_reason_sk#29, r_reason_desc#30]
-Arguments: [#29, #30]
+Input [2]: [r_reason_sk#28, r_reason_desc#29]
+Arguments: [#28, #29]
 
 (105) NativeFilter
-Input [2]: [#29#29, #30#30]
-Arguments: isnotnull(r_reason_sk#29)
+Input [2]: [#28#28, #29#29]
+Condition : isnotnull(r_reason_sk#28)
 
 (106) NativeShuffleExchange
-Input [2]: [#29#29, #30#30]
-Arguments: hashpartitioning(r_reason_sk#29, 5), ENSURE_REQUIREMENTS, [plan_id=14]
+Input [2]: [#28#28, #29#29]
+Arguments: hashpartitioning(r_reason_sk#28, 5), ENSURE_REQUIREMENTS, [plan_id=14]
 
 (107) ShuffleQueryStage
-Output [2]: [#29#29, #30#30]
+Output [2]: [#28#28, #29#29]
 Arguments: X
 
 (108) AQEShuffleRead
-Input [2]: [#29#29, #30#30]
+Input [2]: [#28#28, #29#29]
 Arguments: coalesced
 
 (109) InputAdapter
-Input [2]: [#29#29, #30#30]
+Input [2]: [#28#28, #29#29]
 
 (110) NativeSort
-Input [2]: [#29#29, #30#30]
-Arguments: [r_reason_sk#29 ASC NULLS FIRST], false
+Input [2]: [#28#28, #29#29]
+Arguments: [r_reason_sk#28 ASC NULLS FIRST], false
 
 (111) NativeSortMergeJoin
 Left keys [1]: [wr_reason_sk#12]
-Right keys [1]: [r_reason_sk#29]
+Right keys [1]: [r_reason_sk#28]
 Join type: Inner
 Join condition: None
 
 (112) NativeProject
-Input [6]: [ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, #29#29, #30#30]
-Arguments: [ws_quantity#5, wr_fee#14, wr_refunded_cash#15, r_reason_desc#30]
+Output [4]: [ws_quantity#5, wr_fee#14, wr_refunded_cash#15, r_reason_desc#29]
+Input [6]: [ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, #28#28, #29#29]
 
 (113) NativeProject
-Input [4]: [ws_quantity#5, wr_fee#14, wr_refunded_cash#15, r_reason_desc#30]
-Arguments: [r_reason_desc#30 AS r_reason_desc#30, ws_quantity#5 AS _c1#31, UnscaledValue(wr_refunded_cash#15) AS _c2#32, UnscaledValue(wr_fee#14) AS _c3#33]
+Output [4]: [r_reason_desc#29 AS r_reason_desc#29, ws_quantity#5 AS _c1#30, UnscaledValue(wr_refunded_cash#15) AS _c2#31, UnscaledValue(wr_fee#14) AS _c3#32]
+Input [4]: [ws_quantity#5, wr_fee#14, wr_refunded_cash#15, r_reason_desc#29]
 
 (114) NativeHashAggregate
-Input [4]: [r_reason_desc#30, _c1#31, _c2#32, _c3#33]
-Keys [1]: [r_reason_desc#30]
-Functions [3]: [partial_avg(_c1#31), partial_avg(_c2#32), partial_avg(_c3#33)]
-Aggregate Attributes [6]: [sum#34, count#35, sum#36, count#37, sum#38, count#39]
-Results [2]: [r_reason_desc#30, #40#40]
+Input [4]: [r_reason_desc#29, _c1#30, _c2#31, _c3#32]
+Keys [1]: [r_reason_desc#29]
+Functions [3]: [partial_avg(_c1#30), partial_avg(_c2#31), partial_avg(_c3#32)]
+Aggregate Attributes [6]: [sum#33, count#34, sum#35, count#36, sum#37, count#38]
+Results [2]: [r_reason_desc#29, #39#39]
 
 (115) NativeShuffleExchange
-Input [2]: [r_reason_desc#30, #40#40]
-Arguments: hashpartitioning(r_reason_desc#30, 5), ENSURE_REQUIREMENTS, [plan_id=15]
+Input [2]: [r_reason_desc#29, #39#39]
+Arguments: hashpartitioning(r_reason_desc#29, 5), ENSURE_REQUIREMENTS, [plan_id=15]
 
 (116) ShuffleQueryStage
-Output [2]: [r_reason_desc#30, #40#40]
+Output [2]: [r_reason_desc#29, #39#39]
 Arguments: X
 
 (117) AQEShuffleRead
-Input [2]: [r_reason_desc#30, #40#40]
+Input [2]: [r_reason_desc#29, #39#39]
 Arguments: coalesced
 
 (118) InputAdapter
-Input [2]: [r_reason_desc#30, #40#40]
+Input [2]: [r_reason_desc#29, #39#39]
 
 (119) NativeHashAggregate
-Input [2]: [r_reason_desc#30, #40#40]
-Keys [1]: [r_reason_desc#30]
+Input [2]: [r_reason_desc#29, #39#39]
+Keys [1]: [r_reason_desc#29]
 Functions [3]: [avg(ws_quantity#5), avg(UnscaledValue(wr_refunded_cash#15)), avg(UnscaledValue(wr_fee#14))]
-Aggregate Attributes [3]: [avg(ws_quantity#5)#41, avg(UnscaledValue(wr_refunded_cash#15))#42, avg(UnscaledValue(wr_fee#14))#43]
-Results [4]: [r_reason_desc#30, avg(ws_quantity#5)#41, avg(UnscaledValue(wr_refunded_cash#15))#42, avg(UnscaledValue(wr_fee#14))#43]
+Aggregate Attributes [3]: [avg(ws_quantity#5)#40, avg(UnscaledValue(wr_refunded_cash#15))#41, avg(UnscaledValue(wr_fee#14))#42]
+Results [4]: [r_reason_desc#29, avg(ws_quantity#5)#40, avg(UnscaledValue(wr_refunded_cash#15))#41, avg(UnscaledValue(wr_fee#14))#42]
 
 (120) NativeProject
-Input [4]: [r_reason_desc#30, avg(ws_quantity#5)#41, avg(UnscaledValue(wr_refunded_cash#15))#42, avg(UnscaledValue(wr_fee#14))#43]
-Arguments: [substr(r_reason_desc#30, 1, 20) AS substr(r_reason_desc, 1, 20)#44, avg(ws_quantity#5)#41 AS avg(ws_quantity)#45, cast((avg(UnscaledValue(wr_refunded_cash#15))#42 / 100.0) as decimal(11,6)) AS avg(wr_refunded_cash)#46, cast((avg(UnscaledValue(wr_fee#14))#43 / 100.0) as decimal(11,6)) AS avg(wr_fee)#47]
+Output [4]: [substr(r_reason_desc#29, 1, 20) AS substr(r_reason_desc, 1, 20)#43, avg(ws_quantity#5)#40 AS avg(ws_quantity)#44, cast((avg(UnscaledValue(wr_refunded_cash#15))#41 / 100.0) as decimal(11,6)) AS avg(wr_refunded_cash)#45, cast((avg(UnscaledValue(wr_fee#14))#42 / 100.0) as decimal(11,6)) AS avg(wr_fee)#46]
+Input [4]: [r_reason_desc#29, avg(ws_quantity#5)#40, avg(UnscaledValue(wr_refunded_cash#15))#41, avg(UnscaledValue(wr_fee#14))#42]
 
 (121) NativeTakeOrdered
-Input [4]: [substr(r_reason_desc, 1, 20)#44, avg(ws_quantity)#45, avg(wr_refunded_cash)#46, avg(wr_fee)#47]
-Arguments: X, [substr(r_reason_desc, 1, 20)#44 ASC NULLS FIRST, avg(ws_quantity)#45 ASC NULLS FIRST, avg(wr_refunded_cash)#46 ASC NULLS FIRST, avg(wr_fee)#47 ASC NULLS FIRST]
+Input [4]: [substr(r_reason_desc, 1, 20)#43, avg(ws_quantity)#44, avg(wr_refunded_cash)#45, avg(wr_fee)#46]
+Arguments: X, [substr(r_reason_desc, 1, 20)#43 ASC NULLS FIRST, avg(ws_quantity)#44 ASC NULLS FIRST, avg(wr_refunded_cash)#45 ASC NULLS FIRST, avg(wr_fee)#46 ASC NULLS FIRST]
 
 (122) Scan parquet 
 Output [7]: [ws_sold_date_sk#1, ws_item_sk#2, ws_web_page_sk#3, ws_order_number#4, ws_quantity#5, ws_sales_price#6, ws_net_profit#7]
@@ -844,37 +868,37 @@ Input [7]: [ws_sold_date_sk#1, ws_quantity#5, ws_net_profit#7, wr_refunded_addr_
 Arguments: [wr_refunded_addr_sk#10 ASC NULLS FIRST], false, 0
 
 (158) Scan parquet 
-Output [3]: [ca_address_sk#24, ca_state#25, ca_country#26]
+Output [3]: [ca_address_sk#23, ca_state#24, ca_country#25]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(ca_country), EqualTo(ca_country,United States), IsNotNull(ca_address_sk), Or(Or(In(ca_state, [IN,NJ,OH]),In(ca_state, [CT,KY,WI])),In(ca_state, [AR,IA,LA]))]
 ReadSchema: struct<ca_address_sk:int,ca_state:string,ca_country:string>
 
 (159) Filter
-Input [3]: [ca_address_sk#24, ca_state#25, ca_country#26]
-Condition : (((isnotnull(ca_country#26) AND (ca_country#26 = United States)) AND isnotnull(ca_address_sk#24)) AND ((ca_state#25 IN (IN,OH,NJ) OR ca_state#25 IN (WI,CT,KY)) OR ca_state#25 IN (LA,IA,AR)))
+Input [3]: [ca_address_sk#23, ca_state#24, ca_country#25]
+Condition : (((isnotnull(ca_country#25) AND (ca_country#25 = United States)) AND isnotnull(ca_address_sk#23)) AND ((ca_state#24 IN (IN,OH,NJ) OR ca_state#24 IN (WI,CT,KY)) OR ca_state#24 IN (LA,IA,AR)))
 
 (160) Project
-Output [2]: [ca_address_sk#24, ca_state#25]
-Input [3]: [ca_address_sk#24, ca_state#25, ca_country#26]
+Output [2]: [ca_address_sk#23, ca_state#24]
+Input [3]: [ca_address_sk#23, ca_state#24, ca_country#25]
 
 (161) Exchange
-Input [2]: [ca_address_sk#24, ca_state#25]
-Arguments: hashpartitioning(ca_address_sk#24, 5), ENSURE_REQUIREMENTS, [plan_id=25]
+Input [2]: [ca_address_sk#23, ca_state#24]
+Arguments: hashpartitioning(ca_address_sk#23, 5), ENSURE_REQUIREMENTS, [plan_id=25]
 
 (162) Sort
-Input [2]: [ca_address_sk#24, ca_state#25]
-Arguments: [ca_address_sk#24 ASC NULLS FIRST], false, 0
+Input [2]: [ca_address_sk#23, ca_state#24]
+Arguments: [ca_address_sk#23 ASC NULLS FIRST], false, 0
 
 (163) SortMergeJoin
 Left keys [1]: [wr_refunded_addr_sk#10]
-Right keys [1]: [ca_address_sk#24]
+Right keys [1]: [ca_address_sk#23]
 Join type: Inner
-Join condition: ((((ca_state#25 IN (IN,OH,NJ) AND (ws_net_profit#7 >= 100.00)) AND (ws_net_profit#7 <= 200.00)) OR ((ca_state#25 IN (WI,CT,KY) AND (ws_net_profit#7 >= 150.00)) AND (ws_net_profit#7 <= 300.00))) OR ((ca_state#25 IN (LA,IA,AR) AND (ws_net_profit#7 >= 50.00)) AND (ws_net_profit#7 <= 250.00)))
+Join condition: ((((ca_state#24 IN (IN,OH,NJ) AND (ws_net_profit#7 >= 100.00)) AND (ws_net_profit#7 <= 200.00)) OR ((ca_state#24 IN (WI,CT,KY) AND (ws_net_profit#7 >= 150.00)) AND (ws_net_profit#7 <= 300.00))) OR ((ca_state#24 IN (LA,IA,AR) AND (ws_net_profit#7 >= 50.00)) AND (ws_net_profit#7 <= 250.00)))
 
 (164) Project
 Output [5]: [ws_sold_date_sk#1, ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
-Input [9]: [ws_sold_date_sk#1, ws_quantity#5, ws_net_profit#7, wr_refunded_addr_sk#10, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, ca_address_sk#24, ca_state#25]
+Input [9]: [ws_sold_date_sk#1, ws_quantity#5, ws_net_profit#7, wr_refunded_addr_sk#10, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, ca_address_sk#23, ca_state#24]
 
 (165) Exchange
 Input [5]: [ws_sold_date_sk#1, ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
@@ -885,37 +909,37 @@ Input [5]: [ws_sold_date_sk#1, ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_ref
 Arguments: [ws_sold_date_sk#1 ASC NULLS FIRST], false, 0
 
 (167) Scan parquet 
-Output [2]: [d_date_sk#27, d_year#28]
+Output [2]: [d_date_sk#26, d_year#27]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(d_year), EqualTo(d_year,2000), IsNotNull(d_date_sk)]
 ReadSchema: struct<d_date_sk:int,d_year:int>
 
 (168) Filter
-Input [2]: [d_date_sk#27, d_year#28]
-Condition : ((isnotnull(d_year#28) AND (d_year#28 = 2000)) AND isnotnull(d_date_sk#27))
+Input [2]: [d_date_sk#26, d_year#27]
+Condition : ((isnotnull(d_year#27) AND (d_year#27 = 2000)) AND isnotnull(d_date_sk#26))
 
 (169) Project
-Output [1]: [d_date_sk#27]
-Input [2]: [d_date_sk#27, d_year#28]
+Output [1]: [d_date_sk#26]
+Input [2]: [d_date_sk#26, d_year#27]
 
 (170) Exchange
-Input [1]: [d_date_sk#27]
-Arguments: hashpartitioning(d_date_sk#27, 5), ENSURE_REQUIREMENTS, [plan_id=27]
+Input [1]: [d_date_sk#26]
+Arguments: hashpartitioning(d_date_sk#26, 5), ENSURE_REQUIREMENTS, [plan_id=27]
 
 (171) Sort
-Input [1]: [d_date_sk#27]
-Arguments: [d_date_sk#27 ASC NULLS FIRST], false, 0
+Input [1]: [d_date_sk#26]
+Arguments: [d_date_sk#26 ASC NULLS FIRST], false, 0
 
 (172) SortMergeJoin
 Left keys [1]: [ws_sold_date_sk#1]
-Right keys [1]: [d_date_sk#27]
+Right keys [1]: [d_date_sk#26]
 Join type: Inner
 Join condition: None
 
 (173) Project
 Output [4]: [ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
-Input [6]: [ws_sold_date_sk#1, ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, d_date_sk#27]
+Input [6]: [ws_sold_date_sk#1, ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, d_date_sk#26]
 
 (174) Exchange
 Input [4]: [ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
@@ -926,57 +950,57 @@ Input [4]: [ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15]
 Arguments: [wr_reason_sk#12 ASC NULLS FIRST], false, 0
 
 (176) Scan parquet 
-Output [2]: [r_reason_sk#29, r_reason_desc#30]
+Output [2]: [r_reason_sk#28, r_reason_desc#29]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
 PushedFilters: [IsNotNull(r_reason_sk)]
 ReadSchema: struct<r_reason_sk:int,r_reason_desc:string>
 
 (177) Filter
-Input [2]: [r_reason_sk#29, r_reason_desc#30]
-Condition : isnotnull(r_reason_sk#29)
+Input [2]: [r_reason_sk#28, r_reason_desc#29]
+Condition : isnotnull(r_reason_sk#28)
 
 (178) Exchange
-Input [2]: [r_reason_sk#29, r_reason_desc#30]
-Arguments: hashpartitioning(r_reason_sk#29, 5), ENSURE_REQUIREMENTS, [plan_id=29]
+Input [2]: [r_reason_sk#28, r_reason_desc#29]
+Arguments: hashpartitioning(r_reason_sk#28, 5), ENSURE_REQUIREMENTS, [plan_id=29]
 
 (179) Sort
-Input [2]: [r_reason_sk#29, r_reason_desc#30]
-Arguments: [r_reason_sk#29 ASC NULLS FIRST], false, 0
+Input [2]: [r_reason_sk#28, r_reason_desc#29]
+Arguments: [r_reason_sk#28 ASC NULLS FIRST], false, 0
 
 (180) SortMergeJoin
 Left keys [1]: [wr_reason_sk#12]
-Right keys [1]: [r_reason_sk#29]
+Right keys [1]: [r_reason_sk#28]
 Join type: Inner
 Join condition: None
 
 (181) Project
-Output [4]: [ws_quantity#5, wr_fee#14, wr_refunded_cash#15, r_reason_desc#30]
-Input [6]: [ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, r_reason_sk#29, r_reason_desc#30]
+Output [4]: [ws_quantity#5, wr_fee#14, wr_refunded_cash#15, r_reason_desc#29]
+Input [6]: [ws_quantity#5, wr_reason_sk#12, wr_fee#14, wr_refunded_cash#15, r_reason_sk#28, r_reason_desc#29]
 
 (182) HashAggregate
-Input [4]: [ws_quantity#5, wr_fee#14, wr_refunded_cash#15, r_reason_desc#30]
-Keys [1]: [r_reason_desc#30]
+Input [4]: [ws_quantity#5, wr_fee#14, wr_refunded_cash#15, r_reason_desc#29]
+Keys [1]: [r_reason_desc#29]
 Functions [3]: [partial_avg(ws_quantity#5), partial_avg(UnscaledValue(wr_refunded_cash#15)), partial_avg(UnscaledValue(wr_fee#14))]
-Aggregate Attributes [6]: [sum#34, count#35, sum#36, count#37, sum#38, count#39]
-Results [7]: [r_reason_desc#30, sum#48, count#49, sum#50, count#51, sum#52, count#53]
+Aggregate Attributes [6]: [sum#33, count#34, sum#35, count#36, sum#37, count#38]
+Results [7]: [r_reason_desc#29, sum#47, count#48, sum#49, count#50, sum#51, count#52]
 
 (183) Exchange
-Input [7]: [r_reason_desc#30, sum#48, count#49, sum#50, count#51, sum#52, count#53]
-Arguments: hashpartitioning(r_reason_desc#30, 5), ENSURE_REQUIREMENTS, [plan_id=30]
+Input [7]: [r_reason_desc#29, sum#47, count#48, sum#49, count#50, sum#51, count#52]
+Arguments: hashpartitioning(r_reason_desc#29, 5), ENSURE_REQUIREMENTS, [plan_id=30]
 
 (184) HashAggregate
-Input [7]: [r_reason_desc#30, sum#48, count#49, sum#50, count#51, sum#52, count#53]
-Keys [1]: [r_reason_desc#30]
+Input [7]: [r_reason_desc#29, sum#47, count#48, sum#49, count#50, sum#51, count#52]
+Keys [1]: [r_reason_desc#29]
 Functions [3]: [avg(ws_quantity#5), avg(UnscaledValue(wr_refunded_cash#15)), avg(UnscaledValue(wr_fee#14))]
-Aggregate Attributes [3]: [avg(ws_quantity#5)#41, avg(UnscaledValue(wr_refunded_cash#15))#42, avg(UnscaledValue(wr_fee#14))#43]
-Results [4]: [substr(r_reason_desc#30, 1, 20) AS substr(r_reason_desc, 1, 20)#44, avg(ws_quantity#5)#41 AS avg(ws_quantity)#45, cast((avg(UnscaledValue(wr_refunded_cash#15))#42 / 100.0) as decimal(11,6)) AS avg(wr_refunded_cash)#46, cast((avg(UnscaledValue(wr_fee#14))#43 / 100.0) as decimal(11,6)) AS avg(wr_fee)#47]
+Aggregate Attributes [3]: [avg(ws_quantity#5)#40, avg(UnscaledValue(wr_refunded_cash#15))#41, avg(UnscaledValue(wr_fee#14))#42]
+Results [4]: [substr(r_reason_desc#29, 1, 20) AS substr(r_reason_desc, 1, 20)#43, avg(ws_quantity#5)#40 AS avg(ws_quantity)#44, cast((avg(UnscaledValue(wr_refunded_cash#15))#41 / 100.0) as decimal(11,6)) AS avg(wr_refunded_cash)#45, cast((avg(UnscaledValue(wr_fee#14))#42 / 100.0) as decimal(11,6)) AS avg(wr_fee)#46]
 
 (185) TakeOrderedAndProject
-Input [4]: [substr(r_reason_desc, 1, 20)#44, avg(ws_quantity)#45, avg(wr_refunded_cash)#46, avg(wr_fee)#47]
-Arguments: X, [substr(r_reason_desc, 1, 20)#44 ASC NULLS FIRST, avg(ws_quantity)#45 ASC NULLS FIRST, avg(wr_refunded_cash)#46 ASC NULLS FIRST, avg(wr_fee)#47 ASC NULLS FIRST], [substr(r_reason_desc, 1, 20)#44, avg(ws_quantity)#45, avg(wr_refunded_cash)#46, avg(wr_fee)#47]
+Input [4]: [substr(r_reason_desc, 1, 20)#43, avg(ws_quantity)#44, avg(wr_refunded_cash)#45, avg(wr_fee)#46]
+Arguments: X, [substr(r_reason_desc, 1, 20)#43 ASC NULLS FIRST, avg(ws_quantity)#44 ASC NULLS FIRST, avg(wr_refunded_cash)#45 ASC NULLS FIRST, avg(wr_fee)#46 ASC NULLS FIRST], [substr(r_reason_desc, 1, 20)#43, avg(ws_quantity)#44, avg(wr_refunded_cash)#45, avg(wr_fee)#46]
 
 (186) AdaptiveSparkPlan
-Output [4]: [substr(r_reason_desc, 1, 20)#44, avg(ws_quantity)#45, avg(wr_refunded_cash)#46, avg(wr_fee)#47]
+Output [4]: [substr(r_reason_desc, 1, 20)#43, avg(ws_quantity)#44, avg(wr_refunded_cash)#45, avg(wr_fee)#46]
 Arguments: isFinalPlan=true
 

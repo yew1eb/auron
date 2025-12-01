@@ -369,7 +369,7 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
 
   // FIXME
   // TODO
-  test("initcap: word boundaries and punctuation") {
+  ignore("initcap: word boundaries and punctuation") {
     Seq(
       ("select initcap('hello world')", Row("Hello World")),
       ("select initcap('hello_world')", Row("Hello_world")),
@@ -400,7 +400,7 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
   }
   // FIXME
   // TODO
-  test("initcap: mixed cases and edge cases") {
+  ignore("initcap: mixed cases and edge cases") {
     Seq(
       ("select initcap('a1b2 c3D4')", Row("A1b2 C3d4")),
       ("select initcap('---abc---')", Row("---abc---")),

@@ -226,9 +226,12 @@ AdaptiveSparkPlan (223)
                                                    +- Scan parquet  (205)
 
 
-(1) NativeParquetScan 
+(110) Scan parquet 
 Output [3]: [i_item_sk#1, i_brand#2, i_category#3]
-Arguments: FileScan parquet [i_item_sk#1,i_brand#2,i_category#3] Batched: true, DataFilters: [isnotnull(i_item_sk#1), isnotnull(i_category#3), isnotnull(i_brand#2)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(i_item_sk), IsNotNull(i_category), IsNotNull(i_brand)], ReadSchema: struct<i_item_sk:int,i_brand:string,i_category:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(i_item_sk), IsNotNull(i_category), IsNotNull(i_brand)]
+ReadSchema: struct<i_item_sk:int,i_brand:string,i_category:string>
 
 (2) InputAdapter
 Input [3]: [i_item_sk#1, i_brand#2, i_category#3]
@@ -236,7 +239,7 @@ Arguments: [#1, #2, #3]
 
 (3) NativeFilter
 Input [3]: [#1#1, #2#2, #3#3]
-Arguments: ((isnotnull(i_item_sk#1) AND isnotnull(i_category#3)) AND isnotnull(i_brand#2))
+Condition : ((isnotnull(i_item_sk#1) AND isnotnull(i_category#3)) AND isnotnull(i_brand#2))
 
 (4) NativeShuffleExchange
 Input [3]: [#1#1, #2#2, #3#3]
@@ -257,9 +260,12 @@ Input [3]: [#1#1, #2#2, #3#3]
 Input [3]: [#1#1, #2#2, #3#3]
 Arguments: [i_item_sk#1 ASC NULLS FIRST], false
 
-(9) NativeParquetScan 
+(114) Scan parquet 
 Output [4]: [cs_sold_date_sk#4, cs_call_center_sk#5, cs_item_sk#6, cs_sales_price#7]
-Arguments: FileScan parquet [cs_sold_date_sk#4,cs_call_center_sk#5,cs_item_sk#6,cs_sales_price#7] Batched: true, DataFilters: [isnotnull(cs_item_sk#6), isnotnull(cs_sold_date_sk#4), isnotnull(cs_call_center_sk#5)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(cs_item_sk), IsNotNull(cs_sold_date_sk), IsNotNull(cs_call_center_sk)], ReadSchema: struct<cs_sold_date_sk:int,cs_call_center_sk:int,cs_item_sk:int,cs_sales_price:decimal(7,2)>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(cs_item_sk), IsNotNull(cs_sold_date_sk), IsNotNull(cs_call_center_sk)]
+ReadSchema: struct<cs_sold_date_sk:int,cs_call_center_sk:int,cs_item_sk:int,cs_sales_price:decimal(7,2)>
 
 (10) InputAdapter
 Input [4]: [cs_sold_date_sk#4, cs_call_center_sk#5, cs_item_sk#6, cs_sales_price#7]
@@ -267,7 +273,7 @@ Arguments: [#4, #5, #6, #7]
 
 (11) NativeFilter
 Input [4]: [#4#4, #5#5, #6#6, #7#7]
-Arguments: ((isnotnull(cs_item_sk#6) AND isnotnull(cs_sold_date_sk#4)) AND isnotnull(cs_call_center_sk#5))
+Condition : ((isnotnull(cs_item_sk#6) AND isnotnull(cs_sold_date_sk#4)) AND isnotnull(cs_call_center_sk#5))
 
 (12) NativeShuffleExchange
 Input [4]: [#4#4, #5#5, #6#6, #7#7]
@@ -295,8 +301,8 @@ Join type: Inner
 Join condition: None
 
 (18) NativeProject
+Output [5]: [i_brand#2, i_category#3, cs_sold_date_sk#4, cs_call_center_sk#5, cs_sales_price#7]
 Input [7]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6, #7#7]
-Arguments: [i_brand#2, i_category#3, cs_sold_date_sk#4, cs_call_center_sk#5, cs_sales_price#7]
 
 (19) NativeShuffleExchange
 Input [5]: [i_brand#2, i_category#3, cs_sold_date_sk#4, cs_call_center_sk#5, cs_sales_price#7]
@@ -317,9 +323,12 @@ Input [5]: [i_brand#2, i_category#3, cs_sold_date_sk#4, cs_call_center_sk#5, cs_
 Input [5]: [i_brand#2, i_category#3, cs_sold_date_sk#4, cs_call_center_sk#5, cs_sales_price#7]
 Arguments: [cs_sold_date_sk#4 ASC NULLS FIRST], false
 
-(24) NativeParquetScan 
+(122) Scan parquet 
 Output [3]: [d_date_sk#8, d_year#9, d_moy#10]
-Arguments: FileScan parquet [d_date_sk#8,d_year#9,d_moy#10] Batched: true, DataFilters: [(((d_year#9 = 1999) OR ((d_year#9 = 1998) AND (d_moy#10 = 12))) OR ((d_year#9 = 2000) AND..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [Or(Or(EqualTo(d_year,1999),And(EqualTo(d_year,1998),EqualTo(d_moy,12))),And(EqualTo(d_year,2000)..., ReadSchema: struct<d_date_sk:int,d_year:int,d_moy:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [Or(Or(EqualTo(d_year,1999),And(EqualTo(d_year,1998),EqualTo(d_moy,12))),And(EqualTo(d_year,2000),EqualTo(d_moy,1))), IsNotNull(d_date_sk)]
+ReadSchema: struct<d_date_sk:int,d_year:int,d_moy:int>
 
 (25) InputAdapter
 Input [3]: [d_date_sk#8, d_year#9, d_moy#10]
@@ -327,7 +336,7 @@ Arguments: [#8, #9, #10]
 
 (26) NativeFilter
 Input [3]: [#8#8, #9#9, #10#10]
-Arguments: ((((d_year#9 = 1999) OR ((d_year#9 = 1998) AND (d_moy#10 = 12))) OR ((d_year#9 = 2000) AND (d_moy#10 = 1))) AND isnotnull(d_date_sk#8))
+Condition : ((((d_year#9 = 1999) OR ((d_year#9 = 1998) AND (d_moy#10 = 12))) OR ((d_year#9 = 2000) AND (d_moy#10 = 1))) AND isnotnull(d_date_sk#8))
 
 (27) NativeShuffleExchange
 Input [3]: [#8#8, #9#9, #10#10]
@@ -355,8 +364,8 @@ Join type: Inner
 Join condition: None
 
 (33) NativeProject
+Output [6]: [i_brand#2, i_category#3, cs_call_center_sk#5, cs_sales_price#7, d_year#9, d_moy#10]
 Input [8]: [i_brand#2, i_category#3, cs_sold_date_sk#4, cs_call_center_sk#5, cs_sales_price#7, #8#8, #9#9, #10#10]
-Arguments: [i_brand#2, i_category#3, cs_call_center_sk#5, cs_sales_price#7, d_year#9, d_moy#10]
 
 (34) NativeShuffleExchange
 Input [6]: [i_brand#2, i_category#3, cs_call_center_sk#5, cs_sales_price#7, d_year#9, d_moy#10]
@@ -377,9 +386,12 @@ Input [6]: [i_brand#2, i_category#3, cs_call_center_sk#5, cs_sales_price#7, d_ye
 Input [6]: [i_brand#2, i_category#3, cs_call_center_sk#5, cs_sales_price#7, d_year#9, d_moy#10]
 Arguments: [cs_call_center_sk#5 ASC NULLS FIRST], false
 
-(39) NativeParquetScan 
+(130) Scan parquet 
 Output [2]: [cc_call_center_sk#11, cc_name#12]
-Arguments: FileScan parquet [cc_call_center_sk#11,cc_name#12] Batched: true, DataFilters: [isnotnull(cc_call_center_sk#11), isnotnull(cc_name#12)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(cc_call_center_sk), IsNotNull(cc_name)], ReadSchema: struct<cc_call_center_sk:int,cc_name:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(cc_call_center_sk), IsNotNull(cc_name)]
+ReadSchema: struct<cc_call_center_sk:int,cc_name:string>
 
 (40) InputAdapter
 Input [2]: [cc_call_center_sk#11, cc_name#12]
@@ -387,7 +399,7 @@ Arguments: [#11, #12]
 
 (41) NativeFilter
 Input [2]: [#11#11, #12#12]
-Arguments: (isnotnull(cc_call_center_sk#11) AND isnotnull(cc_name#12))
+Condition : (isnotnull(cc_call_center_sk#11) AND isnotnull(cc_name#12))
 
 (42) NativeShuffleExchange
 Input [2]: [#11#11, #12#12]
@@ -415,12 +427,12 @@ Join type: Inner
 Join condition: None
 
 (48) NativeProject
+Output [6]: [i_brand#2, i_category#3, cs_sales_price#7, d_year#9, d_moy#10, cc_name#12]
 Input [8]: [i_brand#2, i_category#3, cs_call_center_sk#5, cs_sales_price#7, d_year#9, d_moy#10, #11#11, #12#12]
-Arguments: [i_brand#2, i_category#3, cs_sales_price#7, d_year#9, d_moy#10, cc_name#12]
 
 (49) NativeProject
+Output [6]: [i_category#3 AS i_category#3, i_brand#2 AS i_brand#2, cc_name#12 AS cc_name#12, d_year#9 AS d_year#9, d_moy#10 AS d_moy#10, UnscaledValue(cs_sales_price#7) AS _c5#13]
 Input [6]: [i_brand#2, i_category#3, cs_sales_price#7, d_year#9, d_moy#10, cc_name#12]
-Arguments: [i_category#3 AS i_category#3, i_brand#2 AS i_brand#2, cc_name#12 AS cc_name#12, d_year#9 AS d_year#9, d_moy#10 AS d_moy#10, UnscaledValue(cs_sales_price#7) AS _c5#13]
 
 (50) NativeHashAggregate
 Input [6]: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, _c5#13]
@@ -452,8 +464,8 @@ Aggregate Attributes [1]: [sum(UnscaledValue(cs_sales_price#7))#16]
 Results [6]: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, sum(UnscaledValue(cs_sales_price#7))#16]
 
 (56) NativeProject
+Output [7]: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, MakeDecimal(sum(UnscaledValue(cs_sales_price#7))#16,17,2) AS sum_sales#17, MakeDecimal(sum(UnscaledValue(cs_sales_price#7))#16,17,2) AS _w0#18]
 Input [6]: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, sum(UnscaledValue(cs_sales_price#7))#16]
-Arguments: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, MakeDecimal(sum(UnscaledValue(cs_sales_price#7))#16,17,2) AS sum_sales#17, MakeDecimal(sum(UnscaledValue(cs_sales_price#7))#16,17,2) AS _w0#18]
 
 (57) NativeShuffleExchange
 Input [7]: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, sum_sales#17, _w0#18]
@@ -480,7 +492,7 @@ Arguments: [rank(d_year#9, d_moy#10) windowspecdefinition(i_category#3, i_brand#
 
 (63) NativeFilter
 Input [8]: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, sum_sales#17, _w0#18, rn#19]
-Arguments: (isnotnull(d_year#9) AND (d_year#9 = 1999))
+Condition : (isnotnull(d_year#9) AND (d_year#9 = 1999))
 
 (64) Window
 Input [8]: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, sum_sales#17, _w0#18, rn#19]
@@ -542,8 +554,8 @@ Aggregate Attributes [1]: [sum(UnscaledValue(cs_sales_price#28))#16]
 Results [6]: [i_category#21, i_brand#22, cc_name#23, d_year#24, d_moy#25, sum(UnscaledValue(cs_sales_price#28))#16]
 
 (79) NativeProject
+Output [6]: [i_category#21, i_brand#22, cc_name#23, d_year#24, d_moy#25, MakeDecimal(sum(UnscaledValue(cs_sales_price#28))#16,17,2) AS sum_sales#17]
 Input [6]: [i_category#21, i_brand#22, cc_name#23, d_year#24, d_moy#25, sum(UnscaledValue(cs_sales_price#28))#16]
-Arguments: [i_category#21, i_brand#22, cc_name#23, d_year#24, d_moy#25, MakeDecimal(sum(UnscaledValue(cs_sales_price#28))#16,17,2) AS sum_sales#17]
 
 (80) NativeShuffleExchange
 Input [6]: [i_category#21, i_brand#22, cc_name#23, d_year#24, d_moy#25, sum_sales#17]
@@ -569,8 +581,8 @@ Input [6]: [i_category#21, i_brand#22, cc_name#23, d_year#24, d_moy#25, sum_sale
 Arguments: [rank(d_year#24, d_moy#25) windowspecdefinition(i_category#21, i_brand#22, cc_name#23, d_year#24 ASC NULLS FIRST, d_moy#25 ASC NULLS FIRST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS rn#29], [i_category#21, i_brand#22, cc_name#23], [d_year#24 ASC NULLS FIRST, d_moy#25 ASC NULLS FIRST]
 
 (86) NativeProject
+Output [5]: [i_category#21, i_brand#22, cc_name#23, sum_sales#17 AS sum_sales#30, rn#29]
 Input [7]: [i_category#21, i_brand#22, cc_name#23, d_year#24, d_moy#25, sum_sales#17, rn#29]
-Arguments: [i_category#21, i_brand#22, cc_name#23, sum_sales#17 AS sum_sales#30, rn#29]
 
 (87) NativeShuffleExchange
 Input [5]: [i_category#21, i_brand#22, cc_name#23, sum_sales#30, rn#29]
@@ -598,8 +610,8 @@ Join type: Inner
 Join condition: None
 
 (93) NativeProject
+Output [9]: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, sum_sales#17, avg_monthly_sales#20, rn#19, sum_sales#30]
 Input [13]: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, sum_sales#17, avg_monthly_sales#20, rn#19, i_category#21, i_brand#22, cc_name#23, sum_sales#30, rn#29]
-Arguments: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, sum_sales#17, avg_monthly_sales#20, rn#19, sum_sales#30]
 
 (94) ReusedExchange [Reuses operator id: 80]
 Output [6]: [i_category#31, i_brand#32, cc_name#33, d_year#34, d_moy#35, sum_sales#17]
@@ -628,8 +640,8 @@ Input [6]: [#31#31, #32#32, #33#33, #34#34, #35#35, #17#17]
 Arguments: [rank(d_year#34, d_moy#35) windowspecdefinition(i_category#31, i_brand#32, cc_name#33, d_year#34 ASC NULLS FIRST, d_moy#35 ASC NULLS FIRST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS rn#36], [i_category#31, i_brand#32, cc_name#33], [d_year#34 ASC NULLS FIRST, d_moy#35 ASC NULLS FIRST]
 
 (101) NativeProject
+Output [5]: [i_category#31, i_brand#32, cc_name#33, sum_sales#17 AS sum_sales#37, rn#36]
 Input [7]: [#31#31, #32#32, #33#33, #34#34, #35#35, #17#17, rn#36]
-Arguments: [i_category#31, i_brand#32, cc_name#33, sum_sales#17 AS sum_sales#37, rn#36]
 
 (102) NativeShuffleExchange
 Input [5]: [i_category#31, i_brand#32, cc_name#33, sum_sales#37, rn#36]
@@ -657,8 +669,8 @@ Join type: Inner
 Join condition: None
 
 (108) NativeProject
+Output [9]: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, avg_monthly_sales#20, sum_sales#17, sum_sales#30 AS psum#38, sum_sales#37 AS nsum#39]
 Input [14]: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, sum_sales#17, avg_monthly_sales#20, rn#19, sum_sales#30, i_category#31, i_brand#32, cc_name#33, sum_sales#37, rn#36]
-Arguments: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, avg_monthly_sales#20, sum_sales#17, sum_sales#30 AS psum#38, sum_sales#37 AS nsum#39]
 
 (109) NativeTakeOrdered
 Input [9]: [i_category#3, i_brand#2, cc_name#12, d_year#9, d_moy#10, avg_monthly_sales#20, sum_sales#17, psum#38, nsum#39]

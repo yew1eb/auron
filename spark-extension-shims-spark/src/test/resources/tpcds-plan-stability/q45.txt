@@ -143,9 +143,12 @@ AdaptiveSparkPlan (140)
                                  +- Scan parquet  (128)
 
 
-(1) NativeParquetScan 
+(91) Scan parquet 
 Output [4]: [ws_sold_date_sk#2, ws_item_sk#3, ws_bill_customer_sk#4, ws_sales_price#5]
-Arguments: FileScan parquet [ws_sold_date_sk#2,ws_item_sk#3,ws_bill_customer_sk#4,ws_sales_price#5] Batched: true, DataFilters: [isnotnull(ws_bill_customer_sk#4), isnotnull(ws_sold_date_sk#2), isnotnull(ws_item_sk#3)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ws_bill_customer_sk), IsNotNull(ws_sold_date_sk), IsNotNull(ws_item_sk)], ReadSchema: struct<ws_sold_date_sk:int,ws_item_sk:int,ws_bill_customer_sk:int,ws_sales_price:decimal(7,2)>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(ws_bill_customer_sk), IsNotNull(ws_sold_date_sk), IsNotNull(ws_item_sk)]
+ReadSchema: struct<ws_sold_date_sk:int,ws_item_sk:int,ws_bill_customer_sk:int,ws_sales_price:decimal(7,2)>
 
 (2) InputAdapter
 Input [4]: [ws_sold_date_sk#2, ws_item_sk#3, ws_bill_customer_sk#4, ws_sales_price#5]
@@ -153,7 +156,7 @@ Arguments: [#2, #3, #4, #5]
 
 (3) NativeFilter
 Input [4]: [#2#2, #3#3, #4#4, #5#5]
-Arguments: ((isnotnull(ws_bill_customer_sk#4) AND isnotnull(ws_sold_date_sk#2)) AND isnotnull(ws_item_sk#3))
+Condition : ((isnotnull(ws_bill_customer_sk#4) AND isnotnull(ws_sold_date_sk#2)) AND isnotnull(ws_item_sk#3))
 
 (4) NativeShuffleExchange
 Input [4]: [#2#2, #3#3, #4#4, #5#5]
@@ -174,9 +177,12 @@ Input [4]: [#2#2, #3#3, #4#4, #5#5]
 Input [4]: [#2#2, #3#3, #4#4, #5#5]
 Arguments: [ws_bill_customer_sk#4 ASC NULLS FIRST], false
 
-(9) NativeParquetScan 
+(95) Scan parquet 
 Output [2]: [c_customer_sk#6, c_current_addr_sk#7]
-Arguments: FileScan parquet [c_customer_sk#6,c_current_addr_sk#7] Batched: true, DataFilters: [isnotnull(c_customer_sk#6), isnotnull(c_current_addr_sk#7)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(c_customer_sk), IsNotNull(c_current_addr_sk)], ReadSchema: struct<c_customer_sk:int,c_current_addr_sk:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(c_customer_sk), IsNotNull(c_current_addr_sk)]
+ReadSchema: struct<c_customer_sk:int,c_current_addr_sk:int>
 
 (10) InputAdapter
 Input [2]: [c_customer_sk#6, c_current_addr_sk#7]
@@ -184,7 +190,7 @@ Arguments: [#6, #7]
 
 (11) NativeFilter
 Input [2]: [#6#6, #7#7]
-Arguments: (isnotnull(c_customer_sk#6) AND isnotnull(c_current_addr_sk#7))
+Condition : (isnotnull(c_customer_sk#6) AND isnotnull(c_current_addr_sk#7))
 
 (12) NativeShuffleExchange
 Input [2]: [#6#6, #7#7]
@@ -212,8 +218,8 @@ Join type: Inner
 Join condition: None
 
 (18) NativeProject
+Output [4]: [ws_sold_date_sk#2, ws_item_sk#3, ws_sales_price#5, c_current_addr_sk#7]
 Input [6]: [#2#2, #3#3, #4#4, #5#5, #6#6, #7#7]
-Arguments: [ws_sold_date_sk#2, ws_item_sk#3, ws_sales_price#5, c_current_addr_sk#7]
 
 (19) NativeShuffleExchange
 Input [4]: [ws_sold_date_sk#2, ws_item_sk#3, ws_sales_price#5, c_current_addr_sk#7]
@@ -234,9 +240,12 @@ Input [4]: [ws_sold_date_sk#2, ws_item_sk#3, ws_sales_price#5, c_current_addr_sk
 Input [4]: [ws_sold_date_sk#2, ws_item_sk#3, ws_sales_price#5, c_current_addr_sk#7]
 Arguments: [c_current_addr_sk#7 ASC NULLS FIRST], false
 
-(24) NativeParquetScan 
+(103) Scan parquet 
 Output [3]: [ca_address_sk#8, ca_city#9, ca_zip#10]
-Arguments: FileScan parquet [ca_address_sk#8,ca_city#9,ca_zip#10] Batched: true, DataFilters: [isnotnull(ca_address_sk#8)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ca_address_sk)], ReadSchema: struct<ca_address_sk:int,ca_city:string,ca_zip:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(ca_address_sk)]
+ReadSchema: struct<ca_address_sk:int,ca_city:string,ca_zip:string>
 
 (25) InputAdapter
 Input [3]: [ca_address_sk#8, ca_city#9, ca_zip#10]
@@ -244,7 +253,7 @@ Arguments: [#8, #9, #10]
 
 (26) NativeFilter
 Input [3]: [#8#8, #9#9, #10#10]
-Arguments: isnotnull(ca_address_sk#8)
+Condition : isnotnull(ca_address_sk#8)
 
 (27) NativeShuffleExchange
 Input [3]: [#8#8, #9#9, #10#10]
@@ -272,8 +281,8 @@ Join type: Inner
 Join condition: None
 
 (33) NativeProject
+Output [5]: [ws_sold_date_sk#2, ws_item_sk#3, ws_sales_price#5, ca_city#9, ca_zip#10]
 Input [7]: [ws_sold_date_sk#2, ws_item_sk#3, ws_sales_price#5, c_current_addr_sk#7, #8#8, #9#9, #10#10]
-Arguments: [ws_sold_date_sk#2, ws_item_sk#3, ws_sales_price#5, ca_city#9, ca_zip#10]
 
 (34) NativeShuffleExchange
 Input [5]: [ws_sold_date_sk#2, ws_item_sk#3, ws_sales_price#5, ca_city#9, ca_zip#10]
@@ -294,9 +303,12 @@ Input [5]: [ws_sold_date_sk#2, ws_item_sk#3, ws_sales_price#5, ca_city#9, ca_zip
 Input [5]: [ws_sold_date_sk#2, ws_item_sk#3, ws_sales_price#5, ca_city#9, ca_zip#10]
 Arguments: [ws_sold_date_sk#2 ASC NULLS FIRST], false
 
-(39) NativeParquetScan 
+(111) Scan parquet 
 Output [3]: [d_date_sk#11, d_year#12, d_qoy#13]
-Arguments: FileScan parquet [d_date_sk#11,d_year#12,d_qoy#13] Batched: true, DataFilters: [isnotnull(d_qoy#13), isnotnull(d_year#12), (d_qoy#13 = 2), (d_year#12 = 2001), isnotnull(d_d..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(d_qoy), IsNotNull(d_year), EqualTo(d_qoy,2), EqualTo(d_year,2001), IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_year:int,d_qoy:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(d_qoy), IsNotNull(d_year), EqualTo(d_qoy,2), EqualTo(d_year,2001), IsNotNull(d_date_sk)]
+ReadSchema: struct<d_date_sk:int,d_year:int,d_qoy:int>
 
 (40) InputAdapter
 Input [3]: [d_date_sk#11, d_year#12, d_qoy#13]
@@ -304,11 +316,11 @@ Arguments: [#11, #12, #13]
 
 (41) NativeFilter
 Input [3]: [#11#11, #12#12, #13#13]
-Arguments: ((((isnotnull(d_qoy#13) AND isnotnull(d_year#12)) AND (d_qoy#13 = 2)) AND (d_year#12 = 2001)) AND isnotnull(d_date_sk#11))
+Condition : ((((isnotnull(d_qoy#13) AND isnotnull(d_year#12)) AND (d_qoy#13 = 2)) AND (d_year#12 = 2001)) AND isnotnull(d_date_sk#11))
 
 (42) NativeProject
+Output [1]: [d_date_sk#11]
 Input [3]: [#11#11, #12#12, #13#13]
-Arguments: [d_date_sk#11]
 
 (43) NativeShuffleExchange
 Input [1]: [d_date_sk#11]
@@ -336,8 +348,8 @@ Join type: Inner
 Join condition: None
 
 (49) NativeProject
+Output [4]: [ws_item_sk#3, ws_sales_price#5, ca_city#9, ca_zip#10]
 Input [6]: [ws_sold_date_sk#2, ws_item_sk#3, ws_sales_price#5, ca_city#9, ca_zip#10, d_date_sk#11]
-Arguments: [ws_item_sk#3, ws_sales_price#5, ca_city#9, ca_zip#10]
 
 (50) NativeShuffleExchange
 Input [4]: [ws_item_sk#3, ws_sales_price#5, ca_city#9, ca_zip#10]
@@ -358,9 +370,12 @@ Input [4]: [ws_item_sk#3, ws_sales_price#5, ca_city#9, ca_zip#10]
 Input [4]: [ws_item_sk#3, ws_sales_price#5, ca_city#9, ca_zip#10]
 Arguments: [ws_item_sk#3 ASC NULLS FIRST], false
 
-(55) NativeParquetScan 
+(120) Scan parquet 
 Output [2]: [i_item_sk#14, i_item_id#15]
-Arguments: FileScan parquet [i_item_sk#14,i_item_id#15] Batched: true, DataFilters: [isnotnull(i_item_sk#14)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(i_item_sk)], ReadSchema: struct<i_item_sk:int,i_item_id:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(i_item_sk)]
+ReadSchema: struct<i_item_sk:int,i_item_id:string>
 
 (56) InputAdapter
 Input [2]: [i_item_sk#14, i_item_id#15]
@@ -368,7 +383,7 @@ Arguments: [#14, #15]
 
 (57) NativeFilter
 Input [2]: [#14#14, #15#15]
-Arguments: isnotnull(i_item_sk#14)
+Condition : isnotnull(i_item_sk#14)
 
 (58) NativeShuffleExchange
 Input [2]: [#14#14, #15#15]
@@ -396,8 +411,8 @@ Join type: Inner
 Join condition: None
 
 (64) NativeProject
+Output [4]: [ws_sales_price#5, ca_city#9, ca_zip#10, i_item_id#15]
 Input [6]: [ws_item_sk#3, ws_sales_price#5, ca_city#9, ca_zip#10, #14#14, #15#15]
-Arguments: [ws_sales_price#5, ca_city#9, ca_zip#10, i_item_id#15]
 
 (65) NativeShuffleExchange
 Input [4]: [ws_sales_price#5, ca_city#9, ca_zip#10, i_item_id#15]
@@ -418,9 +433,12 @@ Input [4]: [ws_sales_price#5, ca_city#9, ca_zip#10, i_item_id#15]
 Input [4]: [ws_sales_price#5, ca_city#9, ca_zip#10, i_item_id#15]
 Arguments: [i_item_id#15 ASC NULLS FIRST], false
 
-(70) NativeParquetScan 
+(128) Scan parquet 
 Output [2]: [i_item_sk#16, i_item_id#17]
-Arguments: FileScan parquet [i_item_sk#16,i_item_id#17] Batched: true, DataFilters: [i_item_sk#16 IN (2,3,5,7,11,13,17,19,23,29)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [In(i_item_sk, [11,13,17,19,2,23,29,3,5,7])], ReadSchema: struct<i_item_sk:int,i_item_id:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [In(i_item_sk, [11,13,17,19,2,23,29,3,5,7])]
+ReadSchema: struct<i_item_sk:int,i_item_id:string>
 
 (71) InputAdapter
 Input [2]: [i_item_sk#16, i_item_id#17]
@@ -428,11 +446,11 @@ Arguments: [#16, #17]
 
 (72) NativeFilter
 Input [2]: [#16#16, #17#17]
-Arguments: i_item_sk#16 IN (2,3,5,7,11,13,17,19,23,29)
+Condition : i_item_sk#16 IN (2,3,5,7,11,13,17,19,23,29)
 
 (73) NativeProject
+Output [1]: [i_item_id#17]
 Input [2]: [#16#16, #17#17]
-Arguments: [i_item_id#17]
 
 (74) NativeShuffleExchange
 Input [1]: [i_item_id#17]
@@ -461,15 +479,15 @@ Join condition: None
 
 (80) NativeFilter
 Input [5]: [ws_sales_price#5, ca_city#9, ca_zip#10, i_item_id#15, exists#1]
-Arguments: (substr(ca_zip#10, 1, 5) IN (85669,86197,88274,83405,86475,85392,85460,80348,81792) OR exists#1)
+Condition : (substr(ca_zip#10, 1, 5) IN (85669,86197,88274,83405,86475,85392,85460,80348,81792) OR exists#1)
 
 (81) NativeProject
+Output [3]: [ws_sales_price#5, ca_city#9, ca_zip#10]
 Input [5]: [ws_sales_price#5, ca_city#9, ca_zip#10, i_item_id#15, exists#1]
-Arguments: [ws_sales_price#5, ca_city#9, ca_zip#10]
 
 (82) NativeProject
+Output [3]: [ca_zip#10 AS ca_zip#10, ca_city#9 AS ca_city#9, UnscaledValue(ws_sales_price#5) AS _c2#18]
 Input [3]: [ws_sales_price#5, ca_city#9, ca_zip#10]
-Arguments: [ca_zip#10 AS ca_zip#10, ca_city#9 AS ca_city#9, UnscaledValue(ws_sales_price#5) AS _c2#18]
 
 (83) NativeHashAggregate
 Input [3]: [ca_zip#10, ca_city#9, _c2#18]
@@ -501,8 +519,8 @@ Aggregate Attributes [1]: [sum(UnscaledValue(ws_sales_price#5))#21]
 Results [3]: [ca_zip#10, ca_city#9, sum(UnscaledValue(ws_sales_price#5))#21]
 
 (89) NativeProject
+Output [3]: [ca_zip#10, ca_city#9, MakeDecimal(sum(UnscaledValue(ws_sales_price#5))#21,17,2) AS sum(ws_sales_price)#22]
 Input [3]: [ca_zip#10, ca_city#9, sum(UnscaledValue(ws_sales_price#5))#21]
-Arguments: [ca_zip#10, ca_city#9, MakeDecimal(sum(UnscaledValue(ws_sales_price#5))#21,17,2) AS sum(ws_sales_price)#22]
 
 (90) NativeTakeOrdered
 Input [3]: [ca_zip#10, ca_city#9, sum(ws_sales_price)#22]

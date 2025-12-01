@@ -418,9 +418,12 @@ AdaptiveSparkPlan (415)
                                           +- Scan parquet  (400)
 
 
-(1) NativeParquetScan 
+(267) Scan parquet 
 Output [3]: [ss_sold_date_sk#1, ss_addr_sk#2, ss_ext_sales_price#3]
-Arguments: FileScan parquet [ss_sold_date_sk#1,ss_addr_sk#2,ss_ext_sales_price#3] Batched: true, DataFilters: [isnotnull(ss_sold_date_sk#1), isnotnull(ss_addr_sk#2)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ss_sold_date_sk), IsNotNull(ss_addr_sk)], ReadSchema: struct<ss_sold_date_sk:int,ss_addr_sk:int,ss_ext_sales_price:decimal(7,2)>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(ss_sold_date_sk), IsNotNull(ss_addr_sk)]
+ReadSchema: struct<ss_sold_date_sk:int,ss_addr_sk:int,ss_ext_sales_price:decimal(7,2)>
 
 (2) InputAdapter
 Input [3]: [ss_sold_date_sk#1, ss_addr_sk#2, ss_ext_sales_price#3]
@@ -428,7 +431,7 @@ Arguments: [#1, #2, #3]
 
 (3) NativeFilter
 Input [3]: [#1#1, #2#2, #3#3]
-Arguments: (isnotnull(ss_sold_date_sk#1) AND isnotnull(ss_addr_sk#2))
+Condition : (isnotnull(ss_sold_date_sk#1) AND isnotnull(ss_addr_sk#2))
 
 (4) NativeShuffleExchange
 Input [3]: [#1#1, #2#2, #3#3]
@@ -449,9 +452,12 @@ Input [3]: [#1#1, #2#2, #3#3]
 Input [3]: [#1#1, #2#2, #3#3]
 Arguments: [ss_sold_date_sk#1 ASC NULLS FIRST], false
 
-(9) NativeParquetScan 
+(271) Scan parquet 
 Output [3]: [d_date_sk#4, d_year#5, d_qoy#6]
-Arguments: FileScan parquet [d_date_sk#4,d_year#5,d_qoy#6] Batched: true, DataFilters: [isnotnull(d_qoy#6), isnotnull(d_year#5), (d_qoy#6 = 1), (d_year#5 = 2000), isnotnull(d_d..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(d_qoy), IsNotNull(d_year), EqualTo(d_qoy,1), EqualTo(d_year,2000), IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_year:int,d_qoy:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(d_qoy), IsNotNull(d_year), EqualTo(d_qoy,1), EqualTo(d_year,2000), IsNotNull(d_date_sk)]
+ReadSchema: struct<d_date_sk:int,d_year:int,d_qoy:int>
 
 (10) InputAdapter
 Input [3]: [d_date_sk#4, d_year#5, d_qoy#6]
@@ -459,7 +465,7 @@ Arguments: [#4, #5, #6]
 
 (11) NativeFilter
 Input [3]: [#4#4, #5#5, #6#6]
-Arguments: ((((isnotnull(d_qoy#6) AND isnotnull(d_year#5)) AND (d_qoy#6 = 1)) AND (d_year#5 = 2000)) AND isnotnull(d_date_sk#4))
+Condition : ((((isnotnull(d_qoy#6) AND isnotnull(d_year#5)) AND (d_qoy#6 = 1)) AND (d_year#5 = 2000)) AND isnotnull(d_date_sk#4))
 
 (12) NativeShuffleExchange
 Input [3]: [#4#4, #5#5, #6#6]
@@ -487,8 +493,8 @@ Join type: Inner
 Join condition: None
 
 (18) NativeProject
+Output [4]: [ss_addr_sk#2, ss_ext_sales_price#3, d_year#5, d_qoy#6]
 Input [6]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6]
-Arguments: [ss_addr_sk#2, ss_ext_sales_price#3, d_year#5, d_qoy#6]
 
 (19) NativeShuffleExchange
 Input [4]: [ss_addr_sk#2, ss_ext_sales_price#3, d_year#5, d_qoy#6]
@@ -509,9 +515,12 @@ Input [4]: [ss_addr_sk#2, ss_ext_sales_price#3, d_year#5, d_qoy#6]
 Input [4]: [ss_addr_sk#2, ss_ext_sales_price#3, d_year#5, d_qoy#6]
 Arguments: [ss_addr_sk#2 ASC NULLS FIRST], false
 
-(24) NativeParquetScan 
+(279) Scan parquet 
 Output [2]: [ca_address_sk#7, ca_county#8]
-Arguments: FileScan parquet [ca_address_sk#7,ca_county#8] Batched: true, DataFilters: [isnotnull(ca_address_sk#7), isnotnull(ca_county#8)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ca_address_sk), IsNotNull(ca_county)], ReadSchema: struct<ca_address_sk:int,ca_county:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(ca_address_sk), IsNotNull(ca_county)]
+ReadSchema: struct<ca_address_sk:int,ca_county:string>
 
 (25) InputAdapter
 Input [2]: [ca_address_sk#7, ca_county#8]
@@ -519,7 +528,7 @@ Arguments: [#7, #8]
 
 (26) NativeFilter
 Input [2]: [#7#7, #8#8]
-Arguments: (isnotnull(ca_address_sk#7) AND isnotnull(ca_county#8))
+Condition : (isnotnull(ca_address_sk#7) AND isnotnull(ca_county#8))
 
 (27) NativeShuffleExchange
 Input [2]: [#7#7, #8#8]
@@ -547,12 +556,12 @@ Join type: Inner
 Join condition: None
 
 (33) NativeProject
+Output [4]: [ss_ext_sales_price#3, d_year#5, d_qoy#6, ca_county#8]
 Input [6]: [ss_addr_sk#2, ss_ext_sales_price#3, d_year#5, d_qoy#6, #7#7, #8#8]
-Arguments: [ss_ext_sales_price#3, d_year#5, d_qoy#6, ca_county#8]
 
 (34) NativeProject
+Output [4]: [ca_county#8 AS ca_county#8, d_qoy#6 AS d_qoy#6, d_year#5 AS d_year#5, UnscaledValue(ss_ext_sales_price#3) AS _c3#9]
 Input [4]: [ss_ext_sales_price#3, d_year#5, d_qoy#6, ca_county#8]
-Arguments: [ca_county#8 AS ca_county#8, d_qoy#6 AS d_qoy#6, d_year#5 AS d_year#5, UnscaledValue(ss_ext_sales_price#3) AS _c3#9]
 
 (35) NativeHashAggregate
 Input [4]: [ca_county#8, d_qoy#6, d_year#5, _c3#9]
@@ -584,8 +593,8 @@ Aggregate Attributes [1]: [sum(UnscaledValue(ss_ext_sales_price#3))#12]
 Results [4]: [ca_county#8, d_qoy#6, d_year#5, sum(UnscaledValue(ss_ext_sales_price#3))#12]
 
 (41) NativeProject
+Output [3]: [ca_county#8, d_year#5, MakeDecimal(sum(UnscaledValue(ss_ext_sales_price#3))#12,17,2) AS store_sales#13]
 Input [4]: [ca_county#8, d_qoy#6, d_year#5, sum(UnscaledValue(ss_ext_sales_price#3))#12]
-Arguments: [ca_county#8, d_year#5, MakeDecimal(sum(UnscaledValue(ss_ext_sales_price#3))#12,17,2) AS store_sales#13]
 
 (42) NativeShuffleExchange
 Input [3]: [ca_county#8, d_year#5, store_sales#13]
@@ -628,9 +637,12 @@ Input [3]: [#14#14, #15#15, #16#16]
 Input [3]: [#14#14, #15#15, #16#16]
 Arguments: [ss_sold_date_sk#14 ASC NULLS FIRST], false
 
-(53) NativeParquetScan 
+(294) Scan parquet 
 Output [3]: [d_date_sk#17, d_year#18, d_qoy#19]
-Arguments: FileScan parquet [d_date_sk#17,d_year#18,d_qoy#19] Batched: true, DataFilters: [isnotnull(d_qoy#19), isnotnull(d_year#18), (d_qoy#19 = 2), (d_year#18 = 2000), isnotnull..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(d_qoy), IsNotNull(d_year), EqualTo(d_qoy,2), EqualTo(d_year,2000), IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_year:int,d_qoy:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(d_qoy), IsNotNull(d_year), EqualTo(d_qoy,2), EqualTo(d_year,2000), IsNotNull(d_date_sk)]
+ReadSchema: struct<d_date_sk:int,d_year:int,d_qoy:int>
 
 (54) InputAdapter
 Input [3]: [d_date_sk#17, d_year#18, d_qoy#19]
@@ -638,7 +650,7 @@ Arguments: [#17, #18, #19]
 
 (55) NativeFilter
 Input [3]: [#17#17, #18#18, #19#19]
-Arguments: ((((isnotnull(d_qoy#19) AND isnotnull(d_year#18)) AND (d_qoy#19 = 2)) AND (d_year#18 = 2000)) AND isnotnull(d_date_sk#17))
+Condition : ((((isnotnull(d_qoy#19) AND isnotnull(d_year#18)) AND (d_qoy#19 = 2)) AND (d_year#18 = 2000)) AND isnotnull(d_date_sk#17))
 
 (56) NativeShuffleExchange
 Input [3]: [#17#17, #18#18, #19#19]
@@ -666,8 +678,8 @@ Join type: Inner
 Join condition: None
 
 (62) NativeProject
+Output [4]: [ss_addr_sk#15, ss_ext_sales_price#16, d_year#18, d_qoy#19]
 Input [6]: [#14#14, #15#15, #16#16, #17#17, #18#18, #19#19]
-Arguments: [ss_addr_sk#15, ss_ext_sales_price#16, d_year#18, d_qoy#19]
 
 (63) NativeShuffleExchange
 Input [4]: [ss_addr_sk#15, ss_ext_sales_price#16, d_year#18, d_qoy#19]
@@ -717,12 +729,12 @@ Join type: Inner
 Join condition: None
 
 (75) NativeProject
+Output [4]: [ss_ext_sales_price#16, d_year#18, d_qoy#19, ca_county#21]
 Input [6]: [ss_addr_sk#15, ss_ext_sales_price#16, d_year#18, d_qoy#19, #20#20, #21#21]
-Arguments: [ss_ext_sales_price#16, d_year#18, d_qoy#19, ca_county#21]
 
 (76) NativeProject
+Output [4]: [ca_county#21 AS ca_county#21, d_qoy#19 AS d_qoy#19, d_year#18 AS d_year#18, UnscaledValue(ss_ext_sales_price#16) AS _c3#22]
 Input [4]: [ss_ext_sales_price#16, d_year#18, d_qoy#19, ca_county#21]
-Arguments: [ca_county#21 AS ca_county#21, d_qoy#19 AS d_qoy#19, d_year#18 AS d_year#18, UnscaledValue(ss_ext_sales_price#16) AS _c3#22]
 
 (77) NativeHashAggregate
 Input [4]: [ca_county#21, d_qoy#19, d_year#18, _c3#22]
@@ -754,8 +766,8 @@ Aggregate Attributes [1]: [sum(UnscaledValue(ss_ext_sales_price#16))#12]
 Results [4]: [ca_county#21, d_qoy#19, d_year#18, sum(UnscaledValue(ss_ext_sales_price#16))#12]
 
 (83) NativeProject
+Output [2]: [ca_county#21, MakeDecimal(sum(UnscaledValue(ss_ext_sales_price#16))#12,17,2) AS store_sales#24]
 Input [4]: [ca_county#21, d_qoy#19, d_year#18, sum(UnscaledValue(ss_ext_sales_price#16))#12]
-Arguments: [ca_county#21, MakeDecimal(sum(UnscaledValue(ss_ext_sales_price#16))#12,17,2) AS store_sales#24]
 
 (84) NativeShuffleExchange
 Input [2]: [ca_county#21, store_sales#24]
@@ -804,9 +816,12 @@ Input [3]: [#25#25, #26#26, #27#27]
 Input [3]: [#25#25, #26#26, #27#27]
 Arguments: [ss_sold_date_sk#25 ASC NULLS FIRST], false
 
-(96) NativeParquetScan 
+(318) Scan parquet 
 Output [3]: [d_date_sk#28, d_year#29, d_qoy#30]
-Arguments: FileScan parquet [d_date_sk#28,d_year#29,d_qoy#30] Batched: true, DataFilters: [isnotnull(d_qoy#30), isnotnull(d_year#29), (d_qoy#30 = 3), (d_year#29 = 2000), isnotnull..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(d_qoy), IsNotNull(d_year), EqualTo(d_qoy,3), EqualTo(d_year,2000), IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_year:int,d_qoy:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(d_qoy), IsNotNull(d_year), EqualTo(d_qoy,3), EqualTo(d_year,2000), IsNotNull(d_date_sk)]
+ReadSchema: struct<d_date_sk:int,d_year:int,d_qoy:int>
 
 (97) InputAdapter
 Input [3]: [d_date_sk#28, d_year#29, d_qoy#30]
@@ -814,7 +829,7 @@ Arguments: [#28, #29, #30]
 
 (98) NativeFilter
 Input [3]: [#28#28, #29#29, #30#30]
-Arguments: ((((isnotnull(d_qoy#30) AND isnotnull(d_year#29)) AND (d_qoy#30 = 3)) AND (d_year#29 = 2000)) AND isnotnull(d_date_sk#28))
+Condition : ((((isnotnull(d_qoy#30) AND isnotnull(d_year#29)) AND (d_qoy#30 = 3)) AND (d_year#29 = 2000)) AND isnotnull(d_date_sk#28))
 
 (99) NativeShuffleExchange
 Input [3]: [#28#28, #29#29, #30#30]
@@ -842,8 +857,8 @@ Join type: Inner
 Join condition: None
 
 (105) NativeProject
+Output [4]: [ss_addr_sk#26, ss_ext_sales_price#27, d_year#29, d_qoy#30]
 Input [6]: [#25#25, #26#26, #27#27, #28#28, #29#29, #30#30]
-Arguments: [ss_addr_sk#26, ss_ext_sales_price#27, d_year#29, d_qoy#30]
 
 (106) NativeShuffleExchange
 Input [4]: [ss_addr_sk#26, ss_ext_sales_price#27, d_year#29, d_qoy#30]
@@ -893,12 +908,12 @@ Join type: Inner
 Join condition: None
 
 (118) NativeProject
+Output [4]: [ss_ext_sales_price#27, d_year#29, d_qoy#30, ca_county#32]
 Input [6]: [ss_addr_sk#26, ss_ext_sales_price#27, d_year#29, d_qoy#30, #31#31, #32#32]
-Arguments: [ss_ext_sales_price#27, d_year#29, d_qoy#30, ca_county#32]
 
 (119) NativeProject
+Output [4]: [ca_county#32 AS ca_county#32, d_qoy#30 AS d_qoy#30, d_year#29 AS d_year#29, UnscaledValue(ss_ext_sales_price#27) AS _c3#33]
 Input [4]: [ss_ext_sales_price#27, d_year#29, d_qoy#30, ca_county#32]
-Arguments: [ca_county#32 AS ca_county#32, d_qoy#30 AS d_qoy#30, d_year#29 AS d_year#29, UnscaledValue(ss_ext_sales_price#27) AS _c3#33]
 
 (120) NativeHashAggregate
 Input [4]: [ca_county#32, d_qoy#30, d_year#29, _c3#33]
@@ -930,8 +945,8 @@ Aggregate Attributes [1]: [sum(UnscaledValue(ss_ext_sales_price#27))#12]
 Results [4]: [ca_county#32, d_qoy#30, d_year#29, sum(UnscaledValue(ss_ext_sales_price#27))#12]
 
 (126) NativeProject
+Output [2]: [ca_county#32, MakeDecimal(sum(UnscaledValue(ss_ext_sales_price#27))#12,17,2) AS store_sales#35]
 Input [4]: [ca_county#32, d_qoy#30, d_year#29, sum(UnscaledValue(ss_ext_sales_price#27))#12]
-Arguments: [ca_county#32, MakeDecimal(sum(UnscaledValue(ss_ext_sales_price#27))#12,17,2) AS store_sales#35]
 
 (127) NativeShuffleExchange
 Input [2]: [ca_county#32, store_sales#35]
@@ -959,12 +974,15 @@ Join type: Inner
 Join condition: None
 
 (133) NativeProject
+Output [5]: [ca_county#8, d_year#5, store_sales#13, store_sales#24, store_sales#35]
 Input [7]: [ca_county#8, d_year#5, store_sales#13, ca_county#21, store_sales#24, ca_county#32, store_sales#35]
-Arguments: [ca_county#8, d_year#5, store_sales#13, store_sales#24, store_sales#35]
 
-(134) NativeParquetScan 
+(339) Scan parquet 
 Output [3]: [ws_sold_date_sk#36, ws_bill_addr_sk#37, ws_ext_sales_price#38]
-Arguments: FileScan parquet [ws_sold_date_sk#36,ws_bill_addr_sk#37,ws_ext_sales_price#38] Batched: true, DataFilters: [isnotnull(ws_sold_date_sk#36), isnotnull(ws_bill_addr_sk#37)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ws_sold_date_sk), IsNotNull(ws_bill_addr_sk)], ReadSchema: struct<ws_sold_date_sk:int,ws_bill_addr_sk:int,ws_ext_sales_price:decimal(7,2)>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(ws_sold_date_sk), IsNotNull(ws_bill_addr_sk)]
+ReadSchema: struct<ws_sold_date_sk:int,ws_bill_addr_sk:int,ws_ext_sales_price:decimal(7,2)>
 
 (135) InputAdapter
 Input [3]: [ws_sold_date_sk#36, ws_bill_addr_sk#37, ws_ext_sales_price#38]
@@ -972,7 +990,7 @@ Arguments: [#36, #37, #38]
 
 (136) NativeFilter
 Input [3]: [#36#36, #37#37, #38#38]
-Arguments: (isnotnull(ws_sold_date_sk#36) AND isnotnull(ws_bill_addr_sk#37))
+Condition : (isnotnull(ws_sold_date_sk#36) AND isnotnull(ws_bill_addr_sk#37))
 
 (137) NativeShuffleExchange
 Input [3]: [#36#36, #37#37, #38#38]
@@ -1022,8 +1040,8 @@ Join type: Inner
 Join condition: None
 
 (149) NativeProject
+Output [4]: [ws_bill_addr_sk#37, ws_ext_sales_price#38, d_year#40, d_qoy#41]
 Input [6]: [#36#36, #37#37, #38#38, #39#39, #40#40, #41#41]
-Arguments: [ws_bill_addr_sk#37, ws_ext_sales_price#38, d_year#40, d_qoy#41]
 
 (150) NativeShuffleExchange
 Input [4]: [ws_bill_addr_sk#37, ws_ext_sales_price#38, d_year#40, d_qoy#41]
@@ -1073,12 +1091,12 @@ Join type: Inner
 Join condition: None
 
 (162) NativeProject
+Output [4]: [ws_ext_sales_price#38, d_year#40, d_qoy#41, ca_county#43]
 Input [6]: [ws_bill_addr_sk#37, ws_ext_sales_price#38, d_year#40, d_qoy#41, #42#42, #43#43]
-Arguments: [ws_ext_sales_price#38, d_year#40, d_qoy#41, ca_county#43]
 
 (163) NativeProject
+Output [4]: [ca_county#43 AS ca_county#43, d_qoy#41 AS d_qoy#41, d_year#40 AS d_year#40, UnscaledValue(ws_ext_sales_price#38) AS _c3#44]
 Input [4]: [ws_ext_sales_price#38, d_year#40, d_qoy#41, ca_county#43]
-Arguments: [ca_county#43 AS ca_county#43, d_qoy#41 AS d_qoy#41, d_year#40 AS d_year#40, UnscaledValue(ws_ext_sales_price#38) AS _c3#44]
 
 (164) NativeHashAggregate
 Input [4]: [ca_county#43, d_qoy#41, d_year#40, _c3#44]
@@ -1110,8 +1128,8 @@ Aggregate Attributes [1]: [sum(UnscaledValue(ws_ext_sales_price#38))#46]
 Results [4]: [ca_county#43, d_qoy#41, d_year#40, sum(UnscaledValue(ws_ext_sales_price#38))#46]
 
 (170) NativeProject
+Output [2]: [ca_county#43, MakeDecimal(sum(UnscaledValue(ws_ext_sales_price#38))#46,17,2) AS web_sales#47]
 Input [4]: [ca_county#43, d_qoy#41, d_year#40, sum(UnscaledValue(ws_ext_sales_price#38))#46]
-Arguments: [ca_county#43, MakeDecimal(sum(UnscaledValue(ws_ext_sales_price#38))#46,17,2) AS web_sales#47]
 
 (171) NativeShuffleExchange
 Input [2]: [ca_county#43, web_sales#47]
@@ -1189,8 +1207,8 @@ Join type: Inner
 Join condition: None
 
 (190) NativeProject
+Output [4]: [ws_bill_addr_sk#49, ws_ext_sales_price#50, d_year#52, d_qoy#53]
 Input [6]: [#48#48, #49#49, #50#50, #51#51, #52#52, #53#53]
-Arguments: [ws_bill_addr_sk#49, ws_ext_sales_price#50, d_year#52, d_qoy#53]
 
 (191) NativeShuffleExchange
 Input [4]: [ws_bill_addr_sk#49, ws_ext_sales_price#50, d_year#52, d_qoy#53]
@@ -1240,12 +1258,12 @@ Join type: Inner
 Join condition: None
 
 (203) NativeProject
+Output [4]: [ws_ext_sales_price#50, d_year#52, d_qoy#53, ca_county#55]
 Input [6]: [ws_bill_addr_sk#49, ws_ext_sales_price#50, d_year#52, d_qoy#53, #54#54, #55#55]
-Arguments: [ws_ext_sales_price#50, d_year#52, d_qoy#53, ca_county#55]
 
 (204) NativeProject
+Output [4]: [ca_county#55 AS ca_county#55, d_qoy#53 AS d_qoy#53, d_year#52 AS d_year#52, UnscaledValue(ws_ext_sales_price#50) AS _c3#56]
 Input [4]: [ws_ext_sales_price#50, d_year#52, d_qoy#53, ca_county#55]
-Arguments: [ca_county#55 AS ca_county#55, d_qoy#53 AS d_qoy#53, d_year#52 AS d_year#52, UnscaledValue(ws_ext_sales_price#50) AS _c3#56]
 
 (205) NativeHashAggregate
 Input [4]: [ca_county#55, d_qoy#53, d_year#52, _c3#56]
@@ -1277,8 +1295,8 @@ Aggregate Attributes [1]: [sum(UnscaledValue(ws_ext_sales_price#50))#46]
 Results [4]: [ca_county#55, d_qoy#53, d_year#52, sum(UnscaledValue(ws_ext_sales_price#50))#46]
 
 (211) NativeProject
+Output [2]: [ca_county#55, MakeDecimal(sum(UnscaledValue(ws_ext_sales_price#50))#46,17,2) AS web_sales#58]
 Input [4]: [ca_county#55, d_qoy#53, d_year#52, sum(UnscaledValue(ws_ext_sales_price#50))#46]
-Arguments: [ca_county#55, MakeDecimal(sum(UnscaledValue(ws_ext_sales_price#50))#46,17,2) AS web_sales#58]
 
 (212) NativeShuffleExchange
 Input [2]: [ca_county#55, web_sales#58]
@@ -1360,8 +1378,8 @@ Join type: Inner
 Join condition: None
 
 (232) NativeProject
+Output [4]: [ws_bill_addr_sk#60, ws_ext_sales_price#61, d_year#63, d_qoy#64]
 Input [6]: [#59#59, #60#60, #61#61, #62#62, #63#63, #64#64]
-Arguments: [ws_bill_addr_sk#60, ws_ext_sales_price#61, d_year#63, d_qoy#64]
 
 (233) NativeShuffleExchange
 Input [4]: [ws_bill_addr_sk#60, ws_ext_sales_price#61, d_year#63, d_qoy#64]
@@ -1411,12 +1429,12 @@ Join type: Inner
 Join condition: None
 
 (245) NativeProject
+Output [4]: [ws_ext_sales_price#61, d_year#63, d_qoy#64, ca_county#66]
 Input [6]: [ws_bill_addr_sk#60, ws_ext_sales_price#61, d_year#63, d_qoy#64, #65#65, #66#66]
-Arguments: [ws_ext_sales_price#61, d_year#63, d_qoy#64, ca_county#66]
 
 (246) NativeProject
+Output [4]: [ca_county#66 AS ca_county#66, d_qoy#64 AS d_qoy#64, d_year#63 AS d_year#63, UnscaledValue(ws_ext_sales_price#61) AS _c3#67]
 Input [4]: [ws_ext_sales_price#61, d_year#63, d_qoy#64, ca_county#66]
-Arguments: [ca_county#66 AS ca_county#66, d_qoy#64 AS d_qoy#64, d_year#63 AS d_year#63, UnscaledValue(ws_ext_sales_price#61) AS _c3#67]
 
 (247) NativeHashAggregate
 Input [4]: [ca_county#66, d_qoy#64, d_year#63, _c3#67]
@@ -1448,8 +1466,8 @@ Aggregate Attributes [1]: [sum(UnscaledValue(ws_ext_sales_price#61))#46]
 Results [4]: [ca_county#66, d_qoy#64, d_year#63, sum(UnscaledValue(ws_ext_sales_price#61))#46]
 
 (253) NativeProject
+Output [2]: [ca_county#66, MakeDecimal(sum(UnscaledValue(ws_ext_sales_price#61))#46,17,2) AS web_sales#69]
 Input [4]: [ca_county#66, d_qoy#64, d_year#63, sum(UnscaledValue(ws_ext_sales_price#61))#46]
-Arguments: [ca_county#66, MakeDecimal(sum(UnscaledValue(ws_ext_sales_price#61))#46,17,2) AS web_sales#69]
 
 (254) NativeShuffleExchange
 Input [2]: [ca_county#66, web_sales#69]
