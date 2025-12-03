@@ -21,6 +21,19 @@ class AuronFuzzAggregateSuite extends AurontFuzzTestBase {
   // FIXME
   // TODO
   // Found non-native operator: HashAggregate
+  /*
+  25/12/02 08:03:33 INFO FileSourceScanExec: Planning scan with bin packing, max size: 4484920 bytes, open cost is considered as scanning 4194304 bytes.
+25/12/02 08:03:33 WARN AuronConverters: Falling back exec: FileSourceScanExec: Data type conversion not implemented TimestampNTZType
+scala.NotImplementedError: Data type conversion not implemented TimestampNTZType
+	at org.apache.spark.sql.auron.NativeConverters$.convertDataType(NativeConverters.scala:220)
+	at org.apache.spark.sql.auron.NativeConverters$.convertField(NativeConverters.scala:230)
+	at org.apache.spark.sql.auron.NativeConverters$.$anonfun$convertSchema$1(NativeConverters.scala:236)
+	at scala.collection.Iterator.foreach(Iterator.scala:943)
+	at scala.collection.Iterator.foreach$(Iterator.scala:943)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1431)
+	at scala.collection.IterableLike.foreach(IterableLike.scala:74)
+	at scala.collection.IterableLike.foreach$(IterableLike.scala:73)
+   */
   test("count distinct - simple columns") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")
@@ -55,6 +68,7 @@ class AuronFuzzAggregateSuite extends AurontFuzzTestBase {
   }
   // FIXME
   // TODO
+  // Falling back exec: HashAggregateExec: Data type conversion not implemented TimestampNTZType
   test("count distinct group by multiple column - simple columns ") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")

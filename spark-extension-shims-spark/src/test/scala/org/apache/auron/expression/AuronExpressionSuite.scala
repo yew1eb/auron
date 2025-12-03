@@ -207,7 +207,7 @@ class AuronExpressionSuite extends AuronQueryTest with BaseAuronSQLSuite {
 //          !== Correct Answer - 2 ==                                                               == Spark Answer - 2 ==
 //            struct<col1:boolean,negative(col2):float,col1:float,(col1 = negative(col2)):boolean>   struct<col1:boolean,negative(col2):float,col1:float,(col1 = negative(col2)):boolean>
 //            ![false,-0.0,0.0,true]                                                                  [false,-0.0,0.0,false]
-//              [true,-0.0,1.0,false]                                                                  [true,-0.0,1.0,false]
+//             [true,-0.0,1.0,false]                                                                  [true,-0.0,1.0,false]
           checkSparkAnswerAndOperator(
             s"SELECT col1, negative(col2), cast(col1 as float), col1 = negative(col2) FROM $table")
         }

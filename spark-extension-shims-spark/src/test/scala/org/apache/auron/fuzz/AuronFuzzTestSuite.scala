@@ -51,7 +51,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
   }
 
   // FIXME
-  // TODO
+  // TODO select column with default value
   test("select column with default value") {
     // This test fails in Spark's vectorized Parquet reader for DECIMAL(36,18) or BINARY default values.
     withSQLConf(SQLConf.PARQUET_VECTORIZED_READER_ENABLED.key -> "false") {
@@ -63,8 +63,10 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
       val columns = df.schema.fields.filter(f => !isComplexType(f.dataType)).map(_.name)
       for (col <- columns) {
         // Select the first non-null value from our target column type.
+        val  sqlStr  =  s"SELECT $col FROM t1 WHERE $col IS NOT NULL LIMIT 1"
+        println(sqlStr)
         val defaultValueRow =
-          spark.sql(s"SELECT $col FROM t1 WHERE $col IS NOT NULL LIMIT 1").collect()(0)
+          spark.sql(sqlStr).collect()(0)
         val defaultValueType = defaultValueRow.schema.fields(0).dataType.sql
         // Construct the string for the default value based on the column type.
         val defaultValueString = defaultValueType match {
@@ -135,7 +137,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
   }
 
   // FIXME
-  // TODO
+  // TODO NotImplementedError: Data type conversion not implemented TimestampNTZType
   test("order by multiple columns") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")
@@ -151,6 +153,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
 
   // FIXME
   // TODO
+  //25/12/02 08:08:44 WARN AuronConverters: Falling back exec: FileSourceScanExec: Data type conversion not implemented TimestampNTZType
   test("order by random columns") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")
@@ -170,6 +173,8 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
 
   // FIXME
   // TODO
+  //25/12/02 08:08:44 WARN AuronConverters: Falling back exec: FileSourceScanExec: Data type conversion not implemented TimestampNTZType
+
   test("distribute by single column (complex types)") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")
@@ -187,6 +192,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
 
   // FIXME
   // TODO
+  //25/12/02 08:08:44 WARN AuronConverters: Falling back exec: FileSourceScanExec: Data type conversion not implemented TimestampNTZType
   test("shuffle supports all types") {
     val df = spark.read.parquet(filename)
     val df2 = df.repartition(8, df.col("c0")).sort("c1")
@@ -223,6 +229,8 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
   // TODO
   //  Expected :0
   //  Actual   :1
+  // Falling back exec: FileSourceScanExec: Data type conversion not implemented TimestampNTZType
+
   test("count distinct - simple columns") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")
@@ -241,6 +249,8 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
   // TODO
   //  Expected :0
   //  Actual   :1
+  // Falling back exec: FileSourceScanExec: Data type conversion not implemented TimestampNTZType
+
   // Aggregate by complex columns not yet supported
   // https://github.com/apache/datafusion-comet/issues/2382
   test("count distinct - complex columns") {
@@ -259,6 +269,8 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
   // TODO
   //  Expected :0
   //  Actual   :1
+  // Falling back exec: FileSourceScanExec: Data type conversion not implemented TimestampNTZType
+
   test("count distinct group by multiple column - simple columns ") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")
@@ -277,6 +289,8 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
   // TODO
   //  Expected :0
   //  Actual   :1
+  // Falling back exec: FileSourceScanExec: Data type conversion not implemented TimestampNTZType
+
   // Aggregate by complex columns not yet supported
   // https://github.com/apache/datafusion-comet/issues/2382
   test("count distinct group by multiple column - complex columns ") {
@@ -295,6 +309,8 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
   // TODO
   //  Expected :0
   //  Actual   :1
+  // Falling back exec: FileSourceScanExec: Data type conversion not implemented TimestampNTZType
+
   // COUNT(distinct x, y, z, ...) not yet supported
   // https://github.com/apache/datafusion-comet/issues/2292
   test("count distinct multiple values and group by multiple column") {
@@ -313,6 +329,8 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
   // TODO
   //  Expected :0
   //  Actual   :1
+  // Falling back exec: FileSourceScanExec: Data type conversion not implemented TimestampNTZType
+
   test("count(*) group by single column") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")
@@ -329,6 +347,8 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
   // TODO
   //  Expected :0
   //  Actual   :1
+  // Falling back exec: FileSourceScanExec: Data type conversion not implemented TimestampNTZType
+
   test("count(col) group by single column") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")
@@ -346,6 +366,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
   // TODO
 //  Expected :0
 //  Actual   :1
+  // Falling back exec: FileSourceScanExec: Data type conversion not implemented TimestampNTZType
   test("count(col1, col2, ..) group by single column") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")
@@ -363,6 +384,11 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
 
   // FIXME
   // TODO
+  /**
+   * ==Results==
+   * !== Correct Answer - 1 == == Spark Answer - 1 == struct<min(c5):float,max(c5):float>
+   * struct<min(c5):float,max(c5):float> ![-Infinity,NaN] [-Infinity,Infinity]
+   */
   test("min/max aggregate") {
     val df = spark.read.parquet(filename)
     df.createOrReplaceTempView("t1")
@@ -375,11 +401,7 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
         assert(1 == collectNativeScans(cometPlan).length)
       }
 
-      /**
-       * ==Results==
-       * !== Correct Answer - 1 == == Spark Answer - 1 == struct<min(c5):float,max(c5):float>
-       * struct<min(c5):float,max(c5):float> ![-Infinity,NaN] [-Infinity,Infinity]
-       */
+
     }
   }
 

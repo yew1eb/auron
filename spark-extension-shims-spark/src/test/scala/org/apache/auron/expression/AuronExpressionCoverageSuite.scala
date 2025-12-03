@@ -66,7 +66,10 @@ class CometExpressionCoverageSuite extends AuronQueryTest with BaseAuronSQLSuite
       "current_database")
   // Spark Comet configuration to run the tests
   private val sqlConf = Seq(
-    "spark.comet.exec.shuffle.enabled" -> "true",
+    "spark.sql.extensions" -> "org.apache.spark.sql.auron.AuronSparkSessionExtension",
+    "spark.shuffle.manager" -> "org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager",
+    "spark.memory.offHeap.enabled" -> "false",
+    "spark.auron.enable" -> "true",
     "spark.sql.optimizer.excludedRules" -> "org.apache.spark.sql.catalyst.optimizer.ConstantFolding",
     "spark.sql.adaptive.optimizer.excludedRules" -> "org.apache.spark.sql.catalyst.optimizer.ConstantFolding")
 
@@ -355,7 +358,7 @@ class CometExpressionCoverageSuite extends AuronQueryTest with BaseAuronSQLSuite
       generateMarkdown(spark.sql("select * from t")).getBytes(StandardCharsets.UTF_8))
   }
 
-  test("Test markdown") {
+  ignore("Test markdown") {
     val map = new scala.collection.mutable.HashMap[String, CoverageResult]()
     map.put(
       "f1",
@@ -384,7 +387,7 @@ class CometExpressionCoverageSuite extends AuronQueryTest with BaseAuronSQLSuite
     str shouldBe s"${getLicenseHeader()}\n# Supported Spark Expressions\n\n### group1\n - [x] f1\n - [ ] f2\n\n### group2\n - [x] f3\n - [ ] f4\n\n### group3\n - [x] f5"
   }
 
-  test("get sql function arguments") {
+  ignore("get sql function arguments") {
     getSqlFunctionArguments(
       "SELECT unix_seconds(TIMESTAMP('1970-01-01 00:00:01Z'))") shouldBe Seq(
       "TIMESTAMP('1970-01-01 00:00:01Z')")

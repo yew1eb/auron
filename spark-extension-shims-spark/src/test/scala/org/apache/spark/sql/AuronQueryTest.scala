@@ -757,11 +757,17 @@ abstract class AuronQueryTest
         df.createOrReplaceTempView(tableName)
       }
 
-      withSQLConf(sqlConf: _*) {
-        val cometDF = sql(testQuery)
-        debugCometDF(cometDF)
-        if (checkCometOperator) checkSparkAnswerAndOperator(() => cometDF)
-        else checkSparkAnswerAndOperator(() => cometDF, requireNative = false)
+      withSQLConf("spark.auron.enable" -> "true") {
+        withSQLConf(sqlConf: _*) {
+          //val cometDF = sql(testQuery)
+          //debugCometDF(cometDF)
+          logInfo(s"testSingleLineQuery, sql: ${testQuery}")
+          if (checkCometOperator) {
+            val df = checkSparkAnswerAndOperator(testQuery)
+            logInfo(df.queryExecution.executedPlan.toString())
+          }
+          else checkSparkAnswerAndOperator(() => sql(testQuery), requireNative = false)
+        }
       }
     }
   }

@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-set -ex
+set -e
 
 # Preserve the calling directory
 _CALLING_DIR="$(pwd)"
