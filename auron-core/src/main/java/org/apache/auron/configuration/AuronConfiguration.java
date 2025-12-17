@@ -197,4 +197,24 @@ public abstract class AuronConfiguration {
             return configOption.defaultValue();
         }
     }
+
+  public static boolean booleanConf(String confName) {
+    return getOptional(confName);
+  }
+
+  public static int intConf(String confName) {
+    return AuronConf.valueOf(confName).intConf();
+  }
+
+  public static long longConf(String confName) {
+    return AuronConf.valueOf(confName).longConf();
+  }
+
+  public static double doubleConf(String confName) {
+    return AuronConf.valueOf(confName).doubleConf();
+  }
+
+  public static String stringConf(String confName) {
+    return AuronConf.valueOf(confName).stringConf();
+  }
 }

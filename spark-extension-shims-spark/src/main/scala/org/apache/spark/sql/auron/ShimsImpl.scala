@@ -18,9 +18,7 @@ package org.apache.spark.sql.auron
 
 import java.io.File
 import java.util.UUID
-
 import scala.collection.mutable
-
 import org.apache.commons.lang3.reflect.FieldUtils
 import org.apache.spark.{OneToOneDependency, ShuffleDependency, SparkContext, SparkEnv, SparkException, TaskContext}
 import org.apache.spark.internal.Logging
@@ -108,13 +106,16 @@ import org.apache.spark.sql.types.StringType
 import org.apache.spark.status.ElementTrackingStore
 import org.apache.spark.storage.BlockManagerId
 import org.apache.spark.storage.FileSegment
-
-import org.apache.auron.{protobuf => pb, sparkver}
+import org.apache.auron.{sparkver, protobuf => pb}
 import org.apache.auron.common.AuronBuildInfo
+import org.apache.auron.jni.AuronAdaptor
 import org.apache.auron.metric.SparkMetricNode
+import org.apache.auron.spark.configuration.SparkAuronConfiguration
 import org.apache.auron.spark.ui.AuronBuildInfoEvent
 
 class ShimsImpl extends Shims with Logging {
+
+  val sparkAuronConf = AuronAdaptor.getInstance.getAuronConfiguration
 
   @sparkver("3.0")
   override def shimVersion: String = "spark-3.0"
@@ -133,7 +134,7 @@ class ShimsImpl extends Shims with Logging {
   override def initExtension(): Unit = {
     ValidateSparkPlanInjector.inject()
 
-    if (AuronConf.FORCE_SHUFFLED_HASH_JOIN.booleanConf()) {
+    if (sparkAuronConf.get(SparkAuronConfiguration.FORCE_SHUFFLED_HASH_JOIN)) {
       ForceApplyShuffledHashJoinInjector.inject()
     }
 
@@ -146,8 +147,8 @@ class ShimsImpl extends Shims with Logging {
 
   @sparkver("3.0 / 3.1")
   override def initExtension(): Unit = {
-    if (AuronConf.FORCE_SHUFFLED_HASH_JOIN.booleanConf()) {
-      logWarning(s"${AuronConf.FORCE_SHUFFLED_HASH_JOIN.key} is not supported in $shimVersion")
+    if (sparkAuronConf.get(SparkAuronConfiguration.FORCE_SHUFFLED_HASH_JOIN)) {
+      logWarning(s"${SparkAuronConfiguration.FORCE_SHUFFLED_HASH_JOIN.key} is not supported in $shimVersion")
     }
 
   }
@@ -155,10 +156,9 @@ class ShimsImpl extends Shims with Logging {
   // set Auron spark ui if spark.auron.ui.enabled is true
   override def onApplyingExtension(): Unit = {
     logInfo(
-      " onApplyingExtension get ui_enabled : " + SparkEnv.get.conf
-        .get(AuronConf.UI_ENABLED.key, "true"))
+      " onApplyingExtension get ui_enabled : " + sparkAuronConf.get(SparkAuronConfiguration.UI_ENABLED))
 
-    if (SparkEnv.get.conf.get(AuronConf.UI_ENABLED.key, "true").equals("true")) {
+    if (sparkAuronConf.get(SparkAuronConfiguration.UI_ENABLED)) {
       val sparkContext = SparkContext.getActive.getOrElse {
         throw new IllegalStateException("No active spark context found that should not happen")
       }

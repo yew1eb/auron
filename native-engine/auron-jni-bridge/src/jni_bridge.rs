@@ -1133,7 +1133,7 @@ pub struct AuronConf<'a> {
 }
 
 impl<'a> AuronConf<'_> {
-    pub const SIG_TYPE: &'static str = "org/apache/spark/sql/auron/AuronConf";
+    pub const SIG_TYPE: &'static str = "org/apache/auron/configuration/AuronConfiguration";
 
     pub fn new(env: &JNIEnv<'a>) -> JniResult<AuronConf<'a>> {
         let class = get_global_jclass(env, Self::SIG_TYPE)?;
