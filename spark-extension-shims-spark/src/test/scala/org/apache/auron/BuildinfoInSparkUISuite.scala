@@ -18,6 +18,8 @@ package org.apache.spark.sql.auron
 
 import org.apache.spark.sql.execution.ui.AuronSQLAppStatusListener
 
+import org.apache.auron.AuronSQLTestHelper
+
 class BuildinfoInSparkUISuite
     extends org.apache.spark.sql.QueryTest
     with BuildInfoAuronSQLSuite
