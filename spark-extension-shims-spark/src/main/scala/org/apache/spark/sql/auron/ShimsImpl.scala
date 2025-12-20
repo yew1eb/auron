@@ -18,13 +18,9 @@ package org.apache.spark.sql.auron
 
 import java.io.File
 import java.util.UUID
-<<<<<<< HEAD:spark-extension-shims-spark/src/main/scala/org/apache/spark/sql/auron/ShimsImpl.scala
-import scala.collection.mutable
-=======
 
 import scala.collection.mutable
 
->>>>>>> ffb4e026 ([AURON #1409]Support displaying Auron build info in Spark UI):spark-extension-shims-spark3/src/main/scala/org/apache/spark/sql/auron/ShimsImpl.scala
 import org.apache.commons.lang3.reflect.FieldUtils
 import org.apache.spark.{OneToOneDependency, ShuffleDependency, SparkContext, SparkEnv, SparkException, TaskContext}
 import org.apache.spark.internal.Logging
@@ -112,15 +108,10 @@ import org.apache.spark.sql.types.StringType
 import org.apache.spark.status.ElementTrackingStore
 import org.apache.spark.storage.BlockManagerId
 import org.apache.spark.storage.FileSegment
-<<<<<<< HEAD:spark-extension-shims-spark/src/main/scala/org/apache/spark/sql/auron/ShimsImpl.scala
-import org.apache.auron.{sparkver, protobuf => pb}
-import org.apache.auron.common.AuronBuildInfo
-import org.apache.auron.metric.SparkMetricNode
-=======
 
 import org.apache.auron.{protobuf => pb, sparkver}
 import org.apache.auron.common.AuronBuildInfo
->>>>>>> ffb4e026 ([AURON #1409]Support displaying Auron build info in Spark UI):spark-extension-shims-spark3/src/main/scala/org/apache/spark/sql/auron/ShimsImpl.scala
+import org.apache.auron.metric.SparkMetricNode
 import org.apache.auron.spark.ui.AuronBuildInfoEvent
 
 class ShimsImpl extends Shims with Logging {
@@ -168,13 +159,9 @@ class ShimsImpl extends Shims with Logging {
         .get(AuronConf.UI_ENABLED.key, "true"))
 
     if (SparkEnv.get.conf.get(AuronConf.UI_ENABLED.key, "true").equals("true")) {
-<<<<<<< HEAD:spark-extension-shims-spark/src/main/scala/org/apache/spark/sql/auron/ShimsImpl.scala
       val sparkContext = SparkContext.getActive.getOrElse {
         throw new IllegalStateException("No active spark context found that should not happen")
       }
-=======
-      val sparkContext = SparkContext.getOrCreate()
->>>>>>> ffb4e026 ([AURON #1409]Support displaying Auron build info in Spark UI):spark-extension-shims-spark3/src/main/scala/org/apache/spark/sql/auron/ShimsImpl.scala
       val kvStore = sparkContext.statusStore.store.asInstanceOf[ElementTrackingStore]
       val statusStore = new AuronSQLAppStatusStore(kvStore)
       sparkContext.ui.foreach(new AuronSQLTab(statusStore, _))
@@ -205,10 +192,7 @@ class ShimsImpl extends Shims with Logging {
     auronBuildInfo.put(AuronBuildInfo.PAIMON_VERSION_STRING, AuronBuildInfo.PAIMON_VERSION)
     auronBuildInfo.put(AuronBuildInfo.FLINK_VERSION_STRING, AuronBuildInfo.FLINK_VERSION)
     auronBuildInfo.put(AuronBuildInfo.BUILD_DATE_STRING, AuronBuildInfo.BUILD_DATE)
-<<<<<<< HEAD:spark-extension-shims-spark/src/main/scala/org/apache/spark/sql/auron/ShimsImpl.scala
     auronBuildInfo.retain { case (_, v) => v != null && v.nonEmpty }
-=======
->>>>>>> ffb4e026 ([AURON #1409]Support displaying Auron build info in Spark UI):spark-extension-shims-spark3/src/main/scala/org/apache/spark/sql/auron/ShimsImpl.scala
     val event = AuronBuildInfoEvent(auronBuildInfo)
     AuronEventUtils.post(sparkContext, event)
   }
@@ -309,11 +293,6 @@ class ShimsImpl extends Shims with Logging {
 
   override def createNativeLocalLimitExec(limit: Long, child: SparkPlan): NativeLocalLimitBase =
     NativeLocalLimitExec(limit, child)
-
-  override def createNativeCollectLimitExec(
-      limit: Int,
-      child: SparkPlan): NativeCollectLimitBase =
-    NativeCollectLimitExec(limit, child)
 
   override def createNativeParquetInsertIntoHiveTableExec(
       cmd: InsertIntoHiveTable,

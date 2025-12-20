@@ -786,7 +786,7 @@ object AuronConverters extends Logging {
 
   def convertCollectLimitExec(exec: CollectLimitExec): SparkPlan = {
     logDebugPlanConversion(exec)
-    Shims.get.createNativeCollectLimitExec(exec.limit, exec.child)
+    exec.child
   }
 
   def convertHashAggregateExec(exec: HashAggregateExec): SparkPlan = {
