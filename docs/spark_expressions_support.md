@@ -23,7 +23,7 @@
  - [x] any
  - [x] any_value
  - [ ] approx_count_distinct
- - [x] approx_percentile
+ - [ ] approx_percentile
  - [x] array_agg
  - [x] avg
  - [x] bit_and
@@ -59,8 +59,8 @@
  - [x] min
  - [x] min_by
  - [x] mode
- - [x] percentile
- - [x] percentile_approx
+ - [ ] percentile
+ - [ ] percentile_approx
  - [x] regr_avgx
  - [x] regr_avgy
  - [x] regr_count
@@ -298,7 +298,7 @@
  - [ ] csc
  - [ ] degrees
  - [ ] div
- - [x] e
+ - [ ] e
  - [x] exp
  - [x] expm1
  - [x] factorial
@@ -314,7 +314,7 @@
  - [x] log2
  - [x] mod
  - [ ] negative
- - [x] pi
+ - [ ] pi
  - [ ] pmod
  - [x] positive
  - [x] pow
@@ -358,10 +358,10 @@
  - [ ] raise_error
  - [ ] spark_partition_id
  - [ ] try_aes_decrypt
- - [x] typeof
+ - [ ] typeof
  - [x] user
  - [ ] uuid
- - [x] version
+ - [ ] version
 
 ### predicate_funcs
  - [x] !
@@ -412,7 +412,7 @@
  - [x] levenshtein
  - [ ] locate
  - [x] lower
- - [ ] lpad
+ - [x] lpad
  - [x] ltrim
  - [ ] luhn_check
  - [ ] mask
@@ -429,7 +429,7 @@
  - [ ] repeat
  - [ ] replace
  - [ ] right
- - [ ] rpad
+ - [x] rpad
  - [x] rtrim
  - [ ] sentences
  - [ ] soundex

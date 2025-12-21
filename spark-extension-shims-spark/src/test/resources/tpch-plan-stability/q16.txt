@@ -64,9 +64,12 @@ AdaptiveSparkPlan (61)
                                        +- Scan parquet  (47)
 
 
-(1) NativeParquetScan 
+(unknown) Scan parquet 
 Output [2]: [ps_partkey#1, ps_suppkey#2]
-Arguments: FileScan parquet [ps_partkey#1,ps_suppkey#2] Batched: true, DataFilters: [isnotnull(ps_partkey#1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(ps_partkey)], ReadSchema: struct<ps_partkey:bigint,ps_suppkey:bigint>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(ps_partkey)]
+ReadSchema: struct<ps_partkey:bigint,ps_suppkey:bigint>
 
 (2) InputAdapter
 Input [2]: [ps_partkey#1, ps_suppkey#2]
@@ -74,7 +77,7 @@ Arguments: [#3, #4]
 
 (3) NativeFilter
 Input [2]: [#3#1, #4#2]
-Arguments: isnotnull(ps_partkey#1)
+Condition : isnotnull(ps_partkey#1)
 
 (4) NativeShuffleExchange
 Input [2]: [#3#1, #4#2]
@@ -95,9 +98,12 @@ Input [2]: [#3#1, #4#2]
 Input [2]: [#3#1, #4#2]
 Arguments: [ps_partkey#1 ASC NULLS FIRST], false
 
-(9) NativeParquetScan 
+(47) Scan parquet 
 Output [4]: [p_partkey#5, p_brand#6, p_type#7, p_size#8]
-Arguments: FileScan parquet [p_partkey#5,p_brand#6,p_type#7,p_size#8] Batched: true, DataFilters: [isnotnull(p_brand#6), isnotnull(p_type#7), NOT (p_brand#6 = Brand#9), NOT StartsWith(p_ty..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(p_brand), IsNotNull(p_type), Not(EqualTo(p_brand,Brand#9)), Not(StringStartsWith(p_ty..., ReadSchema: struct<p_partkey:bigint,p_brand:string,p_type:string,p_size:int>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(p_brand), IsNotNull(p_type), Not(EqualTo(p_brand,Brand#9)), Not(StringStartsWith(p_type,MEDIUM POLISHED)), In(p_size, [14,19,23,3,36,45,49,9]), IsNotNull(p_partkey)]
+ReadSchema: struct<p_partkey:bigint,p_brand:string,p_type:string,p_size:int>
 
 (10) InputAdapter
 Input [4]: [p_partkey#5, p_brand#6, p_type#7, p_size#8]
@@ -105,7 +111,7 @@ Arguments: [#10, #6, #7, #8]
 
 (11) NativeFilter
 Input [4]: [#10#5, #6#6, #7#7, #8#8]
-Arguments: (((((isnotnull(p_brand#6) AND isnotnull(p_type#7)) AND NOT (p_brand#6 = Brand#9)) AND NOT StartsWith(p_type#7, MEDIUM POLISHED)) AND p_size#8 IN (49,14,23,45,19,3,36,9)) AND isnotnull(p_partkey#5))
+Condition : (((((isnotnull(p_brand#6) AND isnotnull(p_type#7)) AND NOT (p_brand#6 = Brand#9)) AND NOT StartsWith(p_type#7, MEDIUM POLISHED)) AND p_size#8 IN (49,14,23,45,19,3,36,9)) AND isnotnull(p_partkey#5))
 
 (12) NativeShuffleExchange
 Input [4]: [#10#5, #6#6, #7#7, #8#8]
@@ -133,8 +139,8 @@ Join type: Inner
 Join condition: None
 
 (18) NativeProject
+Output [4]: [ps_suppkey#2, p_brand#6, p_type#7, p_size#8]
 Input [6]: [#3#1, #4#2, #10#5, #6#6, #7#7, #8#8]
-Arguments: [ps_suppkey#2, p_brand#6, p_type#7, p_size#8]
 
 (19) NativeHashAggregate
 Input [4]: [ps_suppkey#2, p_brand#6, p_type#7, p_size#8]
@@ -166,8 +172,8 @@ Aggregate Attributes: []
 Results [5]: [p_brand#6, p_type#7, p_size#8, ps_suppkey#2, #11#11]
 
 (25) NativeProject
+Output [4]: [p_brand#6, p_type#7, p_size#8, ps_suppkey#2]
 Input [5]: [p_brand#6, p_type#7, p_size#8, ps_suppkey#2, #11#11]
-Arguments: [p_brand#6, p_type#7, p_size#8, ps_suppkey#2]
 
 (26) NativeHashAggregate
 Input [4]: [p_brand#6, p_type#7, p_size#8, ps_suppkey#2]
@@ -199,8 +205,8 @@ Aggregate Attributes [1]: [count(ps_suppkey#2)#12]
 Results [4]: [p_brand#6, p_type#7, p_size#8, count(ps_suppkey#2)#12]
 
 (32) NativeProject
+Output [4]: [p_brand#6, p_type#7, p_size#8, count(ps_suppkey#2)#12 AS supplier_cnt#13]
 Input [4]: [p_brand#6, p_type#7, p_size#8, count(ps_suppkey#2)#12]
-Arguments: [p_brand#6, p_type#7, p_size#8, count(ps_suppkey#2)#12 AS supplier_cnt#13]
 
 (33) NativeShuffleExchange
 Input [4]: [p_brand#6, p_type#7, p_size#8, supplier_cnt#13]

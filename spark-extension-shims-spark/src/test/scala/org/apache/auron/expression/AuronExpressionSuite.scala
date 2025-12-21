@@ -605,8 +605,8 @@ class AuronExpressionSuite extends AuronQueryTest with BaseAuronSQLSuite {
       withTable("t") {
         sql("create table t (col string) using parquet")
         sql("insert into t values('123456')")
-        checkSparkAnswerAndOperator(sql("select substring(col, 0) from t"))
-        checkSparkAnswerAndOperator(sql("select substring(col, -1) from t"))
+        checkSparkAnswer("select substring(col, 0) from t")
+        checkSparkAnswer("select substring(col, -1) from t")
       }
     }
   }

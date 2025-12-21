@@ -47,9 +47,12 @@ AdaptiveSparkPlan (44)
                            +- Scan parquet  (34)
 
 
-(1) NativeParquetScan 
+(30) Scan parquet 
 Output [3]: [c_custkey#1, c_phone#2, c_acctbal#3]
-Arguments: FileScan parquet [c_custkey#1,c_phone#2,c_acctbal#3] Batched: true, DataFilters: [isnotnull(c_acctbal#3), substring(c_phone#2, 1, 2) IN (13,31,23,29,30,18,17)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(c_acctbal)], ReadSchema: struct<c_custkey:bigint,c_phone:string,c_acctbal:decimal(12,2)>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(c_acctbal)]
+ReadSchema: struct<c_custkey:bigint,c_phone:string,c_acctbal:decimal(12,2)>
 
 (2) InputAdapter
 Input [3]: [c_custkey#1, c_phone#2, c_acctbal#3]
@@ -57,7 +60,7 @@ Arguments: [#4, #2, #3]
 
 (3) NativeFilter
 Input [3]: [#4#1, #2#2, #3#3]
-Arguments: ((isnotnull(c_acctbal#3) AND substring(c_phone#2, 1, 2) IN (13,31,23,29,30,18,17)) AND (cast(c_acctbal#3 as decimal(16,6)) > Subquery subquery#5, [id=#6]))
+Condition : ((isnotnull(c_acctbal#3) AND substring(c_phone#2, 1, 2) IN (13,31,23,29,30,18,17)) AND (cast(c_acctbal#3 as decimal(16,6)) > Subquery subquery#5, [id=#6]))
 
 (4) NativeShuffleExchange
 Input [3]: [#4#1, #2#2, #3#3]
@@ -78,9 +81,11 @@ Input [3]: [#4#1, #2#2, #3#3]
 Input [3]: [#4#1, #2#2, #3#3]
 Arguments: [c_custkey#1 ASC NULLS FIRST], false
 
-(9) NativeParquetScan 
+(34) Scan parquet 
 Output [1]: [o_custkey#7]
-Arguments: FileScan parquet [o_custkey#7] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [], ReadSchema: struct<o_custkey:bigint>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+ReadSchema: struct<o_custkey:bigint>
 
 (10) InputAdapter
 Input [1]: [o_custkey#7]
@@ -112,8 +117,8 @@ Join type: LeftAnti
 Join condition: None
 
 (17) NativeProject
+Output [2]: [substring(c_phone#2, 1, 2) AS cntrycode#9, c_acctbal#3]
 Input [3]: [#4#1, #2#2, #3#3]
-Arguments: [substring(c_phone#2, 1, 2) AS cntrycode#9, c_acctbal#3]
 
 (18) NativeHashAggregate
 Input [2]: [cntrycode#9, c_acctbal#3]
@@ -145,8 +150,8 @@ Aggregate Attributes [2]: [count(1)#14, sum(c_acctbal#3)#15]
 Results [3]: [cntrycode#9, count(1)#14, sum(c_acctbal#3)#15]
 
 (24) NativeProject
+Output [3]: [cntrycode#9, count(1)#14 AS numcust#16, sum(c_acctbal#3)#15 AS totacctbal#17]
 Input [3]: [cntrycode#9, count(1)#14, sum(c_acctbal#3)#15]
-Arguments: [cntrycode#9, count(1)#14 AS numcust#16, sum(c_acctbal#3)#15 AS totacctbal#17]
 
 (25) NativeShuffleExchange
 Input [3]: [cntrycode#9, numcust#16, totacctbal#17]
@@ -263,9 +268,12 @@ AdaptiveSparkPlan (60)
                +- Scan parquet  (54)
 
 
-(45) NativeParquetScan 
+(54) Scan parquet 
 Output [2]: [c_phone#21, c_acctbal#22]
-Arguments: FileScan parquet [c_phone#21,c_acctbal#22] Batched: true, DataFilters: [isnotnull(c_acctbal#22), (c_acctbal#22 > 0.00), substring(c_phone#21, 1, 2) IN (13,31,23,2..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(c_acctbal), GreaterThan(c_acctbal,0.00)], ReadSchema: struct<c_phone:string,c_acctbal:decimal(12,2)>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(c_acctbal), GreaterThan(c_acctbal,0.00)]
+ReadSchema: struct<c_phone:string,c_acctbal:decimal(12,2)>
 
 (46) InputAdapter
 Input [2]: [c_phone#21, c_acctbal#22]
@@ -273,11 +281,11 @@ Arguments: [#21, #22]
 
 (47) NativeFilter
 Input [2]: [#21#21, #22#22]
-Arguments: ((isnotnull(c_acctbal#22) AND (c_acctbal#22 > 0.00)) AND substring(c_phone#21, 1, 2) IN (13,31,23,29,30,18,17))
+Condition : ((isnotnull(c_acctbal#22) AND (c_acctbal#22 > 0.00)) AND substring(c_phone#21, 1, 2) IN (13,31,23,29,30,18,17))
 
 (48) NativeProject
+Output [1]: [c_acctbal#22]
 Input [2]: [#21#21, #22#22]
-Arguments: [c_acctbal#22]
 
 (49) NativeHashAggregate
 Input [1]: [c_acctbal#22]
@@ -302,8 +310,8 @@ Aggregate Attributes [1]: [avg(c_acctbal#22)#25]
 Results [1]: [avg(c_acctbal#22)#25]
 
 (53) NativeProject
+Output [1]: [avg(c_acctbal#22)#25 AS avg(c_acctbal)#26]
 Input [1]: [avg(c_acctbal#22)#25]
-Arguments: [avg(c_acctbal#22)#25 AS avg(c_acctbal)#26]
 
 (54) Scan parquet 
 Output [2]: [c_phone#21, c_acctbal#22]

@@ -54,9 +54,11 @@ AdaptiveSparkPlan (51)
                                        +- Scan parquet  (37)
 
 
-(1) NativeParquetScan 
+(34) Scan parquet 
 Output [1]: [c_custkey#1]
-Arguments: FileScan parquet [c_custkey#1] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [], ReadSchema: struct<c_custkey:bigint>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+ReadSchema: struct<c_custkey:bigint>
 
 (2) InputAdapter
 Input [1]: [c_custkey#1]
@@ -81,9 +83,12 @@ Input [1]: [#2#1]
 Input [1]: [#2#1]
 Arguments: [c_custkey#1 ASC NULLS FIRST], false
 
-(8) NativeParquetScan 
+(37) Scan parquet 
 Output [3]: [o_orderkey#3, o_custkey#4, o_comment#5]
-Arguments: FileScan parquet [o_orderkey#3,o_custkey#4,o_comment#5] Batched: true, DataFilters: [isnotnull(o_comment#5), NOT o_comment#5 LIKE %special%requests%, isnotnull(o_custkey#4)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(o_comment), IsNotNull(o_custkey)], ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_comment:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(o_comment), IsNotNull(o_custkey)]
+ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_comment:string>
 
 (9) InputAdapter
 Input [3]: [o_orderkey#3, o_custkey#4, o_comment#5]
@@ -91,11 +96,11 @@ Arguments: [#6, #7, #5]
 
 (10) NativeFilter
 Input [3]: [#6#3, #7#4, #5#5]
-Arguments: ((isnotnull(o_comment#5) AND NOT o_comment#5 LIKE %special%requests%) AND isnotnull(o_custkey#4))
+Condition : ((isnotnull(o_comment#5) AND NOT o_comment#5 LIKE %special%requests%) AND isnotnull(o_custkey#4))
 
 (11) NativeProject
+Output [2]: [o_orderkey#3, o_custkey#4]
 Input [3]: [#6#3, #7#4, #5#5]
-Arguments: [o_orderkey#3, o_custkey#4]
 
 (12) NativeShuffleExchange
 Input [2]: [o_orderkey#3, o_custkey#4]
@@ -123,8 +128,8 @@ Join type: LeftOuter
 Join condition: None
 
 (18) NativeProject
+Output [2]: [c_custkey#1, o_orderkey#3]
 Input [3]: [#2#1, o_orderkey#3, o_custkey#4]
-Arguments: [c_custkey#1, o_orderkey#3]
 
 (19) NativeHashAggregate
 Input [2]: [c_custkey#1, o_orderkey#3]
@@ -141,8 +146,8 @@ Aggregate Attributes [1]: [count(o_orderkey#3)#10]
 Results [2]: [c_custkey#1, count(o_orderkey#3)#10]
 
 (21) NativeProject
+Output [1]: [count(o_orderkey#3)#10 AS c_count#11]
 Input [2]: [c_custkey#1, count(o_orderkey#3)#10]
-Arguments: [count(o_orderkey#3)#10 AS c_count#11]
 
 (22) NativeHashAggregate
 Input [1]: [c_count#11]
@@ -174,8 +179,8 @@ Aggregate Attributes [1]: [count(1)#13]
 Results [2]: [c_count#11, count(1)#13]
 
 (28) NativeProject
+Output [2]: [c_count#11, count(1)#13 AS custdist#14]
 Input [2]: [c_count#11, count(1)#13]
-Arguments: [c_count#11, count(1)#13 AS custdist#14]
 
 (29) NativeShuffleExchange
 Input [2]: [c_count#11, custdist#14]

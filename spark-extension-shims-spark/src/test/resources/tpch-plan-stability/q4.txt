@@ -53,9 +53,12 @@ AdaptiveSparkPlan (50)
                                  +- Scan parquet  (38)
 
 
-(1) NativeParquetScan 
+(33) Scan parquet 
 Output [3]: [o_orderkey#1, o_orderdate#2, o_orderpriority#3]
-Arguments: FileScan parquet [o_orderkey#1,o_orderdate#2,o_orderpriority#3] Batched: true, DataFilters: [isnotnull(o_orderdate#2), (o_orderdate#2 >= 1993-07-01), (o_orderdate#2 < 1993-10-01)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(o_orderdate), GreaterThanOrEqual(o_orderdate,1993-07-01), LessThan(o_orderdate,1993-10..., ReadSchema: struct<o_orderkey:bigint,o_orderdate:date,o_orderpriority:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(o_orderdate), GreaterThanOrEqual(o_orderdate,1993-07-01), LessThan(o_orderdate,1993-10-01)]
+ReadSchema: struct<o_orderkey:bigint,o_orderdate:date,o_orderpriority:string>
 
 (2) InputAdapter
 Input [3]: [o_orderkey#1, o_orderdate#2, o_orderpriority#3]
@@ -63,11 +66,11 @@ Arguments: [#4, #2, #3]
 
 (3) NativeFilter
 Input [3]: [#4#1, #2#2, #3#3]
-Arguments: ((isnotnull(o_orderdate#2) AND (o_orderdate#2 >= 1993-07-01)) AND (o_orderdate#2 < 1993-10-01))
+Condition : ((isnotnull(o_orderdate#2) AND (o_orderdate#2 >= 1993-07-01)) AND (o_orderdate#2 < 1993-10-01))
 
 (4) NativeProject
+Output [2]: [o_orderkey#1, o_orderpriority#3]
 Input [3]: [#4#1, #2#2, #3#3]
-Arguments: [o_orderkey#1, o_orderpriority#3]
 
 (5) NativeShuffleExchange
 Input [2]: [o_orderkey#1, o_orderpriority#3]
@@ -88,9 +91,12 @@ Input [2]: [o_orderkey#1, o_orderpriority#3]
 Input [2]: [o_orderkey#1, o_orderpriority#3]
 Arguments: [o_orderkey#1 ASC NULLS FIRST], false
 
-(10) NativeParquetScan 
+(38) Scan parquet 
 Output [3]: [l_orderkey#5, l_commitdate#6, l_receiptdate#7]
-Arguments: FileScan parquet [l_orderkey#5,l_commitdate#6,l_receiptdate#7] Batched: true, DataFilters: [isnotnull(l_commitdate#6), isnotnull(l_receiptdate#7), (l_commitdate#6 < l_receiptdate#7)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_commitdate), IsNotNull(l_receiptdate)], ReadSchema: struct<l_orderkey:bigint,l_commitdate:date,l_receiptdate:date>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(l_commitdate), IsNotNull(l_receiptdate)]
+ReadSchema: struct<l_orderkey:bigint,l_commitdate:date,l_receiptdate:date>
 
 (11) InputAdapter
 Input [3]: [l_orderkey#5, l_commitdate#6, l_receiptdate#7]
@@ -98,11 +104,11 @@ Arguments: [#8, #6, #7]
 
 (12) NativeFilter
 Input [3]: [#8#5, #6#6, #7#7]
-Arguments: ((isnotnull(l_commitdate#6) AND isnotnull(l_receiptdate#7)) AND (l_commitdate#6 < l_receiptdate#7))
+Condition : ((isnotnull(l_commitdate#6) AND isnotnull(l_receiptdate#7)) AND (l_commitdate#6 < l_receiptdate#7))
 
 (13) NativeProject
+Output [1]: [l_orderkey#5]
 Input [3]: [#8#5, #6#6, #7#7]
-Arguments: [l_orderkey#5]
 
 (14) NativeShuffleExchange
 Input [1]: [l_orderkey#5]
@@ -130,8 +136,8 @@ Join type: LeftSemi
 Join condition: None
 
 (20) NativeProject
+Output [1]: [o_orderpriority#3]
 Input [2]: [o_orderkey#1, o_orderpriority#3]
-Arguments: [o_orderpriority#3]
 
 (21) NativeHashAggregate
 Input [1]: [o_orderpriority#3]
@@ -163,8 +169,8 @@ Aggregate Attributes [1]: [count(1)#11]
 Results [2]: [o_orderpriority#3, count(1)#11]
 
 (27) NativeProject
+Output [2]: [o_orderpriority#3, count(1)#11 AS order_count#12]
 Input [2]: [o_orderpriority#3, count(1)#11]
-Arguments: [o_orderpriority#3, count(1)#11 AS order_count#12]
 
 (28) NativeShuffleExchange
 Input [2]: [o_orderpriority#3, order_count#12]
