@@ -283,24 +283,24 @@ class AuronFunctionSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
       val functions =
         s"""
-          |select
-          |    least(c4, c3, c5),
-          |    least(c1, c2, 1),
-          |    least(c1, c2, (-1)),
-          |    least(c4, c5, c3, c3, 'a'),
-          |    least(null, null),
-          |    least(c4, c3, c5, null),
-          |    least((-1.0), 2.5),
-          |    least((-1.0), 2),
-          |    least(CAST(-1.0 AS FLOAT), CAST(2.5 AS FLOAT)),
-          |    least(cast(1 as byte), cast(2 as byte)),
-          |    least('abc', 'aaaa'),
-          |    least(true, false),
-          |    least(cast("2015-01-01" as date), cast("2015-07-01" as date)),
-          |    least(${dateTimeStampMin}, ${dateTimeStampMax}),
-          |    least(${minValue}, ${maxValue})
-          |from
-          |    test_least
+           |select
+           |    least(c4, c3, c5),
+           |    least(c1, c2, 1),
+           |    least(c1, c2, (-1)),
+           |    least(c4, c5, c3, c3, 'a'),
+           |    least(null, null),
+           |    least(c4, c3, c5, null),
+           |    least((-1.0), 2.5),
+           |    least((-1.0), 2),
+           |    least(CAST(-1.0 AS FLOAT), CAST(2.5 AS FLOAT)),
+           |    least(cast(1 as byte), cast(2 as byte)),
+           |    least('abc', 'aaaa'),
+           |    least(true, false),
+           |    least(cast("2015-01-01" as date), cast("2015-07-01" as date)),
+           |    least(${dateTimeStampMin}, ${dateTimeStampMax}),
+           |    least(${minValue}, ${maxValue})
+           |from
+           |    test_least
         """.stripMargin
 
       checkSparkAnswerAndOperator(functions)
@@ -325,31 +325,31 @@ class AuronFunctionSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
       val functions =
         s"""
-          |select
-          |    greatest(c3, c4, c5),
-          |    greatest(c2, c1),
-          |    greatest(c1, c2, 2),
-          |    greatest(c4, c5, c3, 'ccc'),
-          |    greatest(null, null),
-          |    greatest(c3, c4, c5, null),
-          |    greatest((-1.0), 2.5),
-          |    greatest((-1), 2),
-          |    greatest(CAST(-1.0 AS FLOAT), CAST(2.5 AS FLOAT)),
-          |    greatest(${longMax}, ${longMin}),
-          |    greatest(cast(1 as byte), cast(2 as byte)),
-          |    greatest(cast(1 as short), cast(2 as short)),
-          |    greatest("abc", "aaaa"),
-          |    greatest(true, false),
-          |    greatest(
-          |        cast("2015-01-01" as date),
-          |        cast("2015-07-01" as date)
-          |    ),
-          |    greatest(
-          |        ${dateTimeStampMin},
-          |        ${dateTimeStampMax}
-          |    )
-          |from
-          |    t1
+           |select
+           |    greatest(c3, c4, c5),
+           |    greatest(c2, c1),
+           |    greatest(c1, c2, 2),
+           |    greatest(c4, c5, c3, 'ccc'),
+           |    greatest(null, null),
+           |    greatest(c3, c4, c5, null),
+           |    greatest((-1.0), 2.5),
+           |    greatest((-1), 2),
+           |    greatest(CAST(-1.0 AS FLOAT), CAST(2.5 AS FLOAT)),
+           |    greatest(${longMax}, ${longMin}),
+           |    greatest(cast(1 as byte), cast(2 as byte)),
+           |    greatest(cast(1 as short), cast(2 as short)),
+           |    greatest("abc", "aaaa"),
+           |    greatest(true, false),
+           |    greatest(
+           |        cast("2015-01-01" as date),
+           |        cast("2015-07-01" as date)
+           |    ),
+           |    greatest(
+           |        ${dateTimeStampMin},
+           |        ${dateTimeStampMax}
+           |    )
+           |from
+           |    t1
         """.stripMargin
 
       checkSparkAnswerAndOperator(functions)
@@ -411,20 +411,21 @@ class AuronFunctionSuite extends AuronQueryTest with BaseAuronSQLSuite {
   test("test function nvl2") {
     withTable("t1") {
       sql(s"""CREATE TABLE t1 USING PARQUET AS SELECT
-             |'X'                      AS str_val,
-             |100                      AS int_val,
-             |array(1,2,3)             AS arr_val,
-             |CAST(NULL AS STRING)     AS null_str,
-             |CAST(NULL AS INT)        AS null_int
-             |""".stripMargin)
+           |'X'                      AS str_val,
+           |100                      AS int_val,
+           |array(1,2,3)             AS arr_val,
+           |CAST(NULL AS STRING)     AS null_str,
+           |CAST(NULL AS INT)        AS null_int
+           |""".stripMargin)
 
-      val sqlStr = s"""SELECT
-                      |nvl2(null_int, int_val, 999)          AS int_only,
-                      |nvl2(1,  str_val, int_val)            AS has_str,
-                      |nvl2(null_int, int_val, str_val)      AS str_in_false,
-                      |nvl2(1,  arr_val, array(888))         AS has_array,
-                      |nvl2(null_int, null_str,  null_str)   AS all_null
-                      |FROM  t1""".stripMargin
+      val sqlStr =
+        s"""SELECT
+           |nvl2(null_int, int_val, 999)          AS int_only,
+           |nvl2(1,  str_val, int_val)            AS has_str,
+           |nvl2(null_int, int_val, str_val)      AS str_in_false,
+           |nvl2(1,  arr_val, array(888))         AS has_array,
+           |nvl2(null_int, null_str,  null_str)   AS all_null
+           |FROM  t1""".stripMargin
 
       checkSparkAnswerAndOperator(sqlStr)
     }
@@ -486,6 +487,21 @@ class AuronFunctionSuite extends AuronQueryTest with BaseAuronSQLSuite {
 
         checkSparkAnswerAndOperator(
           s"SELECT id, name, UPPER(name) AS up, LOWER(name) AS low FROM t1")
+      }
+    }
+  }
+
+  test("substring") {
+    withSQLConf("spark.auron.expression.singleChildFallback.enabled" -> "false") {
+      withTable("t1") {
+        sql("create table t1 (_1 INT, _2 STRING) using parquet")
+        sql("insert into t1 values(1, '123456'), (2, 'abcAFÉdefghi世jkaße界')")
+        Seq((0, 0), (0, 5), (1, 0), (3, 20), (-1, 10), (-2, 20)).foreach {
+          case (pos, len) => {
+            checkSparkAnswerAndOperator(s"select substring(_2, $pos) from t1")
+            checkSparkAnswerAndOperator(s"SELECT _1, substring(_2, $pos, $len) FROM t1")
+          }
+        }
       }
     }
   }

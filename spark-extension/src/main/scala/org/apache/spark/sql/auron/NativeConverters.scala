@@ -958,8 +958,8 @@ object NativeConverters extends Logging {
               .setExpr(convertExprWithFallback(expr, isPruningExpr, fallback))
               .setInfix(infix.toString)))
 
-      case Substring(str, Literal(pos, IntegerType), Literal(len, IntegerType))
-          if pos.asInstanceOf[Int] > 0 && len.asInstanceOf[Int] >= 0 =>
+      case Substring(str, Literal(pos, IntegerType), Literal(len, IntegerType)) =>
+//          if pos.asInstanceOf[Int] > 0 && len.asInstanceOf[Int] >= 0 =>
         val longPos = pos.asInstanceOf[Int].toLong
         val longLen = len.asInstanceOf[Int].toLong
         buildScalarFunction(
