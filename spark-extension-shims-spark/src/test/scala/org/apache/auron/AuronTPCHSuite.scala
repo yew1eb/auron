@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.auron
+package org.apache.spark.sql.auron
 
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -24,21 +24,21 @@ import scala.util.matching.Regex
 
 import org.apache.commons.io.FileUtils
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.{AuronQueryTest, DataFrame, Row}
-import org.apache.spark.sql.auron.Shims
+import org.apache.spark.sql.{DataFrame, QueryTest, Row}
 import org.apache.spark.sql.execution.FormattedMode
 import org.apache.spark.sql.test.SharedSparkSession
 import org.apache.spark.sql.types.DoubleType
 
-abstract class AuronTPCHSuite extends AuronQueryTest with SharedSparkSession {
+abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
 
-  protected val RE_GENERATE: Boolean = (sys.env.getOrElse("SPARK_TPCH_REGENERATE", "0") == "1")
+  protected val regenGoldenFiles: Boolean =
+    sys.env.getOrElse("REGEN_TPCH_GOLDEN_FILES", "0") == "1"
 
   protected val rootPath: String = getClass.getResource("/").getPath
-  protected val tpchDataPath: String = rootPath + "/tpch-data-parquet"
-  protected val tpchQueriesPath: String = rootPath + "/tpch-queries"
-  protected val tpchResultsPath: String = rootPath + "/tpch-query-results"
-  protected val tpchPlanPath: String = rootPath + "/tpch-plan-stability"
+  protected val tpchDataPath: String = s"$rootPath/tpch-data-parquet"
+  protected val tpchQueriesPath: String = s"$rootPath/tpch-queries"
+  protected val tpchResultsPath: String = s"$rootPath/tpch-query-results"
+  protected val tpchPlanPath: String = s"$rootPath/tpch-plan-stability"
 
   protected val colSep: String = "<|COL|>"
 
@@ -54,6 +54,7 @@ abstract class AuronTPCHSuite extends AuronQueryTest with SharedSparkSession {
         "spark.shuffle.manager",
         "org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager")
       .set("spark.memory.offHeap.enabled", "false")
+      .set("spark.ui.enabled", "false")
       .set("spark.auron.enable", "true")
   }
 
@@ -71,122 +72,93 @@ abstract class AuronTPCHSuite extends AuronQueryTest with SharedSparkSession {
       }
   }
 
-  def shouldVerifyPlan(): Boolean = {
+  def shouldVerifyPhysicalPlan(): Boolean = {
     Shims.get.shimVersion match {
       case "spark-3.5" => true
       case _ => false // TODO: Support for other Spark versions in the future
     }
   }
 
-  protected def verifyResult(df: DataFrame, sqlNum: String, resultsPath: String): Unit = {
-    val result = df.collect()
+  protected def checkQueryResult(df: DataFrame, queryId: String): Unit = {
+    val goldenFile = new File(s"$tpchResultsPath/$queryId.out")
+    val rows = df.collect()
+
+    if (regenGoldenFiles) {
+      writeGoldenFile(goldenFile, formatResultContent(rows))
+      return
+    }
+
     if (df.schema.exists(_.dataType == DoubleType)) {
-      compareDoubleResult(sqlNum, result, resultsPath)
+      compareDoubleResult(queryId, rows, goldenFile)
     } else {
-      compareResultStr(sqlNum, result, resultsPath)
+      compareResultStr(queryId, rows, goldenFile)
     }
   }
 
-  protected def compareResultStr(
-      sqlNum: String,
-      result: Array[Row],
-      resultsPath: String): Unit = {
-    val resultStr = new StringBuffer()
-    resultStr.append(result.length).append("\n")
-    result.foreach(r => resultStr.append(r.mkString(colSep)).append("\n"))
+  private def formatResultContent(rows: Array[Row]): String = {
+    val rowStrings = rows.map(_.mkString(colSep))
+    s"${rows.length}\n${rowStrings.mkString("\n")}\n"
+  }
 
-    if (RE_GENERATE) {
-      FileUtils.writeStringToFile(
-        new File(resultsPath + "/" + sqlNum + ".out"),
-        resultStr.toString,
-        StandardCharsets.UTF_8)
-      return
-    }
+  private def writeGoldenFile(file: File, content: String): Unit = {
+    Option(file.getParentFile).foreach(_.mkdirs())
+    FileUtils.writeStringToFile(file, content, StandardCharsets.UTF_8)
+  }
 
-    val expectedResult =
-      FileUtils.readFileToString(
-        new File(resultsPath + "/" + sqlNum + ".out"),
-        StandardCharsets.UTF_8)
+  protected def compareResultStr(sqlNum: String, rows: Array[Row], goldenFile: File): Unit = {
+    val actualContent = formatResultContent(rows)
 
-    if (false) {
-      FileUtils.writeStringToFile(
-        new File(resultsPath + "/" + sqlNum + ".out"),
-        resultStr.toString)
-      return
-    }
-
-    if (expectedResult != resultStr.toString) {
+    val expectedResult = FileUtils.readFileToString(goldenFile, StandardCharsets.UTF_8)
+    if (expectedResult != actualContent) {
       fail(s"""
               |=== $sqlNum result does NOT match expected ===
               |[Expected]
               |${expectedResult}
               |[Actual]
-              |${resultStr.toString}
+              |${actualContent}
               |""".stripMargin)
     }
   }
 
   protected def compareDoubleResult(
-      sqlNum: String,
-      result: Array[Row],
-      resultsPath: String): Unit = {
+                                     queryId: String,
+                                     rows: Array[Row],
+                                     goldenFile: File,
+                                     tolerance: Double = 1e-6): Unit = {
 
-    if (RE_GENERATE) {
-      var resultStr = new StringBuilder()
-      resultStr.append(result.length + "\n")
-      result.foreach { row => resultStr.append(row.mkString(colSep)).append("\n") }
-      FileUtils.writeStringToFile(
-        new File(resultsPath + "/" + sqlNum + ".out"),
-        resultStr.toString,
-        StandardCharsets.UTF_8)
-      return
-    }
+    val expectedRowIter = FileUtils.readLines(goldenFile, StandardCharsets.UTF_8).iterator()
+    val expectedRowCount = expectedRowIter.next().toInt
+    assert(
+      rows.length == expectedRowCount,
+      s"Row count mismatch in $queryId: expected $expectedRowCount, got ${rows.length}")
 
-    val expectedResult =
-      FileUtils
-        .readLines(new File(s"$resultsPath/$sqlNum.out"), StandardCharsets.UTF_8)
-        .iterator()
-    val expectedCount = expectedResult.next().toInt
-    assert(result.length == expectedCount)
+    rows.zipWithIndex.foreach { case (actualRow, rowIdx) =>
+      assert(expectedRowIter.hasNext)
+      val expectedRow = expectedRowIter.next().split(Regex.quote(colSep))
 
-    result.zipWithIndex.foreach { case (row, rowIndex) =>
-      assert(expectedResult.hasNext)
-      val expectedRow = expectedResult.next().split(Regex.quote(colSep))
-
-      row.schema.zipWithIndex.foreach { case (field, idx) =>
+      actualRow.schema.zipWithIndex.foreach { case (field, colIdx) =>
         field.dataType match {
           case DoubleType =>
-            val actualValue = row.getDouble(idx)
-            val expectedValue = expectedRow(idx).toDouble
+            val actualValue = actualRow.getDouble(colIdx)
+            val expectedValue = expectedRow(colIdx).toDouble
+            val diff = math.abs(actualValue - expectedValue)
             assert(
-              Math.abs(actualValue - expectedValue) < 0.000001,
-              failureMessage(sqlNum, rowIndex, expectedRow.mkString(colSep), row.toString))
+              diff < tolerance,
+              s"Floating-point mismatch in $queryId row $rowIdx col $colIdx: " +
+                s"expected ${expectedValue}, got ${actualValue} (diff=$diff)")
           case _ =>
-            val actualValue = row.get(idx).toString
-            val expectedValue = expectedRow(idx)
+            val actualValue = actualRow.get(colIdx).toString
+            val expectedValue = expectedRow(colIdx)
             assert(
-              actualValue.equals(expectedValue),
-              failureMessage(sqlNum, rowIndex, expectedRow.mkString(colSep), row.toString))
+              actualValue == expectedValue,
+              s"Mismatch in $queryId row $rowIdx col $colIdx: " +
+                s"expected $expectedValue, got $actualValue")
         }
       }
     }
   }
 
-  private def failureMessage(
-      sqlNum: String,
-      rowIndex: Int,
-      expected: String,
-      actual: String): String = {
-    s"""
-       |=== Row $rowIndex - $sqlNum result does NOT match expected ===
-       |[Expected]
-       |$expected
-       |[Actual]
-       |$actual
-       |""".stripMargin
-  }
-
-  private def normalizeExplainPlan(plan: String): String = {
+  private def normalizePhysicalPlan(plan: String): String = {
     val exprIdRegex = "#\\d+L?".r
     val planIdRegex = "plan_id=\\d+".r
 
@@ -207,10 +179,10 @@ abstract class AuronTPCHSuite extends AuronQueryTest with SharedSparkSession {
 
     // Replace occurrences in the plan using the normalized map
     def replaceWithNormalizedValues(
-        plan: String,
-        regex: Regex,
-        normalizedMap: Map[String, String],
-        format: String): String = {
+                                     plan: String,
+                                     regex: Regex,
+                                     normalizedMap: Map[String, String],
+                                     format: String): String = {
       regex.replaceAllIn(plan, regexMatch => s"$format${normalizedMap(regexMatch.toString)}")
     }
 
@@ -230,95 +202,54 @@ abstract class AuronTPCHSuite extends AuronQueryTest with SharedSparkSession {
     normalizeLocation(argumentsNormalized)
   }
 
-  protected def verifyPlan(df: DataFrame, sqlNum: String, planPath: String): Unit = {
-    if (!shouldVerifyPlan()) {
-      return
-    }
-    val expectedFile = new File(planPath, s"$sqlNum.txt")
-    val actual = normalizeExplainPlan(df.queryExecution.explainString(FormattedMode))
-
-    if (RE_GENERATE) {
-      FileUtils.writeStringToFile(expectedFile, actual, StandardCharsets.UTF_8)
+  protected def checkPhysicalPlan(df: DataFrame, queryId: String): Unit = {
+    if (!shouldVerifyPhysicalPlan()) {
       return
     }
 
-    val expected = FileUtils.readFileToString(expectedFile, StandardCharsets.UTF_8)
+    val goldenPlanFile = new File(s"$tpchPlanPath/$queryId.txt")
+    val actualPlan = normalizePhysicalPlan(df.queryExecution.explainString(FormattedMode))
 
-    val actualFile = new File(FileUtils.getTempDirectory, s"tpch.plan.actual.$sqlNum.txt")
-    FileUtils.writeStringToFile(actualFile, actual, StandardCharsets.UTF_8)
+    if (regenGoldenFiles) {
+      writeGoldenFile(goldenPlanFile, actualPlan)
+      return
+    }
 
-    if (expected != actual) {
+    val expectedPlan = FileUtils.readFileToString(goldenPlanFile, StandardCharsets.UTF_8)
+    if (expectedPlan != actualPlan) {
+      val actualTempFile = new File(FileUtils.getTempDirectory, s"tpch.actual.plan.$queryId.txt")
+      FileUtils.writeStringToFile(actualTempFile, actualPlan, StandardCharsets.UTF_8)
       fail(s"""
-              |Plans did not match for query: $sqlNum
-              |Expected explain plan: ${expectedFile.getAbsolutePath}
+              |Physical plan mismatch for query $queryId
+              |Expected: ${goldenPlanFile.getAbsolutePath}
+              |Actual  : ${actualTempFile.getAbsolutePath}
               |
-              |$expected
-              |Actual explain plan: ${actualFile.getAbsolutePath}
+              |--- Expected ---
+              |$expectedPlan
               |
-              |$actual
+              |--- Actual ---
+              |$actualPlan
               |""".stripMargin)
     }
   }
 
-  // FIXME
-  // TODO q1 avg函数浮点数精度差异
-  /*
-    q1  与spark结果不一致, avg函数有差异
-![A,F,380456.00,532348211.65,505822441.4861,526165934.000839,25.575155,35785.709307,0.050081,14876]   --- spark
- [A,F,380456.00,532348211.65,505822441.4861,526165934.000839,25.575154,35785.709306,0.050081,14876]   --- auron
+  tpchQueries.foreach { queryId =>
+    test(s"TPC-H $queryId") {
+      val queryFile = new File(s"$tpchQueriesPath/$queryId.sql")
+      val sqlText = FileUtils.readFileToString(queryFile, StandardCharsets.UTF_8).trim
 
-    // TODO q17,q19  join支持join condition
-    q17 存在非native算子
-      25/11/30 17:25:54 WARN NativeConverters: Falling back expression: scala.NotImplementedError: unsupported expression: (class org.apache.spark.sql.catalyst.expressions.Multiply) (0.2 * avg(l_quantity#530)#524)
-      25/11/30 17:25:54 WARN AuronConverters: Falling back exec: SortMergeJoinExec: assertion failed: join condition is not supported
-      25/11/30 17:25:54 WARN NativeConverters: Falling back expression: scala.NotImplementedError: unsupported expression: (class org.apache.spark.sql.catalyst.expressions.Multiply) (0.2 * avg(l_quantity#530)#524)
-      25/11/30 17:25:54 WARN NativeConverters: Falling back expression: scala.NotImplementedError: unsupported expression: (class org.apache.spark.sql.catalyst.expressions.Multiply) (0.2 * none#1)
-      25/11/30 17:25:54 WARN NativeConverters: Falling back expression: scala.NotImplementedError: unsupported expression: (class org.apache.spark.sql.catalyst.expressions.Multiply) (0.2 * none#1)
-      25/11/30 17:25:54 WARN NativeConverters: Falling back expression: scala.NotImplementedError: unsupported expression: (class org.apache.spark.sql.catalyst.expressions.Multiply) (0.2 * avg(l_quantity#530)#524)
-                                               Falling back exec: HashAggregateExec: assertion failed: partial AggregateExec is not native
+      val resultDf = spark.sql(sqlText)
 
-    q19 存在非native算子
-    25/11/30 17:30:43 WARN AuronConverters: Falling back exec: SortMergeJoinExec: assertion failed: join condition is not supported
-    25/11/30 17:30:43 WARN NativeConverters: Falling back expression: scala.NotImplementedError: unsupported expression: (class org.apache.spark.sql.catalyst.expressions.Subtract) (1 - l_discount#67)
-    25/11/30 17:30:43 WARN NativeConverters: Falling back expression: scala.NotImplementedError: unsupported expression: (class org.apache.spark.sql.catalyst.expressions.Multiply) (class org.apache.spark.sql.auron
-   */
-
-  // only run single query
-  if (false) {
-    val sqlNum = "q1"
-    test(s"query: $sqlNum") {
-      val sqlStr = FileUtils.readFileToString(
-        new File(s"$tpchQueriesPath/$sqlNum.sql"),
-        StandardCharsets.UTF_8)
-      verifyResult(sql(sqlStr), sqlNum, tpchResultsPath)
-      verifyPlan(sql(sqlStr), sqlNum, tpchPlanPath)
-      //checkSparkAnswerAndOperator(sqlStr)
-      checkSparkAnswer(sqlStr)
-      //Thread.sleep(100000000)
-    }
-  }
-
-  // check query result and query plan
-  if (true) {
-    tpchQueries.foreach { sqlNum =>
-      test("TPC-H " + sqlNum) {
-        val sqlStr = FileUtils.readFileToString(
-          new File(s"$tpchQueriesPath/$sqlNum.sql"),
-          StandardCharsets.UTF_8)
-        val df = spark.sql(sqlStr)
-        verifyResult(df, sqlNum, tpchResultsPath)
-        verifyPlan(df, sqlNum, tpchPlanPath)
-        //checkSparkAnswerAndOperator(sqlStr)
-        checkSparkAnswer(sqlStr)
-      }
-    }
-
-    test("fake test") {
-      Thread.sleep(10000000000L)
+      checkQueryResult(resultDf, queryId)
+      checkPhysicalPlan(resultDf, queryId)
     }
   }
 }
 
+/**
+ * Variant that forces usage of the legacy V1 Parquet reader and disables broadcast joins
+ * (ensuring sort-merge joins are used).
+ */
 class AuronTPCHV1Suite extends AuronTPCHSuite {
   override protected def sparkConf: SparkConf = {
     super.sparkConf

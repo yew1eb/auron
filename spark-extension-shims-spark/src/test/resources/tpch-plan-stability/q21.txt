@@ -131,9 +131,12 @@ AdaptiveSparkPlan (128)
                               +- Scan parquet  (117)
 
 
-(1) NativeParquetScan 
+(83) Scan parquet 
 Output [3]: [s_suppkey#1, s_name#2, s_nationkey#3]
-Arguments: FileScan parquet [s_suppkey#1,s_name#2,s_nationkey#3] Batched: true, DataFilters: [isnotnull(s_suppkey#1), isnotnull(s_nationkey#3)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(s_suppkey), IsNotNull(s_nationkey)], ReadSchema: struct<s_suppkey:bigint,s_name:string,s_nationkey:bigint>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(s_suppkey), IsNotNull(s_nationkey)]
+ReadSchema: struct<s_suppkey:bigint,s_name:string,s_nationkey:bigint>
 
 (2) InputAdapter
 Input [3]: [s_suppkey#1, s_name#2, s_nationkey#3]
@@ -141,7 +144,7 @@ Arguments: [#4, #2, #5]
 
 (3) NativeFilter
 Input [3]: [#4#1, #2#2, #5#3]
-Arguments: (isnotnull(s_suppkey#1) AND isnotnull(s_nationkey#3))
+Condition : (isnotnull(s_suppkey#1) AND isnotnull(s_nationkey#3))
 
 (4) NativeShuffleExchange
 Input [3]: [#4#1, #2#2, #5#3]
@@ -162,9 +165,12 @@ Input [3]: [#4#1, #2#2, #5#3]
 Input [3]: [#4#1, #2#2, #5#3]
 Arguments: [s_suppkey#1 ASC NULLS FIRST], false
 
-(9) NativeParquetScan 
+(87) Scan parquet 
 Output [4]: [l_orderkey#6, l_suppkey#7, l_commitdate#8, l_receiptdate#9]
-Arguments: FileScan parquet [l_orderkey#6,l_suppkey#7,l_commitdate#8,l_receiptdate#9] Batched: true, DataFilters: [isnotnull(l_receiptdate#9), isnotnull(l_commitdate#8), (l_receiptdate#9 > l_commitdate#8), i..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_receiptdate), IsNotNull(l_commitdate), IsNotNull(l_suppkey), IsNotNull(l_orderkey)], ReadSchema: struct<l_orderkey:bigint,l_suppkey:bigint,l_commitdate:date,l_receiptdate:date>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(l_receiptdate), IsNotNull(l_commitdate), IsNotNull(l_suppkey), IsNotNull(l_orderkey)]
+ReadSchema: struct<l_orderkey:bigint,l_suppkey:bigint,l_commitdate:date,l_receiptdate:date>
 
 (10) InputAdapter
 Input [4]: [l_orderkey#6, l_suppkey#7, l_commitdate#8, l_receiptdate#9]
@@ -172,11 +178,11 @@ Arguments: [#10, #11, #8, #9]
 
 (11) NativeFilter
 Input [4]: [#10#6, #11#7, #8#8, #9#9]
-Arguments: ((((isnotnull(l_receiptdate#9) AND isnotnull(l_commitdate#8)) AND (l_receiptdate#9 > l_commitdate#8)) AND isnotnull(l_suppkey#7)) AND isnotnull(l_orderkey#6))
+Condition : ((((isnotnull(l_receiptdate#9) AND isnotnull(l_commitdate#8)) AND (l_receiptdate#9 > l_commitdate#8)) AND isnotnull(l_suppkey#7)) AND isnotnull(l_orderkey#6))
 
 (12) NativeProject
+Output [2]: [l_orderkey#6, l_suppkey#7]
 Input [4]: [#10#6, #11#7, #8#8, #9#9]
-Arguments: [l_orderkey#6, l_suppkey#7]
 
 (13) NativeShuffleExchange
 Input [2]: [l_orderkey#6, l_suppkey#7]
@@ -197,9 +203,11 @@ Input [2]: [l_orderkey#6, l_suppkey#7]
 Input [2]: [l_orderkey#6, l_suppkey#7]
 Arguments: [l_orderkey#6 ASC NULLS FIRST], false
 
-(18) NativeParquetScan 
+(92) Scan parquet 
 Output [2]: [l_orderkey#12, l_suppkey#13]
-Arguments: FileScan parquet [l_orderkey#12,l_suppkey#13] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [], ReadSchema: struct<l_orderkey:bigint,l_suppkey:bigint>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+ReadSchema: struct<l_orderkey:bigint,l_suppkey:bigint>
 
 (19) InputAdapter
 Input [2]: [l_orderkey#12, l_suppkey#13]
@@ -230,9 +238,12 @@ Right keys [1]: [l_orderkey#12]
 Join type: LeftSemi
 Join condition: NOT (l_suppkey#13 = l_suppkey#7)
 
-(26) NativeParquetScan 
+(96) Scan parquet 
 Output [4]: [l_orderkey#16, l_suppkey#17, l_commitdate#18, l_receiptdate#19]
-Arguments: FileScan parquet [l_orderkey#16,l_suppkey#17,l_commitdate#18,l_receiptdate#19] Batched: true, DataFilters: [isnotnull(l_receiptdate#19), isnotnull(l_commitdate#18), (l_receiptdate#19 > l_commitdate#..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_receiptdate), IsNotNull(l_commitdate)], ReadSchema: struct<l_orderkey:bigint,l_suppkey:bigint,l_commitdate:date,l_receiptdate:date>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(l_receiptdate), IsNotNull(l_commitdate)]
+ReadSchema: struct<l_orderkey:bigint,l_suppkey:bigint,l_commitdate:date,l_receiptdate:date>
 
 (27) InputAdapter
 Input [4]: [l_orderkey#16, l_suppkey#17, l_commitdate#18, l_receiptdate#19]
@@ -240,11 +251,11 @@ Arguments: [#20, #21, #18, #19]
 
 (28) NativeFilter
 Input [4]: [#20#16, #21#17, #18#18, #19#19]
-Arguments: ((isnotnull(l_receiptdate#19) AND isnotnull(l_commitdate#18)) AND (l_receiptdate#19 > l_commitdate#18))
+Condition : ((isnotnull(l_receiptdate#19) AND isnotnull(l_commitdate#18)) AND (l_receiptdate#19 > l_commitdate#18))
 
 (29) NativeProject
+Output [2]: [l_orderkey#16, l_suppkey#17]
 Input [4]: [#20#16, #21#17, #18#18, #19#19]
-Arguments: [l_orderkey#16, l_suppkey#17]
 
 (30) NativeShuffleExchange
 Input [2]: [l_orderkey#16, l_suppkey#17]
@@ -300,8 +311,8 @@ Join type: Inner
 Join condition: None
 
 (43) NativeProject
+Output [3]: [s_name#2, s_nationkey#3, l_orderkey#6]
 Input [5]: [#4#1, #2#2, #5#3, l_orderkey#6, l_suppkey#7]
-Arguments: [s_name#2, s_nationkey#3, l_orderkey#6]
 
 (44) NativeShuffleExchange
 Input [3]: [s_name#2, s_nationkey#3, l_orderkey#6]
@@ -322,9 +333,12 @@ Input [3]: [s_name#2, s_nationkey#3, l_orderkey#6]
 Input [3]: [s_name#2, s_nationkey#3, l_orderkey#6]
 Arguments: [l_orderkey#6 ASC NULLS FIRST], false
 
-(49) NativeParquetScan 
+(108) Scan parquet 
 Output [2]: [o_orderkey#22, o_orderstatus#23]
-Arguments: FileScan parquet [o_orderkey#22,o_orderstatus#23] Batched: true, DataFilters: [isnotnull(o_orderstatus#23), (o_orderstatus#23 = F), isnotnull(o_orderkey#22)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(o_orderstatus), EqualTo(o_orderstatus,F), IsNotNull(o_orderkey)], ReadSchema: struct<o_orderkey:bigint,o_orderstatus:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(o_orderstatus), EqualTo(o_orderstatus,F), IsNotNull(o_orderkey)]
+ReadSchema: struct<o_orderkey:bigint,o_orderstatus:string>
 
 (50) InputAdapter
 Input [2]: [o_orderkey#22, o_orderstatus#23]
@@ -332,11 +346,11 @@ Arguments: [#24, #23]
 
 (51) NativeFilter
 Input [2]: [#24#22, #23#23]
-Arguments: ((isnotnull(o_orderstatus#23) AND (o_orderstatus#23 = F)) AND isnotnull(o_orderkey#22))
+Condition : ((isnotnull(o_orderstatus#23) AND (o_orderstatus#23 = F)) AND isnotnull(o_orderkey#22))
 
 (52) NativeProject
+Output [1]: [o_orderkey#22]
 Input [2]: [#24#22, #23#23]
-Arguments: [o_orderkey#22]
 
 (53) NativeShuffleExchange
 Input [1]: [o_orderkey#22]
@@ -364,8 +378,8 @@ Join type: Inner
 Join condition: None
 
 (59) NativeProject
+Output [2]: [s_name#2, s_nationkey#3]
 Input [4]: [s_name#2, s_nationkey#3, l_orderkey#6, o_orderkey#22]
-Arguments: [s_name#2, s_nationkey#3]
 
 (60) NativeShuffleExchange
 Input [2]: [s_name#2, s_nationkey#3]
@@ -386,9 +400,12 @@ Input [2]: [s_name#2, s_nationkey#3]
 Input [2]: [s_name#2, s_nationkey#3]
 Arguments: [s_nationkey#3 ASC NULLS FIRST], false
 
-(65) NativeParquetScan 
+(117) Scan parquet 
 Output [2]: [n_nationkey#25, n_name#26]
-Arguments: FileScan parquet [n_nationkey#25,n_name#26] Batched: true, DataFilters: [isnotnull(n_name#26), (n_name#26 = SAUDI ARABIA), isnotnull(n_nationkey#25)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(n_name), EqualTo(n_name,SAUDI ARABIA), IsNotNull(n_nationkey)], ReadSchema: struct<n_nationkey:bigint,n_name:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(n_name), EqualTo(n_name,SAUDI ARABIA), IsNotNull(n_nationkey)]
+ReadSchema: struct<n_nationkey:bigint,n_name:string>
 
 (66) InputAdapter
 Input [2]: [n_nationkey#25, n_name#26]
@@ -396,11 +413,11 @@ Arguments: [#27, #26]
 
 (67) NativeFilter
 Input [2]: [#27#25, #26#26]
-Arguments: ((isnotnull(n_name#26) AND (n_name#26 = SAUDI ARABIA)) AND isnotnull(n_nationkey#25))
+Condition : ((isnotnull(n_name#26) AND (n_name#26 = SAUDI ARABIA)) AND isnotnull(n_nationkey#25))
 
 (68) NativeProject
+Output [1]: [n_nationkey#25]
 Input [2]: [#27#25, #26#26]
-Arguments: [n_nationkey#25]
 
 (69) NativeShuffleExchange
 Input [1]: [n_nationkey#25]
@@ -428,8 +445,8 @@ Join type: Inner
 Join condition: None
 
 (75) NativeProject
+Output [1]: [s_name#2]
 Input [3]: [s_name#2, s_nationkey#3, n_nationkey#25]
-Arguments: [s_name#2]
 
 (76) NativeHashAggregate
 Input [1]: [s_name#2]
@@ -461,8 +478,8 @@ Aggregate Attributes [1]: [count(1)#30]
 Results [2]: [s_name#2, count(1)#30]
 
 (82) NativeProject
+Output [2]: [s_name#2, count(1)#30 AS numwait#31]
 Input [2]: [s_name#2, count(1)#30]
-Arguments: [s_name#2, count(1)#30 AS numwait#31]
 
 (83) Scan parquet 
 Output [3]: [s_suppkey#1, s_name#2, s_nationkey#3]

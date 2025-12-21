@@ -101,6 +101,8 @@ object NativeConverters extends Logging {
     AuronConverters.getBooleanConf("spark.auron.datetime.extract.enabled", defaultValue = false)
   def castTrimStringEnabled: Boolean =
     AuronConverters.getBooleanConf("spark.auron.cast.trimString", defaultValue = true)
+  def singleChildFallbackEnabled: Boolean =
+    AuronConverters.getBooleanConf("spark.auron.expression.singleChildFallback.enabled", defaultValue = true)
 
   /**
    * Is the data type(scalar or complex) supported by Auron.
@@ -288,6 +290,10 @@ object NativeConverters extends Logging {
       throw new NotImplementedError(s"unsupported expression: (${e.getClass}) $e")
     }
 
+    if (!singleChildFallbackEnabled) {
+      return convertExprWithFallback(sparkExpr, isPruningExpr = false, fallbackToError)
+    }
+
     try {
       // get number of inconvertible children
       var numInconvertibleChildren = 0
@@ -306,7 +312,7 @@ object NativeConverters extends Logging {
       //  N - fallback the whole expression
       numInconvertibleChildren match {
         case 0 => convertExprWithFallback(sparkExpr, isPruningExpr = false, fallbackToError)
-        case 100 =>
+        case 1 =>
           val childrenConverted = sparkExpr.mapChildren { child =>
             try {
               val converted =
@@ -325,7 +331,6 @@ object NativeConverters extends Logging {
     } catch {
       case e: NotImplementedError =>
         logWarning(s"Falling back expression: $e")
-        fallbackToError(sparkExpr)
 
         // update subquery result if needed
         sparkExpr.foreach {
@@ -964,8 +969,7 @@ object NativeConverters extends Logging {
               .setExpr(convertExprWithFallback(expr, isPruningExpr, fallback))
               .setInfix(infix.toString)))
 
-      case Substring(str, Literal(pos, IntegerType), Literal(len, IntegerType))
-          if pos.asInstanceOf[Int] > 0 && len.asInstanceOf[Int] >= 0 =>
+      case Substring(str, Literal(pos, IntegerType), Literal(len, IntegerType)) =>
         val longPos = pos.asInstanceOf[Int].toLong
         val longLen = len.asInstanceOf[Int].toLong
         buildScalarFunction(

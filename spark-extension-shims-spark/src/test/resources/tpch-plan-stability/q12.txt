@@ -52,9 +52,12 @@ AdaptiveSparkPlan (49)
                                  +- Scan parquet  (37)
 
 
-(1) NativeParquetScan 
+(33) Scan parquet 
 Output [2]: [o_orderkey#1, o_orderpriority#2]
-Arguments: FileScan parquet [o_orderkey#1,o_orderpriority#2] Batched: true, DataFilters: [isnotnull(o_orderkey#1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(o_orderkey)], ReadSchema: struct<o_orderkey:bigint,o_orderpriority:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(o_orderkey)]
+ReadSchema: struct<o_orderkey:bigint,o_orderpriority:string>
 
 (2) InputAdapter
 Input [2]: [o_orderkey#1, o_orderpriority#2]
@@ -62,7 +65,7 @@ Arguments: [#3, #2]
 
 (3) NativeFilter
 Input [2]: [#3#1, #2#2]
-Arguments: isnotnull(o_orderkey#1)
+Condition : isnotnull(o_orderkey#1)
 
 (4) NativeShuffleExchange
 Input [2]: [#3#1, #2#2]
@@ -83,9 +86,12 @@ Input [2]: [#3#1, #2#2]
 Input [2]: [#3#1, #2#2]
 Arguments: [o_orderkey#1 ASC NULLS FIRST], false
 
-(9) NativeParquetScan 
+(37) Scan parquet 
 Output [5]: [l_orderkey#4, l_shipdate#5, l_commitdate#6, l_receiptdate#7, l_shipmode#8]
-Arguments: FileScan parquet [l_orderkey#4,l_shipdate#5,l_commitdate#6,l_receiptdate#7,l_shipmode#8] Batched: true, DataFilters: [isnotnull(l_commitdate#6), isnotnull(l_receiptdate#7), isnotnull(l_shipdate#5), l_shipmode#8..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_commitdate), IsNotNull(l_receiptdate), IsNotNull(l_shipdate), In(l_shipmode, [MAIL,S..., ReadSchema: struct<l_orderkey:bigint,l_shipdate:date,l_commitdate:date,l_receiptdate:date,l_shipmode:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(l_commitdate), IsNotNull(l_receiptdate), IsNotNull(l_shipdate), In(l_shipmode, [MAIL,SHIP]), GreaterThanOrEqual(l_receiptdate,1994-01-01), LessThan(l_receiptdate,1995-01-01), IsNotNull(l_orderkey)]
+ReadSchema: struct<l_orderkey:bigint,l_shipdate:date,l_commitdate:date,l_receiptdate:date,l_shipmode:string>
 
 (10) InputAdapter
 Input [5]: [l_orderkey#4, l_shipdate#5, l_commitdate#6, l_receiptdate#7, l_shipmode#8]
@@ -93,11 +99,11 @@ Arguments: [#9, #5, #6, #7, #8]
 
 (11) NativeFilter
 Input [5]: [#9#4, #5#5, #6#6, #7#7, #8#8]
-Arguments: ((((((((isnotnull(l_commitdate#6) AND isnotnull(l_receiptdate#7)) AND isnotnull(l_shipdate#5)) AND l_shipmode#8 IN (MAIL,SHIP)) AND (l_commitdate#6 < l_receiptdate#7)) AND (l_shipdate#5 < l_commitdate#6)) AND (l_receiptdate#7 >= 1994-01-01)) AND (l_receiptdate#7 < 1995-01-01)) AND isnotnull(l_orderkey#4))
+Condition : ((((((((isnotnull(l_commitdate#6) AND isnotnull(l_receiptdate#7)) AND isnotnull(l_shipdate#5)) AND l_shipmode#8 IN (MAIL,SHIP)) AND (l_commitdate#6 < l_receiptdate#7)) AND (l_shipdate#5 < l_commitdate#6)) AND (l_receiptdate#7 >= 1994-01-01)) AND (l_receiptdate#7 < 1995-01-01)) AND isnotnull(l_orderkey#4))
 
 (12) NativeProject
+Output [2]: [l_orderkey#4, l_shipmode#8]
 Input [5]: [#9#4, #5#5, #6#6, #7#7, #8#8]
-Arguments: [l_orderkey#4, l_shipmode#8]
 
 (13) NativeShuffleExchange
 Input [2]: [l_orderkey#4, l_shipmode#8]
@@ -125,12 +131,12 @@ Join type: Inner
 Join condition: None
 
 (19) NativeProject
+Output [2]: [o_orderpriority#2, l_shipmode#8]
 Input [4]: [#3#1, #2#2, l_orderkey#4, l_shipmode#8]
-Arguments: [o_orderpriority#2, l_shipmode#8]
 
 (20) NativeProject
+Output [3]: [l_shipmode#8 AS l_shipmode#8, CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END AS _c1#10, CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END AS _c2#11]
 Input [2]: [o_orderpriority#2, l_shipmode#8]
-Arguments: [l_shipmode#8 AS l_shipmode#8, CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END AS _c1#10, CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END AS _c2#11]
 
 (21) NativeHashAggregate
 Input [3]: [l_shipmode#8, _c1#10, _c2#11]
@@ -162,8 +168,8 @@ Aggregate Attributes [2]: [sum(CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_o
 Results [3]: [l_shipmode#8, sum(CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#15, sum(CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#16]
 
 (27) NativeProject
+Output [3]: [l_shipmode#8, sum(CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#15 AS high_line_count#17, sum(CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#16 AS low_line_count#18]
 Input [3]: [l_shipmode#8, sum(CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#15, sum(CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#16]
-Arguments: [l_shipmode#8, sum(CASE WHEN ((o_orderpriority#2 = 1-URGENT) OR (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#15 AS high_line_count#17, sum(CASE WHEN (NOT (o_orderpriority#2 = 1-URGENT) AND NOT (o_orderpriority#2 = 2-HIGH)) THEN 1 ELSE 0 END)#16 AS low_line_count#18]
 
 (28) NativeShuffleExchange
 Input [3]: [l_shipmode#8, high_line_count#17, low_line_count#18]

@@ -24,21 +24,6 @@ import org.apache.auron.util.AuronTestUtils
 class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQLTestHelper {
   import testImplicits._
 
-  test("global/local limit") {
-    withTempView("t1") {
-      sql("create table t1(id INT) using parquet")
-      sql("insert into t1 values(1),(2),(3),(3),(3),(4),(5),(6),(7),(8),(9),(10)")
-
-      val df = spark.sql(s"""SELECT * FROM (
-           |   SELECT * FROM t1 LIMIT 10
-           |) WHERE id != 0 LIMIT 5;
-           |""".stripMargin)
-      df.collect()
-      println(df.queryExecution.executedPlan)
-      Thread.sleep(1000000)
-    }
-  }
-
   test("test partition path has url encoded character") {
     withTable("t1") {
       sql(
@@ -186,8 +171,10 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
 
   test("floor function with long input") {
     withTable("t1") {
-      sql("create table t1 using parquet as select 1L as c1, 2.2 as c2")
-      checkSparkAnswerAndOperator("select floor(c1), floor(c2) from t1")
+      withSQLConf("spark.auron.expression.singleChildFallback.enabled" -> "false") {
+        sql("create table t1 using parquet as select 1L as c1, 2.2 as c2")
+        checkSparkAnswerAndOperator("select floor(c1), floor(c2) from t1")
+      }
     }
   }
 

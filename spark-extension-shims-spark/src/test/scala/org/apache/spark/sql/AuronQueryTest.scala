@@ -16,13 +16,13 @@
  */
 package org.apache.spark.sql
 
-import java.util.concurrent.atomic.AtomicInteger
+import org.apache.auron.test.FallbackUtil
 
+import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger}
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
 import scala.util.{Success, Try}
-
 import org.apache.hadoop.fs.Path
 import org.apache.parquet.column.ParquetProperties
 import org.apache.parquet.example.data.Group
@@ -48,6 +48,13 @@ abstract class AuronQueryTest
     with SQLTestUtils
     with BeforeAndAfterEach
     with AdaptiveSparkPlanHelper {
+
+  private val isFallbackCheckDisabled0 = new AtomicBoolean(false)
+
+  final protected def disableFallbackCheck: Boolean =
+    isFallbackCheckDisabled0.compareAndSet(false, true)
+
+  protected def needCheckFallback: Boolean = !isFallbackCheckDisabled0.get()
 
   /**
    * Assert results match vanilla Spark, skip operator checks.
@@ -99,11 +106,23 @@ abstract class AuronQueryTest
       if (!unsupportedOperators.isEmpty) {
         fail(s"""
                 |Found non-native operators: ${unsupportedOperators.mkString(", ")}
-                |plan: ${plan}""".stripMargin)
+                |plan:
+                |${plan}""".stripMargin)
       }
     }
 
+    if(needCheckFallback) {
+      checkFallBack(dfAuron)
+    }
+
     dfAuron
+  }
+
+  def checkFallBack(df: DataFrame): Unit = {
+    val hasFallbacks = FallbackUtil.hasFallback(df.queryExecution.executedPlan)
+    assert(!hasFallbacks,
+      s"""FallBack check error:
+         |${df.queryExecution.executedPlan}""".stripMargin)
   }
 
   protected def isNativeOrPassThrough(op: SparkPlan): Boolean = op match {

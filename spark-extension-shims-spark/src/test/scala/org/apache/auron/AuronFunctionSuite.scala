@@ -599,4 +599,19 @@ class AuronFunctionSuite extends AuronQueryTest with BaseAuronSQLSuite {
       }
     }
   }
+
+  test("substring") {
+    withSQLConf("spark.auron.expression.singleChildFallback.enabled" -> "false") {
+      withTable("t1") {
+        sql("create table t1 (_1 INT, _2 STRING) using parquet")
+        sql("insert into t1 values(1, '123456'), (2, 'abcAFÉdefghi世jkaße界')")
+        Seq((0, 0), (0, 5), (1, 0), (3, 20), (-1, 10), (-2, 20)).foreach {
+          case (pos, len) => {
+            checkSparkAnswerAndOperator(s"select substring(_2, $pos) from t1")
+            checkSparkAnswerAndOperator(s"SELECT _1, substring(_2, $pos, $len) FROM t1")
+          }
+        }
+      }
+    }
+  }
 }

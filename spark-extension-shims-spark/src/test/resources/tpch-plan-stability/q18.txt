@@ -109,9 +109,12 @@ AdaptiveSparkPlan (106)
                                     +- Scan parquet  (93)
 
 
-(1) NativeParquetScan 
+(67) Scan parquet 
 Output [2]: [c_custkey#1, c_name#2]
-Arguments: FileScan parquet [c_custkey#1,c_name#2] Batched: true, DataFilters: [isnotnull(c_custkey#1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(c_custkey)], ReadSchema: struct<c_custkey:bigint,c_name:string>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(c_custkey)]
+ReadSchema: struct<c_custkey:bigint,c_name:string>
 
 (2) InputAdapter
 Input [2]: [c_custkey#1, c_name#2]
@@ -119,7 +122,7 @@ Arguments: [#3, #2]
 
 (3) NativeFilter
 Input [2]: [#3#1, #2#2]
-Arguments: isnotnull(c_custkey#1)
+Condition : isnotnull(c_custkey#1)
 
 (4) NativeShuffleExchange
 Input [2]: [#3#1, #2#2]
@@ -140,9 +143,12 @@ Input [2]: [#3#1, #2#2]
 Input [2]: [#3#1, #2#2]
 Arguments: [c_custkey#1 ASC NULLS FIRST], false
 
-(9) NativeParquetScan 
+(71) Scan parquet 
 Output [4]: [o_orderkey#4, o_custkey#5, o_totalprice#6, o_orderdate#7]
-Arguments: FileScan parquet [o_orderkey#4,o_custkey#5,o_totalprice#6,o_orderdate#7] Batched: true, DataFilters: [isnotnull(o_custkey#5), isnotnull(o_orderkey#4)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(o_custkey), IsNotNull(o_orderkey)], ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_totalprice:decimal(12,2),o_orderdate:date>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(o_custkey), IsNotNull(o_orderkey)]
+ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_totalprice:decimal(12,2),o_orderdate:date>
 
 (10) InputAdapter
 Input [4]: [o_orderkey#4, o_custkey#5, o_totalprice#6, o_orderdate#7]
@@ -150,7 +156,7 @@ Arguments: [#8, #9, #6, #7]
 
 (11) NativeFilter
 Input [4]: [#8#4, #9#5, #6#6, #7#7]
-Arguments: (isnotnull(o_custkey#5) AND isnotnull(o_orderkey#4))
+Condition : (isnotnull(o_custkey#5) AND isnotnull(o_orderkey#4))
 
 (12) NativeShuffleExchange
 Input [4]: [#8#4, #9#5, #6#6, #7#7]
@@ -171,9 +177,11 @@ Input [4]: [#8#4, #9#5, #6#6, #7#7]
 Input [4]: [#8#4, #9#5, #6#6, #7#7]
 Arguments: [o_orderkey#4 ASC NULLS FIRST], false
 
-(17) NativeParquetScan 
+(75) Scan parquet 
 Output [2]: [l_orderkey#10, l_quantity#11]
-Arguments: FileScan parquet [l_orderkey#10,l_quantity#11] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [], ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
 
 (18) InputAdapter
 Input [2]: [l_orderkey#10, l_quantity#11]
@@ -209,16 +217,16 @@ Aggregate Attributes [1]: [sum(l_quantity#11)#16]
 Results [2]: [l_orderkey#10, sum(l_quantity#11)#16]
 
 (25) NativeProject
+Output [2]: [l_orderkey#10, sum(l_quantity#11)#16 AS sum(l_quantity#17)#18]
 Input [2]: [l_orderkey#10, sum(l_quantity#11)#16]
-Arguments: [l_orderkey#10, sum(l_quantity#11)#16 AS sum(l_quantity#17)#18]
 
 (26) NativeFilter
 Input [2]: [l_orderkey#10, sum(l_quantity#17)#18]
-Arguments: (isnotnull(sum(l_quantity#17)#18) AND (sum(l_quantity#17)#18 > 300.00))
+Condition : (isnotnull(sum(l_quantity#17)#18) AND (sum(l_quantity#17)#18 > 300.00))
 
 (27) NativeProject
+Output [1]: [l_orderkey#10]
 Input [2]: [l_orderkey#10, sum(l_quantity#17)#18]
-Arguments: [l_orderkey#10]
 
 (28) NativeSort
 Input [1]: [l_orderkey#10]
@@ -256,8 +264,8 @@ Join type: Inner
 Join condition: None
 
 (36) NativeProject
+Output [5]: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7]
 Input [6]: [#3#1, #2#2, #8#4, #9#5, #6#6, #7#7]
-Arguments: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7]
 
 (37) NativeShuffleExchange
 Input [5]: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7]
@@ -278,9 +286,12 @@ Input [5]: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7]
 Input [5]: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7]
 Arguments: [o_orderkey#4 ASC NULLS FIRST], false
 
-(42) NativeParquetScan 
+(89) Scan parquet 
 Output [2]: [l_orderkey#19, l_quantity#17]
-Arguments: FileScan parquet [l_orderkey#19,l_quantity#17] Batched: true, DataFilters: [isnotnull(l_orderkey#19)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(l_orderkey)], ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(l_orderkey)]
+ReadSchema: struct<l_orderkey:bigint,l_quantity:decimal(12,2)>
 
 (43) InputAdapter
 Input [2]: [l_orderkey#19, l_quantity#17]
@@ -288,7 +299,7 @@ Arguments: [#20, #17]
 
 (44) NativeFilter
 Input [2]: [#20#19, #17#17]
-Arguments: isnotnull(l_orderkey#19)
+Condition : isnotnull(l_orderkey#19)
 
 (45) NativeShuffleExchange
 Input [2]: [#20#19, #17#17]
@@ -335,16 +346,16 @@ Aggregate Attributes [1]: [sum(l_quantity#11)#16]
 Results [2]: [l_orderkey#10, sum(l_quantity#11)#16]
 
 (56) NativeProject
+Output [2]: [l_orderkey#10, sum(l_quantity#11)#16 AS sum(l_quantity#17)#18]
 Input [2]: [l_orderkey#10, sum(l_quantity#11)#16]
-Arguments: [l_orderkey#10, sum(l_quantity#11)#16 AS sum(l_quantity#17)#18]
 
 (57) NativeFilter
 Input [2]: [l_orderkey#10, sum(l_quantity#17)#18]
-Arguments: (isnotnull(sum(l_quantity#17)#18) AND (sum(l_quantity#17)#18 > 300.00))
+Condition : (isnotnull(sum(l_quantity#17)#18) AND (sum(l_quantity#17)#18 > 300.00))
 
 (58) NativeProject
+Output [1]: [l_orderkey#10]
 Input [2]: [l_orderkey#10, sum(l_quantity#17)#18]
-Arguments: [l_orderkey#10]
 
 (59) NativeSort
 Input [1]: [l_orderkey#10]
@@ -363,8 +374,8 @@ Join type: Inner
 Join condition: None
 
 (62) NativeProject
+Output [6]: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7, l_quantity#17]
 Input [7]: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7, #20#19, #17#17]
-Arguments: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7, l_quantity#17]
 
 (63) NativeHashAggregate
 Input [6]: [c_custkey#1, c_name#2, o_orderkey#4, o_totalprice#6, o_orderdate#7, l_quantity#17]
@@ -381,12 +392,12 @@ Aggregate Attributes [1]: [sum(l_quantity#17)#25]
 Results [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum(l_quantity#17)#25]
 
 (65) NativeProject
+Output [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum(l_quantity#17)#25 AS sum(l_quantity)#26]
 Input [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum(l_quantity#17)#25]
-Arguments: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum(l_quantity#17)#25 AS sum(l_quantity)#26]
 
 (66) NativeTakeOrdered
 Input [6]: [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum(l_quantity)#26]
-Arguments: X, [o_totalprice#6 DESC NULLS LAST, o_orderdate#7 ASC NULLS FIRST]
+Arguments: X, [o_totalprice#6 DESC NULLS LAST, o_orderdate#7 ASC NULLS FIRST], [c_name#2, c_custkey#1, o_orderkey#4, o_orderdate#7, o_totalprice#6, sum(l_quantity)#26]
 
 (67) Scan parquet 
 Output [2]: [c_custkey#1, c_name#2]

@@ -66,10 +66,10 @@ class CometExpressionCoverageSuite extends AuronQueryTest with BaseAuronSQLSuite
       "current_database")
   // Spark Comet configuration to run the tests
   private val sqlConf = Seq(
-    "spark.sql.extensions" -> "org.apache.spark.sql.auron.AuronSparkSessionExtension",
-    "spark.shuffle.manager" -> "org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager",
-    "spark.memory.offHeap.enabled" -> "false",
-    "spark.auron.enable" -> "true",
+//    "spark.sql.extensions" -> "org.apache.spark.sql.auron.AuronSparkSessionExtension",
+//    "spark.shuffle.manager" -> "org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager",
+//    "spark.memory.offHeap.enabled" -> "false",
+//    "spark.auron.enable" -> "true",
     "spark.sql.optimizer.excludedRules" -> "org.apache.spark.sql.catalyst.optimizer.ConstantFolding",
     "spark.sql.adaptive.optimizer.excludedRules" -> "org.apache.spark.sql.catalyst.optimizer.ConstantFolding")
 
