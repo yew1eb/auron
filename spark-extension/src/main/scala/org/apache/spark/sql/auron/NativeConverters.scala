@@ -1111,6 +1111,10 @@ object NativeConverters extends Logging {
           _.setRowNumExpr(pb.RowNumExprNode.newBuilder())
         }
 
+      // misc funcs
+      case e: MonotonicallyIncreasingID =>
+        buildExtScalarFunction("Spark_MonotonicallyIncreasingID", e.children, e.dataType)
+
       // hive UDFJson
       case e
           if udfJsonEnabled && (

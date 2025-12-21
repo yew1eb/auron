@@ -489,4 +489,14 @@ class AuronFunctionSuite extends AuronQueryTest with BaseAuronSQLSuite {
       }
     }
   }
+
+  test("monotonically_increasing_id function") {
+    withTable("t1") {
+      sql(s"CREATE TABLE t1(id INT) USING parquet PARTITIONED BY (part STRING)")
+      sql("INSERT INTO t1 PARTITION (part = 'a') VALUES (1), (3), (5)")
+      sql("INSERT INTO t1 PARTITION (part = 'b') VALUES (2), (4), (6)")
+      checkSparkAnswerAndOperator("SELECT part, monotonically_increasing_id() AS incr_id FROM t1 ORDER BY part, incr_id")
+      // spark.sql("SELECT part, monotonically_increasing_id() AS incr_id FROM t1 ORDER BY part, incr_id").show()
+    }
+  }
 }

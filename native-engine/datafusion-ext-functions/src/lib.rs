@@ -33,6 +33,7 @@ mod spark_null_if;
 mod spark_round;
 mod spark_strings;
 mod spark_unscaled_value;
+mod spark_monotonically_increasing_id;
 
 pub fn create_auron_ext_function(name: &str) -> Result<ScalarFunctionImplementation> {
     // auron ext functions, if used for spark should be start with 'Spark_',
@@ -79,6 +80,7 @@ pub fn create_auron_ext_function(name: &str) -> Result<ScalarFunctionImplementat
             Arc::new(spark_normalize_nan_and_zero::spark_normalize_nan_and_zero)
         }
         "Spark_IsNaN" => Arc::new(spark_isnan::spark_isnan),
+        "Spark_MonotonicallyIncreasingID" => Arc::new(spark_monotonically_increasing_id::monotonically_increasing_id),
         _ => df_unimplemented_err!("spark ext function not implemented: {name}")?,
     })
 }
