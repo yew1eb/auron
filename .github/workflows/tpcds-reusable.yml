@@ -245,10 +245,6 @@ jobs:
         run: |
           ls -la
           cp auron-*${{ inputs.sparkver }}_${{ inputs.scalaver }}*.jar spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}/jars/
-          AURON_JAR=$(ls auron-${{ inputs.sparkver }}_${{ inputs.scalaver }}-pre-*.jar)
-          mvn install:install-file -Dfile="$AURON_JAR" -DgroupId=org.apache.auron \
-            -DartifactId=auron-assembly-${{ inputs.sparkver }}_${{ inputs.scalaver }} \
-            -Dversion=${{ steps.get-dependency-version.outputs.projectversion }} -Dpackaging=jar
 
       - name: Setup Java and Maven cache
         uses: actions/setup-java@v4
@@ -360,6 +356,15 @@ jobs:
           export SPARK_TPCDS_EXTRA_CONF="${{ inputs.extrasparkconf }}"
           export SPARK_TPCDS_DATA=${{ github.workspace }}/dev/tpcds_1g
           export SPARK_TPCDS_QUERY=${{ matrix.query }}
+
+          if [ -n "${{ inputs.celebornver }}" ]; then
+            RSS_PROFILE="-Pceleborn,${{ inputs.celebornver }}"
+          fi
+          if [ -n "${{ inputs.unifflever }}" ]; then
+            RSS_PROFILE="-Puniffle,${{ inputs.unifflever }}"
+          fi
+          
+          ./build/mvn install -Ppre -P${{ inputs.sparkver }} -P${{ inputs.scalaver }} ${RSS_PROFILE} -DskipTests -Drat.skip=true -Dscalafix.skip=true
 
           cd dev/auron-it
           ${{ github.workspace }}/build/mvn -Ppre -P${{ inputs.sparkver }} -Pscala-${{ inputs.scalaver }} \
