@@ -356,17 +356,8 @@ jobs:
           ls -la uniffle-bin-${{ steps.get-dependency-version.outputs.uniffleversion }}/jars/client/spark3/
           cp uniffle-bin-${{ steps.get-dependency-version.outputs.uniffleversion }}/jars/client/spark3/*.jar spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}/jars/
 
-      - name: Run TPC-DS Query ${{ matrix.query }}
+      - name: Install auron (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
         run: |
-          ls -la
-          export RUST_LOG=ERROR
-          export RUST_BACKTRACE=1
-          export SCALA_VERSION=${{ inputs.scalaver }}
-          export SPARK_HOME=spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
-          export SPARK_TPCDS_EXTRA_CONF="${{ inputs.extrasparkconf }}"
-          export SPARK_TPCDS_DATA=${{ github.workspace }}/dev/tpcds_1g
-          export SPARK_TPCDS_QUERY=${{ matrix.query }}
-
           SPARK_NUMBER="${{ inputs.sparkver }}"
           SPARK_NUMBER="${SPARK_NUMBER#spark-}"
 
@@ -374,7 +365,7 @@ jobs:
           if [ -n "${{ inputs.celebornver }}" ]; then
             CELEBORN_NUMBER="${CELEBORN_NUMBER#celeborn-}"
           fi
-          
+
           UNIFFLE_NUMBER="${{ inputs.unifflever }}"
           if [ -n "${{ inputs.unifflever }}" ]; then
             UNIFFLE_NUMBER="${UNIFFLE_NUMBER#uniffle-}"
@@ -388,13 +379,24 @@ jobs:
             CMD="$CMD --uniffle $UNIFFLE_NUMBER"
           fi
           echo "Running: $CMD"
-          $CMD
-          
-          echo "Running: AuronTPCDSV1Suite"
+          exec $CMD
+
+      - name: Run TPC-DS Query ${{ matrix.query }}
+        run: |
+          ls -la
+          export RUST_LOG=ERROR
+          export RUST_BACKTRACE=1
+          export SCALA_VERSION=${{ inputs.scalaver }}
+          export SPARK_HOME=spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
+          export SPARK_TPCDS_EXTRA_CONF="${{ inputs.extrasparkconf }}"
+          export SPARK_TPCDS_DATA=${{ github.workspace }}/dev/tpcds_1g
+          export SPARK_TPCDS_QUERY=${{ matrix.query }}
+
           cd dev/auron-it
-          ${{ github.workspace }}/build/mvn -Ppre -P${{ inputs.sparkver }} -Pscala-${{ inputs.scalaver }} \
-            -Pjdk-${{ inputs.javaver }} -P ${{ inputs.hadoop-profile }} \
-            -Dsuites=org.apache.auron.integration.AuronTPCDSV1Suite test
+          CMD="${{ github.workspace }}/build/mvn -Ppre -P${{ inputs.sparkver }} -Pscala-${{ inputs.scalaver }} -Pjdk-${{ inputs.javaver }} -P ${{ inputs.hadoop-profile }} "
+          CMD="$CMD -Dsuites=org.apache.auron.integration.AuronTPCDSV1Suite test"
+          echo "Running: $CMD"
+          exec $CMD
 
       - name: Upload RSS log
         if: ${{ failure() && (inputs.celebornver != '' || inputs.unifflever != '') }}
