@@ -369,6 +369,17 @@ jobs:
 
           SPARK_NUMBER="${{ inputs.sparkver }}"
           SPARK_NUMBER="${SPARK_NUMBER#spark-}"
+
+          CELEBORN_NUMBER="${{ inputs.celebornver }}"
+          if [ -n "${{ inputs.celebornver }}" ]; then
+            CELEBORN_NUMBER="${CELEBORN_NUMBER#celeborn-}"
+          fi
+          
+          UNIFFLE_NUMBER="${{ inputs.unifflever }}"
+          if [ -n "${{ inputs.unifflever }}" ]; then
+            UNIFFLE_NUMBER="${UNIFFLE_NUMBER#uniffle-}"
+          fi
+
           CMD="./auron-build.sh --pre --sparkver $SPARK_NUMBER --scalaver ${{ inputs.scalaver }} --skiptests true"
           if [ -n "${{ inputs.celebornver }}" ]; then
             CMD="$CMD --celeborn $CELEBORN_NUMBER"
