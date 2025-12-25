@@ -374,7 +374,7 @@ jobs:
             RSS_PROFILE="-Puniffle,${{ inputs.unifflever }}"
           fi
           
-          ./build/mvn install -Ppre -P${{ inputs.sparkver }} -P${{ inputs.scalaver }} ${RSS_PROFILE} -DskipTests -Drat.skip=true -Dscalafix.skip=true
+          ./build/mvn install -U -Ppre -P${{ inputs.sparkver }} -P${{ inputs.scalaver }} ${RSS_PROFILE} -DskipTests -Drat.skip=true -Dscalafix.skip=true
 
           cd dev/auron-it
           ${{ github.workspace }}/build/mvn -Ppre -P${{ inputs.sparkver }} -Pscala-${{ inputs.scalaver }} \
