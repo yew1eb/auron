@@ -178,6 +178,13 @@ jobs:
             }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
           path: target/auron-${{ inputs.sparkver }}_${{ inputs.scalaver }}-pre-*.jar
           overwrite: true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: auron-deps-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
+            }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || ''
+            }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
+          path: /root/.m2/repository/org/apache/auron/
+          if-no-files-found: error
 
   run-tpcds-test:
     name: Run TPC-DS test ${{ matrix.query }}
@@ -356,33 +363,17 @@ jobs:
           ls -la uniffle-bin-${{ steps.get-dependency-version.outputs.uniffleversion }}/jars/client/spark3/
           cp uniffle-bin-${{ steps.get-dependency-version.outputs.uniffleversion }}/jars/client/spark3/*.jar spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}/jars/
 
-      - name: Install auron (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
-        run: |
-          SPARK_NUMBER="${{ inputs.sparkver }}"
-          SPARK_NUMBER="${SPARK_NUMBER#spark-}"
-
-          CELEBORN_NUMBER="${{ inputs.celebornver }}"
-          if [ -n "${{ inputs.celebornver }}" ]; then
-            CELEBORN_NUMBER="${CELEBORN_NUMBER#celeborn-}"
-          fi
-
-          UNIFFLE_NUMBER="${{ inputs.unifflever }}"
-          if [ -n "${{ inputs.unifflever }}" ]; then
-            UNIFFLE_NUMBER="${UNIFFLE_NUMBER#uniffle-}"
-          fi
-
-          CMD="./auron-build.sh --pre --sparkver $SPARK_NUMBER --scalaver ${{ inputs.scalaver }} --skiptests true"
-          if [ -n "${{ inputs.celebornver }}" ]; then
-            CMD="$CMD --celeborn $CELEBORN_NUMBER"
-          fi
-          if [ -n "${{ inputs.unifflever }}" ]; then
-            CMD="$CMD --uniffle $UNIFFLE_NUMBER"
-          fi
-          echo "Running: $CMD"
-          exec $CMD
+      - name: Download All auron Jar Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: auron-deps-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
+            }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || ''
+            }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
+          path: /root/.m2/repository/org/apache/auron/
 
       - name: Run TPC-DS Query ${{ matrix.query }}
         run: |
+          ls -l /root/.m2/repository/org/apache/auron/
           ls -la
           export RUST_LOG=ERROR
           export RUST_BACKTRACE=1
