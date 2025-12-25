@@ -100,8 +100,9 @@ jobs:
         run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - name: Build auron-${{ matrix.sparkver }}_${{ matrix.scalaver }}
+        env:
+          RUSTFLAGS: "-C opt-level=0" # No optimization for faster CI builds
         run: |
-          sed -i 's/opt-level = 1/opt-level = 0/g' Cargo.toml # use opt-level 0
           rm -f .build-checksum_*.cache
           build/mvn package -Prelease -P${{ matrix.sparkver }} -Pscala-${{ matrix.scalaver }} -DskipTests
 

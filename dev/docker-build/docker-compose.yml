@@ -30,7 +30,7 @@ services:
       - ./../../target-docker/build-helper-proto-target:/auron/dev/mvn-build-helper/proto/target:rw
       - ./../../target-docker/build-helper-assembly-target:/auron/dev/mvn-build-helper/assembly/target:rw
     environment:
-      RUSTFLAGS: "-C target-cpu=skylake"
+      RUSTFLAGS: "${RUSTFLAGS:-} -C target-cpu=skylake"
       AURON_BUILD_ARGS: "${AURON_BUILD_ARGS}"
     command: >
       bash -c '

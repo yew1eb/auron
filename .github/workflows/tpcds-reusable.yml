@@ -158,8 +158,9 @@ jobs:
           cargo test --workspace --all-features
 
       - name: Build auron (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
+        env:
+          RUSTFLAGS: "-C opt-level=0" # No optimization for faster CI builds
         run: |
-          sed -i 's/opt-level = 1/opt-level = 0/g' Cargo.toml # use opt-level 0
           rm -f .build-checksum_*.cache
           
           SPARK_NUMBER="${{ inputs.sparkver }}"
