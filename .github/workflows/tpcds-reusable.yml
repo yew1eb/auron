@@ -385,10 +385,10 @@ jobs:
           cd dev/auron-it
           CMD="${{ github.workspace }}/build/mvn -Ppre -P${{ inputs.sparkver }} -Pscala-${{ inputs.scalaver }} -Pjdk-${{ inputs.javaver }} -P${{ inputs.hadoop-profile }} "
           if [ -n "${{ inputs.celebornver }}" ]; then
-            CMD="$CMD -Pceleborn,celeborn-$CELEBORN_NUMBER"
+            CMD="$CMD -Pceleborn,${{ inputs.celebornver }}"
           fi
           if [ -n "${{ inputs.unifflever }}" ]; then
-            CMD="$CMD -Puniffle,uniffle-$UNIFFLE_NUMBER"
+            CMD="$CMD -Puniffle,${{ inputs.unifflever }}"
           fi
           CMD="$CMD -Dsuites=org.apache.auron.integration.AuronTPCDSV1Suite test"
           echo "Running: $CMD"
