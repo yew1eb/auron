@@ -388,8 +388,9 @@ jobs:
             CMD="$CMD --uniffle $UNIFFLE_NUMBER"
           fi
           echo "Running: $CMD"
-          exec $CMD
+          $CMD
           
+          echo "Running: AuronTPCDSV1Suite"
           cd dev/auron-it
           ${{ github.workspace }}/build/mvn -Ppre -P${{ inputs.sparkver }} -Pscala-${{ inputs.scalaver }} \
             -Pjdk-${{ inputs.javaver }} -P ${{ inputs.hadoop-profile }} \
