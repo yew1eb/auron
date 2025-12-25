@@ -346,5 +346,34 @@
         </dependency>
       </dependencies>
     </profile>
+
+    <profile>
+      <id>celeborn</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.celeborn</groupId>
+          <artifactId>celeborn-client-spark-3-shaded_${scalaVersion}</artifactId>
+          <version>${celebornVersion}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>uniffle</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.uniffle</groupId>
+          <artifactId>rss-client-spark3-shaded</artifactId>
+          <version>${uniffleVersion}</version>
+          <scope>provided</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.apache.logging.log4j</groupId>
+              <artifactId>log4j-slf4j-impl</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
 </project>
