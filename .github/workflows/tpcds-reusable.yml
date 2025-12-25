@@ -357,15 +357,18 @@ jobs:
           export SPARK_TPCDS_DATA=${{ github.workspace }}/dev/tpcds_1g
           export SPARK_TPCDS_QUERY=${{ matrix.query }}
 
+          SPARK_NUMBER="${{ inputs.sparkver }}"
+          SPARK_NUMBER="${SPARK_NUMBER#spark-}"
+          CMD="./auron-build.sh --pre --sparkver $SPARK_NUMBER --scalaver ${{ inputs.scalaver }} --skiptests true"
           if [ -n "${{ inputs.celebornver }}" ]; then
-            RSS_PROFILE="-Pceleborn,${{ inputs.celebornver }}"
+            CMD="$CMD --celeborn $CELEBORN_NUMBER"
           fi
           if [ -n "${{ inputs.unifflever }}" ]; then
-            RSS_PROFILE="-Puniffle,${{ inputs.unifflever }}"
+            CMD="$CMD --uniffle $UNIFFLE_NUMBER"
           fi
+          echo "Running: $CMD"
+          exec $CMD
           
-          ./build/mvn install -U -Ppre -P${{ inputs.sparkver }} -P${{ inputs.scalaver }} ${RSS_PROFILE} -DskipTests -Drat.skip=true -Dscalafix.skip=true
-
           cd dev/auron-it
           ${{ github.workspace }}/build/mvn -Ppre -P${{ inputs.sparkver }} -Pscala-${{ inputs.scalaver }} \
             -Pjdk-${{ inputs.javaver }} -P ${{ inputs.hadoop-profile }} \
