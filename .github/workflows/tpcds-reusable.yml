@@ -393,10 +393,24 @@ jobs:
           export SPARK_TPCDS_QUERY=${{ matrix.query }}
 
           cd dev/auron-it
-          CMD="${{ github.workspace }}/build/mvn -Ppre -P${{ inputs.sparkver }} -Pscala-${{ inputs.scalaver }} -Pjdk-${{ inputs.javaver }} -P ${{ inputs.hadoop-profile }} "
+          CMD="${{ github.workspace }}/build/mvn -Ppre -P${{ inputs.sparkver }} -Pscala-${{ inputs.scalaver }} -Pjdk-${{ inputs.javaver }} -P${{ inputs.hadoop-profile }} "
           CMD="$CMD -Dsuites=org.apache.auron.integration.AuronTPCDSV1Suite test"
           echo "Running: $CMD"
           exec $CMD
+      - name: Upload tpcds test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-tpcds-reports-${{ inputs.hadoop-profile }}-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
+          path: |
+            **/auron-it/target/surefire-reports/*.xml
+            **/auron-it/target/surefire-reports/*.txt
+      - name: Upload tpcds test log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-tpcds-logs-${{ inputs.hadoop-profile }}-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
+          path: "**/auron-it/target/unit-tests.log"
 
       - name: Upload RSS log
         if: ${{ failure() && (inputs.celebornver != '' || inputs.unifflever != '') }}
