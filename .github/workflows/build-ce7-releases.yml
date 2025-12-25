@@ -97,6 +97,8 @@ jobs:
           key: auron-${{matrix.sparkver}}_${{matrix.scalaver}}-release-${{ env.osclassfier }}-${{ matrix.auronver }}.jar
 
       - name: Build auron-${{ matrix.sparkver }}_${{ matrix.scalaver }}
+        env:
+          RUSTFLAGS: "-C opt-level=0" # No optimization for faster CI builds
         run: |
           sed -i 's/docker-compose -f/docker compose -f/g' ./auron-build.sh
           ./auron-build.sh \
