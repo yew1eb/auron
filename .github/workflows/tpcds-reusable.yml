@@ -394,9 +394,16 @@ jobs:
 
           cd dev/auron-it
           CMD="${{ github.workspace }}/build/mvn -Ppre -P${{ inputs.sparkver }} -Pscala-${{ inputs.scalaver }} -Pjdk-${{ inputs.javaver }} -P${{ inputs.hadoop-profile }} "
+          if [ -n "${{ inputs.celebornver }}" ]; then
+            CMD="$CMD -Pceleborn,celeborn-$CELEBORN_NUMBER"
+          fi
+          if [ -n "${{ inputs.unifflever }}" ]; then
+            CMD="$CMD -Puniffle,uniffle-$UNIFFLE_NUMBER"
+          fi
           CMD="$CMD -Dsuites=org.apache.auron.integration.AuronTPCDSV1Suite test"
           echo "Running: $CMD"
           exec $CMD
+
       - name: Upload tpcds test reports
         if: failure()
         uses: actions/upload-artifact@v4
@@ -405,6 +412,7 @@ jobs:
           path: |
             **/auron-it/target/surefire-reports/*.xml
             **/auron-it/target/surefire-reports/*.txt
+
       - name: Upload tpcds test log
         if: failure()
         uses: actions/upload-artifact@v4
