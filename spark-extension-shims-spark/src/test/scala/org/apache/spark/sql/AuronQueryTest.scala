@@ -16,13 +16,13 @@
  */
 package org.apache.spark.sql
 
-import org.apache.auron.test.FallbackUtil
-
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger}
+
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
 import scala.util.{Success, Try}
+
 import org.apache.hadoop.fs.Path
 import org.apache.parquet.column.ParquetProperties
 import org.apache.parquet.example.data.Group
@@ -38,6 +38,8 @@ import org.apache.spark.sql.test.SQLTestUtils
 import org.apache.spark.sql.types.{ArrayType, DataType, DataTypes, DecimalType, MapType, StructType}
 import org.apache.spark.sql.types.DataTypes.{BinaryType, BooleanType, ByteType, DateType, DoubleType, FloatType, IntegerType, LongType, ShortType, StringType, TimestampNTZType, TimestampType}
 import org.scalatest.BeforeAndAfterEach
+
+import org.apache.auron.test.FallbackUtil
 
 /**
  * Base test class under org.apache.spark.sql to use package-private [[SQLTestUtils]]; extends
@@ -111,7 +113,7 @@ abstract class AuronQueryTest
       }
     }
 
-    if(needCheckFallback) {
+    if (needCheckFallback) {
       checkFallBack(dfAuron)
     }
 
@@ -120,7 +122,8 @@ abstract class AuronQueryTest
 
   def checkFallBack(df: DataFrame): Unit = {
     val hasFallbacks = FallbackUtil.hasFallback(df.queryExecution.executedPlan)
-    assert(!hasFallbacks,
+    assert(
+      !hasFallbacks,
       s"""FallBack check error:
          |${df.queryExecution.executedPlan}""".stripMargin)
   }

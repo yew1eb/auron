@@ -16,17 +16,15 @@
  */
 package org.apache.auron.test
 
-
-
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.auron.NativeSupports
 import org.apache.spark.sql.execution._
-import org.apache.spark.sql.execution.adaptive.{AQEShuffleReadExec, AdaptiveSparkPlanExec, AdaptiveSparkPlanHelper, QueryStageExec, ShuffleQueryStageExec}
+import org.apache.spark.sql.execution.adaptive.{AdaptiveSparkPlanExec, AdaptiveSparkPlanHelper, AQEShuffleReadExec, QueryStageExec, ShuffleQueryStageExec}
 import org.apache.spark.sql.execution.exchange.ReusedExchangeExec
 
 /**
- * attention: if AQE is enabled,This method will only be executed correctly after the execution plan
- * is fully determined
+ * attention: if AQE is enabled,This method will only be executed correctly after the execution
+ * plan is fully determined
  */
 
 object FallbackUtil extends Logging with AdaptiveSparkPlanHelper {
