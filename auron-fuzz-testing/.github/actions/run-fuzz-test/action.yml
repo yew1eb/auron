@@ -1,0 +1,62 @@
+name: setup-spark
+description: 'Run fuzz test'
+inputs:
+  native-engine:
+    description: 'type of spark native engine (eg. auron/comet/gluten)'
+    required: true
+  native-engine-jar:
+    description: 'native engine jar file'
+    required: true
+  data-exclude-negative-zero:
+    description: 'exclude negative zero from fuzz test'
+    required: false
+    default: 'true'
+runs:
+  using: composite
+  steps:
+    - name: Get cached fuzz test lib
+      id: get-fuzz-test-cache
+      uses: actions/cache/restore@v4
+      with:
+        path: auron-fuzz-testing-*.jar
+        key: auron-fuzz-testing-lib-${{ hashFiles('pom.xml', '**/*.scala', '**/*.java') }}-${{ github.sha }}
+        restore-keys:
+          auron-fuzz-testing-lib-
+        enableCrossOsArchive: true
+        fail-on-cache-miss: true
+    - name: Copy native engine jar to spark jars
+      shell: bash
+      run: |
+        cp ${{ inputs.native-engine-jar }} $SPARK_HOME/jars
+    - name: Generating data
+      shell: bash
+      run: |
+        FUZZ_TEST_JAR=$(ls auron-fuzz-testing-*.jar)
+        OPTS="--num-files=2 --num-rows=200"
+        if [[ "${{ inputs.data-exclude-negative-zero }}" == "true" ]]; then
+          OPTS="$OPTS --exclude-negative-zero --generate-arrays --generate-structs --generate-maps "
+        fi
+        $SPARK_HOME/bin/spark-submit \
+          --master local \
+          --class org.apache.auron.fuzz.Main \
+          $FUZZ_TEST_JAR \
+          data $OPTS
+    - name: Generating queries
+      shell: bash
+      run: |
+        FUZZ_TEST_JAR=$(ls auron-fuzz-testing-*.jar)
+        $SPARK_HOME/bin/spark-submit \
+          --master local \
+          --class org.apache.auron.fuzz.Main \
+          $FUZZ_TEST_JAR \
+          queries --num-files=2 --num-queries=500
+    - name: Running fuzz tests
+      shell: bash
+      run: |
+        FUZZ_TEST_JAR=$(ls auron-fuzz-testing-*.jar)
+        $SPARK_HOME/bin/spark-submit \
+          --master local \
+          --class org.apache.auron.fuzz.Main \
+          --conf spark.driver.extraJavaOptions="--add-modules=jdk.incubator.vector -Dio.netty.tryReflectionSetAccessible=true --enable-native-access=ALL-UNNAMED" \
+          $FUZZ_TEST_JAR \
+          run --native-engine=${{ inputs.native-engine }} --num-files=2 --filename=queries.sql
