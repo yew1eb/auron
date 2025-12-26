@@ -121,10 +121,10 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
   }
 
   protected def compareDoubleResult(
-                                     queryId: String,
-                                     rows: Array[Row],
-                                     goldenFile: File,
-                                     tolerance: Double = 1e-6): Unit = {
+      queryId: String,
+      rows: Array[Row],
+      goldenFile: File,
+      tolerance: Double = 1e-6): Unit = {
 
     val expectedRowIter = FileUtils.readLines(goldenFile, StandardCharsets.UTF_8).iterator()
     val expectedRowCount = expectedRowIter.next().toInt
@@ -179,10 +179,10 @@ abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
 
     // Replace occurrences in the plan using the normalized map
     def replaceWithNormalizedValues(
-                                     plan: String,
-                                     regex: Regex,
-                                     normalizedMap: Map[String, String],
-                                     format: String): String = {
+        plan: String,
+        regex: Regex,
+        normalizedMap: Map[String, String],
+        format: String): String = {
       regex.replaceAllIn(plan, regexMatch => s"$format${normalizedMap(regexMatch.toString)}")
     }
 

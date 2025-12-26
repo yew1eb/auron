@@ -102,7 +102,9 @@ object NativeConverters extends Logging {
   def castTrimStringEnabled: Boolean =
     AuronConverters.getBooleanConf("spark.auron.cast.trimString", defaultValue = true)
   def singleChildFallbackEnabled: Boolean =
-    AuronConverters.getBooleanConf("spark.auron.expression.singleChildFallback.enabled", defaultValue = true)
+    AuronConverters.getBooleanConf(
+      "spark.auron.expression.singleChildFallback.enabled",
+      defaultValue = true)
 
   /**
    * Is the data type(scalar or complex) supported by Auron.
