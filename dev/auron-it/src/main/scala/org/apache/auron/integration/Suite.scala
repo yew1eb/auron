@@ -16,8 +16,14 @@
  */
 package org.apache.auron.integration
 
-object AuronTPCDSTestRunner {
-  def main(args: Array[String]): Unit = {
-    println(args.mkString("", "\n", ""))
-  }
+import org.apache.auron.integration.cli.ArgsParser
+
+trait Suite {
+  def name: String
+  def prepareSessions( ): Unit
+  def registerTables( ): Unit
+  def loadQueries( ): Seq[String]
+
+  def run(config: ArgsParser.Config): Int
+
 }

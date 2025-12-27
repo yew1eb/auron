@@ -147,13 +147,13 @@ jobs:
           echo "Running: $CMD"
           exec $CMD
 
-      - name: Upload Unit Test Reports
+      - name: Upload unit test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: unit-tests-reports-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
           path: "**/target/surefire-reports/*.xml"
-      - name: Upload Unit Test Logs
+      - name: Upload unit tests log
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -362,27 +362,14 @@ jobs:
         env:
           RUST_LOG: ERROR
           RUST_BACKTRACE: 1
+          SPARK_VERSION: ${{ inputs.sparkver }}
           SCALA_VERSION: ${{ inputs.scalaver }}
           SPARK_HOME: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
-          SPARK_TPCDS_EXTRA_CONF: ${{ inputs.extrasparkconf }}
-          SPARK_TPCDS_DATA: ${{ github.workspace }}/dev/tpcds_1g
-          SPARK_TPCDS_QUERY: ${{ matrix.query }}
+          AURON_SPARK_JAR: auron-*${{ inputs.sparkver }}_${{ inputs.scalaver }}*.jar
         run: |
-          ls -la "$SPARK_HOME"/jars/auron-*.jar || echo "Warning: Auron JAR not found!" || exit -1
-          cd dev/auron-it
-          CMD="${{ github.workspace }}/build/mvn -Ppre -P${{ inputs.sparkver }} -Pscala-${{ inputs.scalaver }} -Pjdk-${{ inputs.javaver }} -P${{ inputs.hadoop-profile }} "
-          if [ -n "${{ inputs.celebornver }}" ]; then
-            CMD="$CMD -Pceleborn,${{ inputs.celebornver }}"
-          fi
-          if [ -n "${{ inputs.unifflever }}" ]; then
-            CMD="$CMD -Puniffle,${{ inputs.unifflever }}"
-          fi
-          CMD="$CMD install"
-          echo "Running: $CMD"
-          exec $CMD
-
-          dev/auron-it/tpcds-it.sh
+          dev/auron-it/auron-it.sh
             ${{ inputs.extrasparkconf }} \
+            --type tpcds \
             --data-location dev/tpcds_1g \
             --query-filter ${{ matrix.query }}
 
