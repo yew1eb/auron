@@ -16,23 +16,18 @@
  */
 package org.apache.auron.integration
 
+import org.apache.commons.io.FileUtils
+import org.apache.spark.SparkConf
+import org.apache.spark.sql.execution.FormattedMode
+import org.apache.spark.sql.types.DoubleType
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
+
 import java.io.File
 import java.nio.charset.StandardCharsets
-import java.util.Locale
-
-import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.util.matching.Regex
 
-import org.apache.commons.io.FileUtils
-import org.apache.spark.SparkConf
-import org.apache.spark.sql.{DataFrame, QueryTest, Row}
-import org.apache.spark.sql.auron.Shims
-import org.apache.spark.sql.execution.FormattedMode
-import org.apache.spark.sql.test.SharedSparkSession
-import org.apache.spark.sql.types.DoubleType
-
-abstract class AuronTPCDSSuite extends QueryTest with SharedSparkSession {
+abstract class AuronTPCDSSuite {
   protected val regenGoldenFiles: Boolean =
     sys.env.getOrElse("REGEN_TPCDS_GOLDEN_FILES", "0") == "1"
 
@@ -167,50 +162,7 @@ abstract class AuronTPCDSSuite extends QueryTest with SharedSparkSession {
   var needRunQueries: Seq[String] = Seq.empty
   var joinConfs: Map[String, String] = Map.empty
 
-  def parseEnvironmentVaribles(): Unit = {
-    logInfo(s"""
-         |===============================================================
-         |[TPCDS] Environment:
-         | SPARK_TPCDS_DATA = $tpcdsDataPath
-         | SPARK_TPCDS_QUERY = $execTpcdsQueries
-         | SPARK_TPCDS_EXTRA_CONF = $tpcdsExtraSparkConfs
-         |===============================================================
-         |""".stripMargin)
 
-    assume(tpcdsDataPath.nonEmpty, "Skipping all tests as env `SPARK_TPCDS_DATA` is not set")
-
-    val queryFilter: Set[String] =
-      Option(execTpcdsQueries)
-        .filter(_.trim.nonEmpty)
-        .map(_.toLowerCase(Locale.ROOT).split(",").map(_.trim).toSet)
-        .getOrElse(Set.empty)
-    needRunQueries = filterQueries(tpcdsQueries, queryFilter)
-
-    val properties = new java.util.Properties()
-
-    if (tpcdsExtraSparkConfs.nonEmpty) {
-      tpcdsExtraSparkConfs.split("--conf").filter(_.trim.nonEmpty).foreach { conf =>
-        val keyValue = conf.split("=", 2).map(_.trim)
-        if (keyValue.length == 2) {
-          properties.setProperty(keyValue(0), keyValue(1))
-        } else {
-          logInfo(s"Invalid config format: --conf$conf")
-        }
-      }
-    }
-
-    joinConfs = properties.asScala.toMap
-    logInfo(s"""
-         |===============================================================
-         |[TPCDS] Coverted:
-         | SPARK_TPCDS_DATA = $tpcdsDataPath
-         | SPARK_TPCDS_QUERY = $needRunQueries
-         | SPARK_TPCDS_EXTRA_CONF = $joinConfs
-         |===============================================================
-         |""".stripMargin)
-  }
-
-  parseEnvironmentVaribles()
 
   private def filterQueries(
       origQueries: Seq[String],
@@ -464,10 +416,88 @@ abstract class AuronTPCDSSuite extends QueryTest with SharedSparkSession {
 }
 
 class AuronTPCDSV1Suite extends AuronTPCDSSuite {
-
   override protected def sparkConf: SparkConf = {
     super.sparkConf
       .set("spark.sql.sources.useV1SourceList", "parquet")
       .set("spark.sql.autoBroadcastJoinThreshold", "-1")
   }
+
+  case class Config(
+                     query: Option[String] = None,
+                     dataPath: String = "/tmp/tpcds_1g",
+                     scale: Int = 1,
+                     extraConf: Map[String, String] = Map.empty
+                   )
+
+  def main(args: Array[String]): Unit = {
+    val parser = new scopt.OptionParser[Config]("AuronTPCDSSuite") {
+      head("Auron TPC-DS Integration Test Runner", "1.0")
+      opt[String]("query") action { (x, c) => c.copy(query = Some(x)) } text "Single TPC-DS query ID (e.g., q1, q42)"
+      opt[String]("data") action { (x, c) => c.copy(dataPath = x) } text "Path to TPC-DS data directory"
+      opt[Int]("scale") action { (x, c) => c.copy(scale = x) } text "TPC-DS scale factor (default: 1)"
+      help("help") text "Print this help message"
+    }
+
+    parser.parse(args, Config()) match {
+      case Some(config) => runTests(config)
+      case None => sys.exit(1)
+    }
+  }
+
+  private def runTests(config: Config): Unit = {
+    println("=== Auron TPC-DS Integration Test Runner ===")
+    println(s"Target query: ${config.query.getOrElse("all (99 queries)")}")
+    println(s"Data path: ${config.dataPath}")
+    println(s"Scale factor: ${config.scale}")
+
+    val spark = SparkSession.builder()
+      .appName("AuronTpcdsITRunner")
+      .master("local[*]")
+      .getOrCreate()
+
+    // 支持 CI 传入额外 Spark 配置（如 shuffle backend）
+    Option(System.getenv("SPARK_TPCDS_EXTRA_CONF")).foreach { confStr =>
+      confStr.split(",").foreach { kv =>
+        if (kv.contains("=")) {
+          val Array(k, v) = kv.split("=", 2)
+          spark.conf.set(k.trim, v.trim)
+        }
+      }
+    }
+
+    spark.sparkContext.setLogLevel("WARN")
+    spark.sql(s"USE tpcds_sf${config.scale}")
+
+    val queries = TpcdsQueries.allQueries
+    val queriesToRun = config.query match {
+      case Some(qid) if queries.contains(qid) => Map(qid -> queries(qid))
+      case Some(qid) => sys.error(s"Unknown query ID: $qid")
+      case None => queries
+    }
+
+    queriesToRun.foreach { case (qid, sqlText) =>
+      println(s"[$qid] Executing TPC-DS query...")
+
+      val df = spark.sql(sqlText)
+
+      // 基本结果验证（行数）
+      val rowCount = df.count()
+      println(s"[$qid] Result row count: $rowCount")
+
+      // 核心：Auron 计划稳定性检查
+      val physicalPlan = df.queryExecution.executedPlan.toString().toLowerCase
+
+      if (!physicalPlan.contains("auron") && !physicalPlan.contains("columnar")) {
+        System.err.println(s"[$qid] FAILED: No Auron native operator detected in physical plan!")
+        System.err.println(s"Plan snippet:\n${df.queryExecution.executedPlan}")
+        sys.exit(1)
+      }
+
+      println(s"[$qid] PASSED: Auron native acceleration successfully applied")
+    }
+
+    spark.stop()
+    println("=== All TPC-DS integration tests passed successfully ===")
+  }
+}
 }

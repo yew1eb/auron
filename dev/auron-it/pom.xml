@@ -31,6 +31,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.github.scopt</groupId>
+      <artifactId>scopt_${scalaVersion}</artifactId>
+      <version>4.1.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.auron</groupId>
       <artifactId>auron-${shimName}_${scalaVersion}</artifactId>
       <version>${project.version}</version>
@@ -127,28 +133,60 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- scalafix -->
+      <plugin>
+        <groupId>io.github.evis</groupId>
+        <artifactId>scalafix-maven-plugin_${scalaVersion}</artifactId>
+        <version>0.1.4_0.9.31</version>
+        <configuration>
+          <config>${maven.multiModuleProjectDirectory}/../../scalafix.conf</config>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>com.nequissimus</groupId>
+            <artifactId>sort-imports_${scalaVersion}</artifactId>
+            <version>0.6.1</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>scalafix</id>
+            <goals>
+              <goal>scalafix</goal>
+            </goals>
+            <phase>prepare-package</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <inherited>true</inherited>
+        <configuration>
+          <excludeSubProjects>false</excludeSubProjects>
+          <numUnapprovedLicenses>0</numUnapprovedLicenses>
+          <licenseFamilies>
+            <licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
+              <familyName>Apache License 2.0</familyName>
+            </licenseFamily>
+          </licenseFamilies>
+          <excludesFile>${maven.multiModuleProjectDirectory}/../../.rat-excludes</excludesFile>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>verify</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
   <profiles>
-    <profile>
-      <id>release</id>
-      <properties>
-        <releaseMode>release</releaseMode>
-        <buildNativeWithRelease>true</buildNativeWithRelease>
-        <buildWithFeatures />
-      </properties>
-    </profile>
-
-    <profile>
-      <id>pre</id>
-      <properties>
-        <releaseMode>pre</releaseMode>
-        <buildNativeWithRelease>false</buildNativeWithRelease>
-        <buildWithFeatures />
-      </properties>
-    </profile>
-
     <profile>
       <id>spark-3.0</id>
       <properties>
@@ -315,65 +353,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-
-    <profile>
-      <id>hadoop2.7</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-common</artifactId>
-          <version>2.7.7</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-
-    <profile>
-      <id>hadoop3</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-client-api</artifactId>
-          <version>3.3.4</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-client-runtime</artifactId>
-          <version>3.3.4</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-
-    <profile>
-      <id>celeborn</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.celeborn</groupId>
-          <artifactId>celeborn-client-spark-3-shaded_${scalaVersion}</artifactId>
-          <version>${celebornVersion}</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>uniffle</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.uniffle</groupId>
-          <artifactId>rss-client-spark3-shaded</artifactId>
-          <version>${uniffleVersion}</version>
-          <scope>provided</scope>
-          <exclusions>
-            <exclusion>
-              <groupId>org.apache.logging.log4j</groupId>
-              <artifactId>log4j-slf4j-impl</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency>
-      </dependencies>
     </profile>
   </profiles>
 </project>
