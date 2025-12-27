@@ -36,7 +36,7 @@ jobs:
   test-spark-30:
     if: false
     name: Test spark-3.0
-    uses: ./.github/workflows/reusable_test.yml
+    uses: ./.github/workflows/reusable_build_test.yml
     with:
       sparkver: spark-3.0
       hadoop-profile: 'hadoop2.7'
@@ -44,7 +44,7 @@ jobs:
   test-spark-31:
     if: false
     name: Test spark-3.1
-    uses: ./.github/workflows/reusable_test.yml
+    uses: ./.github/workflows/reusable_build_test.yml
     with:
       sparkver: spark-3.1
       hadoop-profile: 'hadoop2.7'
@@ -52,7 +52,7 @@ jobs:
   test-spark-32:
     if: false
     name: Test spark-3.2
-    uses: ./.github/workflows/reusable_test.yml
+    uses: ./.github/workflows/reusable_build_test.yml
     with:
       sparkver: spark-3.2
       hadoop-profile: 'hadoop2.7'
@@ -60,7 +60,7 @@ jobs:
   test-spark-33:
     if: false
     name: Test spark-3.3
-    uses: ./.github/workflows/reusable_test.yml
+    uses: ./.github/workflows/reusable_build_test.yml
     with:
       sparkver: spark-3.3
       hadoop-profile: 'hadoop3'
@@ -69,7 +69,7 @@ jobs:
   test-spark-34-jdk11:
     if: false
     name: Test spark-3.4
-    uses: ./.github/workflows/reusable_test.yml
+    uses: ./.github/workflows/reusable_build_test.yml
     with:
       sparkver: spark-3.4
       javaver: '11'
@@ -77,7 +77,7 @@ jobs:
 
   test-spark-35-jdk17-scala-2-13:
     name: Test spark-3.5 JDK17 Scala-2.13
-    uses: ./.github/workflows/reusable_test.yml
+    uses: ./.github/workflows/reusable_build_test.yml
     with:
       sparkver: spark-3.5
       javaver: '17'
@@ -87,7 +87,7 @@ jobs:
   test-spark-35-jdk21-scala-2-13:
     if: false
     name: Test spark-3.5 JDK21 Scala-2.13
-    uses: ./.github/workflows/reusable_test.yml
+    uses: ./.github/workflows/reusable_build_test.yml
     with:
       sparkver: spark-3.5
       javaver: '21'

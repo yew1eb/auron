@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-name: Reusable Test
+name: Reusable Build and Test
 
 on:
   workflow_call:
@@ -123,7 +123,7 @@ jobs:
           cargo --version
           cargo test --workspace --all-features
 
-      - name: Build and Run Unit Tests (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
+      - name: Build auron (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
         run: |
           sed -i 's/opt-level = 1/opt-level = 0/g' Cargo.toml # use opt-level 0
           rm -f .build-checksum_*.cache
