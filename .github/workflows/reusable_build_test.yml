@@ -123,7 +123,7 @@ jobs:
           cargo --version
           cargo test --workspace --all-features
 
-      - name: Build auron (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
+      - name: Build and Run unit test (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
         run: |
           sed -i 's/opt-level = 1/opt-level = 0/g' Cargo.toml # use opt-level 0
           rm -f .build-checksum_*.cache
@@ -378,7 +378,7 @@ jobs:
           SPARK_TPCDS_DATA: ${{ github.workspace }}/dev/tpcds_1g
           SPARK_TPCDS_QUERY: ${{ matrix.query }}
         run: |
-          ls -la "$SPARK_HOME"/jars/auron-*.jar || echo "Warning: Auron JAR not found!"
+          ls -la "$SPARK_HOME"/jars/auron-*.jar || echo "Warning: Auron JAR not found!" || exit -1
           cd dev/auron-it
           CMD="${{ github.workspace }}/build/mvn -Ppre -P${{ inputs.sparkver }} -Pscala-${{ inputs.scalaver }} -Pjdk-${{ inputs.javaver }} -P${{ inputs.hadoop-profile }} "
           if [ -n "${{ inputs.celebornver }}" ]; then
@@ -387,25 +387,14 @@ jobs:
           if [ -n "${{ inputs.unifflever }}" ]; then
             CMD="$CMD -Puniffle,${{ inputs.unifflever }}"
           fi
-          CMD="$CMD -Dsuites=org.apache.auron.integration.AuronTPCDSV1Suite test"
+          CMD="$CMD install"
           echo "Running: $CMD"
           exec $CMD
 
-#          dev/auron-it/run-tpcds-test
-#          export JAVA_HOME=/usr/lib/jvm/${{ matrix.java }}-openjdk-amd64
-#          echo "JAVA_HOME: $JAVA_HOME"
-#          if [ "${{ matrix.spark }}" = "spark-4.0" ]; then
-#            $MVN_CMD clean install -P${{ matrix.spark }} -P${{ matrix.java }} -Pscala-2.13 -Pbackends-velox -DskipTests
-#          else
-#            $MVN_CMD clean install -P${{ matrix.spark }} -P${{ matrix.java }} -Pbackends-velox -DskipTests
-#          fi
-#          cd $GITHUB_WORKSPACE/tools/gluten-it
-#          $MVN_CMD clean install -P${{ matrix.spark }} -P${{ matrix.java }} \
-#          && GLUTEN_IT_JVM_ARGS=-Xmx5G sbin/gluten-it.sh queries-compare \
-#            --local --preset=velox --benchmark-type=h --error-on-memleak --off-heap-size=10g -s=1.0 --threads=16 --iterations=1 \
-#          && GLUTEN_IT_JVM_ARGS=-Xmx6G sbin/gluten-it.sh queries-compare \
-#            --local --preset=velox --benchmark-type=ds --error-on-memleak --off-heap-size=10g -s=1.0 --threads=16 --iterations=1
-
+          dev/auron-it/tpcds-it.sh
+            ${{ inputs.extrasparkconf }} \
+            --data-location dev/tpcds_1g \
+            --query-filter ${{ matrix.query }}
 
       - name: Upload tpcds test reports
         if: failure()
