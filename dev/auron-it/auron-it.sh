@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+
+set -exo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+AURON_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+MVN_CMD="${AURON_DIR}/build/mvn"
+SPARK_VERSION="${SPARK_VERSION:-spark-3.5}"
+SCALA_VERSION="${SCALA_VERSION:-2.12}"
+PROFILES="-P${SPARK_VERSION},scala-${SCALA_VERSION}"
+PROJECT_VERSION=$("${MVN_CMD}" -f "${AURON_DIR}/pom.xml" -q $PROFILES help:evaluate -Dexpression=project.version -DforceStdout)
+AURON_SPARK_JAR="${AURON_SPARK_JAR:-$AURON_DIR/dev/mvn-build-helper/assembly/target/auron-${SPARK_VERSION}_$SCALA_VERSION-$PROJECT_VERSION.jar}"
+MAIN_CLASS="org.apache.auron.integration.Main"
+
+AURON_IT_JAR=$(find "$AURON_DIR/dev/auron-it/target/" -name "auron-it-*.jar" | head -n 1)
+
+if [[ -z "${SPARK_HOME:-}" ]]; then
+  echo "ERROR: SPARK_HOME must be set"
+  exit 1
+fi
+
+if [[ ! -f "$AURON_SPARK_JAR" ]]; then
+  echo "ERROR: auron-spark.jar not found"
+  echo "请，首先Building Auron Spark jar..."
+  # ./auron-build.sh --pre --sparkver 3.5 --scalaver 2.12
+  exit 1
+fi
+
+if [[ ! -f "$AURON_IT_JAR" ]]; then
+  echo "Building Auron it jar..."
+  "${MVN_CMD}" -P${SPARK_VERSION} -Pscala-${SCALA_VERSION} package -DskipTests
+fi
+
+echo "=== Auron TPC-DS Integration Test ==="
+echo "SPARK_HOME: $SPARK_HOME"
+echo "Main Class: $MAIN_CLASS"
+
+# Split input arguments into two parts: Spark confs and args
+SPARK_CONF=()
+ARGS=()
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --master=*)
+      SPARK_CONF+=("$1") ;;
+    --conf)
+      shift
+      SPARK_CONF+=("--conf" "$1") ;;
+    *)
+      ARGS+=("$1") ;;
+  esac
+  shift
+done
+
+exec $SPARK_HOME/bin/spark-submit \
+  --driver-memory 5g \
+  --conf spark.ui.enabled=false \
+  --conf spark.sql.extensions=org.apache.spark.sql.auron.AuronSparkSessionExtension \
+  --conf spark.shuffle.manager=org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager \
+  --conf spark.sql.shuffle.partitions=1000 \
+  --conf spark.sql.adaptive.advisoryPartitionSizeInBytes=16777216 \
+  --conf spark.sql.autoBroadcastJoinThreshold=1048576 \
+  --conf spark.sql.broadcastTimeout=900s \
+  --conf spark.driver.memoryOverhead=3072 \
+  --conf spark.auron.memoryFraction=0.8 \
+  --jars "${AURON_SPARK_JAR}" \
+  "${SPARK_CONF[@]}" \
+  "$AURON_IT_JAR" \
+  --class $MAIN_CLASS  \
+  "${ARGS[@]}"
