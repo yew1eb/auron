@@ -29,7 +29,9 @@ trait BaseAuronSQLSuite extends SharedSparkSession {
         "org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager")
       .set("spark.memory.offHeap.enabled", "false")
       .set("spark.auron.enable", "true")
-      .set("spark.auron.expression.singleChildFallback.enabled", "false")
+      .set("spark.auron.expression.singleChildFallback.enabled", "false") //TODO singleChildFallback
+      .set("spark.auron.decimal.arithOp.enabled", "true")
+      .set("spark.auron.datetime.extract.enabled", "true")
       .set("spark.ui.enabled", "false")
   }
 
