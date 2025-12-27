@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-name: TPC-DS Reusable
+name: Reusable Test
 
 on:
   workflow_call:
@@ -118,7 +118,7 @@ jobs:
           cargo --version
           cargo test --workspace --all-features
 
-      - name: Build auron (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
+      - name: Build and Run Unit Tests (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
         run: |
           sed -i 's/opt-level = 1/opt-level = 0/g' Cargo.toml # use opt-level 0
           rm -f .build-checksum_*.cache
@@ -147,19 +147,19 @@ jobs:
           echo "Running: $CMD"
           exec $CMD
 
-      - name: Upload unit test reports
+      - name: Upload Unit Test Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: unit-tests-reports-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
           path: "**/target/surefire-reports/*.xml"
-      - name: Upload unit tests log
+      - name: Upload Unit Test Logs
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: unit-tests-logs-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
           path: "**/target/unit-tests.log"
-      - name: Upload auron (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
+      - name: Upload Auron JAR (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
         uses: actions/upload-artifact@v4
         with:
           name: >
@@ -168,7 +168,8 @@ jobs:
             }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
           path: target/auron-${{ inputs.sparkver }}_${{ inputs.scalaver }}-pre-*.jar
           overwrite: true
-      - uses: actions/upload-artifact@v4
+      - name: Upload Auron Maven Dependencies (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
+        uses: actions/upload-artifact@v4
         with:
           name: auron-deps-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
             }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || ''
@@ -177,7 +178,7 @@ jobs:
           if-no-files-found: error
 
   run-tpcds-test:
-    name: Run TPC-DS test ${{ matrix.query }}
+    name: Run TPC-DS Queries ${{ matrix.query }}
     needs: [build-auron-jar]
     runs-on: ubuntu-24.04
     strategy:
@@ -191,10 +192,6 @@ jobs:
       - name: Get dependency version from pom
         id: get-dependency-version
         run: |
-          PROJECT_VERSION=$(./build/mvn help:evaluate -N -Dexpression=project.version -P${{ inputs.sparkver }} -q -DforceStdout)
-          echo "Detected Project VERSION: $PROJECT_VERSION"
-          echo "projectversion=$PROJECT_VERSION" >> $GITHUB_OUTPUT
-          
           SPARK_VERSION=$(./build/mvn help:evaluate -N -Dexpression=sparkVersion -P${{ inputs.sparkver }} -q -DforceStdout)
           echo "Detected Spark VERSION: $SPARK_VERSION"
           echo "sparkversion=$SPARK_VERSION" >> $GITHUB_OUTPUT
@@ -216,7 +213,7 @@ jobs:
         id: cache-spark-bin
         with:
           path: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
-          key: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
+          key: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}-${{ inputs.hadoop-profile }}
 
       - name: Setup Spark (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }})
         id: setup-spark-bin
@@ -242,16 +239,24 @@ jobs:
             }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' 
             }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
 
+      - name: Install Auron JAR
+        run: |
+          ls -la
+          cp auron-*${{ inputs.sparkver }}_${{ inputs.scalaver }}*.jar spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}/jars/
+
+      - name: Download All auron Jar Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: auron-deps-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
+            }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || ''
+            }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
+          path: ~/.m2/repository/org/apache/auron
+
       - name: Checkout TPC-DS Data
         uses: actions/checkout@v4
         with:
           repository: auron-project/tpcds_1g
           path: dev/tpcds_1g
-
-      - name: Install Auron JAR
-        run: |
-          ls -la
-          cp auron-*${{ inputs.sparkver }}_${{ inputs.scalaver }}*.jar spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}/jars/
 
       - name: Setup Java and Maven cache
         uses: actions/setup-java@v4
@@ -353,26 +358,17 @@ jobs:
           ls -la uniffle-bin-${{ steps.get-dependency-version.outputs.uniffleversion }}/jars/client/spark3/
           cp uniffle-bin-${{ steps.get-dependency-version.outputs.uniffleversion }}/jars/client/spark3/*.jar spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}/jars/
 
-      - name: Download All auron Jar Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: auron-deps-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
-            }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || ''
-            }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
-          path: ~/.m2/repository/org/apache/auron
-
-      - name: Run TPC-DS Query ${{ matrix.query }}
+      - name: Run TPC-DS Queries ${{ matrix.query }}
+        env:
+          RUST_LOG: ERROR
+          RUST_BACKTRACE: 1
+          SCALA_VERSION: ${{ inputs.scalaver }}
+          SPARK_HOME: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
+          SPARK_TPCDS_EXTRA_CONF: ${{ inputs.extrasparkconf }}
+          SPARK_TPCDS_DATA: ${{ github.workspace }}/dev/tpcds_1g
+          SPARK_TPCDS_QUERY: ${{ matrix.query }}
         run: |
-          ls -l ~/.m2/repository/org/apache/auron
-          ls -la
-          export RUST_LOG=ERROR
-          export RUST_BACKTRACE=1
-          export SCALA_VERSION=${{ inputs.scalaver }}
-          export SPARK_HOME=spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
-          export SPARK_TPCDS_EXTRA_CONF="${{ inputs.extrasparkconf }}"
-          export SPARK_TPCDS_DATA=${{ github.workspace }}/dev/tpcds_1g
-          export SPARK_TPCDS_QUERY=${{ matrix.query }}
-
+          ls -la "$SPARK_HOME"/jars/auron-*.jar || echo "Warning: Auron JAR not found!"
           cd dev/auron-it
           CMD="${{ github.workspace }}/build/mvn -Ppre -P${{ inputs.sparkver }} -Pscala-${{ inputs.scalaver }} -Pjdk-${{ inputs.javaver }} -P${{ inputs.hadoop-profile }} "
           if [ -n "${{ inputs.celebornver }}" ]; then
@@ -385,11 +381,27 @@ jobs:
           echo "Running: $CMD"
           exec $CMD
 
+#          dev/auron-it/run-tpcds-test
+#          export JAVA_HOME=/usr/lib/jvm/${{ matrix.java }}-openjdk-amd64
+#          echo "JAVA_HOME: $JAVA_HOME"
+#          if [ "${{ matrix.spark }}" = "spark-4.0" ]; then
+#            $MVN_CMD clean install -P${{ matrix.spark }} -P${{ matrix.java }} -Pscala-2.13 -Pbackends-velox -DskipTests
+#          else
+#            $MVN_CMD clean install -P${{ matrix.spark }} -P${{ matrix.java }} -Pbackends-velox -DskipTests
+#          fi
+#          cd $GITHUB_WORKSPACE/tools/gluten-it
+#          $MVN_CMD clean install -P${{ matrix.spark }} -P${{ matrix.java }} \
+#          && GLUTEN_IT_JVM_ARGS=-Xmx5G sbin/gluten-it.sh queries-compare \
+#            --local --preset=velox --benchmark-type=h --error-on-memleak --off-heap-size=10g -s=1.0 --threads=16 --iterations=1 \
+#          && GLUTEN_IT_JVM_ARGS=-Xmx6G sbin/gluten-it.sh queries-compare \
+#            --local --preset=velox --benchmark-type=ds --error-on-memleak --off-heap-size=10g -s=1.0 --threads=16 --iterations=1
+
+
       - name: Upload tpcds test reports
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: unit-tpcds-reports-${{ inputs.hadoop-profile }}-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
+          name: tpcds-test-reports-${{ inputs.hadoop-profile }}-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
           path: |
             **/auron-it/target/surefire-reports/*.xml
             **/auron-it/target/surefire-reports/*.txt
@@ -398,7 +410,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: unit-tpcds-logs-${{ inputs.hadoop-profile }}-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
+          name: tpcds-test-logs-${{ inputs.hadoop-profile }}-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
           path: "**/auron-it/target/unit-tests.log"
 
       - name: Upload RSS log
