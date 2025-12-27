@@ -244,7 +244,7 @@ jobs:
         id: cache-spark-bin
         with:
           path: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
-          key: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
+          key: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}_${{ inputs.hadoop-profile }}
 
       - name: Setup Spark (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }})
         id: setup-spark-bin
