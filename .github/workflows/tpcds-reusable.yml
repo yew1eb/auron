@@ -83,45 +83,6 @@ env:
   WGET_OPTS: "--tries=3 --timeout=30 -c"
 
 jobs:
-  build-validator:
-    name: Build TPC-DS Validator
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Cache TPC-DS Validator
-        uses: actions/cache@v4
-        id: cache-tpcds-validator
-        with:
-          key: tpcds-validator_${{ inputs.scalaver }}
-          path: target/tpcds-validator_${{ inputs.scalaver }}-0.1.0-SNAPSHOT-with-dependencies.jar
-
-      - name: Checkout TPC-DS Validator
-        uses: actions/checkout@v4
-        if: steps.cache-tpcds-validator.outputs.cache-hit != 'true'
-        with:
-          repository: auron-project/tpcds-validator
-
-      - name: Setup Java and Maven cache
-        uses: actions/setup-java@v4
-        if: steps.cache-tpcds-validator.outputs.cache-hit != 'true'
-        with:
-          distribution: 'adopt-hotspot'
-          java-version: ${{ inputs.javaver }}
-          cache: 'maven'
-
-      - name: Build TPC-DS Validator
-        if: steps.cache-tpcds-validator.outputs.cache-hit != 'true'
-        run: ./build/mvn package -DskipTests -Pscala-${{ inputs.scalaver }}
-
-      - name: Upload TPC-DS Validator
-        uses: actions/upload-artifact@v4
-        with:
-          name: >
-            tpcds-validator-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver 
-            }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' 
-            }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
-          path: target/tpcds-validator_${{ inputs.scalaver }}-0.1.0-SNAPSHOT-with-dependencies.jar
-          overwrite: true
-
   build-auron-jar:
     name: Build Auron JAR
     runs-on: ubuntu-24.04
@@ -207,10 +168,17 @@ jobs:
             }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
           path: target/auron-${{ inputs.sparkver }}_${{ inputs.scalaver }}-pre-*.jar
           overwrite: true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: auron-deps-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
+            }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || ''
+            }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
+          path: ~/.m2/repository/org/apache/auron
+          if-no-files-found: error
 
   run-tpcds-test:
     name: Run TPC-DS test ${{ matrix.query }}
-    needs: [build-validator, build-auron-jar]
+    needs: [build-auron-jar]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -223,6 +191,10 @@ jobs:
       - name: Get dependency version from pom
         id: get-dependency-version
         run: |
+          PROJECT_VERSION=$(./build/mvn help:evaluate -N -Dexpression=project.version -P${{ inputs.sparkver }} -q -DforceStdout)
+          echo "Detected Project VERSION: $PROJECT_VERSION"
+          echo "projectversion=$PROJECT_VERSION" >> $GITHUB_OUTPUT
+          
           SPARK_VERSION=$(./build/mvn help:evaluate -N -Dexpression=sparkVersion -P${{ inputs.sparkver }} -q -DforceStdout)
           echo "Detected Spark VERSION: $SPARK_VERSION"
           echo "sparkversion=$SPARK_VERSION" >> $GITHUB_OUTPUT
@@ -267,14 +239,6 @@ jobs:
         with:
           name: >
             auron-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver 
-            }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' 
-            }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
-
-      - name: Download TPC-DS Validator JAR
-        uses: actions/download-artifact@v4
-        with:
-          name: >
-            tpcds-validator-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver 
             }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' 
             }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
 
@@ -389,17 +353,53 @@ jobs:
           ls -la uniffle-bin-${{ steps.get-dependency-version.outputs.uniffleversion }}/jars/client/spark3/
           cp uniffle-bin-${{ steps.get-dependency-version.outputs.uniffleversion }}/jars/client/spark3/*.jar spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}/jars/
 
+      - name: Download All auron Jar Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: auron-deps-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
+            }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || ''
+            }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
+          path: ~/.m2/repository/org/apache/auron
+
       - name: Run TPC-DS Query ${{ matrix.query }}
         run: |
+          ls -l ~/.m2/repository/org/apache/auron
           ls -la
           export RUST_LOG=ERROR
           export RUST_BACKTRACE=1
           export SCALA_VERSION=${{ inputs.scalaver }}
           export SPARK_HOME=spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
-          dev/run-tpcds-test \
-            ${{ inputs.extrasparkconf }} \
-            --data-location dev/tpcds_1g \
-            --query-filter ${{ matrix.query }}
+          export SPARK_TPCDS_EXTRA_CONF="${{ inputs.extrasparkconf }}"
+          export SPARK_TPCDS_DATA=${{ github.workspace }}/dev/tpcds_1g
+          export SPARK_TPCDS_QUERY=${{ matrix.query }}
+
+          cd dev/auron-it
+          CMD="${{ github.workspace }}/build/mvn -Ppre -P${{ inputs.sparkver }} -Pscala-${{ inputs.scalaver }} -Pjdk-${{ inputs.javaver }} -P${{ inputs.hadoop-profile }} "
+          if [ -n "${{ inputs.celebornver }}" ]; then
+            CMD="$CMD -Pceleborn,${{ inputs.celebornver }}"
+          fi
+          if [ -n "${{ inputs.unifflever }}" ]; then
+            CMD="$CMD -Puniffle,${{ inputs.unifflever }}"
+          fi
+          CMD="$CMD -Dsuites=org.apache.auron.integration.AuronTPCDSV1Suite test"
+          echo "Running: $CMD"
+          exec $CMD
+
+      - name: Upload tpcds test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-tpcds-reports-${{ inputs.hadoop-profile }}-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
+          path: |
+            **/auron-it/target/surefire-reports/*.xml
+            **/auron-it/target/surefire-reports/*.txt
+
+      - name: Upload tpcds test log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-tpcds-logs-${{ inputs.hadoop-profile }}-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
+          path: "**/auron-it/target/unit-tests.log"
 
       - name: Upload RSS log
         if: ${{ failure() && (inputs.celebornver != '' || inputs.unifflever != '') }}
