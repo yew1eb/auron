@@ -183,7 +183,7 @@ jobs:
           name: auron-deps-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
             }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || ''
             }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
-          path: .m2/repository/org/apache/auron/
+          path: ~/.m2/repository/org/apache/auron
           if-no-files-found: error
 
   run-tpcds-test:
@@ -369,11 +369,11 @@ jobs:
           name: auron-deps-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
             }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || ''
             }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
-          path: /root/.m2/repository/org/apache/auron/
+          path: ~/.m2/repository/org/apache/auron
 
       - name: Run TPC-DS Query ${{ matrix.query }}
         run: |
-          ls -l /root/.m2/repository/org/apache/auron/
+          ls -l ~/.m2/repository/org/apache/auron
           ls -la
           export RUST_LOG=ERROR
           export RUST_BACKTRACE=1
