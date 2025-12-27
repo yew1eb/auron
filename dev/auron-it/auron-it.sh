@@ -23,24 +23,36 @@ set -exo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 AURON_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+MVN_CMD="${AURON_DIR}/build/mvn"
+SPARK_VERSION="${SPARK_VERSION:-spark-3.5}"
+SCALA_VERSION="${SCALA_VERSION:-2.12}"
+PROFILES="-P${SPARK_VERSION},scala-${SCALA_VERSION}"
+PROJECT_VERSION=$("${MVN_CMD}" -f "${AURON_DIR}/pom.xml" -q $PROFILES help:evaluate -Dexpression=project.version -DforceStdout)
+AURON_SPARK_JAR="${AURON_SPARK_JAR:-$AURON_DIR/dev/mvn-build-helper/assembly/target/auron-${SPARK_VERSION}_$SCALA_VERSION-$PROJECT_VERSION.jar}"
+MAIN_CLASS="org.apache.auron.integration.Main"
 
-# mvn clean install -Pspark-3.5 -Pscala-2.12
-
-JAR_PATH=$(find "$AURON_DIR/dev/auron-it/target/" -name "auron-it-*.jar" | head -n 1)
+AURON_IT_JAR=$(find "$AURON_DIR/dev/auron-it/target/" -name "auron-it-*.jar" | head -n 1)
 
 if [[ -z "${SPARK_HOME:-}" ]]; then
   echo "ERROR: SPARK_HOME must be set"
   exit 1
 fi
 
-if [[ ! -f "$JAR_PATH" ]]; then
-  echo "ERROR: auron-it.jar not found"
+if [[ ! -f "$AURON_SPARK_JAR" ]]; then
+  echo "ERROR: auron-spark.jar not found"
+  echo "请，首先Building Auron Spark jar..."
+  # ./auron-build.sh --pre --sparkver 3.5 --scalaver 2.12
   exit 1
 fi
 
-echo "=== Auron TPC-DS Integration Test (tpcds-it.sh) ==="
+if [[ ! -f "$AURON_IT_JAR" ]]; then
+  echo "Building Auron it jar..."
+  "${MVN_CMD}" -P${SPARK_VERSION} -Pscala-${SCALA_VERSION} package -DskipTests
+fi
+
+echo "=== Auron TPC-DS Integration Test ==="
 echo "SPARK_HOME: $SPARK_HOME"
-echo "Runner JAR: $JAR_PATH"
+echo "Main Class: $MAIN_CLASS"
 
 # Split input arguments into two parts: Spark confs and args
 SPARK_CONF=()
@@ -59,7 +71,6 @@ while [[ $# -gt 0 ]]; do
 done
 
 exec $SPARK_HOME/bin/spark-submit \
-  --class org.apache.auron.integration.AuronTPCDSTestRunner \
   --driver-memory 5g \
   --conf spark.ui.enabled=false \
   --conf spark.sql.extensions=org.apache.spark.sql.auron.AuronSparkSessionExtension \
@@ -70,6 +81,8 @@ exec $SPARK_HOME/bin/spark-submit \
   --conf spark.sql.broadcastTimeout=900s \
   --conf spark.driver.memoryOverhead=3072 \
   --conf spark.auron.memoryFraction=0.8 \
+  --jars "${AURON_SPARK_JAR}" \
   "${SPARK_CONF[@]}" \
-  "$JAR_PATH" \
+  "$AURON_IT_JAR" \
+  --class $MAIN_CLASS  \
   "${ARGS[@]}"
