@@ -40,6 +40,7 @@ class SessionManager(val extraSparkConfMap: Map[String, String]) {
     commonConfMap ++ Map(
       "spark.sql.extensions" -> "org.apache.spark.sql.auron.AuronSparkSessionExtension",
       "spark.shuffle.manager" -> "org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager",
+      "spark.auron.native.log.level" -> "warn",
       "spark.auron.enable" -> "true") ++ extraSparkConfMap
 
   private lazy val confsMap: Map[String, Map[String, String]] =
