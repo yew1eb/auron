@@ -16,11 +16,11 @@
  */
 package org.apache.auron.integration
 
-import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.must.Matchers
+import org.apache.spark.sql.QueryTest
+import org.apache.spark.sql.test.SharedSparkSession
 
+class MainTest extends QueryTest with SharedSparkSession {
 
-class MainTest extends AnyFunSuite with Matchers {
   protected val tpcdsDataPath: String =
     sys.env.getOrElse("SPARK_TPCDS_DATA", "/Users/yew1eb/workspaces/tpcds-validator/tpcds_1g")
 
