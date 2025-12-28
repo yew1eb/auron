@@ -23,77 +23,107 @@ import scala.collection.mutable
 import scala.util.matching.Regex
 
 import org.apache.commons.io.FileUtils
+import org.apache.spark.sql.auron.Shims
 
-case class PlanCheckResult(
-    generated: Boolean,
-    compared: Boolean,
-    stable: Boolean,
-    message: Option[String] = None)
+import org.apache.auron.integration.SingleQueryResult
 
 class PlanStability(
-    plansDir: String,
-    colSep: String = "<|COL|>",
-    doubleTolerance: Double = 1e-6) {
-  private def goldenPlanFile(queryId: String): File = new File(s"$plansDir/$queryId.txt")
+    readGoldenPlan: String => String,
+    writeGoldenPlan: (String, String) => Unit,
+    regenGoldenFiles: Boolean = false,
+    planCheck: Boolean = false) {
 
-  def generatePlanGolden(queryId: String, rawPlan: String): PlanCheckResult = {
-    val file = goldenPlanFile(queryId)
-    val normalized = normalizePlan(rawPlan)
-    write(file, normalized)
-    PlanCheckResult(generated = true, compared = false, stable = true, None)
-  }
-
-  def comparePlanGolden(queryId: String, rawPlan: String): PlanCheckResult = {
-    val file = goldenPlanFile(queryId)
-    if (!file.exists()) {
-      return PlanCheckResult(
-        generated = false,
-        compared = true,
-        stable = false,
-        Some(s"Golden plan not found: ${file.getAbsolutePath}"))
+  def shouldVerifyPhysicalPlan(): Boolean = {
+    Shims.get.shimVersion match {
+      case "spark-3.5" => true
+      case _ => false // TODO: Support for other Spark versions in the future
     }
-    val expected = read(file)
-    val actual = normalizePlan(rawPlan)
-    val ok = expected == actual
-    PlanCheckResult(
-      generated = false,
-      compared = true,
-      stable = ok,
-      if (ok) None else Some(s"Plan mismatch for $queryId"))
   }
 
-  def normalizePlan(plan: String): String = {
+  def validate(test: SingleQueryResult): Boolean = {
+    if (regenGoldenFiles) {
+      generatePlanGolden(test.queryId, test.plan)
+    } else if (planCheck && shouldVerifyPhysicalPlan) {
+      return comparePlanGolden(test.queryId, test.plan)
+    }
+    true
+  }
+
+  private def generatePlanGolden(queryId: String, rawPlan: String): Unit = {
+    val normalized = normalizePlan(rawPlan)
+    writeGoldenPlan(queryId, normalized)
+  }
+
+  private def comparePlanGolden(queryId: String, rawPlan: String): Boolean = {
+    val expectedPlan = readGoldenPlan(queryId)
+    val actualPlan = normalizePlan(rawPlan)
+    if (expectedPlan == actualPlan) {
+      println(s"""[DEBUG] comparePlanGolden, queryId: $queryId
+                 |--- Expected ---
+                 |$expectedPlan
+                 |
+                 |--- Actual ---
+                 |$actualPlan
+                 |""".stripMargin)
+
+      true
+    } else {
+      val actualTempFile = new File(FileUtils.getTempDirectory, s"actual.golden.$queryId.txt")
+      FileUtils.writeStringToFile(actualTempFile, actualPlan, StandardCharsets.UTF_8)
+      println(s"""
+                 |Physical plan mismatch for query $queryId
+                 |Actual  : ${actualTempFile.getAbsolutePath}
+                 |--- Expected ---
+                 |$expectedPlan
+                 |
+                 |--- Actual ---
+                 |$actualPlan
+                 |""".stripMargin)
+      false
+    }
+  }
+
+  private def normalizePlan(plan: String): String = {
     val exprIdRegex = "#\\d+L?".r
     val planIdRegex = "plan_id=\\d+".r
 
-    def indexMatches(s: String, r: Regex): Map[String, String] = {
-      val m = new mutable.LinkedHashMap[String, String]()
-      r.findAllMatchIn(s).map(_.toString).foreach { tok =>
-        m.getOrElseUpdate(tok, (m.size + 1).toString)
-      }
-      m.toMap
-    }
-    def replace(s: String, r: Regex, m: Map[String, String], prefix: String): String = {
-      r.replaceAllIn(s, mt => s"$prefix${m(mt.toString)}")
+    // Normalize file location
+    def normalizeLocation(plan: String): String = {
+      plan.replaceAll("""file:/[^,\s\]\)]+""", "file:/<warehouse_dir>")
     }
 
-    val exprMap = indexMatches(plan, exprIdRegex)
-    val p1 = replace(plan, exprIdRegex, exprMap, "#")
+    // Create a normalized map for regex matches
+    def createNormalizedMap(regex: Regex, plan: String): Map[String, String] = {
+      val map = new mutable.HashMap[String, String]()
+      regex
+        .findAllMatchIn(plan)
+        .map(_.toString)
+        .foreach(map.getOrElseUpdate(_, (map.size + 1).toString))
+      map.toMap
+    }
 
-    val pidMap = indexMatches(p1, planIdRegex)
-    val p2 = replace(p1, planIdRegex, pidMap, "plan_id=")
+    // Replace occurrences in the plan using the normalized map
+    def replaceWithNormalizedValues(
+        plan: String,
+        regex: Regex,
+        normalizedMap: Map[String, String],
+        format: String): String = {
+      regex.replaceAllIn(plan, regexMatch => s"$format${normalizedMap(regexMatch.toString)}")
+    }
 
-    val p3 = p2
+    // Normalize the entire plan step by step
+    val exprIdMap = createNormalizedMap(exprIdRegex, plan)
+    val exprIdNormalized = replaceWithNormalizedValues(plan, exprIdRegex, exprIdMap, "#")
+
+    val planIdMap = createNormalizedMap(planIdRegex, exprIdNormalized)
+    val planIdNormalized =
+      replaceWithNormalizedValues(exprIdNormalized, planIdRegex, planIdMap, "plan_id=")
+
+    // QueryStageExec will take its id as argument, replace it with X
+    val argumentsNormalized = planIdNormalized
       .replaceAll("Arguments: [0-9]+, [0-9]+", "Arguments: X, X")
       .replaceAll("Arguments: [0-9]+", "Arguments: X")
 
-    p3.replaceAll("""file:/[^,\s\]\)]+""", "file:/<warehouse_dir>")
+    normalizeLocation(argumentsNormalized)
   }
-  private def write(file: File, content: String): Unit = {
-    Option(file.getParentFile).foreach(_.mkdirs())
-    FileUtils.writeStringToFile(file, content, StandardCharsets.UTF_8)
-  }
-  private def read(file: File): String =
-    FileUtils.readFileToString(file, StandardCharsets.UTF_8)
-
 }

@@ -17,8 +17,11 @@
 package org.apache.auron.integration.tpcds
 
 import java.io.File
+import java.nio.charset.StandardCharsets
+import java.nio.file.{Files, Path}
 
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.auron.Shims
 
 trait TPCDSFeatures {
   val tpcdsQueries: Seq[String] = Seq(
@@ -189,19 +192,8 @@ trait TPCDSFeatures {
     finally src.close()
   }
 
-  def readGoldenResult(queryId: String): String = {
-    val resourcePath = s"tpcds-query-results/$queryId.out"
-    val is =
-      Option(Thread.currentThread().getContextClassLoader.getResourceAsStream(resourcePath))
-        .getOrElse(
-          throw new IllegalArgumentException(s"TPC-DS golden result not found: $resourcePath"))
-    val src = scala.io.Source.fromInputStream(is, "UTF-8")
-    try src.mkString
-    finally src.close()
-  }
-
   def readGoldenPlan(queryId: String): String = {
-    val resourcePath = s"tpcds-plan-stability/$queryId.txt"
+    val resourcePath = s"tpcds-plan-stability/${Shims.get.shimVersion}/$queryId.txt"
     val is =
       Option(Thread.currentThread().getContextClassLoader.getResourceAsStream(resourcePath))
         .getOrElse(
@@ -209,5 +201,20 @@ trait TPCDSFeatures {
     val src = scala.io.Source.fromInputStream(is, "UTF-8")
     try src.mkString
     finally src.close()
+  }
+
+  lazy val goldenOutputDir: File = {
+    val dir = new File(
+      System.getProperty("java.io.tmpdir"),
+      s"tpcds-plan-stability/${Shims.get.shimVersion}")
+    if (!dir.exists()) dir.mkdirs()
+    dir
+  }
+
+  def writeGoldenPlan(queryId: String, normalized: String): File = {
+    val path: Path = new File(goldenOutputDir, s"$queryId.txt").toPath
+    println(s"[GoldenPlan] queryId=$queryId, saved to ${path.toAbsolutePath}")
+    Files.write(path, normalized.getBytes(StandardCharsets.UTF_8))
+    path.toFile
   }
 }

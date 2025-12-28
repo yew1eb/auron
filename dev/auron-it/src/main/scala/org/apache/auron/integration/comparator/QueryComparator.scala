@@ -16,8 +16,10 @@
  */
 package org.apache.auron.integration.comparator
 
+import org.apache.auron.integration.SingleQueryResult
+
 case class ComparisonResult(
-    queryName: String,
+    queryId: String,
     baselineRows: Long,
     testRows: Long,
     baselineTime: Double,
@@ -25,7 +27,8 @@ case class ComparisonResult(
     rowMatch: Boolean,
     dataMatch: Boolean,
     speedup: Double,
-    success: Boolean = false)
+    success: Boolean = false,
+    var planStable: Boolean = true)
 
 trait QueryComparator {
   def compare(baseline: SingleQueryResult, test: SingleQueryResult): ComparisonResult

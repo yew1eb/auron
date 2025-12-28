@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.auron.integration.comparator
+package org.apache.auron.integration
 
 import org.apache.spark.sql.{Row, SparkSession}
 
@@ -46,7 +46,7 @@ class QueryRunner(loadQuerySql: String => String) {
       val planStr = df.queryExecution.executedPlan.toString()
 
       val duration = (System.currentTimeMillis() - startTime) / 1000.0
-
+      println(s"queryId: $queryId, duration: $duration")
       SingleQueryResult(
         queryId = queryId,
         rowCount = rowCount,
