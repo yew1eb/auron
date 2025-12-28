@@ -96,7 +96,20 @@ class MainTest extends AnyFunSuite with Matchers {
       "--data-location",
       tpcdsDataPath,
       "--query-filter",
-      "q7,q13,q17,q22,q26,q27,q35,q39a,q39b,q79,q83,q85")
+      "q7,q13,q17,q22,q26,q27,q35,q39a,q39b,q83,q85")
+    Main.main(args)
+  }
+
+
+  test("q7") {
+    assume(tpcdsDataPath.nonEmpty, "Skip: SPARK_TPCDS_DATA env not set")
+    val args = Array[String](
+      "--type",
+      "tpcds",
+      "--data-location",
+      tpcdsDataPath,
+      "--query-filter",
+      "q7")
     Main.main(args)
   }
 }

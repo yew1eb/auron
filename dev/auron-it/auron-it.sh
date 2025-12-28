@@ -40,14 +40,15 @@ fi
 
 if [[ ! -f "$AURON_SPARK_JAR" ]]; then
   echo "ERROR: auron-spark.jar not found"
-  echo "请，首先Building Auron Spark jar..."
   # ./auron-build.sh --pre --sparkver 3.5 --scalaver 2.12
   exit 1
 fi
 
 if [[ ! -f "$AURON_IT_JAR" ]]; then
   echo "Building Auron it jar..."
+  pushd "${SCRIPT_DIR}"
   "${MVN_CMD}" -P${SPARK_VERSION} -Pscala-${SCALA_VERSION} package -DskipTests
+  popd
 fi
 
 echo "=== Auron Integration Test ==="

@@ -123,7 +123,7 @@ class QueryResultComparator extends QueryComparator {
               }
             case _ =>
               val actualValue = actualRow.get(colIdx).toString
-              val expectedValue = expectedRow.get(colIdx)
+              val expectedValue = expectedRow.get(colIdx).toString
               if (actualValue != expectedValue) {
                 println(
                   s"Mismatch in $queryId row $rowIdx col $colIdx: " +
