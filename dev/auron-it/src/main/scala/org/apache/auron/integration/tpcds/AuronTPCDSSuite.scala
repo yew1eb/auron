@@ -16,107 +16,77 @@
  */
 package org.apache.auron.integration.runner
 
-import org.apache.auron.integration.Suite
-import org.apache.auron.integration.cli.ArgsParser
-import org.apache.auron.integration.exec.SparkFactory
-import org.apache.auron.integration.tpcds.TPCDSQueriesCompare
-import org.apache.commons.io.FileUtils
-import org.apache.spark.SparkConf
-import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.apache.spark.sql.auron.Shims
-import org.apache.spark.sql.catalyst.util.resourceToString
-import org.apache.spark.sql.execution.FormattedMode
-import org.apache.spark.sql.types.{DoubleType, StructType}
+import org.apache.auron.integration.{Suite, SuiteArgs}
+import org.apache.auron.integration.comparator.{ComparisonResult, QueryResultComparator, QueryRunner}
+import org.apache.auron.integration.tpcds.TPCDSFeatures
 
-import java.io.File
-import java.nio.charset.StandardCharsets
-import scala.collection.mutable
-import scala.util.Try
-import scala.util.matching.Regex
+class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
 
-object AuronTPCDSSuite extends Suite {
-  protected val regenGoldenFiles: Boolean =
-    sys.env.getOrElse("REGEN_TPCDS_GOLDEN_FILES", "0") == "1"
+  val queryRunner = new QueryRunner(loadQuerySql = (qid: String) => this.loadQuerySql(qid))
 
-  protected val rootPath: String = getClass.getResource("/").getPath
-  protected val tpcdsQueriesPath: String = rootPath + "/tpcds-queries"
-  protected val tpcdsResultsPath: String = rootPath + "/tpcds-query-results"
-  protected val tpcdsPlanPath: String = rootPath + "/tpcds-plan-stability"
+  val resutComparator = new QueryResultComparator()
 
-  protected val colSep: String = "<|COL|>"
+  override def run(): Int = {
+    val queries = filterQueries(args.queryFilter)
 
-  val tpcdsQueries: Seq[String] = Seq(
-    "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10", "q11",
-    "q12", "q13", "q14a", "q14b", "q15", "q16", "q17", "q18", "q19", "q20",
-    "q21", "q22", "q23a", "q23b", "q24a", "q24b", "q25", "q26", "q27", "q28", "q29", "q30",
-    "q31", "q32", "q33", "q34", "q35", "q36", "q37", "q38", "q39a", "q39b", "q40",
-    "q41", "q42", "q43", "q44", "q45", "q46", "q47", "q48", "q49", "q50",
-    "q51", "q52", "q53", "q54", "q55", "q56", "q57", "q58", "q59", "q60",
-    "q61", "q62", "q63", "q64", "q65", "q66", "q67", "q68", "q69", "q70",
-    "q71", "q72", "q73", "q74", "q75", "q76", "q77", "q78", "q79", "q80",
-    "q81", "q82", "q83", "q84", "q85", "q86", "q87", "q88", "q89", "q90",
-    "q91", "q92", "q93", "q94", "q95", "q96", "q97", "q98", "q99")
-
-  val tables = Seq("catalog_page", "catalog_returns", "customer", "customer_address",
-    "customer_demographics", "date_dim", "household_demographics", "inventory", "item",
-    "promotion", "store", "store_returns", "catalog_sales", "web_sales", "store_sales",
-    "web_returns", "web_site", "reason", "call_center", "warehouse", "ship_mode", "income_band",
-    "time_dim", "web_page")
-
-  def setupTables(dataLocation: String): Map[String, Long] =
-    tables.map { tableName =>
-        val tablePath = new File(dataLocation, tableName).getAbsolutePath
-        val tableDF = spark.read.format("parquet").load(tablePath)
-        tableDF.createOrReplaceTempView(tableName)
-      tableName -> spark.table(tableName).count()
-      }.toMap
-
-
-  val baseConf = new SparkConf()
-    .setAppName("validate-tpcds-queries")
-    .set("spark.sql.parquet.compression.codec", "snappy")
-    .set("spark.sql.shuffle.partitions", "4")
-    .set("spark.driver.extraJavaOptions", "-XX:+UseG1GC")
-    .set("spark.sql.autoBroadcastJoinThreshold", (20 * 1024 * 1024).toString)
-    // Since Spark 3.0, `spark.sql.crossJoin.enabled` is true by default
-    .set("spark.sql.crossJoin.enabled", "true")
-    .set("spark.sql.sources.useV1SourceList", "parquet")
-    .set("spark.sql.autoBroadcastJoinThreshold", "-1")
-
-  val spark = SparkSession.builder.config(baseConf).getOrCreate()
-
-  override def run(args: ArgsParser.Config): Int = {
-
-    val filteredQueries = filterQueries(tpcdsQueries, args.queryFilter)
-
-    val tableSizes = setupTables(args.dataLocation)
-    println(tableSizes)
-
-    TPCDSQueriesCompare.runQueries(session = spark, queryLocation = tpcdsQueriesPath, queries = filteredQueries)
-  }
-
-
-  private def filterQueries(
-                             origQueries: Seq[String],
-                             queryFilter: Seq[String],
-                             nameSuffix: String = ""): Seq[String] = {
-    if (queryFilter.nonEmpty) {
-      if (nameSuffix.nonEmpty) {
-        origQueries.filter { name => queryFilter.contains(s"$name$nameSuffix") }
-      } else {
-        origQueries.filter(queryFilter.contains)
-      }
-    } else {
-      origQueries
+    if (queries.isEmpty) {
+      println("No valid queries specified")
+      return 1
     }
+    println(s"AuronTPCDSSuite queries: $queries")
+
+    val tableSizes = setupTables(args.dataLocation, sessions.baselineSpark)
+    println(s"AuronTPCDSSuite tableSizes: ${tableSizes.mkString("", "\n", "")}")
+
+    val comparisonResults = executeBenchmark(queries)
+
+    printComparisonResults(comparisonResults)
+
+    if (comparisonResults.exists(!_.success)) {
+      println(
+        s"\nIntegration test FAILED: ${comparisonResults.count(!_.success)}/${comparisonResults.length} queries failed")
+      1
+    } else {
+      println(
+        s"\nIntegration test PASSED: ${comparisonResults.length}/${comparisonResults.length}")
+      0
+    }
+
+    //TODO 根据comparisonResults 实现 planStability
   }
 
-  override def name: String = ???
+  private def executeBenchmark(queries: List[String]): List[ComparisonResult] = {
+    val baselineResults = queryRunner.runQueries(sessions.baselineSpark, queries)
+    val testResults = queryRunner.runQueries(sessions.auronSpark, queries)
 
-  override def prepareSessions(): Unit = ???
+    val comparisonResults = queries.map { queryId =>
+      resutComparator.compare(baselineResults(queryId), testResults(queryId))
+    }
+    comparisonResults
+  }
 
-  override def registerTables(): Unit = ???
+  private def printComparisonResults(results: List[ComparisonResult]): Unit = {
+    println("\n" + "=" * 120)
+    println("📊 TPC-DS Comparison Results")
+    println("=" * 120)
+    println("Query | Rows(B/T) | Time(B/T) | Speedup | Data")
+    println("=" * 120)
 
-  override def loadQueries(): Seq[String] = ???
+    results.sortBy(_.speedup).reverse.foreach { r =>
+      val status = if (r.success) "✅" else "❌"
+      println(
+        f"$status ${r.queryName}%-6s | ${r.baselineRows}%5d/${r.testRows}%5d | " +
+          f"${r.baselineTime}%.2f/${r.testTime}%.2fs | ${r.speedup}%.2fx | " +
+          s"${if (r.dataMatch) "✓" else "✗"}")
+    }
 
+    val passed = results.count(_.success)
+    val total = results.length
+    println("=" * 120)
+    println(f"Summary: $passed/$total PASSED (${passed * 100.0 / total})")
+  }
+}
+
+object AuronTPCDSSuite {
+  def apply(args: SuiteArgs): Suite = new AuronTPCDSSuite(args)
 }

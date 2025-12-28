@@ -29,9 +29,9 @@ SCALA_VERSION="${SCALA_VERSION:-2.12}"
 PROFILES="-P${SPARK_VERSION},scala-${SCALA_VERSION}"
 PROJECT_VERSION=$("${MVN_CMD}" -f "${AURON_DIR}/pom.xml" -q $PROFILES help:evaluate -Dexpression=project.version -DforceStdout)
 AURON_SPARK_JAR="${AURON_SPARK_JAR:-$AURON_DIR/dev/mvn-build-helper/assembly/target/auron-${SPARK_VERSION}_$SCALA_VERSION-$PROJECT_VERSION.jar}"
-MAIN_CLASS="org.apache.auron.integration.Main"
 
-AURON_IT_JAR=$(find "$AURON_DIR/dev/auron-it/target/" -name "auron-it-*.jar" | head -n 1)
+AURON_IT_JAR=$AURON_DIR/dev/auron-it/target/auron-it-$PROJECT_VERSION-jar-with-dependencies.jar
+
 
 if [[ -z "${SPARK_HOME:-}" ]]; then
   echo "ERROR: SPARK_HOME must be set"
@@ -50,7 +50,7 @@ if [[ ! -f "$AURON_IT_JAR" ]]; then
   "${MVN_CMD}" -P${SPARK_VERSION} -Pscala-${SCALA_VERSION} package -DskipTests
 fi
 
-echo "=== Auron TPC-DS Integration Test ==="
+echo "=== Auron Integration Test ==="
 echo "SPARK_HOME: $SPARK_HOME"
 echo "Main Class: $MAIN_CLASS"
 
@@ -72,17 +72,10 @@ done
 
 exec $SPARK_HOME/bin/spark-submit \
   --driver-memory 5g \
+  --conf spark.driver.extraJavaOptions=-XX:+UseG1GC \
   --conf spark.ui.enabled=false \
-  --conf spark.sql.extensions=org.apache.spark.sql.auron.AuronSparkSessionExtension \
-  --conf spark.shuffle.manager=org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager \
-  --conf spark.sql.shuffle.partitions=1000 \
-  --conf spark.sql.adaptive.advisoryPartitionSizeInBytes=16777216 \
-  --conf spark.sql.autoBroadcastJoinThreshold=1048576 \
-  --conf spark.sql.broadcastTimeout=900s \
-  --conf spark.driver.memoryOverhead=3072 \
-  --conf spark.auron.memoryFraction=0.8 \
+  --conf spark.sql.shuffle.partitions=100 \
   --jars "${AURON_SPARK_JAR}" \
   "${SPARK_CONF[@]}" \
   "$AURON_IT_JAR" \
-  --class $MAIN_CLASS  \
   "${ARGS[@]}"

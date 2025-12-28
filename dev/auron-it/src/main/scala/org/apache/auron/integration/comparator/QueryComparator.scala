@@ -14,14 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.auron.integration
+package org.apache.auron.integration.comparator
 
-abstract class Suite(val args: SuiteArgs) {
-  protected val sessions = new SessionManager(args.extraSparkConf)
+case class ComparisonResult(
+    queryName: String,
+    baselineRows: Long,
+    testRows: Long,
+    baselineTime: Double,
+    testTime: Double,
+    rowMatch: Boolean,
+    dataMatch: Boolean,
+    speedup: Double,
+    success: Boolean = false)
 
-  def run(): Int
-
-  def close(): Unit = {
-    sessions.stopAll()
-  }
+trait QueryComparator {
+  def compare(baseline: SingleQueryResult, test: SingleQueryResult): ComparisonResult
 }
