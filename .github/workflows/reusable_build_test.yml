@@ -242,7 +242,10 @@ jobs:
       - name: Install Auron JAR
         run: |
           ls -la
-          cp auron-*${{ inputs.sparkver }}_${{ inputs.scalaver }}*.jar spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}/jars/
+          jar=$(ls -1 auron-${{ inputs.sparkver }}_${{ inputs.scalaver }}*.jar | head -n1)
+          [ -n "$jar" ] || { echo "No jar matched: auron-${{ inputs.sparkver }}_${{ inputs.scalaver }}*.jar"; exit 1; }
+          echo "AURON_SPARK_JAR=$jar" >> "$GITHUB_ENV"
+          cp "$jar" spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}/jars/
 
       - name: Download All auron Jar Artifacts
         uses: actions/download-artifact@v4
@@ -365,7 +368,6 @@ jobs:
           SPARK_VERSION: ${{ inputs.sparkver }}
           SCALA_VERSION: ${{ inputs.scalaver }}
           SPARK_HOME: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
-          AURON_SPARK_JAR: auron-*${{ inputs.sparkver }}_${{ inputs.scalaver }}*.jar
         run: |
           dev/auron-it/auron-it.sh
             ${{ inputs.extrasparkconf }} \

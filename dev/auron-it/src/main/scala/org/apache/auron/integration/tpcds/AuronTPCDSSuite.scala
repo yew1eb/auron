@@ -88,7 +88,7 @@ class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
     println("Query | Rows(B/T) | Time(B/T) | Speedup | Data | PlanStable")
     println("=" * 120)
 
-    results.sortBy(_.speedup).reverse.foreach { r =>
+    results.foreach { r =>
       val status = if (r.success && r.planStable) "✅" else "❌"
       println(
         f"$status ${r.queryId}%-6s | ${r.baselineRows}%5d/${r.testRows}%5d | " +
