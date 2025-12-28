@@ -19,7 +19,8 @@ package org.apache.auron.integration
 case class SuiteArgs(
     benchType: String = "",
     dataLocation: String = "",
-    queryFilter: List[String] = Nil,
+    queryFilter: Seq[String] = Nil,
     extraSparkConf: Map[String, String] = Map.empty,
+    disableResultCheck: Boolean = false,
     enablePlanCheck: Boolean = false,
     regenGoldenFiles: Boolean = false)

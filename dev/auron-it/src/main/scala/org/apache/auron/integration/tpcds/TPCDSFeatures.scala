@@ -173,11 +173,10 @@ trait TPCDSFeatures {
     }.toMap
   }
 
-  protected def filterQueries(queryFilter: List[String]): List[String] = {
-    if (queryFilter.isEmpty) tpcdsQueries.toList
+  protected def filterQueries(queryFilter: Seq[String]): Seq[String] = {
+    if (queryFilter.isEmpty) tpcdsQueries
     else {
-      val filterSet = queryFilter.toSet
-      tpcdsQueries.filter(q => filterSet.contains(q)).toList
+      queryFilter.filter(q => tpcdsQueries.contains(q))
     }
   }
 

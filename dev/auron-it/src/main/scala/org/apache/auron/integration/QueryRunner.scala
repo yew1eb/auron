@@ -29,7 +29,7 @@ case class SingleQueryResult(
 
 class QueryRunner(loadQuerySql: String => String) {
 
-  def runQueries(spark: SparkSession, queries: List[String]): Map[String, SingleQueryResult] = {
+  def runQueries(spark: SparkSession, queries: Seq[String]): Map[String, SingleQueryResult] = {
     queries
       .map { qid => executeSingleQuery(spark, qid) }
       .map(r => r.queryId -> r)

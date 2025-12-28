@@ -22,6 +22,6 @@ abstract class Suite(val args: SuiteArgs) {
   def run(): Int
 
   def close(): Unit = {
-    sessions.stopAll()
+    sessions.close()
   }
 }

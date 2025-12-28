@@ -80,4 +80,10 @@ class MainTest extends AnyFunSuite with Matchers {
       "--regen-golden")
     Main.main(args)
   }
+
+  test("check all") {
+    assume(tpcdsDataPath.nonEmpty, "Skip: SPARK_TPCDS_DATA env not set")
+    val args = Array[String]("--type", "tpcds", "--data-location", tpcdsDataPath)
+    Main.main(args)
+  }
 }

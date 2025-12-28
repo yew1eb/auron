@@ -17,9 +17,8 @@
 package org.apache.auron.integration.runner
 
 import org.apache.auron.integration.{QueryRunner, Suite, SuiteArgs}
-import org.apache.auron.integration.comparator.{ComparisonResult, PlanStability, QueryResultComparator}
+import org.apache.auron.integration.comparator.{ComparisonResult, PlanStabilityChecker, QueryResultComparator}
 import org.apache.auron.integration.tpcds.TPCDSFeatures
-import org.apache.spark.sql.SparkSession
 
 class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
 
@@ -27,14 +26,14 @@ class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
 
   val resutComparator = new QueryResultComparator()
 
-  val planStability = new PlanStability(
+  val planStability = new PlanStabilityChecker(
     readGoldenPlan = (qid: String) => this.readGoldenPlan(qid),
     writeGoldenPlan = (qid: String, plan: String) => this.writeGoldenPlan(qid, plan),
     regenGoldenFiles = args.regenGoldenFiles,
     planCheck = args.enablePlanCheck)
 
   override def run(): Int = {
-    val queries = if(args.queryFilter == Nil) {
+    val queries = if (args.queryFilter == Nil) {
       tpcdsQueries.toList
     } else {
       filterQueries(args.queryFilter)
@@ -45,8 +44,6 @@ class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
       return 1
     }
     println(s"AuronTPCDSSuite queries: $queries")
-
-    setupTables(args.dataLocation, sessions.baselineSpark)
 
     val comparisonResults = executeBenchmark(queries)
 
@@ -62,19 +59,21 @@ class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
     }
   }
 
-  private def executeBenchmark(queries: List[String]): List[ComparisonResult] = {
-    val baselineResults = queryRunner.runQueries(sessions.baselineSpark, queries)
-    println("sessions.baselineSpark.stop ....")
-    sessions.baselineSpark.stop()
-    val testResults = queryRunner.runQueries(sessions.auronSpark, queries)
+  private def executeBenchmark(queries: Seq[String]): Seq[ComparisonResult] = {
+    println("execute baseline ....")
+    setupTables(args.dataLocation, sessions.baselineSession)
+    val baselineResults = queryRunner.runQueries(sessions.baselineSession, queries)
+    println("execute auron ....")
+    setupTables(args.dataLocation, sessions.auronSession)
+    val auronResults = queryRunner.runQueries(sessions.auronSession, queries)
 
     val comparisonResults = queries.map { queryId =>
-      resutComparator.compare(baselineResults(queryId), testResults(queryId))
+      resutComparator.compare(baselineResults(queryId), auronResults(queryId))
     }
 
-    if(args.enablePlanCheck || args.regenGoldenFiles) {
+    if (args.enablePlanCheck || args.regenGoldenFiles) {
       comparisonResults.foreach(comparisonResult => {
-        val testResult = testResults(comparisonResult.queryId)
+        val testResult = auronResults(comparisonResult.queryId)
         val planStable = planStability.validate(testResult)
         comparisonResult.planStable = planStable
       })
@@ -82,7 +81,7 @@ class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
     comparisonResults
   }
 
-  private def printComparisonResults(results: List[ComparisonResult]): Unit = {
+  private def printComparisonResults(results: Seq[ComparisonResult]): Unit = {
     println("\n" + "=" * 120)
     println("📊 TPC-DS Comparison Results")
     println("=" * 120)
@@ -90,15 +89,17 @@ class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
     println("=" * 120)
 
     results.sortBy(_.speedup).reverse.foreach { r =>
-      val status = if (r.success) "✅" else "❌"
+      val status = if (r.success && r.planStable) "✅" else "❌"
       println(
         f"$status ${r.queryId}%-6s | ${r.baselineRows}%5d/${r.testRows}%5d | " +
           f"${r.baselineTime}%.2f/${r.testTime}%.2fs | ${r.speedup}%.2fx | " +
           s"${if (r.dataMatch) "✓" else "✗"} | " +
-          s"${if (r.planStable) "✓" else "✗"}" )
+          s"${if (r.planStable) "✓" else "✗"}")
     }
 
-    val passed = results.count(_.success)
+    val passed: Int =
+      if (args.enablePlanCheck) results.count(r => r.success && r.planStable)
+      else results.count(_.success)
     val total = results.length
     println("=" * 120)
     println(f"Summary: $passed/$total PASSED (${passed * 100.0 / total})")

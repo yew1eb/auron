@@ -22,7 +22,7 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.ClassFileLocator;
-import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.pool.TypePool;
 import org.slf4j.Logger;
@@ -49,7 +49,8 @@ public class ValidateSparkPlanInjector {
                     .method(named("apply"))
                     .intercept(MethodDelegation.to(ValidateSparkPlanApplyInterceptor.class))
                     .make()
-                    .load(contextClassLoader, ClassLoadingStrategy.Default.INJECTION);
+                    // .load(contextClassLoader, ClassLoadingStrategy.Default.INJECTION);
+                    .load(contextClassLoader, ClassReloadingStrategy.fromInstalledAgent());
             logger.info("Successfully injected ValidateSparkPlan.");
             injected = true;
         } catch (TypePool.Resolution.NoSuchTypeException e) {

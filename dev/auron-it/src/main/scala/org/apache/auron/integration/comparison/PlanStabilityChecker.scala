@@ -27,7 +27,7 @@ import org.apache.spark.sql.auron.Shims
 
 import org.apache.auron.integration.SingleQueryResult
 
-class PlanStability(
+class PlanStabilityChecker(
     readGoldenPlan: String => String,
     writeGoldenPlan: (String, String) => Unit,
     regenGoldenFiles: Boolean = false,

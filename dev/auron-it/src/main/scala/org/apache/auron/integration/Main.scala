@@ -26,7 +26,7 @@ object Main {
     import builder._
     OParser.sequence(
       programName("auron-it"),
-      head("Auron-it", "v1.0"),
+      head("auron-it", "v1.0"),
       opt[String]('t', "type")
         .action((x, c) => c.copy(benchType = x))
         .required()
@@ -36,9 +36,8 @@ object Main {
         .required()
         .text("data directory path"),
       opt[String]('q', "query-filter")
-        .action((x, c) =>
-          c.copy(queryFilter = x.split(",").map(_.trim).filter(_.nonEmpty).toList))
-        .required()
+        .action((x, c) => c.copy(queryFilter = x.split(",").map(_.trim).filter(_.nonEmpty).toSeq))
+        //.required()
         .text("query filter (e.g. q1,q2,q3)"),
       opt[String]("conf")
         .unbounded()
@@ -57,6 +56,9 @@ object Main {
       opt[Unit]("regen-golden")
         .action((_, c) => c.copy(regenGoldenFiles = true))
         .text("regenerate golden files"),
+      opt[Unit]("disable-result-check")
+        .action((_, c) => c.copy(disableResultCheck = true))
+        .text("disable query result check (default: enabled)"),
       help('h', "help"))
   }
 

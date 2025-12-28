@@ -74,7 +74,6 @@ exec $SPARK_HOME/bin/spark-submit \
   --driver-memory 5g \
   --conf spark.driver.extraJavaOptions=-XX:+UseG1GC \
   --conf spark.ui.enabled=false \
-  --conf spark.sql.shuffle.partitions=100 \
   --jars "${AURON_SPARK_JAR}" \
   "${SPARK_CONF[@]}" \
   "$AURON_IT_JAR" \
