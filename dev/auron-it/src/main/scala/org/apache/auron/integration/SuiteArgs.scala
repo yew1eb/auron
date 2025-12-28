@@ -16,12 +16,10 @@
  */
 package org.apache.auron.integration
 
-abstract class Suite(val args: SuiteArgs) {
-  protected val sessions = new SessionManager(args.extraSparkConf)
-
-  def run(): Int
-
-  def close(): Unit = {
-    sessions.stopAll()
-  }
-}
+case class SuiteArgs(
+    benchType: String = "",
+    dataLocation: String = "",
+    queryFilter: List[String] = Nil,
+    extraSparkConf: Map[String, String] = Map.empty,
+    enablePlanCheck: Boolean = false,
+    regenGoldenFiles: Boolean = false)
