@@ -30,4 +30,4 @@ $SCRIPT_DIR/auron-it.sh \
     --conf spark.serializer=org.apache.spark.serializer.KryoSerializer  --conf spark.celeborn.client.spark.shuffle.writer=hash \
     --type tpcds \
     --data-location /Users/yew1eb/workspaces/tpcds-validator/tpcds_1g \
-    --query-filter q7,q13,q17,q22,q26,q27,q35,q39a,q39b,q83,q85
+    --query-filter  q17,q22,q27
