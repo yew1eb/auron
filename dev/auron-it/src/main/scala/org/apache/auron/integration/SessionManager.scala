@@ -29,7 +29,7 @@ class SessionManager(val extraSparkConf: Map[String, String]) {
   def commonConf(master: String): SparkConf = {
     new SparkConf()
       .setMaster(master)
-      .set("spark.ui.enabled", "false")
+      .set("spark.ui.enabled", "true")
       .set("spark.sql.sources.useV1SourceList", "parquet")
       .set("spark.sql.autoBroadcastJoinThreshold", "-1")
   }

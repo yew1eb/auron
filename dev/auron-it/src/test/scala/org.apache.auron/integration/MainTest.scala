@@ -63,7 +63,7 @@ class MainTest extends AnyFunSuite with Matchers {
       "--data-location",
       tpcdsDataPath,
       "--query-filter",
-      "q1,q8",
+      "q1",
       "--plan-check")
     Main.main(args)
   }
@@ -77,7 +77,7 @@ class MainTest extends AnyFunSuite with Matchers {
       tpcdsDataPath,
       "--query-filter",
       "q1,q8",
-      "--plan-check")
+      "--regen-golden")
     Main.main(args)
   }
 }

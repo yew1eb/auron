@@ -18,6 +18,8 @@ package org.apache.auron.integration.comparator
 
 import org.apache.spark.sql.Row
 
+import org.apache.auron.integration.SingleQueryResult
+
 class QueryResultComparator extends QueryComparator {
   private val colSep = "<|COL|>"
 
@@ -52,5 +54,4 @@ class QueryResultComparator extends QueryComparator {
     val rowStrings = rows.map(_.mkString(colSep))
     s"${rows.length}\n${rowStrings.mkString("\n")}\n"
   }
-
 }

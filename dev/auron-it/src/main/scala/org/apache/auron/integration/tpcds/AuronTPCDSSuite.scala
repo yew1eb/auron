@@ -16,9 +16,10 @@
  */
 package org.apache.auron.integration.runner
 
-import org.apache.auron.integration.{Suite, SuiteArgs}
-import org.apache.auron.integration.comparator.{ComparisonResult, QueryResultComparator, QueryRunner}
+import org.apache.auron.integration.{QueryRunner, Suite, SuiteArgs}
+import org.apache.auron.integration.comparator.{ComparisonResult, PlanStability, QueryResultComparator}
 import org.apache.auron.integration.tpcds.TPCDSFeatures
+import org.apache.spark.sql.SparkSession
 
 class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
 
@@ -26,8 +27,18 @@ class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
 
   val resutComparator = new QueryResultComparator()
 
+  val planStability = new PlanStability(
+    readGoldenPlan = (qid: String) => this.readGoldenPlan(qid),
+    writeGoldenPlan = (qid: String, plan: String) => this.writeGoldenPlan(qid, plan),
+    regenGoldenFiles = args.regenGoldenFiles,
+    planCheck = args.enablePlanCheck)
+
   override def run(): Int = {
-    val queries = filterQueries(args.queryFilter)
+    val queries = if(args.queryFilter == Nil) {
+      tpcdsQueries.toList
+    } else {
+      filterQueries(args.queryFilter)
+    }
 
     if (queries.isEmpty) {
       println("No valid queries specified")
@@ -35,32 +46,38 @@ class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
     }
     println(s"AuronTPCDSSuite queries: $queries")
 
-    val tableSizes = setupTables(args.dataLocation, sessions.baselineSpark)
-    println(s"AuronTPCDSSuite tableSizes: ${tableSizes.mkString("", "\n", "")}")
+    setupTables(args.dataLocation, sessions.baselineSpark)
 
     val comparisonResults = executeBenchmark(queries)
 
     printComparisonResults(comparisonResults)
 
-    if (comparisonResults.exists(!_.success)) {
-      println(
-        s"\nIntegration test FAILED: ${comparisonResults.count(!_.success)}/${comparisonResults.length} queries failed")
+    val failed = comparisonResults.count(r => !r.success || !r.planStable)
+    if (failed > 0) {
+      println(s"\nTPC-DS test FAILED: $failed/${comparisonResults.length} queries failed")
       1
     } else {
-      println(
-        s"\nIntegration test PASSED: ${comparisonResults.length}/${comparisonResults.length}")
+      println(s"\nTPC-DS test PASSED: ${comparisonResults.length}/${comparisonResults.length}")
       0
     }
-
-    //TODO 根据comparisonResults 实现 planStability
   }
 
   private def executeBenchmark(queries: List[String]): List[ComparisonResult] = {
     val baselineResults = queryRunner.runQueries(sessions.baselineSpark, queries)
+    println("sessions.baselineSpark.stop ....")
+    sessions.baselineSpark.stop()
     val testResults = queryRunner.runQueries(sessions.auronSpark, queries)
 
     val comparisonResults = queries.map { queryId =>
       resutComparator.compare(baselineResults(queryId), testResults(queryId))
+    }
+
+    if(args.enablePlanCheck || args.regenGoldenFiles) {
+      comparisonResults.foreach(comparisonResult => {
+        val testResult = testResults(comparisonResult.queryId)
+        val planStable = planStability.validate(testResult)
+        comparisonResult.planStable = planStable
+      })
     }
     comparisonResults
   }
@@ -69,15 +86,16 @@ class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
     println("\n" + "=" * 120)
     println("📊 TPC-DS Comparison Results")
     println("=" * 120)
-    println("Query | Rows(B/T) | Time(B/T) | Speedup | Data")
+    println("Query | Rows(B/T) | Time(B/T) | Speedup | Data | PlanStable")
     println("=" * 120)
 
     results.sortBy(_.speedup).reverse.foreach { r =>
       val status = if (r.success) "✅" else "❌"
       println(
-        f"$status ${r.queryName}%-6s | ${r.baselineRows}%5d/${r.testRows}%5d | " +
+        f"$status ${r.queryId}%-6s | ${r.baselineRows}%5d/${r.testRows}%5d | " +
           f"${r.baselineTime}%.2f/${r.testTime}%.2fs | ${r.speedup}%.2fx | " +
-          s"${if (r.dataMatch) "✓" else "✗"}")
+          s"${if (r.dataMatch) "✓" else "✗"} | " +
+          s"${if (r.planStable) "✓" else "✗"}" )
     }
 
     val passed = results.count(_.success)
