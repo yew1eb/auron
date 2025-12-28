@@ -53,7 +53,6 @@ fi
 
 echo "=== Auron Integration Test ==="
 echo "SPARK_HOME: $SPARK_HOME"
-echo "Main Class: $MAIN_CLASS"
 
 # Split input arguments into two parts: Spark confs and args
 SPARK_CONF=()

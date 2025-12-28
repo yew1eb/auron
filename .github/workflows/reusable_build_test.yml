@@ -379,20 +379,11 @@ jobs:
           SCALA_VERSION: ${{ inputs.scalaver }}
           SPARK_HOME: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
         run: |
-          dev/auron-it/auron-it.sh
+          dev/auron-it/auron-it.sh  \
             ${{ inputs.extrasparkconf }} \
             --type tpcds \
             --data-location dev/tpcds_1g \
             --query-filter ${{ matrix.query }}
-
-      - name: Upload tpcds test reports
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: tpcds-test-reports-${{ inputs.hadoop-profile }}-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
-          path: |
-            **/auron-it/target/surefire-reports/*.xml
-            **/auron-it/target/surefire-reports/*.txt
 
       - name: Upload tpcds test log
         if: failure()
