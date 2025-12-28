@@ -105,7 +105,7 @@ class QueryResultComparator extends QueryComparator {
       val expectedRow: Row = test(rowIdx)
       actualRow.schema.zipWithIndex.foreach { case (field, colIdx) =>
         if (actualRow.isNullAt(colIdx) || expectedRow.isNullAt(colIdx)) {
-          if(actualRow.isNullAt(colIdx) != expectedRow.isNullAt(colIdx)) {
+          if (actualRow.isNullAt(colIdx) != expectedRow.isNullAt(colIdx)) {
             println(
               s"Mismatch in $queryId row $rowIdx col $colIdx: " +
                 s"expected null, got ${expectedRow(colIdx)}")

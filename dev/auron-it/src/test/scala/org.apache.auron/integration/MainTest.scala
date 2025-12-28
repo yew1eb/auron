@@ -18,7 +18,7 @@ package org.apache.auron.integration
 
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.must.Matchers
-import org.apache.auron.integration.Main
+
 
 class MainTest extends AnyFunSuite with Matchers {
   protected val tpcdsDataPath: String =
@@ -100,16 +100,10 @@ class MainTest extends AnyFunSuite with Matchers {
     Main.main(args)
   }
 
-
   test("q17") {
     assume(tpcdsDataPath.nonEmpty, "Skip: SPARK_TPCDS_DATA env not set")
-    val args = Array[String](
-      "--type",
-      "tpcds",
-      "--data-location",
-      tpcdsDataPath,
-      "--query-filter",
-      "q17")
+    val args =
+      Array[String]("--type", "tpcds", "--data-location", tpcdsDataPath, "--query-filter", "q17")
     Main.main(args)
   }
 }
