@@ -18,6 +18,7 @@ package org.apache.auron.integration
 
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.must.Matchers
+import org.apache.auron.integration.Main
 
 class MainTest extends AnyFunSuite with Matchers {
   protected val tpcdsDataPath: String =

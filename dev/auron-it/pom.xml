@@ -26,6 +26,8 @@
 
   <artifactId>auron-it</artifactId>
   <packaging>jar</packaging>
+  <name>Apache Auron IT</name>
+  <description>Apache Auron IT Project</description>
 
   <properties />
 
