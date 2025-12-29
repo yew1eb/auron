@@ -17,6 +17,7 @@
 package org.apache.auron.integration
 
 import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.execution.FormattedMode
 
 case class SingleQueryResult(
     queryId: String,
@@ -43,7 +44,7 @@ class QueryRunner(loadQuerySql: String => String) {
       val df = spark.sql(sql)
       val rows = df.collect()
       val rowCount = rows.length
-      val planStr = df.queryExecution.executedPlan.toString()
+      val planStr = df.queryExecution.explainString(FormattedMode)
 
       val duration = (System.currentTimeMillis() - startTime) / 1000.0
       println(s"queryId: $queryId, duration: $duration")
