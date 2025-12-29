@@ -104,7 +104,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                  :  +- NativeHashAggregate HashAgg, ArrayBuffer(cp_catalog_page_id#62), [cp_catalog_page_id#62], [sum(UnscaledValue(cs_ext_sales_price#51)), sum(coalesce(cast(cr_return_amount#54 as decimal(12,2)), 0.00)), sum((cs_net_profit#57 - coalesce(cast(cr_net_loss#58 as decimal(12,2)), 0.00)))], [sum(UnscaledValue(cs_ext_sales_price#51))#52, sum(coalesce(cast(cr_return_amount#54 as decimal(12,2)), 0.00))#55, sum((cs_net_profit#57 - coalesce(cast(cr_net_loss#58 as decimal(12,2)), 0.00)))#59], 1
                                  :     +- InputAdapter
                                  :        +- AQEShuffleRead coalesced
-                                 :           +- ShuffleQueryStage 38
+                                 :           +- ShuffleQueryStage 37
                                  :              +- NativeShuffleExchange hashpartitioning(cp_catalog_page_id#62, 100), ENSURE_REQUIREMENTS, [plan_id=13]
                                  :                 +- NativeHashAggregate HashAgg, [cp_catalog_page_id#62], [partial_sum(_c1#64), partial_sum(_c2#65), partial_sum(_c3#66)], [sum#67, sum#68, isEmpty#69, sum#70, isEmpty#71], 0
                                  :                    +- NativeProject [cp_catalog_page_id#62 AS cp_catalog_page_id#62, UnscaledValue(cs_ext_sales_price#51) AS _c1#64, coalesce(cast(cr_return_amount#54 as decimal(12,2)), 0.00) AS _c2#65, (cs_net_profit#57 - coalesce(cast(cr_net_loss#58 as decimal(12,2)), 0.00)) AS _c3#66]
@@ -113,7 +113,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                  :                             :- NativeSort [cs_promo_sk#72 ASC NULLS FIRST], false
                                  :                             :  +- InputAdapter
                                  :                             :     +- AQEShuffleRead coalesced
-                                 :                             :        +- ShuffleQueryStage 35
+                                 :                             :        +- ShuffleQueryStage 34
                                  :                             :           +- NativeShuffleExchange hashpartitioning(cs_promo_sk#72, 100), ENSURE_REQUIREMENTS, [plan_id=14]
                                  :                             :              +- NativeProject [cs_promo_sk#72, cs_ext_sales_price#51, cs_net_profit#57, cr_return_amount#54, cr_net_loss#58, cp_catalog_page_id#62]
                                  :                             :                 +- NativeSortMergeJoin [cs_item_sk#74], [i_item_sk#75], Inner
@@ -184,7 +184,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                     +- NativeHashAggregate HashAgg, ArrayBuffer(web_site_id#95), [web_site_id#95], [sum(UnscaledValue(ws_ext_sales_price#84)), sum(coalesce(cast(wr_return_amt#87 as decimal(12,2)), 0.00)), sum((ws_net_profit#90 - coalesce(cast(wr_net_loss#91 as decimal(12,2)), 0.00)))], [sum(UnscaledValue(ws_ext_sales_price#84))#85, sum(coalesce(cast(wr_return_amt#87 as decimal(12,2)), 0.00))#88, sum((ws_net_profit#90 - coalesce(cast(wr_net_loss#91 as decimal(12,2)), 0.00)))#92], 1
                                        +- InputAdapter
                                           +- AQEShuffleRead coalesced
-                                             +- ShuffleQueryStage 37
+                                             +- ShuffleQueryStage 38
                                                 +- NativeShuffleExchange hashpartitioning(web_site_id#95, 100), ENSURE_REQUIREMENTS, [plan_id=21]
                                                    +- NativeHashAggregate HashAgg, [web_site_id#95], [partial_sum(_c1#97), partial_sum(_c2#98), partial_sum(_c3#99)], [sum#100, sum#101, isEmpty#102, sum#103, isEmpty#104], 0
                                                       +- NativeProject [web_site_id#95 AS web_site_id#95, UnscaledValue(ws_ext_sales_price#84) AS _c1#97, coalesce(cast(wr_return_amt#87 as decimal(12,2)), 0.00) AS _c2#98, (ws_net_profit#90 - coalesce(cast(wr_net_loss#91 as decimal(12,2)), 0.00)) AS _c3#99]
@@ -193,7 +193,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                                                :- NativeSort [ws_promo_sk#105 ASC NULLS FIRST], false
                                                                :  +- InputAdapter
                                                                :     +- AQEShuffleRead coalesced
-                                                               :        +- ShuffleQueryStage 34
+                                                               :        +- ShuffleQueryStage 35
                                                                :           +- NativeShuffleExchange hashpartitioning(ws_promo_sk#105, 100), ENSURE_REQUIREMENTS, [plan_id=22]
                                                                :              +- NativeProject [ws_promo_sk#105, ws_ext_sales_price#84, ws_net_profit#90, wr_return_amt#87, wr_net_loss#91, web_site_id#95]
                                                                :                 +- NativeSortMergeJoin [ws_item_sk#107], [i_item_sk#108], Inner

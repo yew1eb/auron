@@ -14,7 +14,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               :  +- NativeHashAggregate HashAgg, ArrayBuffer(i_item_id#1), [i_item_id#1], [sum(UnscaledValue(ss_ext_sales_price#7))], [sum(UnscaledValue(ss_ext_sales_price#7))#8], 1
                               :     +- InputAdapter
                               :        +- AQEShuffleRead coalesced
-                              :           +- ShuffleQueryStage 34
+                              :           +- ShuffleQueryStage 33
                               :              +- NativeShuffleExchange hashpartitioning(i_item_id#1, 100), ENSURE_REQUIREMENTS, [plan_id=2]
                               :                 +- NativeHashAggregate HashAgg, [i_item_id#1], [partial_sum(_c1#9)], [sum#10], 0
                               :                    +- NativeProject [i_item_id#1 AS i_item_id#1, UnscaledValue(ss_ext_sales_price#7) AS _c1#9]
@@ -146,7 +146,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                                             :- NativeSort [ws_item_sk#40 ASC NULLS FIRST], false
                                                             :  +- InputAdapter
                                                             :     +- AQEShuffleRead coalesced
-                                                            :        +- ShuffleQueryStage 33
+                                                            :        +- ShuffleQueryStage 34
                                                             :           +- NativeShuffleExchange hashpartitioning(ws_item_sk#40, 100), ENSURE_REQUIREMENTS, [plan_id=16]
                                                             :              +- NativeProject [ws_item_sk#40, ws_ext_sales_price#35]
                                                             :                 +- NativeSortMergeJoin [ws_bill_addr_sk#42], [ca_address_sk#43], Inner
