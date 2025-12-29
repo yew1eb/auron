@@ -32,5 +32,4 @@ $SCRIPT_DIR/auron-it.sh \
     --type tpcds \
     --data-location /Users/yew1eb/workspaces/tpcds-validator/tpcds_1g \
     --query-filter q64 \
-    --regen-golden \
     --plan-check
