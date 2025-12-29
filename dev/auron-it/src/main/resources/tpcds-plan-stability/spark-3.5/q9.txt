@@ -14,7 +14,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               +- NativeProject [ss_ext_discount_amt#21, ss_net_paid#23]
                                  +- NativeFilter ((isnotnull(ss_quantity#32) AND (ss_quantity#32 >= 1)) AND (ss_quantity#32 <= 20))
                                     +- InputAdapter [#32, #21, #23]
-                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#32,ss_ext_discount_amt#21,ss_net_paid#23] Batched: true, DataFilters: [isnotnull(ss_quantity#32), (ss_quantity#32 >= 1), (ss_quantity#32 <= 20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,1), LessThanOrEqual(ss_quantity,20)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
+                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#32,ss_ext_discount_amt#21,ss_net_paid#23] Batched: true, DataFilters: [isnotnull(ss_quantity#32), (ss_quantity#32 >= 1), (ss_quantity#32 <= 20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,1), LessThanOrEqual(ss_quantity,20)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
          +- == Initial Plan ==
             Project [named_struct(count(1), count(1)#16, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#17, avg(ss_net_paid), avg(ss_net_paid)#18) AS mergedValue#19]
             +- HashAggregate(keys=[], functions=[count(1), avg(UnscaledValue(ss_ext_discount_amt#21)), avg(UnscaledValue(ss_net_paid#23))], output=[count(1)#16, avg(ss_ext_discount_amt)#17, avg(ss_net_paid)#18])
@@ -22,7 +22,7 @@ AdaptiveSparkPlan isFinalPlan=true
                   +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#21)), partial_avg(UnscaledValue(ss_net_paid#23))], output=[count#33, sum#34, count#35, sum#36, count#37])
                      +- Project [ss_ext_discount_amt#21, ss_net_paid#23]
                         +- Filter ((isnotnull(ss_quantity#32) AND (ss_quantity#32 >= 1)) AND (ss_quantity#32 <= 20))
-                           +- FileScan parquet [ss_quantity#32,ss_ext_discount_amt#21,ss_net_paid#23] Batched: true, DataFilters: [isnotnull(ss_quantity#32), (ss_quantity#32 >= 1), (ss_quantity#32 <= 20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,1), LessThanOrEqual(ss_quantity,20)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+                           +- FileScan parquet [ss_quantity#32,ss_ext_discount_amt#21,ss_net_paid#23] Batched: true, DataFilters: [isnotnull(ss_quantity#32), (ss_quantity#32 >= 1), (ss_quantity#32 <= 20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,1), LessThanOrEqual(ss_quantity,20)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- ReusedSubquery Subquery subquery#1, [id=#2]
    :  :- ReusedSubquery Subquery subquery#1, [id=#2]
    :  :- Subquery subquery#4, [id=#5]
@@ -38,7 +38,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               +- NativeProject [ss_ext_discount_amt#43, ss_net_paid#45]
                                  +- NativeFilter ((isnotnull(ss_quantity#54) AND (ss_quantity#54 >= 21)) AND (ss_quantity#54 <= 40))
                                     +- InputAdapter [#54, #43, #45]
-                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#54,ss_ext_discount_amt#43,ss_net_paid#45] Batched: true, DataFilters: [isnotnull(ss_quantity#54), (ss_quantity#54 >= 21), (ss_quantity#54 <= 40)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,21), LessThanOrEqual(ss_quantity,40)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
+                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#54,ss_ext_discount_amt#43,ss_net_paid#45] Batched: true, DataFilters: [isnotnull(ss_quantity#54), (ss_quantity#54 >= 21), (ss_quantity#54 <= 40)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,21), LessThanOrEqual(ss_quantity,40)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
          +- == Initial Plan ==
             Project [named_struct(count(1), count(1)#38, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#39, avg(ss_net_paid), avg(ss_net_paid)#40) AS mergedValue#41]
             +- HashAggregate(keys=[], functions=[count(1), avg(UnscaledValue(ss_ext_discount_amt#43)), avg(UnscaledValue(ss_net_paid#45))], output=[count(1)#38, avg(ss_ext_discount_amt)#39, avg(ss_net_paid)#40])
@@ -46,7 +46,7 @@ AdaptiveSparkPlan isFinalPlan=true
                   +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#43)), partial_avg(UnscaledValue(ss_net_paid#45))], output=[count#55, sum#56, count#57, sum#58, count#59])
                      +- Project [ss_ext_discount_amt#43, ss_net_paid#45]
                         +- Filter ((isnotnull(ss_quantity#54) AND (ss_quantity#54 >= 21)) AND (ss_quantity#54 <= 40))
-                           +- FileScan parquet [ss_quantity#54,ss_ext_discount_amt#43,ss_net_paid#45] Batched: true, DataFilters: [isnotnull(ss_quantity#54), (ss_quantity#54 >= 21), (ss_quantity#54 <= 40)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,21), LessThanOrEqual(ss_quantity,40)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+                           +- FileScan parquet [ss_quantity#54,ss_ext_discount_amt#43,ss_net_paid#45] Batched: true, DataFilters: [isnotnull(ss_quantity#54), (ss_quantity#54 >= 21), (ss_quantity#54 <= 40)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,21), LessThanOrEqual(ss_quantity,40)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- ReusedSubquery Subquery subquery#4, [id=#5]
    :  :- ReusedSubquery Subquery subquery#4, [id=#5]
    :  :- Subquery subquery#7, [id=#8]
@@ -62,7 +62,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               +- NativeProject [ss_ext_discount_amt#65, ss_net_paid#67]
                                  +- NativeFilter ((isnotnull(ss_quantity#76) AND (ss_quantity#76 >= 41)) AND (ss_quantity#76 <= 60))
                                     +- InputAdapter [#76, #65, #67]
-                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#76,ss_ext_discount_amt#65,ss_net_paid#67] Batched: true, DataFilters: [isnotnull(ss_quantity#76), (ss_quantity#76 >= 41), (ss_quantity#76 <= 60)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,41), LessThanOrEqual(ss_quantity,60)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
+                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#76,ss_ext_discount_amt#65,ss_net_paid#67] Batched: true, DataFilters: [isnotnull(ss_quantity#76), (ss_quantity#76 >= 41), (ss_quantity#76 <= 60)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,41), LessThanOrEqual(ss_quantity,60)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
          +- == Initial Plan ==
             Project [named_struct(count(1), count(1)#60, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#61, avg(ss_net_paid), avg(ss_net_paid)#62) AS mergedValue#63]
             +- HashAggregate(keys=[], functions=[count(1), avg(UnscaledValue(ss_ext_discount_amt#65)), avg(UnscaledValue(ss_net_paid#67))], output=[count(1)#60, avg(ss_ext_discount_amt)#61, avg(ss_net_paid)#62])
@@ -70,7 +70,7 @@ AdaptiveSparkPlan isFinalPlan=true
                   +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#65)), partial_avg(UnscaledValue(ss_net_paid#67))], output=[count#77, sum#78, count#79, sum#80, count#81])
                      +- Project [ss_ext_discount_amt#65, ss_net_paid#67]
                         +- Filter ((isnotnull(ss_quantity#76) AND (ss_quantity#76 >= 41)) AND (ss_quantity#76 <= 60))
-                           +- FileScan parquet [ss_quantity#76,ss_ext_discount_amt#65,ss_net_paid#67] Batched: true, DataFilters: [isnotnull(ss_quantity#76), (ss_quantity#76 >= 41), (ss_quantity#76 <= 60)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,41), LessThanOrEqual(ss_quantity,60)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+                           +- FileScan parquet [ss_quantity#76,ss_ext_discount_amt#65,ss_net_paid#67] Batched: true, DataFilters: [isnotnull(ss_quantity#76), (ss_quantity#76 >= 41), (ss_quantity#76 <= 60)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,41), LessThanOrEqual(ss_quantity,60)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- ReusedSubquery Subquery subquery#7, [id=#8]
    :  :- ReusedSubquery Subquery subquery#7, [id=#8]
    :  :- Subquery subquery#10, [id=#11]
@@ -86,7 +86,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               +- NativeProject [ss_ext_discount_amt#87, ss_net_paid#89]
                                  +- NativeFilter ((isnotnull(ss_quantity#98) AND (ss_quantity#98 >= 61)) AND (ss_quantity#98 <= 80))
                                     +- InputAdapter [#98, #87, #89]
-                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#98,ss_ext_discount_amt#87,ss_net_paid#89] Batched: true, DataFilters: [isnotnull(ss_quantity#98), (ss_quantity#98 >= 61), (ss_quantity#98 <= 80)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,61), LessThanOrEqual(ss_quantity,80)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
+                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#98,ss_ext_discount_amt#87,ss_net_paid#89] Batched: true, DataFilters: [isnotnull(ss_quantity#98), (ss_quantity#98 >= 61), (ss_quantity#98 <= 80)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,61), LessThanOrEqual(ss_quantity,80)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
          +- == Initial Plan ==
             Project [named_struct(count(1), count(1)#82, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#83, avg(ss_net_paid), avg(ss_net_paid)#84) AS mergedValue#85]
             +- HashAggregate(keys=[], functions=[count(1), avg(UnscaledValue(ss_ext_discount_amt#87)), avg(UnscaledValue(ss_net_paid#89))], output=[count(1)#82, avg(ss_ext_discount_amt)#83, avg(ss_net_paid)#84])
@@ -94,7 +94,7 @@ AdaptiveSparkPlan isFinalPlan=true
                   +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#87)), partial_avg(UnscaledValue(ss_net_paid#89))], output=[count#99, sum#100, count#101, sum#102, count#103])
                      +- Project [ss_ext_discount_amt#87, ss_net_paid#89]
                         +- Filter ((isnotnull(ss_quantity#98) AND (ss_quantity#98 >= 61)) AND (ss_quantity#98 <= 80))
-                           +- FileScan parquet [ss_quantity#98,ss_ext_discount_amt#87,ss_net_paid#89] Batched: true, DataFilters: [isnotnull(ss_quantity#98), (ss_quantity#98 >= 61), (ss_quantity#98 <= 80)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,61), LessThanOrEqual(ss_quantity,80)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+                           +- FileScan parquet [ss_quantity#98,ss_ext_discount_amt#87,ss_net_paid#89] Batched: true, DataFilters: [isnotnull(ss_quantity#98), (ss_quantity#98 >= 61), (ss_quantity#98 <= 80)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,61), LessThanOrEqual(ss_quantity,80)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- ReusedSubquery Subquery subquery#10, [id=#11]
    :  :- ReusedSubquery Subquery subquery#10, [id=#11]
    :  :- Subquery subquery#13, [id=#14]
@@ -110,7 +110,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               +- NativeProject [ss_ext_discount_amt#109, ss_net_paid#111]
                                  +- NativeFilter ((isnotnull(ss_quantity#120) AND (ss_quantity#120 >= 81)) AND (ss_quantity#120 <= 100))
                                     +- InputAdapter [#120, #109, #111]
-                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#120,ss_ext_discount_amt#109,ss_net_paid#111] Batched: true, DataFilters: [isnotnull(ss_quantity#120), (ss_quantity#120 >= 81), (ss_quantity#120 <= 100)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,81), LessThanOrEqual(ss_quantity,100)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
+                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#120,ss_ext_discount_amt#109,ss_net_paid#111] Batched: true, DataFilters: [isnotnull(ss_quantity#120), (ss_quantity#120 >= 81), (ss_quantity#120 <= 100)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,81), LessThanOrEqual(ss_quantity,100)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
          +- == Initial Plan ==
             Project [named_struct(count(1), count(1)#104, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#105, avg(ss_net_paid), avg(ss_net_paid)#106) AS mergedValue#107]
             +- HashAggregate(keys=[], functions=[count(1), avg(UnscaledValue(ss_ext_discount_amt#109)), avg(UnscaledValue(ss_net_paid#111))], output=[count(1)#104, avg(ss_ext_discount_amt)#105, avg(ss_net_paid)#106])
@@ -118,12 +118,12 @@ AdaptiveSparkPlan isFinalPlan=true
                   +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#109)), partial_avg(UnscaledValue(ss_net_paid#111))], output=[count#121, sum#122, count#123, sum#124, count#125])
                      +- Project [ss_ext_discount_amt#109, ss_net_paid#111]
                         +- Filter ((isnotnull(ss_quantity#120) AND (ss_quantity#120 >= 81)) AND (ss_quantity#120 <= 100))
-                           +- FileScan parquet [ss_quantity#120,ss_ext_discount_amt#109,ss_net_paid#111] Batched: true, DataFilters: [isnotnull(ss_quantity#120), (ss_quantity#120 >= 81), (ss_quantity#120 <= 100)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,81), LessThanOrEqual(ss_quantity,100)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+                           +- FileScan parquet [ss_quantity#120,ss_ext_discount_amt#109,ss_net_paid#111] Batched: true, DataFilters: [isnotnull(ss_quantity#120), (ss_quantity#120 >= 81), (ss_quantity#120 <= 100)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,81), LessThanOrEqual(ss_quantity,100)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- ReusedSubquery Subquery subquery#13, [id=#14]
    :  +- ReusedSubquery Subquery subquery#13, [id=#14]
    +- NativeFilter (isnotnull(r_reason_sk#126) AND (r_reason_sk#126 = 1))
       +- InputAdapter [#126]
-         +- NativeParquetScan  (FileScan parquet [r_reason_sk#126] Batched: true, DataFilters: [isnotnull(r_reason_sk#126), (r_reason_sk#126 = 1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(r_reason_sk), EqualTo(r_reason_sk,1)], ReadSchema: struct<r_reason_sk:int>)
+         +- NativeParquetScan  (FileScan parquet [r_reason_sk#126] Batched: true, DataFilters: [isnotnull(r_reason_sk#126), (r_reason_sk#126 = 1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(r_reason_sk), EqualTo(r_reason_sk,1)], ReadSchema: struct<r_reason_sk:int>)
 +- == Initial Plan ==
    Project [CASE WHEN (Subquery subquery#1, [id=#2].count(1) > 62316685) THEN Subquery subquery#127, [id=#128].avg(ss_ext_discount_amt) ELSE Subquery subquery#129, [id=#130].avg(ss_net_paid) END AS bucket1#3, CASE WHEN (Subquery subquery#4, [id=#5].count(1) > 19045798) THEN Subquery subquery#131, [id=#132].avg(ss_ext_discount_amt) ELSE Subquery subquery#133, [id=#134].avg(ss_net_paid) END AS bucket2#6, CASE WHEN (Subquery subquery#7, [id=#8].count(1) > 365541424) THEN Subquery subquery#135, [id=#136].avg(ss_ext_discount_amt) ELSE Subquery subquery#137, [id=#138].avg(ss_net_paid) END AS bucket3#9, CASE WHEN (Subquery subquery#10, [id=#11].count(1) > 216357808) THEN Subquery subquery#139, [id=#140].avg(ss_ext_discount_amt) ELSE Subquery subquery#141, [id=#142].avg(ss_net_paid) END AS bucket4#12, CASE WHEN (Subquery subquery#13, [id=#14].count(1) > 184483884) THEN Subquery subquery#143, [id=#144].avg(ss_ext_discount_amt) ELSE Subquery subquery#145, [id=#146].avg(ss_net_paid) END AS bucket5#15]
    :  :- Subquery subquery#1, [id=#2]
@@ -139,7 +139,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               +- NativeProject [ss_ext_discount_amt#21, ss_net_paid#23]
                                  +- NativeFilter ((isnotnull(ss_quantity#32) AND (ss_quantity#32 >= 1)) AND (ss_quantity#32 <= 20))
                                     +- InputAdapter [#32, #21, #23]
-                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#32,ss_ext_discount_amt#21,ss_net_paid#23] Batched: true, DataFilters: [isnotnull(ss_quantity#32), (ss_quantity#32 >= 1), (ss_quantity#32 <= 20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,1), LessThanOrEqual(ss_quantity,20)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
+                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#32,ss_ext_discount_amt#21,ss_net_paid#23] Batched: true, DataFilters: [isnotnull(ss_quantity#32), (ss_quantity#32 >= 1), (ss_quantity#32 <= 20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,1), LessThanOrEqual(ss_quantity,20)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
          +- == Initial Plan ==
             Project [named_struct(count(1), count(1)#16, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#17, avg(ss_net_paid), avg(ss_net_paid)#18) AS mergedValue#19]
             +- HashAggregate(keys=[], functions=[count(1), avg(UnscaledValue(ss_ext_discount_amt#21)), avg(UnscaledValue(ss_net_paid#23))], output=[count(1)#16, avg(ss_ext_discount_amt)#17, avg(ss_net_paid)#18])
@@ -147,7 +147,7 @@ AdaptiveSparkPlan isFinalPlan=true
                   +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#21)), partial_avg(UnscaledValue(ss_net_paid#23))], output=[count#33, sum#34, count#35, sum#36, count#37])
                      +- Project [ss_ext_discount_amt#21, ss_net_paid#23]
                         +- Filter ((isnotnull(ss_quantity#32) AND (ss_quantity#32 >= 1)) AND (ss_quantity#32 <= 20))
-                           +- FileScan parquet [ss_quantity#32,ss_ext_discount_amt#21,ss_net_paid#23] Batched: true, DataFilters: [isnotnull(ss_quantity#32), (ss_quantity#32 >= 1), (ss_quantity#32 <= 20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,1), LessThanOrEqual(ss_quantity,20)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+                           +- FileScan parquet [ss_quantity#32,ss_ext_discount_amt#21,ss_net_paid#23] Batched: true, DataFilters: [isnotnull(ss_quantity#32), (ss_quantity#32 >= 1), (ss_quantity#32 <= 20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,1), LessThanOrEqual(ss_quantity,20)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- Subquery subquery#127, [id=#128]
    :  :  +- AdaptiveSparkPlan isFinalPlan=false
    :  :     +- Project [named_struct(count(1), count(1)#16, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#17, avg(ss_net_paid), avg(ss_net_paid)#18) AS mergedValue#19]
@@ -156,7 +156,7 @@ AdaptiveSparkPlan isFinalPlan=true
    :  :              +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#21)), partial_avg(UnscaledValue(ss_net_paid#23))], output=[count#33, sum#34, count#35, sum#36, count#37])
    :  :                 +- Project [ss_ext_discount_amt#21, ss_net_paid#23]
    :  :                    +- Filter ((isnotnull(ss_quantity#32) AND (ss_quantity#32 >= 1)) AND (ss_quantity#32 <= 20))
-   :  :                       +- FileScan parquet [ss_quantity#32,ss_ext_discount_amt#21,ss_net_paid#23] Batched: true, DataFilters: [isnotnull(ss_quantity#32), (ss_quantity#32 >= 1), (ss_quantity#32 <= 20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,1), LessThanOrEqual(ss_quantity,20)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+   :  :                       +- FileScan parquet [ss_quantity#32,ss_ext_discount_amt#21,ss_net_paid#23] Batched: true, DataFilters: [isnotnull(ss_quantity#32), (ss_quantity#32 >= 1), (ss_quantity#32 <= 20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,1), LessThanOrEqual(ss_quantity,20)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- Subquery subquery#129, [id=#130]
    :  :  +- AdaptiveSparkPlan isFinalPlan=false
    :  :     +- Project [named_struct(count(1), count(1)#16, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#17, avg(ss_net_paid), avg(ss_net_paid)#18) AS mergedValue#19]
@@ -165,7 +165,7 @@ AdaptiveSparkPlan isFinalPlan=true
    :  :              +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#21)), partial_avg(UnscaledValue(ss_net_paid#23))], output=[count#33, sum#34, count#35, sum#36, count#37])
    :  :                 +- Project [ss_ext_discount_amt#21, ss_net_paid#23]
    :  :                    +- Filter ((isnotnull(ss_quantity#32) AND (ss_quantity#32 >= 1)) AND (ss_quantity#32 <= 20))
-   :  :                       +- FileScan parquet [ss_quantity#32,ss_ext_discount_amt#21,ss_net_paid#23] Batched: true, DataFilters: [isnotnull(ss_quantity#32), (ss_quantity#32 >= 1), (ss_quantity#32 <= 20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,1), LessThanOrEqual(ss_quantity,20)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+   :  :                       +- FileScan parquet [ss_quantity#32,ss_ext_discount_amt#21,ss_net_paid#23] Batched: true, DataFilters: [isnotnull(ss_quantity#32), (ss_quantity#32 >= 1), (ss_quantity#32 <= 20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,1), LessThanOrEqual(ss_quantity,20)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- Subquery subquery#4, [id=#5]
    :  :  +- AdaptiveSparkPlan isFinalPlan=true
          +- == Final Plan ==
@@ -179,7 +179,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               +- NativeProject [ss_ext_discount_amt#43, ss_net_paid#45]
                                  +- NativeFilter ((isnotnull(ss_quantity#54) AND (ss_quantity#54 >= 21)) AND (ss_quantity#54 <= 40))
                                     +- InputAdapter [#54, #43, #45]
-                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#54,ss_ext_discount_amt#43,ss_net_paid#45] Batched: true, DataFilters: [isnotnull(ss_quantity#54), (ss_quantity#54 >= 21), (ss_quantity#54 <= 40)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,21), LessThanOrEqual(ss_quantity,40)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
+                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#54,ss_ext_discount_amt#43,ss_net_paid#45] Batched: true, DataFilters: [isnotnull(ss_quantity#54), (ss_quantity#54 >= 21), (ss_quantity#54 <= 40)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,21), LessThanOrEqual(ss_quantity,40)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
          +- == Initial Plan ==
             Project [named_struct(count(1), count(1)#38, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#39, avg(ss_net_paid), avg(ss_net_paid)#40) AS mergedValue#41]
             +- HashAggregate(keys=[], functions=[count(1), avg(UnscaledValue(ss_ext_discount_amt#43)), avg(UnscaledValue(ss_net_paid#45))], output=[count(1)#38, avg(ss_ext_discount_amt)#39, avg(ss_net_paid)#40])
@@ -187,7 +187,7 @@ AdaptiveSparkPlan isFinalPlan=true
                   +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#43)), partial_avg(UnscaledValue(ss_net_paid#45))], output=[count#55, sum#56, count#57, sum#58, count#59])
                      +- Project [ss_ext_discount_amt#43, ss_net_paid#45]
                         +- Filter ((isnotnull(ss_quantity#54) AND (ss_quantity#54 >= 21)) AND (ss_quantity#54 <= 40))
-                           +- FileScan parquet [ss_quantity#54,ss_ext_discount_amt#43,ss_net_paid#45] Batched: true, DataFilters: [isnotnull(ss_quantity#54), (ss_quantity#54 >= 21), (ss_quantity#54 <= 40)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,21), LessThanOrEqual(ss_quantity,40)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+                           +- FileScan parquet [ss_quantity#54,ss_ext_discount_amt#43,ss_net_paid#45] Batched: true, DataFilters: [isnotnull(ss_quantity#54), (ss_quantity#54 >= 21), (ss_quantity#54 <= 40)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,21), LessThanOrEqual(ss_quantity,40)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- Subquery subquery#131, [id=#132]
    :  :  +- AdaptiveSparkPlan isFinalPlan=false
    :  :     +- Project [named_struct(count(1), count(1)#38, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#39, avg(ss_net_paid), avg(ss_net_paid)#40) AS mergedValue#41]
@@ -196,7 +196,7 @@ AdaptiveSparkPlan isFinalPlan=true
    :  :              +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#43)), partial_avg(UnscaledValue(ss_net_paid#45))], output=[count#55, sum#56, count#57, sum#58, count#59])
    :  :                 +- Project [ss_ext_discount_amt#43, ss_net_paid#45]
    :  :                    +- Filter ((isnotnull(ss_quantity#54) AND (ss_quantity#54 >= 21)) AND (ss_quantity#54 <= 40))
-   :  :                       +- FileScan parquet [ss_quantity#54,ss_ext_discount_amt#43,ss_net_paid#45] Batched: true, DataFilters: [isnotnull(ss_quantity#54), (ss_quantity#54 >= 21), (ss_quantity#54 <= 40)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,21), LessThanOrEqual(ss_quantity,40)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+   :  :                       +- FileScan parquet [ss_quantity#54,ss_ext_discount_amt#43,ss_net_paid#45] Batched: true, DataFilters: [isnotnull(ss_quantity#54), (ss_quantity#54 >= 21), (ss_quantity#54 <= 40)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,21), LessThanOrEqual(ss_quantity,40)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- Subquery subquery#133, [id=#134]
    :  :  +- AdaptiveSparkPlan isFinalPlan=false
    :  :     +- Project [named_struct(count(1), count(1)#38, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#39, avg(ss_net_paid), avg(ss_net_paid)#40) AS mergedValue#41]
@@ -205,7 +205,7 @@ AdaptiveSparkPlan isFinalPlan=true
    :  :              +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#43)), partial_avg(UnscaledValue(ss_net_paid#45))], output=[count#55, sum#56, count#57, sum#58, count#59])
    :  :                 +- Project [ss_ext_discount_amt#43, ss_net_paid#45]
    :  :                    +- Filter ((isnotnull(ss_quantity#54) AND (ss_quantity#54 >= 21)) AND (ss_quantity#54 <= 40))
-   :  :                       +- FileScan parquet [ss_quantity#54,ss_ext_discount_amt#43,ss_net_paid#45] Batched: true, DataFilters: [isnotnull(ss_quantity#54), (ss_quantity#54 >= 21), (ss_quantity#54 <= 40)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,21), LessThanOrEqual(ss_quantity,40)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+   :  :                       +- FileScan parquet [ss_quantity#54,ss_ext_discount_amt#43,ss_net_paid#45] Batched: true, DataFilters: [isnotnull(ss_quantity#54), (ss_quantity#54 >= 21), (ss_quantity#54 <= 40)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,21), LessThanOrEqual(ss_quantity,40)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- Subquery subquery#7, [id=#8]
    :  :  +- AdaptiveSparkPlan isFinalPlan=true
          +- == Final Plan ==
@@ -219,7 +219,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               +- NativeProject [ss_ext_discount_amt#65, ss_net_paid#67]
                                  +- NativeFilter ((isnotnull(ss_quantity#76) AND (ss_quantity#76 >= 41)) AND (ss_quantity#76 <= 60))
                                     +- InputAdapter [#76, #65, #67]
-                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#76,ss_ext_discount_amt#65,ss_net_paid#67] Batched: true, DataFilters: [isnotnull(ss_quantity#76), (ss_quantity#76 >= 41), (ss_quantity#76 <= 60)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,41), LessThanOrEqual(ss_quantity,60)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
+                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#76,ss_ext_discount_amt#65,ss_net_paid#67] Batched: true, DataFilters: [isnotnull(ss_quantity#76), (ss_quantity#76 >= 41), (ss_quantity#76 <= 60)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,41), LessThanOrEqual(ss_quantity,60)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
          +- == Initial Plan ==
             Project [named_struct(count(1), count(1)#60, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#61, avg(ss_net_paid), avg(ss_net_paid)#62) AS mergedValue#63]
             +- HashAggregate(keys=[], functions=[count(1), avg(UnscaledValue(ss_ext_discount_amt#65)), avg(UnscaledValue(ss_net_paid#67))], output=[count(1)#60, avg(ss_ext_discount_amt)#61, avg(ss_net_paid)#62])
@@ -227,7 +227,7 @@ AdaptiveSparkPlan isFinalPlan=true
                   +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#65)), partial_avg(UnscaledValue(ss_net_paid#67))], output=[count#77, sum#78, count#79, sum#80, count#81])
                      +- Project [ss_ext_discount_amt#65, ss_net_paid#67]
                         +- Filter ((isnotnull(ss_quantity#76) AND (ss_quantity#76 >= 41)) AND (ss_quantity#76 <= 60))
-                           +- FileScan parquet [ss_quantity#76,ss_ext_discount_amt#65,ss_net_paid#67] Batched: true, DataFilters: [isnotnull(ss_quantity#76), (ss_quantity#76 >= 41), (ss_quantity#76 <= 60)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,41), LessThanOrEqual(ss_quantity,60)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+                           +- FileScan parquet [ss_quantity#76,ss_ext_discount_amt#65,ss_net_paid#67] Batched: true, DataFilters: [isnotnull(ss_quantity#76), (ss_quantity#76 >= 41), (ss_quantity#76 <= 60)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,41), LessThanOrEqual(ss_quantity,60)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- Subquery subquery#135, [id=#136]
    :  :  +- AdaptiveSparkPlan isFinalPlan=false
    :  :     +- Project [named_struct(count(1), count(1)#60, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#61, avg(ss_net_paid), avg(ss_net_paid)#62) AS mergedValue#63]
@@ -236,7 +236,7 @@ AdaptiveSparkPlan isFinalPlan=true
    :  :              +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#65)), partial_avg(UnscaledValue(ss_net_paid#67))], output=[count#77, sum#78, count#79, sum#80, count#81])
    :  :                 +- Project [ss_ext_discount_amt#65, ss_net_paid#67]
    :  :                    +- Filter ((isnotnull(ss_quantity#76) AND (ss_quantity#76 >= 41)) AND (ss_quantity#76 <= 60))
-   :  :                       +- FileScan parquet [ss_quantity#76,ss_ext_discount_amt#65,ss_net_paid#67] Batched: true, DataFilters: [isnotnull(ss_quantity#76), (ss_quantity#76 >= 41), (ss_quantity#76 <= 60)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,41), LessThanOrEqual(ss_quantity,60)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+   :  :                       +- FileScan parquet [ss_quantity#76,ss_ext_discount_amt#65,ss_net_paid#67] Batched: true, DataFilters: [isnotnull(ss_quantity#76), (ss_quantity#76 >= 41), (ss_quantity#76 <= 60)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,41), LessThanOrEqual(ss_quantity,60)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- Subquery subquery#137, [id=#138]
    :  :  +- AdaptiveSparkPlan isFinalPlan=false
    :  :     +- Project [named_struct(count(1), count(1)#60, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#61, avg(ss_net_paid), avg(ss_net_paid)#62) AS mergedValue#63]
@@ -245,7 +245,7 @@ AdaptiveSparkPlan isFinalPlan=true
    :  :              +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#65)), partial_avg(UnscaledValue(ss_net_paid#67))], output=[count#77, sum#78, count#79, sum#80, count#81])
    :  :                 +- Project [ss_ext_discount_amt#65, ss_net_paid#67]
    :  :                    +- Filter ((isnotnull(ss_quantity#76) AND (ss_quantity#76 >= 41)) AND (ss_quantity#76 <= 60))
-   :  :                       +- FileScan parquet [ss_quantity#76,ss_ext_discount_amt#65,ss_net_paid#67] Batched: true, DataFilters: [isnotnull(ss_quantity#76), (ss_quantity#76 >= 41), (ss_quantity#76 <= 60)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,41), LessThanOrEqual(ss_quantity,60)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+   :  :                       +- FileScan parquet [ss_quantity#76,ss_ext_discount_amt#65,ss_net_paid#67] Batched: true, DataFilters: [isnotnull(ss_quantity#76), (ss_quantity#76 >= 41), (ss_quantity#76 <= 60)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,41), LessThanOrEqual(ss_quantity,60)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- Subquery subquery#10, [id=#11]
    :  :  +- AdaptiveSparkPlan isFinalPlan=true
          +- == Final Plan ==
@@ -259,7 +259,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               +- NativeProject [ss_ext_discount_amt#87, ss_net_paid#89]
                                  +- NativeFilter ((isnotnull(ss_quantity#98) AND (ss_quantity#98 >= 61)) AND (ss_quantity#98 <= 80))
                                     +- InputAdapter [#98, #87, #89]
-                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#98,ss_ext_discount_amt#87,ss_net_paid#89] Batched: true, DataFilters: [isnotnull(ss_quantity#98), (ss_quantity#98 >= 61), (ss_quantity#98 <= 80)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,61), LessThanOrEqual(ss_quantity,80)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
+                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#98,ss_ext_discount_amt#87,ss_net_paid#89] Batched: true, DataFilters: [isnotnull(ss_quantity#98), (ss_quantity#98 >= 61), (ss_quantity#98 <= 80)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,61), LessThanOrEqual(ss_quantity,80)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
          +- == Initial Plan ==
             Project [named_struct(count(1), count(1)#82, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#83, avg(ss_net_paid), avg(ss_net_paid)#84) AS mergedValue#85]
             +- HashAggregate(keys=[], functions=[count(1), avg(UnscaledValue(ss_ext_discount_amt#87)), avg(UnscaledValue(ss_net_paid#89))], output=[count(1)#82, avg(ss_ext_discount_amt)#83, avg(ss_net_paid)#84])
@@ -267,7 +267,7 @@ AdaptiveSparkPlan isFinalPlan=true
                   +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#87)), partial_avg(UnscaledValue(ss_net_paid#89))], output=[count#99, sum#100, count#101, sum#102, count#103])
                      +- Project [ss_ext_discount_amt#87, ss_net_paid#89]
                         +- Filter ((isnotnull(ss_quantity#98) AND (ss_quantity#98 >= 61)) AND (ss_quantity#98 <= 80))
-                           +- FileScan parquet [ss_quantity#98,ss_ext_discount_amt#87,ss_net_paid#89] Batched: true, DataFilters: [isnotnull(ss_quantity#98), (ss_quantity#98 >= 61), (ss_quantity#98 <= 80)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,61), LessThanOrEqual(ss_quantity,80)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+                           +- FileScan parquet [ss_quantity#98,ss_ext_discount_amt#87,ss_net_paid#89] Batched: true, DataFilters: [isnotnull(ss_quantity#98), (ss_quantity#98 >= 61), (ss_quantity#98 <= 80)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,61), LessThanOrEqual(ss_quantity,80)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- Subquery subquery#139, [id=#140]
    :  :  +- AdaptiveSparkPlan isFinalPlan=false
    :  :     +- Project [named_struct(count(1), count(1)#82, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#83, avg(ss_net_paid), avg(ss_net_paid)#84) AS mergedValue#85]
@@ -276,7 +276,7 @@ AdaptiveSparkPlan isFinalPlan=true
    :  :              +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#87)), partial_avg(UnscaledValue(ss_net_paid#89))], output=[count#99, sum#100, count#101, sum#102, count#103])
    :  :                 +- Project [ss_ext_discount_amt#87, ss_net_paid#89]
    :  :                    +- Filter ((isnotnull(ss_quantity#98) AND (ss_quantity#98 >= 61)) AND (ss_quantity#98 <= 80))
-   :  :                       +- FileScan parquet [ss_quantity#98,ss_ext_discount_amt#87,ss_net_paid#89] Batched: true, DataFilters: [isnotnull(ss_quantity#98), (ss_quantity#98 >= 61), (ss_quantity#98 <= 80)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,61), LessThanOrEqual(ss_quantity,80)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+   :  :                       +- FileScan parquet [ss_quantity#98,ss_ext_discount_amt#87,ss_net_paid#89] Batched: true, DataFilters: [isnotnull(ss_quantity#98), (ss_quantity#98 >= 61), (ss_quantity#98 <= 80)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,61), LessThanOrEqual(ss_quantity,80)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- Subquery subquery#141, [id=#142]
    :  :  +- AdaptiveSparkPlan isFinalPlan=false
    :  :     +- Project [named_struct(count(1), count(1)#82, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#83, avg(ss_net_paid), avg(ss_net_paid)#84) AS mergedValue#85]
@@ -285,7 +285,7 @@ AdaptiveSparkPlan isFinalPlan=true
    :  :              +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#87)), partial_avg(UnscaledValue(ss_net_paid#89))], output=[count#99, sum#100, count#101, sum#102, count#103])
    :  :                 +- Project [ss_ext_discount_amt#87, ss_net_paid#89]
    :  :                    +- Filter ((isnotnull(ss_quantity#98) AND (ss_quantity#98 >= 61)) AND (ss_quantity#98 <= 80))
-   :  :                       +- FileScan parquet [ss_quantity#98,ss_ext_discount_amt#87,ss_net_paid#89] Batched: true, DataFilters: [isnotnull(ss_quantity#98), (ss_quantity#98 >= 61), (ss_quantity#98 <= 80)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,61), LessThanOrEqual(ss_quantity,80)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+   :  :                       +- FileScan parquet [ss_quantity#98,ss_ext_discount_amt#87,ss_net_paid#89] Batched: true, DataFilters: [isnotnull(ss_quantity#98), (ss_quantity#98 >= 61), (ss_quantity#98 <= 80)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,61), LessThanOrEqual(ss_quantity,80)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- Subquery subquery#13, [id=#14]
    :  :  +- AdaptiveSparkPlan isFinalPlan=true
          +- == Final Plan ==
@@ -299,7 +299,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               +- NativeProject [ss_ext_discount_amt#109, ss_net_paid#111]
                                  +- NativeFilter ((isnotnull(ss_quantity#120) AND (ss_quantity#120 >= 81)) AND (ss_quantity#120 <= 100))
                                     +- InputAdapter [#120, #109, #111]
-                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#120,ss_ext_discount_amt#109,ss_net_paid#111] Batched: true, DataFilters: [isnotnull(ss_quantity#120), (ss_quantity#120 >= 81), (ss_quantity#120 <= 100)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,81), LessThanOrEqual(ss_quantity,100)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
+                                       +- NativeParquetScan  (FileScan parquet [ss_quantity#120,ss_ext_discount_amt#109,ss_net_paid#111] Batched: true, DataFilters: [isnotnull(ss_quantity#120), (ss_quantity#120 >= 81), (ss_quantity#120 <= 100)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,81), LessThanOrEqual(ss_quantity,100)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>)
          +- == Initial Plan ==
             Project [named_struct(count(1), count(1)#104, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#105, avg(ss_net_paid), avg(ss_net_paid)#106) AS mergedValue#107]
             +- HashAggregate(keys=[], functions=[count(1), avg(UnscaledValue(ss_ext_discount_amt#109)), avg(UnscaledValue(ss_net_paid#111))], output=[count(1)#104, avg(ss_ext_discount_amt)#105, avg(ss_net_paid)#106])
@@ -307,7 +307,7 @@ AdaptiveSparkPlan isFinalPlan=true
                   +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#109)), partial_avg(UnscaledValue(ss_net_paid#111))], output=[count#121, sum#122, count#123, sum#124, count#125])
                      +- Project [ss_ext_discount_amt#109, ss_net_paid#111]
                         +- Filter ((isnotnull(ss_quantity#120) AND (ss_quantity#120 >= 81)) AND (ss_quantity#120 <= 100))
-                           +- FileScan parquet [ss_quantity#120,ss_ext_discount_amt#109,ss_net_paid#111] Batched: true, DataFilters: [isnotnull(ss_quantity#120), (ss_quantity#120 >= 81), (ss_quantity#120 <= 100)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,81), LessThanOrEqual(ss_quantity,100)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+                           +- FileScan parquet [ss_quantity#120,ss_ext_discount_amt#109,ss_net_paid#111] Batched: true, DataFilters: [isnotnull(ss_quantity#120), (ss_quantity#120 >= 81), (ss_quantity#120 <= 100)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,81), LessThanOrEqual(ss_quantity,100)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  :- Subquery subquery#143, [id=#144]
    :  :  +- AdaptiveSparkPlan isFinalPlan=false
    :  :     +- Project [named_struct(count(1), count(1)#104, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#105, avg(ss_net_paid), avg(ss_net_paid)#106) AS mergedValue#107]
@@ -316,7 +316,7 @@ AdaptiveSparkPlan isFinalPlan=true
    :  :              +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#109)), partial_avg(UnscaledValue(ss_net_paid#111))], output=[count#121, sum#122, count#123, sum#124, count#125])
    :  :                 +- Project [ss_ext_discount_amt#109, ss_net_paid#111]
    :  :                    +- Filter ((isnotnull(ss_quantity#120) AND (ss_quantity#120 >= 81)) AND (ss_quantity#120 <= 100))
-   :  :                       +- FileScan parquet [ss_quantity#120,ss_ext_discount_amt#109,ss_net_paid#111] Batched: true, DataFilters: [isnotnull(ss_quantity#120), (ss_quantity#120 >= 81), (ss_quantity#120 <= 100)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,81), LessThanOrEqual(ss_quantity,100)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+   :  :                       +- FileScan parquet [ss_quantity#120,ss_ext_discount_amt#109,ss_net_paid#111] Batched: true, DataFilters: [isnotnull(ss_quantity#120), (ss_quantity#120 >= 81), (ss_quantity#120 <= 100)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,81), LessThanOrEqual(ss_quantity,100)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    :  +- Subquery subquery#145, [id=#146]
    :     +- AdaptiveSparkPlan isFinalPlan=false
    :        +- Project [named_struct(count(1), count(1)#104, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#105, avg(ss_net_paid), avg(ss_net_paid)#106) AS mergedValue#107]
@@ -325,6 +325,6 @@ AdaptiveSparkPlan isFinalPlan=true
    :                 +- HashAggregate(keys=[], functions=[partial_count(1), partial_avg(UnscaledValue(ss_ext_discount_amt#109)), partial_avg(UnscaledValue(ss_net_paid#111))], output=[count#121, sum#122, count#123, sum#124, count#125])
    :                    +- Project [ss_ext_discount_amt#109, ss_net_paid#111]
    :                       +- Filter ((isnotnull(ss_quantity#120) AND (ss_quantity#120 >= 81)) AND (ss_quantity#120 <= 100))
-   :                          +- FileScan parquet [ss_quantity#120,ss_ext_discount_amt#109,ss_net_paid#111] Batched: true, DataFilters: [isnotnull(ss_quantity#120), (ss_quantity#120 >= 81), (ss_quantity#120 <= 100)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,81), LessThanOrEqual(ss_quantity,100)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
+   :                          +- FileScan parquet [ss_quantity#120,ss_ext_discount_amt#109,ss_net_paid#111] Batched: true, DataFilters: [isnotnull(ss_quantity#120), (ss_quantity#120 >= 81), (ss_quantity#120 <= 100)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_quantity), GreaterThanOrEqual(ss_quantity,81), LessThanOrEqual(ss_quantity,100)], ReadSchema: struct<ss_quantity:int,ss_ext_discount_amt:decimal(7,2),ss_net_paid:decimal(7,2)>
    +- Filter (isnotnull(r_reason_sk#126) AND (r_reason_sk#126 = 1))
-      +- FileScan parquet [r_reason_sk#126] Batched: true, DataFilters: [isnotnull(r_reason_sk#126), (r_reason_sk#126 = 1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(r_reason_sk), EqualTo(r_reason_sk,1)], ReadSchema: struct<r_reason_sk:int>
+      +- FileScan parquet [r_reason_sk#126] Batched: true, DataFilters: [isnotnull(r_reason_sk#126), (r_reason_sk#126 = 1)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(r_reason_sk), EqualTo(r_reason_sk,1)], ReadSchema: struct<r_reason_sk:int>
