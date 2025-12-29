@@ -9,7 +9,7 @@ AdaptiveSparkPlan isFinalPlan=true
    :  :  :  :  :  :- CartesianProduct
    :  :  :  :  :  :  :- NativeProject [count(1)#1 AS h8_30_to_9#2]
    :  :  :  :  :  :  :  +- NativeHashAggregate HashAgg, List(), [count(1)], [count(1)#1], 0
-   :  :  :  :  :  :  :     +- ShuffleQueryStage 76
+   :  :  :  :  :  :  :     +- ShuffleQueryStage 78
    :  :  :  :  :  :  :        +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=1]
    :  :  :  :  :  :  :           +- NativeHashAggregate HashAgg, [partial_count(1)], [count#3], 0
    :  :  :  :  :  :  :              +- NativeProject
@@ -65,7 +65,7 @@ AdaptiveSparkPlan isFinalPlan=true
    :  :  :  :  :  :  :                                            +- NativeParquetScan  (FileScan parquet [s_store_sk#5,s_store_name#14] Batched: true, DataFilters: [isnotnull(s_store_name#14), (s_store_name#14 = ese), isnotnull(s_store_sk#5)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(s_store_name), EqualTo(s_store_name,ese), IsNotNull(s_store_sk)], ReadSchema: struct<s_store_sk:int,s_store_name:string>)
    :  :  :  :  :  :  +- NativeProject [count(1)#15 AS h9_to_9_30#16]
    :  :  :  :  :  :     +- NativeHashAggregate HashAgg, List(), [count(1)], [count(1)#15], 0
-   :  :  :  :  :  :        +- ShuffleQueryStage 77
+   :  :  :  :  :  :        +- ShuffleQueryStage 76
    :  :  :  :  :  :           +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=8]
    :  :  :  :  :  :              +- NativeHashAggregate HashAgg, [partial_count(1)], [count#17], 0
    :  :  :  :  :  :                 +- NativeProject
@@ -100,7 +100,7 @@ AdaptiveSparkPlan isFinalPlan=true
    :  :  :  :  :  :                                      +- ReusedExchange [s_store_sk#19], NativeShuffleExchange hashpartitioning(s_store_sk#5, 100), ENSURE_REQUIREMENTS, [plan_id=7]
    :  :  :  :  :  +- NativeProject [count(1)#24 AS h9_30_to_10#25]
    :  :  :  :  :     +- NativeHashAggregate HashAgg, List(), [count(1)], [count(1)#24], 0
-   :  :  :  :  :        +- ShuffleQueryStage 78
+   :  :  :  :  :        +- ShuffleQueryStage 77
    :  :  :  :  :           +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=11]
    :  :  :  :  :              +- NativeHashAggregate HashAgg, [partial_count(1)], [count#26], 0
    :  :  :  :  :                 +- NativeProject

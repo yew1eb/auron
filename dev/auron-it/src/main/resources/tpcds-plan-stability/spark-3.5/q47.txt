@@ -8,7 +8,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :- NativeSort [i_category#4 ASC NULLS FIRST, i_brand#5 ASC NULLS FIRST, s_store_name#3 ASC NULLS FIRST, s_company_name#6 ASC NULLS FIRST, rn#13 ASC NULLS FIRST], false
          :     :  +- InputAdapter
          :     :     +- AQEShuffleRead coalesced
-         :     :        +- ShuffleQueryStage 41
+         :     :        +- ShuffleQueryStage 39
          :     :           +- NativeShuffleExchange hashpartitioning(i_category#4, i_brand#5, s_store_name#3, s_company_name#6, rn#13, 100), ENSURE_REQUIREMENTS, [plan_id=1]
          :     :              +- ConvertToNative
          :     :                 +- *(1) Project [i_category#4, i_brand#5, s_store_name#3, s_company_name#6, d_year#7, d_moy#8, sum_sales#1, avg_monthly_sales#2, rn#13]
@@ -80,7 +80,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :     +- NativeSort [i_category#19 ASC NULLS FIRST, i_brand#20 ASC NULLS FIRST, s_store_name#21 ASC NULLS FIRST, s_company_name#22 ASC NULLS FIRST, (rn#23 + 1) ASC NULLS FIRST], false
          :        +- InputAdapter
          :           +- AQEShuffleRead coalesced
-         :              +- ShuffleQueryStage 39
+         :              +- ShuffleQueryStage 40
          :                 +- NativeShuffleExchange hashpartitioning(i_category#19, i_brand#20, s_store_name#21, s_company_name#22, (rn#23 + 1), 100), ENSURE_REQUIREMENTS, [plan_id=10]
          :                    +- NativeProject [i_category#19, i_brand#20, s_store_name#21, s_company_name#22, sum_sales#1 AS sum_sales#9, rn#23]
          :                       +- NativeWindow [rank(d_year#35, d_moy#36) windowspecdefinition(i_category#19, i_brand#20, s_store_name#21, s_company_name#22, d_year#35 ASC NULLS FIRST, d_moy#36 ASC NULLS FIRST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS rn#23], [i_category#19, i_brand#20, s_store_name#21, s_company_name#22], [d_year#35 ASC NULLS FIRST, d_moy#36 ASC NULLS FIRST]
@@ -99,7 +99,7 @@ AdaptiveSparkPlan isFinalPlan=true
          +- NativeSort [i_category#14 ASC NULLS FIRST, i_brand#15 ASC NULLS FIRST, s_store_name#16 ASC NULLS FIRST, s_company_name#17 ASC NULLS FIRST, (rn#18 - 1) ASC NULLS FIRST], false
             +- InputAdapter
                +- AQEShuffleRead coalesced
-                  +- ShuffleQueryStage 40
+                  +- ShuffleQueryStage 41
                      +- NativeShuffleExchange hashpartitioning(i_category#14, i_brand#15, s_store_name#16, s_company_name#17, (rn#18 - 1), 100), ENSURE_REQUIREMENTS, [plan_id=12]
                         +- NativeProject [i_category#14, i_brand#15, s_store_name#16, s_company_name#17, sum_sales#1 AS sum_sales#11, rn#18]
                            +- NativeWindow [rank(d_year#40, d_moy#41) windowspecdefinition(i_category#14, i_brand#15, s_store_name#16, s_company_name#17, d_year#40 ASC NULLS FIRST, d_moy#41 ASC NULLS FIRST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS rn#18], [i_category#14, i_brand#15, s_store_name#16, s_company_name#17], [d_year#40 ASC NULLS FIRST, d_moy#41 ASC NULLS FIRST]

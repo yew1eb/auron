@@ -56,7 +56,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :  +- NativeSort [customer_id#1 ASC NULLS FIRST], false
          :     :     +- InputAdapter
          :     :        +- AQEShuffleRead coalesced
-         :     :           +- ShuffleQueryStage 30
+         :     :           +- ShuffleQueryStage 31
          :     :              +- NativeShuffleExchange hashpartitioning(customer_id#1, 100), ENSURE_REQUIREMENTS, [plan_id=7]
          :     :                 +- NativeProject [c_customer_id#23 AS customer_id#1, c_first_name#24 AS customer_first_name#2, c_last_name#25 AS customer_last_name#3, MakeDecimal(sum(UnscaledValue(ss_net_paid#26))#13,17,2) AS year_total#9]
          :     :                    +- NativeHashAggregate HashAgg, ArrayBuffer(c_customer_id#23, c_first_name#24, c_last_name#25, d_year#27), [c_customer_id#23, c_first_name#24, c_last_name#25, d_year#27], [sum(UnscaledValue(ss_net_paid#26))], [sum(UnscaledValue(ss_net_paid#26))#13], 4
@@ -85,7 +85,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :     +- NativeSort [customer_id#10 ASC NULLS FIRST], false
          :        +- InputAdapter
          :           +- AQEShuffleRead coalesced
-         :              +- ShuffleQueryStage 31
+         :              +- ShuffleQueryStage 30
          :                 +- NativeShuffleExchange hashpartitioning(customer_id#10, 100), ENSURE_REQUIREMENTS, [plan_id=10]
          :                    +- NativeFilter (isnotnull(year_total#6) AND (year_total#6 > 0.00))
          :                       +- NativeProject [c_customer_id#32 AS customer_id#10, MakeDecimal(sum(UnscaledValue(ws_net_paid#33))#34,17,2) AS year_total#6]

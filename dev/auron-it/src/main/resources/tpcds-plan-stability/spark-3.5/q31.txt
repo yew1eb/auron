@@ -17,7 +17,7 @@ AdaptiveSparkPlan isFinalPlan=true
                         :     :  :     :  :- NativeSort [ca_county#1 ASC NULLS FIRST], false
                         :     :  :     :  :  +- InputAdapter
                         :     :  :     :  :     +- AQEShuffleRead coalesced
-                        :     :  :     :  :        +- ShuffleQueryStage 41
+                        :     :  :     :  :        +- ShuffleQueryStage 42
                         :     :  :     :  :           +- NativeShuffleExchange hashpartitioning(ca_county#1, 100), ENSURE_REQUIREMENTS, [plan_id=2]
                         :     :  :     :  :              +- NativeProject [ca_county#1, d_year#2, MakeDecimal(sum(UnscaledValue(ss_ext_sales_price#18))#19,17,2) AS store_sales#7]
                         :     :  :     :  :                 +- NativeHashAggregate HashAgg, ArrayBuffer(ca_county#1, d_qoy#20, d_year#2), [ca_county#1, d_qoy#20, d_year#2], [sum(UnscaledValue(ss_ext_sales_price#18))], [sum(UnscaledValue(ss_ext_sales_price#18))#19], 3
@@ -105,13 +105,13 @@ AdaptiveSparkPlan isFinalPlan=true
                         :     :  :     +- NativeSort [ca_county#17 ASC NULLS FIRST], false
                         :     :  :        +- InputAdapter
                         :     :  :           +- AQEShuffleRead coalesced
-                        :     :  :              +- ShuffleQueryStage 47
+                        :     :  :              +- ShuffleQueryStage 45
                         :     :  :                 +- NativeShuffleExchange hashpartitioning(ca_county#17, 100), ENSURE_REQUIREMENTS, [plan_id=12]
                         :     :  :                    +- NativeProject [ca_county#17, MakeDecimal(sum(UnscaledValue(ss_ext_sales_price#36))#19,17,2) AS store_sales#11]
                         :     :  :                       +- NativeHashAggregate HashAgg, ArrayBuffer(ca_county#17, d_qoy#37, d_year#38), [ca_county#17, d_qoy#37, d_year#38], [sum(UnscaledValue(ss_ext_sales_price#36))], [sum(UnscaledValue(ss_ext_sales_price#36))#19], 3
                         :     :  :                          +- InputAdapter
                         :     :  :                             +- AQEShuffleRead coalesced
-                        :     :  :                                +- ShuffleQueryStage 42
+                        :     :  :                                +- ShuffleQueryStage 38
                         :     :  :                                   +- NativeShuffleExchange hashpartitioning(ca_county#17, d_qoy#37, d_year#38, 100), ENSURE_REQUIREMENTS, [plan_id=13]
                         :     :  :                                      +- NativeHashAggregate HashAgg, [ca_county#17, d_qoy#37, d_year#38], [partial_sum(_c3#39)], [sum#40], 0
                         :     :  :                                         +- NativeProject [ca_county#17 AS ca_county#17, d_qoy#37 AS d_qoy#37, d_year#38 AS d_year#38, UnscaledValue(ss_ext_sales_price#36) AS _c3#39]
@@ -153,7 +153,7 @@ AdaptiveSparkPlan isFinalPlan=true
                         :     :                    +- NativeHashAggregate HashAgg, ArrayBuffer(ca_county#13, d_qoy#47, d_year#48), [ca_county#13, d_qoy#47, d_year#48], [sum(UnscaledValue(ws_ext_sales_price#45))], [sum(UnscaledValue(ws_ext_sales_price#45))#46], 3
                         :     :                       +- InputAdapter
                         :     :                          +- AQEShuffleRead coalesced
-                        :     :                             +- ShuffleQueryStage 38
+                        :     :                             +- ShuffleQueryStage 39
                         :     :                                +- NativeShuffleExchange hashpartitioning(ca_county#13, d_qoy#47, d_year#48, 100), ENSURE_REQUIREMENTS, [plan_id=17]
                         :     :                                   +- NativeHashAggregate HashAgg, [ca_county#13, d_qoy#47, d_year#48], [partial_sum(_c3#49)], [sum#50], 0
                         :     :                                      +- NativeProject [ca_county#13 AS ca_county#13, d_qoy#47 AS d_qoy#47, d_year#48 AS d_year#48, UnscaledValue(ws_ext_sales_price#45) AS _c3#49]
@@ -189,13 +189,13 @@ AdaptiveSparkPlan isFinalPlan=true
                         :     +- NativeSort [ca_county#15 ASC NULLS FIRST], false
                         :        +- InputAdapter
                         :           +- AQEShuffleRead coalesced
-                        :              +- ShuffleQueryStage 45
+                        :              +- ShuffleQueryStage 46
                         :                 +- NativeShuffleExchange hashpartitioning(ca_county#15, 100), ENSURE_REQUIREMENTS, [plan_id=20]
                         :                    +- NativeProject [ca_county#15, MakeDecimal(sum(UnscaledValue(ws_ext_sales_price#55))#46,17,2) AS web_sales#3]
                         :                       +- NativeHashAggregate HashAgg, ArrayBuffer(ca_county#15, d_qoy#56, d_year#57), [ca_county#15, d_qoy#56, d_year#57], [sum(UnscaledValue(ws_ext_sales_price#55))], [sum(UnscaledValue(ws_ext_sales_price#55))#46], 3
                         :                          +- InputAdapter
                         :                             +- AQEShuffleRead coalesced
-                        :                                +- ShuffleQueryStage 39
+                        :                                +- ShuffleQueryStage 40
                         :                                   +- NativeShuffleExchange hashpartitioning(ca_county#15, d_qoy#56, d_year#57, 100), ENSURE_REQUIREMENTS, [plan_id=21]
                         :                                      +- NativeHashAggregate HashAgg, [ca_county#15, d_qoy#56, d_year#57], [partial_sum(_c3#58)], [sum#59], 0
                         :                                         +- NativeProject [ca_county#15 AS ca_county#15, d_qoy#56 AS d_qoy#56, d_year#57 AS d_year#57, UnscaledValue(ws_ext_sales_price#55) AS _c3#58]
@@ -229,13 +229,13 @@ AdaptiveSparkPlan isFinalPlan=true
                         +- NativeSort [ca_county#14 ASC NULLS FIRST], false
                            +- InputAdapter
                               +- AQEShuffleRead coalesced
-                                 +- ShuffleQueryStage 46
+                                 +- ShuffleQueryStage 47
                                     +- NativeShuffleExchange hashpartitioning(ca_county#14, 100), ENSURE_REQUIREMENTS, [plan_id=23]
                                        +- NativeProject [ca_county#14, MakeDecimal(sum(UnscaledValue(ws_ext_sales_price#64))#46,17,2) AS web_sales#9]
                                           +- NativeHashAggregate HashAgg, ArrayBuffer(ca_county#14, d_qoy#65, d_year#66), [ca_county#14, d_qoy#65, d_year#66], [sum(UnscaledValue(ws_ext_sales_price#64))], [sum(UnscaledValue(ws_ext_sales_price#64))#46], 3
                                              +- InputAdapter
                                                 +- AQEShuffleRead coalesced
-                                                   +- ShuffleQueryStage 40
+                                                   +- ShuffleQueryStage 41
                                                       +- NativeShuffleExchange hashpartitioning(ca_county#14, d_qoy#65, d_year#66, 100), ENSURE_REQUIREMENTS, [plan_id=24]
                                                          +- NativeHashAggregate HashAgg, [ca_county#14, d_qoy#65, d_year#66], [partial_sum(_c3#67)], [sum#68], 0
                                                             +- NativeProject [ca_county#14 AS ca_county#14, d_qoy#65 AS d_qoy#65, d_year#66 AS d_year#66, UnscaledValue(ws_ext_sales_price#64) AS _c3#67]
