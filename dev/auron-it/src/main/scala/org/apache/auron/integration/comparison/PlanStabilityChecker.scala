@@ -41,6 +41,10 @@ class PlanStabilityChecker(
   }
 
   def validate(test: SingleQueryResult): Boolean = {
+    if (!shouldVerifyPhysicalPlan()) {
+      println(s"Skip validate PhysicalPlan for ${Shims.get.shimVersion}")
+    }
+
     if (regenGoldenFiles) {
       generatePlanGolden(test.queryId, test.plan)
     } else if (planCheck && shouldVerifyPhysicalPlan) {
@@ -89,7 +93,7 @@ class PlanStabilityChecker(
 
     // Normalize file location
     def normalizeLocation(plan: String): String = {
-      plan.replaceAll("""file:/[^,\s\]\)]+""", "file:/<dir>")
+      plan.replaceAll("""file:/[^,\s\]\)]+""", "file:/<warehouse_dir>")
     }
 
     // Create a normalized map for regex matches
@@ -123,7 +127,6 @@ class PlanStabilityChecker(
     val argumentsNormalized = planIdNormalized
       .replaceAll("Arguments: [0-9]+, [0-9]+", "Arguments: X, X")
       .replaceAll("Arguments: [0-9]+", "Arguments: X")
-      .replaceAll("ShuffleQueryStage [0-9]+", "ShuffleQueryStage X")
 
     normalizeLocation(argumentsNormalized)
   }
