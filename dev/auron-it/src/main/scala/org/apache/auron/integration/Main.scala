@@ -16,6 +16,7 @@
  */
 package org.apache.auron.integration
 
+import org.apache.spark.sql.auron.Shims
 import scopt.OParser
 
 import org.apache.auron.integration.runner.AuronTPCDSSuite
@@ -71,6 +72,7 @@ object Main {
       case Some(args) =>
         println(s"""
                    |Auron Integration Test (type: ${args.benchType})
+                   |Spark Version: ${Shims.get.shimVersion}
                    |Data: ${args.dataLocation}
                    |Queries: [${args.queryFilter
           .mkString(", ")}] (${args.queryFilter.length} queries)

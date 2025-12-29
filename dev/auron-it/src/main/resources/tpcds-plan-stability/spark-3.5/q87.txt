@@ -57,13 +57,13 @@ AdaptiveSparkPlan isFinalPlan=true
                      :  +- NativeSort [coalesce(c_last_name#10, ) ASC NULLS FIRST, isnull(c_last_name#10) ASC NULLS FIRST, coalesce(c_first_name#11, ) ASC NULLS FIRST, isnull(c_first_name#11) ASC NULLS FIRST, coalesce(d_date#12, 1970-01-01) ASC NULLS FIRST, isnull(d_date#12) ASC NULLS FIRST], false
                      :     +- InputAdapter
                      :        +- AQEShuffleRead coalesced
-                     :           +- ShuffleQueryStage 21
+                     :           +- ShuffleQueryStage 20
                      :              +- NativeShuffleExchange hashpartitioning(coalesce(c_last_name#10, ), isnull(c_last_name#10), coalesce(c_first_name#11, ), isnull(c_first_name#11), coalesce(d_date#12, 1970-01-01), isnull(d_date#12), 100), ENSURE_REQUIREMENTS, [plan_id=8]
                      :                 +- NativeProject [c_last_name#10, c_first_name#11, d_date#12]
                      :                    +- NativeHashAggregate HashAgg, List(c_last_name#10, c_first_name#11, d_date#12), [c_last_name#10, c_first_name#11, d_date#12], 3
                      :                       +- InputAdapter
                      :                          +- AQEShuffleRead coalesced
-                     :                             +- ShuffleQueryStage 18
+                     :                             +- ShuffleQueryStage 17
                      :                                +- NativeShuffleExchange hashpartitioning(c_last_name#10, c_first_name#11, d_date#12, 100), ENSURE_REQUIREMENTS, [plan_id=9]
                      :                                   +- NativeHashAggregate HashAgg, [c_last_name#10, c_first_name#11, d_date#12], 0
                      :                                      +- NativeProject [c_last_name#10, c_first_name#11, d_date#12]
@@ -98,13 +98,13 @@ AdaptiveSparkPlan isFinalPlan=true
                      +- NativeSort [coalesce(c_last_name#7, ) ASC NULLS FIRST, isnull(c_last_name#7) ASC NULLS FIRST, coalesce(c_first_name#8, ) ASC NULLS FIRST, isnull(c_first_name#8) ASC NULLS FIRST, coalesce(d_date#9, 1970-01-01) ASC NULLS FIRST, isnull(d_date#9) ASC NULLS FIRST], false
                         +- InputAdapter
                            +- AQEShuffleRead coalesced
-                              +- ShuffleQueryStage 20
+                              +- ShuffleQueryStage 21
                                  +- NativeShuffleExchange hashpartitioning(coalesce(c_last_name#7, ), isnull(c_last_name#7), coalesce(c_first_name#8, ), isnull(c_first_name#8), coalesce(d_date#9, 1970-01-01), isnull(d_date#9), 100), ENSURE_REQUIREMENTS, [plan_id=12]
                                     +- NativeProject [c_last_name#7, c_first_name#8, d_date#9]
                                        +- NativeHashAggregate HashAgg, List(c_last_name#7, c_first_name#8, d_date#9), [c_last_name#7, c_first_name#8, d_date#9], 3
                                           +- InputAdapter
                                              +- AQEShuffleRead coalesced
-                                                +- ShuffleQueryStage 17
+                                                +- ShuffleQueryStage 18
                                                    +- NativeShuffleExchange hashpartitioning(c_last_name#7, c_first_name#8, d_date#9, 100), ENSURE_REQUIREMENTS, [plan_id=13]
                                                       +- NativeHashAggregate HashAgg, [c_last_name#7, c_first_name#8, d_date#9], 0
                                                          +- NativeProject [c_last_name#7, c_first_name#8, d_date#9]

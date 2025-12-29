@@ -13,7 +13,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :                    :- NativeSort [ss_item_sk#10 ASC NULLS FIRST], false
          :                    :  +- InputAdapter
          :                    :     +- AQEShuffleRead coalesced
-         :                    :        +- ShuffleQueryStage 11
+         :                    :        +- ShuffleQueryStage 10
          :                    :           +- NativeShuffleExchange hashpartitioning(ss_item_sk#10, 100), ENSURE_REQUIREMENTS, [plan_id=2]
          :                    :              +- NativeProject [s_store_name#1, ss_store_sk#7, ss_item_sk#10, revenue#3]
          :                    :                 +- NativeSortMergeJoin [s_store_sk#12], [ss_store_sk#7], Inner
@@ -72,7 +72,7 @@ AdaptiveSparkPlan isFinalPlan=true
                   +- NativeHashAggregate HashAgg, ArrayBuffer(ss_store_sk#8), [ss_store_sk#8], [avg(revenue#20)], [avg(revenue#20)#21], 1
                      +- InputAdapter
                         +- AQEShuffleRead coalesced
-                           +- ShuffleQueryStage 10
+                           +- ShuffleQueryStage 11
                               +- NativeShuffleExchange hashpartitioning(ss_store_sk#8, 100), ENSURE_REQUIREMENTS, [plan_id=9]
                                  +- NativeHashAggregate HashAgg, [ss_store_sk#8], [partial_avg(revenue#20)], [sum#22, count#23], 0
                                     +- NativeProject [ss_store_sk#8, MakeDecimal(sum(UnscaledValue(ss_sales_price#24))#25,17,2) AS revenue#20]

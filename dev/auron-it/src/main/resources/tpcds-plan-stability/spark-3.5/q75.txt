@@ -6,14 +6,14 @@ AdaptiveSparkPlan isFinalPlan=true
          :- NativeSort [i_brand_id#5 ASC NULLS FIRST, i_class_id#6 ASC NULLS FIRST, i_category_id#7 ASC NULLS FIRST, i_manufact_id#8 ASC NULLS FIRST], false
          :  +- InputAdapter
          :     +- AQEShuffleRead coalesced
-         :        +- ShuffleQueryStage 58
+         :        +- ShuffleQueryStage 59
          :           +- NativeShuffleExchange hashpartitioning(i_brand_id#5, i_class_id#6, i_category_id#7, i_manufact_id#8, 100), ENSURE_REQUIREMENTS, [plan_id=1]
          :              +- NativeFilter isnotnull(sales_cnt#14)
          :                 +- NativeProject [d_year#12, i_brand_id#5, i_class_id#6, i_category_id#7, i_manufact_id#8, sum(sales_cnt#21)#22 AS sales_cnt#14, MakeDecimal(sum(UnscaledValue(sales_amt#23))#24,18,2) AS sales_amt#15]
          :                    +- NativeHashAggregate HashAgg, ArrayBuffer(d_year#12, i_brand_id#5, i_class_id#6, i_category_id#7, i_manufact_id#8), [d_year#12, i_brand_id#5, i_class_id#6, i_category_id#7, i_manufact_id#8], [sum(sales_cnt#21), sum(UnscaledValue(sales_amt#23))], [sum(sales_cnt#21)#22, sum(UnscaledValue(sales_amt#23))#24], 5
          :                       +- InputAdapter
          :                          +- AQEShuffleRead coalesced
-         :                             +- ShuffleQueryStage 56
+         :                             +- ShuffleQueryStage 57
          :                                +- NativeShuffleExchange hashpartitioning(d_year#12, i_brand_id#5, i_class_id#6, i_category_id#7, i_manufact_id#8, 100), ENSURE_REQUIREMENTS, [plan_id=2]
          :                                   +- NativeHashAggregate HashAgg, [d_year#12, i_brand_id#5, i_class_id#6, i_category_id#7, i_manufact_id#8], [partial_sum(_c5#25), partial_sum(_c6#26)], [sum#27, sum#28], 0
          :                                      +- NativeProject [d_year#12 AS d_year#12, i_brand_id#5 AS i_brand_id#5, i_class_id#6 AS i_class_id#6, i_category_id#7 AS i_category_id#7, i_manufact_id#8 AS i_manufact_id#8, sales_cnt#21 AS _c5#25, UnscaledValue(sales_amt#23) AS _c6#26]
@@ -21,7 +21,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :                                            +- NativeHashAggregate HashAgg, ArrayBuffer(d_year#12, i_brand_id#5, i_class_id#6, i_category_id#7, i_manufact_id#8, sales_cnt#21, sales_amt#23), [d_year#12, i_brand_id#5, i_class_id#6, i_category_id#7, i_manufact_id#8, sales_cnt#21, sales_amt#23], 7
          :                                               +- InputAdapter
          :                                                  +- AQEShuffleRead coalesced
-         :                                                     +- ShuffleQueryStage 54
+         :                                                     +- ShuffleQueryStage 55
          :                                                        +- NativeShuffleExchange hashpartitioning(d_year#12, i_brand_id#5, i_class_id#6, i_category_id#7, i_manufact_id#8, sales_cnt#21, sales_amt#23, 100), ENSURE_REQUIREMENTS, [plan_id=3]
          :                                                           +- NativeHashAggregate HashAgg, [d_year#12, i_brand_id#5, i_class_id#6, i_category_id#7, i_manufact_id#8, sales_cnt#21, sales_amt#23], 0
          :                                                              +- InputAdapter [#12, #5, #6, #7, #8, #21, #23]
@@ -166,14 +166,14 @@ AdaptiveSparkPlan isFinalPlan=true
          +- NativeSort [i_brand_id#17 ASC NULLS FIRST, i_class_id#18 ASC NULLS FIRST, i_category_id#19 ASC NULLS FIRST, i_manufact_id#20 ASC NULLS FIRST], false
             +- InputAdapter
                +- AQEShuffleRead coalesced
-                  +- ShuffleQueryStage 59
+                  +- ShuffleQueryStage 58
                      +- NativeShuffleExchange hashpartitioning(i_brand_id#17, i_class_id#18, i_category_id#19, i_manufact_id#20, 100), ENSURE_REQUIREMENTS, [plan_id=18]
                         +- NativeFilter isnotnull(sales_cnt#13)
                            +- NativeProject [d_year#11, i_brand_id#17, i_class_id#18, i_category_id#19, i_manufact_id#20, sum(sales_cnt#21)#22 AS sales_cnt#13, MakeDecimal(sum(UnscaledValue(sales_amt#23))#24,18,2) AS sales_amt#16]
                               +- NativeHashAggregate HashAgg, ArrayBuffer(d_year#11, i_brand_id#17, i_class_id#18, i_category_id#19, i_manufact_id#20), [d_year#11, i_brand_id#17, i_class_id#18, i_category_id#19, i_manufact_id#20], [sum(sales_cnt#21), sum(UnscaledValue(sales_amt#23))], [sum(sales_cnt#21)#22, sum(UnscaledValue(sales_amt#23))#24], 5
                                  +- InputAdapter
                                     +- AQEShuffleRead coalesced
-                                       +- ShuffleQueryStage 57
+                                       +- ShuffleQueryStage 56
                                           +- NativeShuffleExchange hashpartitioning(d_year#11, i_brand_id#17, i_class_id#18, i_category_id#19, i_manufact_id#20, 100), ENSURE_REQUIREMENTS, [plan_id=19]
                                              +- NativeHashAggregate HashAgg, [d_year#11, i_brand_id#17, i_class_id#18, i_category_id#19, i_manufact_id#20], [partial_sum(_c5#77), partial_sum(_c6#78)], [sum#27, sum#79], 0
                                                 +- NativeProject [d_year#11 AS d_year#11, i_brand_id#17 AS i_brand_id#17, i_class_id#18 AS i_class_id#18, i_category_id#19 AS i_category_id#19, i_manufact_id#20 AS i_manufact_id#20, sales_cnt#21 AS _c5#77, UnscaledValue(sales_amt#23) AS _c6#78]
@@ -181,7 +181,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                                       +- NativeHashAggregate HashAgg, ArrayBuffer(d_year#11, i_brand_id#17, i_class_id#18, i_category_id#19, i_manufact_id#20, sales_cnt#21, sales_amt#23), [d_year#11, i_brand_id#17, i_class_id#18, i_category_id#19, i_manufact_id#20, sales_cnt#21, sales_amt#23], 7
                                                          +- InputAdapter
                                                             +- AQEShuffleRead coalesced
-                                                               +- ShuffleQueryStage 55
+                                                               +- ShuffleQueryStage 54
                                                                   +- NativeShuffleExchange hashpartitioning(d_year#11, i_brand_id#17, i_class_id#18, i_category_id#19, i_manufact_id#20, sales_cnt#21, sales_amt#23, 100), ENSURE_REQUIREMENTS, [plan_id=20]
                                                                      +- NativeHashAggregate HashAgg, [d_year#11, i_brand_id#17, i_class_id#18, i_category_id#19, i_manufact_id#20, sales_cnt#21, sales_amt#23], 0
                                                                         +- InputAdapter [#11, #17, #18, #19, #20, #21, #23]
