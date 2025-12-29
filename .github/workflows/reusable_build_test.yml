@@ -383,7 +383,8 @@ jobs:
             ${{ inputs.extrasparkconf }} \
             --type tpcds \
             --data-location dev/tpcds_1g \
-            --query-filter ${{ matrix.query }}
+            --query-filter ${{ matrix.query }} \
+            --plan-check
 
       - name: Upload tpcds test log
         if: failure()

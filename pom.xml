@@ -42,7 +42,7 @@
     <module>hadoop-shim</module>
     <module>dev/mvn-build-helper/assembly</module>
     <module>dev/mvn-build-helper/proto</module>
-<!--    <module>dev/auron-it</module>-->
+    <!--    <module>dev/auron-it</module>-->
     <module>auron-spark-ui</module>
   </modules>
 
