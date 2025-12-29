@@ -7,7 +7,7 @@ AdaptiveSparkPlan isFinalPlan=true
             NativeProject [named_struct(count(1), count(1)#16, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#17, avg(ss_net_paid), avg(ss_net_paid)#18) AS mergedValue#19]
             +- NativeProject [count(1)#20 AS count(1)#16, cast((avg(UnscaledValue(ss_ext_discount_amt#21))#22 / 100.0) as decimal(11,6)) AS avg(ss_ext_discount_amt)#17, cast((avg(UnscaledValue(ss_net_paid#23))#24 / 100.0) as decimal(11,6)) AS avg(ss_net_paid)#18]
                +- NativeHashAggregate HashAgg, List(), [count(1), avg(UnscaledValue(ss_ext_discount_amt#21)), avg(UnscaledValue(ss_net_paid#23))], [count(1)#20, avg(UnscaledValue(ss_ext_discount_amt#21))#22, avg(UnscaledValue(ss_net_paid#23))#24], 0
-                  +- ShuffleQueryStage 0
+                  +- ShuffleQueryStage X
                      +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=1]
                         +- NativeHashAggregate HashAgg, [partial_count(1), partial_avg(_c0#25), partial_avg(_c1#26)], [count#27, sum#28, count#29, sum#30, count#31], 0
                            +- NativeProject [UnscaledValue(ss_ext_discount_amt#21) AS _c0#25, UnscaledValue(ss_net_paid#23) AS _c1#26]
@@ -31,7 +31,7 @@ AdaptiveSparkPlan isFinalPlan=true
             NativeProject [named_struct(count(1), count(1)#38, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#39, avg(ss_net_paid), avg(ss_net_paid)#40) AS mergedValue#41]
             +- NativeProject [count(1)#42 AS count(1)#38, cast((avg(UnscaledValue(ss_ext_discount_amt#43))#44 / 100.0) as decimal(11,6)) AS avg(ss_ext_discount_amt)#39, cast((avg(UnscaledValue(ss_net_paid#45))#46 / 100.0) as decimal(11,6)) AS avg(ss_net_paid)#40]
                +- NativeHashAggregate HashAgg, List(), [count(1), avg(UnscaledValue(ss_ext_discount_amt#43)), avg(UnscaledValue(ss_net_paid#45))], [count(1)#42, avg(UnscaledValue(ss_ext_discount_amt#43))#44, avg(UnscaledValue(ss_net_paid#45))#46], 0
-                  +- ShuffleQueryStage 0
+                  +- ShuffleQueryStage X
                      +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=3]
                         +- NativeHashAggregate HashAgg, [partial_count(1), partial_avg(_c0#47), partial_avg(_c1#48)], [count#49, sum#50, count#51, sum#52, count#53], 0
                            +- NativeProject [UnscaledValue(ss_ext_discount_amt#43) AS _c0#47, UnscaledValue(ss_net_paid#45) AS _c1#48]
@@ -55,7 +55,7 @@ AdaptiveSparkPlan isFinalPlan=true
             NativeProject [named_struct(count(1), count(1)#60, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#61, avg(ss_net_paid), avg(ss_net_paid)#62) AS mergedValue#63]
             +- NativeProject [count(1)#64 AS count(1)#60, cast((avg(UnscaledValue(ss_ext_discount_amt#65))#66 / 100.0) as decimal(11,6)) AS avg(ss_ext_discount_amt)#61, cast((avg(UnscaledValue(ss_net_paid#67))#68 / 100.0) as decimal(11,6)) AS avg(ss_net_paid)#62]
                +- NativeHashAggregate HashAgg, List(), [count(1), avg(UnscaledValue(ss_ext_discount_amt#65)), avg(UnscaledValue(ss_net_paid#67))], [count(1)#64, avg(UnscaledValue(ss_ext_discount_amt#65))#66, avg(UnscaledValue(ss_net_paid#67))#68], 0
-                  +- ShuffleQueryStage 0
+                  +- ShuffleQueryStage X
                      +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=5]
                         +- NativeHashAggregate HashAgg, [partial_count(1), partial_avg(_c0#69), partial_avg(_c1#70)], [count#71, sum#72, count#73, sum#74, count#75], 0
                            +- NativeProject [UnscaledValue(ss_ext_discount_amt#65) AS _c0#69, UnscaledValue(ss_net_paid#67) AS _c1#70]
@@ -79,7 +79,7 @@ AdaptiveSparkPlan isFinalPlan=true
             NativeProject [named_struct(count(1), count(1)#82, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#83, avg(ss_net_paid), avg(ss_net_paid)#84) AS mergedValue#85]
             +- NativeProject [count(1)#86 AS count(1)#82, cast((avg(UnscaledValue(ss_ext_discount_amt#87))#88 / 100.0) as decimal(11,6)) AS avg(ss_ext_discount_amt)#83, cast((avg(UnscaledValue(ss_net_paid#89))#90 / 100.0) as decimal(11,6)) AS avg(ss_net_paid)#84]
                +- NativeHashAggregate HashAgg, List(), [count(1), avg(UnscaledValue(ss_ext_discount_amt#87)), avg(UnscaledValue(ss_net_paid#89))], [count(1)#86, avg(UnscaledValue(ss_ext_discount_amt#87))#88, avg(UnscaledValue(ss_net_paid#89))#90], 0
-                  +- ShuffleQueryStage 0
+                  +- ShuffleQueryStage X
                      +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=7]
                         +- NativeHashAggregate HashAgg, [partial_count(1), partial_avg(_c0#91), partial_avg(_c1#92)], [count#93, sum#94, count#95, sum#96, count#97], 0
                            +- NativeProject [UnscaledValue(ss_ext_discount_amt#87) AS _c0#91, UnscaledValue(ss_net_paid#89) AS _c1#92]
@@ -103,7 +103,7 @@ AdaptiveSparkPlan isFinalPlan=true
             NativeProject [named_struct(count(1), count(1)#104, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#105, avg(ss_net_paid), avg(ss_net_paid)#106) AS mergedValue#107]
             +- NativeProject [count(1)#108 AS count(1)#104, cast((avg(UnscaledValue(ss_ext_discount_amt#109))#110 / 100.0) as decimal(11,6)) AS avg(ss_ext_discount_amt)#105, cast((avg(UnscaledValue(ss_net_paid#111))#112 / 100.0) as decimal(11,6)) AS avg(ss_net_paid)#106]
                +- NativeHashAggregate HashAgg, List(), [count(1), avg(UnscaledValue(ss_ext_discount_amt#109)), avg(UnscaledValue(ss_net_paid#111))], [count(1)#108, avg(UnscaledValue(ss_ext_discount_amt#109))#110, avg(UnscaledValue(ss_net_paid#111))#112], 0
-                  +- ShuffleQueryStage 0
+                  +- ShuffleQueryStage X
                      +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=9]
                         +- NativeHashAggregate HashAgg, [partial_count(1), partial_avg(_c0#113), partial_avg(_c1#114)], [count#115, sum#116, count#117, sum#118, count#119], 0
                            +- NativeProject [UnscaledValue(ss_ext_discount_amt#109) AS _c0#113, UnscaledValue(ss_net_paid#111) AS _c1#114]
@@ -132,7 +132,7 @@ AdaptiveSparkPlan isFinalPlan=true
             NativeProject [named_struct(count(1), count(1)#16, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#17, avg(ss_net_paid), avg(ss_net_paid)#18) AS mergedValue#19]
             +- NativeProject [count(1)#20 AS count(1)#16, cast((avg(UnscaledValue(ss_ext_discount_amt#21))#22 / 100.0) as decimal(11,6)) AS avg(ss_ext_discount_amt)#17, cast((avg(UnscaledValue(ss_net_paid#23))#24 / 100.0) as decimal(11,6)) AS avg(ss_net_paid)#18]
                +- NativeHashAggregate HashAgg, List(), [count(1), avg(UnscaledValue(ss_ext_discount_amt#21)), avg(UnscaledValue(ss_net_paid#23))], [count(1)#20, avg(UnscaledValue(ss_ext_discount_amt#21))#22, avg(UnscaledValue(ss_net_paid#23))#24], 0
-                  +- ShuffleQueryStage 0
+                  +- ShuffleQueryStage X
                      +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=1]
                         +- NativeHashAggregate HashAgg, [partial_count(1), partial_avg(_c0#25), partial_avg(_c1#26)], [count#27, sum#28, count#29, sum#30, count#31], 0
                            +- NativeProject [UnscaledValue(ss_ext_discount_amt#21) AS _c0#25, UnscaledValue(ss_net_paid#23) AS _c1#26]
@@ -172,7 +172,7 @@ AdaptiveSparkPlan isFinalPlan=true
             NativeProject [named_struct(count(1), count(1)#38, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#39, avg(ss_net_paid), avg(ss_net_paid)#40) AS mergedValue#41]
             +- NativeProject [count(1)#42 AS count(1)#38, cast((avg(UnscaledValue(ss_ext_discount_amt#43))#44 / 100.0) as decimal(11,6)) AS avg(ss_ext_discount_amt)#39, cast((avg(UnscaledValue(ss_net_paid#45))#46 / 100.0) as decimal(11,6)) AS avg(ss_net_paid)#40]
                +- NativeHashAggregate HashAgg, List(), [count(1), avg(UnscaledValue(ss_ext_discount_amt#43)), avg(UnscaledValue(ss_net_paid#45))], [count(1)#42, avg(UnscaledValue(ss_ext_discount_amt#43))#44, avg(UnscaledValue(ss_net_paid#45))#46], 0
-                  +- ShuffleQueryStage 0
+                  +- ShuffleQueryStage X
                      +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=3]
                         +- NativeHashAggregate HashAgg, [partial_count(1), partial_avg(_c0#47), partial_avg(_c1#48)], [count#49, sum#50, count#51, sum#52, count#53], 0
                            +- NativeProject [UnscaledValue(ss_ext_discount_amt#43) AS _c0#47, UnscaledValue(ss_net_paid#45) AS _c1#48]
@@ -212,7 +212,7 @@ AdaptiveSparkPlan isFinalPlan=true
             NativeProject [named_struct(count(1), count(1)#60, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#61, avg(ss_net_paid), avg(ss_net_paid)#62) AS mergedValue#63]
             +- NativeProject [count(1)#64 AS count(1)#60, cast((avg(UnscaledValue(ss_ext_discount_amt#65))#66 / 100.0) as decimal(11,6)) AS avg(ss_ext_discount_amt)#61, cast((avg(UnscaledValue(ss_net_paid#67))#68 / 100.0) as decimal(11,6)) AS avg(ss_net_paid)#62]
                +- NativeHashAggregate HashAgg, List(), [count(1), avg(UnscaledValue(ss_ext_discount_amt#65)), avg(UnscaledValue(ss_net_paid#67))], [count(1)#64, avg(UnscaledValue(ss_ext_discount_amt#65))#66, avg(UnscaledValue(ss_net_paid#67))#68], 0
-                  +- ShuffleQueryStage 0
+                  +- ShuffleQueryStage X
                      +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=5]
                         +- NativeHashAggregate HashAgg, [partial_count(1), partial_avg(_c0#69), partial_avg(_c1#70)], [count#71, sum#72, count#73, sum#74, count#75], 0
                            +- NativeProject [UnscaledValue(ss_ext_discount_amt#65) AS _c0#69, UnscaledValue(ss_net_paid#67) AS _c1#70]
@@ -252,7 +252,7 @@ AdaptiveSparkPlan isFinalPlan=true
             NativeProject [named_struct(count(1), count(1)#82, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#83, avg(ss_net_paid), avg(ss_net_paid)#84) AS mergedValue#85]
             +- NativeProject [count(1)#86 AS count(1)#82, cast((avg(UnscaledValue(ss_ext_discount_amt#87))#88 / 100.0) as decimal(11,6)) AS avg(ss_ext_discount_amt)#83, cast((avg(UnscaledValue(ss_net_paid#89))#90 / 100.0) as decimal(11,6)) AS avg(ss_net_paid)#84]
                +- NativeHashAggregate HashAgg, List(), [count(1), avg(UnscaledValue(ss_ext_discount_amt#87)), avg(UnscaledValue(ss_net_paid#89))], [count(1)#86, avg(UnscaledValue(ss_ext_discount_amt#87))#88, avg(UnscaledValue(ss_net_paid#89))#90], 0
-                  +- ShuffleQueryStage 0
+                  +- ShuffleQueryStage X
                      +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=7]
                         +- NativeHashAggregate HashAgg, [partial_count(1), partial_avg(_c0#91), partial_avg(_c1#92)], [count#93, sum#94, count#95, sum#96, count#97], 0
                            +- NativeProject [UnscaledValue(ss_ext_discount_amt#87) AS _c0#91, UnscaledValue(ss_net_paid#89) AS _c1#92]
@@ -292,7 +292,7 @@ AdaptiveSparkPlan isFinalPlan=true
             NativeProject [named_struct(count(1), count(1)#104, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#105, avg(ss_net_paid), avg(ss_net_paid)#106) AS mergedValue#107]
             +- NativeProject [count(1)#108 AS count(1)#104, cast((avg(UnscaledValue(ss_ext_discount_amt#109))#110 / 100.0) as decimal(11,6)) AS avg(ss_ext_discount_amt)#105, cast((avg(UnscaledValue(ss_net_paid#111))#112 / 100.0) as decimal(11,6)) AS avg(ss_net_paid)#106]
                +- NativeHashAggregate HashAgg, List(), [count(1), avg(UnscaledValue(ss_ext_discount_amt#109)), avg(UnscaledValue(ss_net_paid#111))], [count(1)#108, avg(UnscaledValue(ss_ext_discount_amt#109))#110, avg(UnscaledValue(ss_net_paid#111))#112], 0
-                  +- ShuffleQueryStage 0
+                  +- ShuffleQueryStage X
                      +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=9]
                         +- NativeHashAggregate HashAgg, [partial_count(1), partial_avg(_c0#113), partial_avg(_c1#114)], [count#115, sum#116, count#117, sum#118, count#119], 0
                            +- NativeProject [UnscaledValue(ss_ext_discount_amt#109) AS _c0#113, UnscaledValue(ss_net_paid#111) AS _c1#114]

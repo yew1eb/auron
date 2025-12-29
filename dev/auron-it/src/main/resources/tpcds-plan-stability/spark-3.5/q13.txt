@@ -1,7 +1,7 @@
 AdaptiveSparkPlan isFinalPlan=true
 +- == Final Plan ==
    *(4) HashAggregate(keys=[], functions=[avg(ss_quantity#1), avg(UnscaledValue(ss_ext_sales_price#2)), avg(UnscaledValue(ss_ext_wholesale_cost#3)), sum(UnscaledValue(ss_ext_wholesale_cost#3))], output=[avg(ss_quantity)#4, avg(ss_ext_sales_price)#5, avg(ss_ext_wholesale_cost)#6, sum(ss_ext_wholesale_cost)#7])
-   +- ShuffleQueryStage 10
+   +- ShuffleQueryStage X
       +- Exchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=1]
          +- *(3) HashAggregate(keys=[], functions=[partial_avg(ss_quantity#1), partial_avg(UnscaledValue(ss_ext_sales_price#2)), partial_avg(UnscaledValue(ss_ext_wholesale_cost#3)), partial_sum(UnscaledValue(ss_ext_wholesale_cost#3))], output=[sum#8, count#9, sum#10, count#11, sum#12, count#13, sum#14])
             +- *(3) Project [ss_quantity#1, ss_ext_sales_price#2, ss_ext_wholesale_cost#3]
@@ -9,7 +9,7 @@ AdaptiveSparkPlan isFinalPlan=true
                   :- NativeSort [ss_hdemo_sk#15 ASC NULLS FIRST], false
                   :  +- InputAdapter
                   :     +- AQEShuffleRead coalesced
-                  :        +- ShuffleQueryStage 9
+                  :        +- ShuffleQueryStage X
                   :           +- NativeShuffleExchange hashpartitioning(ss_hdemo_sk#15, 100), ENSURE_REQUIREMENTS, [plan_id=2]
                   :              +- ConvertToNative
                   :                 +- *(2) Project [ss_hdemo_sk#15, ss_quantity#1, ss_sales_price#19, ss_ext_sales_price#2, ss_ext_wholesale_cost#3, cd_marital_status#17, cd_education_status#18]
@@ -17,14 +17,14 @@ AdaptiveSparkPlan isFinalPlan=true
                   :                       :- NativeSort [ss_cdemo_sk#21 ASC NULLS FIRST], false
                   :                       :  +- InputAdapter
                   :                       :     +- AQEShuffleRead coalesced
-                  :                       :        +- ShuffleQueryStage 8
+                  :                       :        +- ShuffleQueryStage X
                   :                       :           +- NativeShuffleExchange hashpartitioning(ss_cdemo_sk#21, 100), ENSURE_REQUIREMENTS, [plan_id=3]
                   :                       :              +- NativeProject [ss_cdemo_sk#21, ss_hdemo_sk#15, ss_quantity#1, ss_sales_price#19, ss_ext_sales_price#2, ss_ext_wholesale_cost#3]
                   :                       :                 +- NativeSortMergeJoin [ss_sold_date_sk#23], [d_date_sk#24], Inner
                   :                       :                    :- NativeSort [ss_sold_date_sk#23 ASC NULLS FIRST], false
                   :                       :                    :  +- InputAdapter
                   :                       :                    :     +- AQEShuffleRead coalesced
-                  :                       :                    :        +- ShuffleQueryStage 7
+                  :                       :                    :        +- ShuffleQueryStage X
                   :                       :                    :           +- NativeShuffleExchange hashpartitioning(ss_sold_date_sk#23, 100), ENSURE_REQUIREMENTS, [plan_id=4]
                   :                       :                    :              +- ConvertToNative
                   :                       :                    :                 +- *(1) Project [ss_sold_date_sk#23, ss_cdemo_sk#21, ss_hdemo_sk#15, ss_quantity#1, ss_sales_price#19, ss_ext_sales_price#2, ss_ext_wholesale_cost#3]
@@ -32,22 +32,22 @@ AdaptiveSparkPlan isFinalPlan=true
                   :                       :                    :                       :- NativeSort [ss_addr_sk#25 ASC NULLS FIRST], false
                   :                       :                    :                       :  +- InputAdapter
                   :                       :                    :                       :     +- AQEShuffleRead coalesced
-                  :                       :                    :                       :        +- ShuffleQueryStage 6
+                  :                       :                    :                       :        +- ShuffleQueryStage X
                   :                       :                    :                       :           +- NativeShuffleExchange hashpartitioning(ss_addr_sk#25, 100), ENSURE_REQUIREMENTS, [plan_id=5]
                   :                       :                    :                       :              +- NativeProject [ss_sold_date_sk#23, ss_cdemo_sk#21, ss_hdemo_sk#15, ss_addr_sk#25, ss_quantity#1, ss_sales_price#19, ss_ext_sales_price#2, ss_ext_wholesale_cost#3, ss_net_profit#28]
                   :                       :                    :                       :                 +- NativeSortMergeJoin [ss_store_sk#29], [s_store_sk#30], Inner
                   :                       :                    :                       :                    :- NativeSort [ss_store_sk#29 ASC NULLS FIRST], false
                   :                       :                    :                       :                    :  +- InputAdapter
                   :                       :                    :                       :                    :     +- AQEShuffleRead coalesced
-                  :                       :                    :                       :                    :        +- ShuffleQueryStage 0
+                  :                       :                    :                       :                    :        +- ShuffleQueryStage X
                   :                       :                    :                       :                    :           +- NativeShuffleExchange hashpartitioning(ss_store_sk#29, 100), ENSURE_REQUIREMENTS, [plan_id=6]
                   :                       :                    :                       :                    :              +- NativeFilter ((((((isnotnull(ss_store_sk#29) AND isnotnull(ss_addr_sk#25)) AND isnotnull(ss_sold_date_sk#23)) AND isnotnull(ss_cdemo_sk#21)) AND isnotnull(ss_hdemo_sk#15)) AND ((((ss_net_profit#28 >= 100.00) AND (ss_net_profit#28 <= 200.00)) OR ((ss_net_profit#28 >= 150.00) AND (ss_net_profit#28 <= 300.00))) OR ((ss_net_profit#28 >= 50.00) AND (ss_net_profit#28 <= 250.00)))) AND ((((ss_sales_price#19 >= 100.00) AND (ss_sales_price#19 <= 150.00)) OR ((ss_sales_price#19 >= 50.00) AND (ss_sales_price#19 <= 100.00))) OR ((ss_sales_price#19 >= 150.00) AND (ss_sales_price#19 <= 200.00))))
                   :                       :                    :                       :                    :                 +- InputAdapter [#23, #21, #15, #25, #29, #1, #19, #2, #3, #28]
-                  :                       :                    :                       :                    :                    +- NativeParquetScan  (FileScan parquet [ss_sold_date_sk#23,ss_cdemo_sk#21,ss_hdemo_sk#15,ss_addr_sk#25,ss_store_sk#29,ss_quantity#1,ss_sales_price#19,ss_ext_sales_price#2,ss_ext_wholesale_cost#3,ss_net_profit#28] Batched: true, DataFilters: [isnotnull(ss_store_sk#29), isnotnull(ss_addr_sk#25), isnotnull(ss_sold_date_sk#23), isn..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_store_sk), IsNotNull(ss_addr_sk), IsNotNull(ss_sold_date_sk), IsNotNull(ss_cdemo_sk..., ReadSchema: struct<ss_sold_date_sk:int,ss_cdemo_sk:int,ss_hdemo_sk:int,ss_addr_sk:int,ss_store_sk:int,ss_quan...)
+                  :                       :                    :                       :                    :                    +- NativeParquetScan  (FileScan parquet [ss_sold_date_sk#23,ss_cdemo_sk#21,ss_hdemo_sk#15,ss_addr_sk#25,ss_store_sk#29,ss_quantity#1,ss_sales_price#19,ss_ext_sales_price#2,ss_ext_wholesale_cost#3,ss_net_profit#28] Batched: true, DataFilters: [isnotnull(ss_store_sk#29), isnotnull(ss_addr_sk#25), isnotnull(ss_sold_date_sk#23), isnotn..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_store_sk), IsNotNull(ss_addr_sk), IsNotNull(ss_sold_date_sk), IsNotNull(ss_cdemo_sk..., ReadSchema: struct<ss_sold_date_sk:int,ss_cdemo_sk:int,ss_hdemo_sk:int,ss_addr_sk:int,ss_store_sk:int,ss_quan...)
                   :                       :                    :                       :                    +- NativeSort [s_store_sk#30 ASC NULLS FIRST], false
                   :                       :                    :                       :                       +- InputAdapter
                   :                       :                    :                       :                          +- AQEShuffleRead coalesced
-                  :                       :                    :                       :                             +- ShuffleQueryStage 1
+                  :                       :                    :                       :                             +- ShuffleQueryStage X
                   :                       :                    :                       :                                +- NativeShuffleExchange hashpartitioning(s_store_sk#30, 100), ENSURE_REQUIREMENTS, [plan_id=7]
                   :                       :                    :                       :                                   +- NativeFilter isnotnull(s_store_sk#30)
                   :                       :                    :                       :                                      +- InputAdapter [#30]
@@ -55,16 +55,16 @@ AdaptiveSparkPlan isFinalPlan=true
                   :                       :                    :                       +- NativeSort [ca_address_sk#26 ASC NULLS FIRST], false
                   :                       :                    :                          +- InputAdapter
                   :                       :                    :                             +- AQEShuffleRead coalesced
-                  :                       :                    :                                +- ShuffleQueryStage 2
+                  :                       :                    :                                +- ShuffleQueryStage X
                   :                       :                    :                                   +- NativeShuffleExchange hashpartitioning(ca_address_sk#26, 100), ENSURE_REQUIREMENTS, [plan_id=8]
                   :                       :                    :                                      +- NativeProject [ca_address_sk#26, ca_state#27]
                   :                       :                    :                                         +- NativeFilter (((isnotnull(ca_country#31) AND (ca_country#31 = United States)) AND isnotnull(ca_address_sk#26)) AND ((ca_state#27 IN (TX,OH) OR ca_state#27 IN (OR,NM,KY)) OR ca_state#27 IN (VA,TX,MS)))
                   :                       :                    :                                            +- InputAdapter [#26, #27, #31]
-                  :                       :                    :                                               +- NativeParquetScan  (FileScan parquet [ca_address_sk#26,ca_state#27,ca_country#31] Batched: true, DataFilters: [isnotnull(ca_country#31), (ca_country#31 = United States), isnotnull(ca_address_sk#26),..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ca_country), EqualTo(ca_country,United States), IsNotNull(ca_address_sk), Or(Or(In(ca_..., ReadSchema: struct<ca_address_sk:int,ca_state:string,ca_country:string>)
+                  :                       :                    :                                               +- NativeParquetScan  (FileScan parquet [ca_address_sk#26,ca_state#27,ca_country#31] Batched: true, DataFilters: [isnotnull(ca_country#31), (ca_country#31 = United States), isnotnull(ca_address_sk#26), ((ca_..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ca_country), EqualTo(ca_country,United States), IsNotNull(ca_address_sk), Or(Or(In(ca_..., ReadSchema: struct<ca_address_sk:int,ca_state:string,ca_country:string>)
                   :                       :                    +- NativeSort [d_date_sk#24 ASC NULLS FIRST], false
                   :                       :                       +- InputAdapter
                   :                       :                          +- AQEShuffleRead coalesced
-                  :                       :                             +- ShuffleQueryStage 3
+                  :                       :                             +- ShuffleQueryStage X
                   :                       :                                +- NativeShuffleExchange hashpartitioning(d_date_sk#24, 100), ENSURE_REQUIREMENTS, [plan_id=9]
                   :                       :                                   +- NativeProject [d_date_sk#24]
                   :                       :                                      +- NativeFilter ((isnotnull(d_year#32) AND (d_year#32 = 2001)) AND isnotnull(d_date_sk#24))
@@ -73,15 +73,15 @@ AdaptiveSparkPlan isFinalPlan=true
                   :                       +- NativeSort [cd_demo_sk#22 ASC NULLS FIRST], false
                   :                          +- InputAdapter
                   :                             +- AQEShuffleRead coalesced
-                  :                                +- ShuffleQueryStage 4
+                  :                                +- ShuffleQueryStage X
                   :                                   +- NativeShuffleExchange hashpartitioning(cd_demo_sk#22, 100), ENSURE_REQUIREMENTS, [plan_id=10]
                   :                                      +- NativeFilter (isnotnull(cd_demo_sk#22) AND ((((cd_marital_status#17 = M) AND (cd_education_status#18 = Advanced Degree)) OR ((cd_marital_status#17 = S) AND (cd_education_status#18 = College))) OR ((cd_marital_status#17 = W) AND (cd_education_status#18 = 2 yr Degree))))
                   :                                         +- InputAdapter [#22, #17, #18]
-                  :                                            +- NativeParquetScan  (FileScan parquet [cd_demo_sk#22,cd_marital_status#17,cd_education_status#18] Batched: true, DataFilters: [isnotnull(cd_demo_sk#22), ((((cd_marital_status#17 = M) AND (cd_education_status#18 = A..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(cd_demo_sk), Or(Or(And(EqualTo(cd_marital_status,M),EqualTo(cd_education_status,Advanc..., ReadSchema: struct<cd_demo_sk:int,cd_marital_status:string,cd_education_status:string>)
+                  :                                            +- NativeParquetScan  (FileScan parquet [cd_demo_sk#22,cd_marital_status#17,cd_education_status#18] Batched: true, DataFilters: [isnotnull(cd_demo_sk#22), ((((cd_marital_status#17 = M) AND (cd_education_status#18 = Advance..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(cd_demo_sk), Or(Or(And(EqualTo(cd_marital_status,M),EqualTo(cd_education_status,Advanc..., ReadSchema: struct<cd_demo_sk:int,cd_marital_status:string,cd_education_status:string>)
                   +- NativeSort [hd_demo_sk#16 ASC NULLS FIRST], false
                      +- InputAdapter
                         +- AQEShuffleRead coalesced
-                           +- ShuffleQueryStage 5
+                           +- ShuffleQueryStage X
                               +- NativeShuffleExchange hashpartitioning(hd_demo_sk#16, 100), ENSURE_REQUIREMENTS, [plan_id=11]
                                  +- NativeFilter (isnotnull(hd_demo_sk#16) AND ((hd_dep_count#20 = 3) OR (hd_dep_count#20 = 1)))
                                     +- InputAdapter [#16, #20]
@@ -111,7 +111,7 @@ AdaptiveSparkPlan isFinalPlan=true
                :           :           :           :           :- Sort [ss_store_sk#29 ASC NULLS FIRST], false, 0
                :           :           :           :           :  +- Exchange hashpartitioning(ss_store_sk#29, 100), ENSURE_REQUIREMENTS, [plan_id=17]
                :           :           :           :           :     +- Filter ((((((isnotnull(ss_store_sk#29) AND isnotnull(ss_addr_sk#25)) AND isnotnull(ss_sold_date_sk#23)) AND isnotnull(ss_cdemo_sk#21)) AND isnotnull(ss_hdemo_sk#15)) AND ((((ss_net_profit#28 >= 100.00) AND (ss_net_profit#28 <= 200.00)) OR ((ss_net_profit#28 >= 150.00) AND (ss_net_profit#28 <= 300.00))) OR ((ss_net_profit#28 >= 50.00) AND (ss_net_profit#28 <= 250.00)))) AND ((((ss_sales_price#19 >= 100.00) AND (ss_sales_price#19 <= 150.00)) OR ((ss_sales_price#19 >= 50.00) AND (ss_sales_price#19 <= 100.00))) OR ((ss_sales_price#19 >= 150.00) AND (ss_sales_price#19 <= 200.00))))
-               :           :           :           :           :        +- FileScan parquet [ss_sold_date_sk#23,ss_cdemo_sk#21,ss_hdemo_sk#15,ss_addr_sk#25,ss_store_sk#29,ss_quantity#1,ss_sales_price#19,ss_ext_sales_price#2,ss_ext_wholesale_cost#3,ss_net_profit#28] Batched: true, DataFilters: [isnotnull(ss_store_sk#29), isnotnull(ss_addr_sk#25), isnotnull(ss_sold_date_sk#23), isn..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_store_sk), IsNotNull(ss_addr_sk), IsNotNull(ss_sold_date_sk), IsNotNull(ss_cdemo_sk..., ReadSchema: struct<ss_sold_date_sk:int,ss_cdemo_sk:int,ss_hdemo_sk:int,ss_addr_sk:int,ss_store_sk:int,ss_quan...
+               :           :           :           :           :        +- FileScan parquet [ss_sold_date_sk#23,ss_cdemo_sk#21,ss_hdemo_sk#15,ss_addr_sk#25,ss_store_sk#29,ss_quantity#1,ss_sales_price#19,ss_ext_sales_price#2,ss_ext_wholesale_cost#3,ss_net_profit#28] Batched: true, DataFilters: [isnotnull(ss_store_sk#29), isnotnull(ss_addr_sk#25), isnotnull(ss_sold_date_sk#23), isnotn..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_store_sk), IsNotNull(ss_addr_sk), IsNotNull(ss_sold_date_sk), IsNotNull(ss_cdemo_sk..., ReadSchema: struct<ss_sold_date_sk:int,ss_cdemo_sk:int,ss_hdemo_sk:int,ss_addr_sk:int,ss_store_sk:int,ss_quan...
                :           :           :           :           +- Sort [s_store_sk#30 ASC NULLS FIRST], false, 0
                :           :           :           :              +- Exchange hashpartitioning(s_store_sk#30, 100), ENSURE_REQUIREMENTS, [plan_id=18]
                :           :           :           :                 +- Filter isnotnull(s_store_sk#30)
@@ -120,7 +120,7 @@ AdaptiveSparkPlan isFinalPlan=true
                :           :           :              +- Exchange hashpartitioning(ca_address_sk#26, 100), ENSURE_REQUIREMENTS, [plan_id=19]
                :           :           :                 +- Project [ca_address_sk#26, ca_state#27]
                :           :           :                    +- Filter (((isnotnull(ca_country#31) AND (ca_country#31 = United States)) AND isnotnull(ca_address_sk#26)) AND ((ca_state#27 IN (TX,OH) OR ca_state#27 IN (OR,NM,KY)) OR ca_state#27 IN (VA,TX,MS)))
-               :           :           :                       +- FileScan parquet [ca_address_sk#26,ca_state#27,ca_country#31] Batched: true, DataFilters: [isnotnull(ca_country#31), (ca_country#31 = United States), isnotnull(ca_address_sk#26),..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ca_country), EqualTo(ca_country,United States), IsNotNull(ca_address_sk), Or(Or(In(ca_..., ReadSchema: struct<ca_address_sk:int,ca_state:string,ca_country:string>
+               :           :           :                       +- FileScan parquet [ca_address_sk#26,ca_state#27,ca_country#31] Batched: true, DataFilters: [isnotnull(ca_country#31), (ca_country#31 = United States), isnotnull(ca_address_sk#26), ((ca_..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ca_country), EqualTo(ca_country,United States), IsNotNull(ca_address_sk), Or(Or(In(ca_..., ReadSchema: struct<ca_address_sk:int,ca_state:string,ca_country:string>
                :           :           +- Sort [d_date_sk#24 ASC NULLS FIRST], false, 0
                :           :              +- Exchange hashpartitioning(d_date_sk#24, 100), ENSURE_REQUIREMENTS, [plan_id=20]
                :           :                 +- Project [d_date_sk#24]
@@ -129,7 +129,7 @@ AdaptiveSparkPlan isFinalPlan=true
                :           +- Sort [cd_demo_sk#22 ASC NULLS FIRST], false, 0
                :              +- Exchange hashpartitioning(cd_demo_sk#22, 100), ENSURE_REQUIREMENTS, [plan_id=21]
                :                 +- Filter (isnotnull(cd_demo_sk#22) AND ((((cd_marital_status#17 = M) AND (cd_education_status#18 = Advanced Degree)) OR ((cd_marital_status#17 = S) AND (cd_education_status#18 = College))) OR ((cd_marital_status#17 = W) AND (cd_education_status#18 = 2 yr Degree))))
-               :                    +- FileScan parquet [cd_demo_sk#22,cd_marital_status#17,cd_education_status#18] Batched: true, DataFilters: [isnotnull(cd_demo_sk#22), ((((cd_marital_status#17 = M) AND (cd_education_status#18 = A..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(cd_demo_sk), Or(Or(And(EqualTo(cd_marital_status,M),EqualTo(cd_education_status,Advanc..., ReadSchema: struct<cd_demo_sk:int,cd_marital_status:string,cd_education_status:string>
+               :                    +- FileScan parquet [cd_demo_sk#22,cd_marital_status#17,cd_education_status#18] Batched: true, DataFilters: [isnotnull(cd_demo_sk#22), ((((cd_marital_status#17 = M) AND (cd_education_status#18 = Advance..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(cd_demo_sk), Or(Or(And(EqualTo(cd_marital_status,M),EqualTo(cd_education_status,Advanc..., ReadSchema: struct<cd_demo_sk:int,cd_marital_status:string,cd_education_status:string>
                +- Sort [hd_demo_sk#16 ASC NULLS FIRST], false, 0
                   +- Exchange hashpartitioning(hd_demo_sk#16, 100), ENSURE_REQUIREMENTS, [plan_id=22]
                      +- Filter (isnotnull(hd_demo_sk#16) AND ((hd_dep_count#20 = 3) OR (hd_dep_count#20 = 1)))

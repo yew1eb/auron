@@ -5,7 +5,7 @@ AdaptiveSparkPlan isFinalPlan=true
       +- NativeHashAggregate HashAgg, ArrayBuffer(ss_customer_sk#2), [ss_customer_sk#2], [sum(act_sales#3)], [sum(act_sales#3)#4], 1
          +- InputAdapter
             +- AQEShuffleRead coalesced
-               +- ShuffleQueryStage 4
+               +- ShuffleQueryStage X
                   +- NativeShuffleExchange hashpartitioning(ss_customer_sk#2, 100), ENSURE_REQUIREMENTS, [plan_id=1]
                      +- NativeHashAggregate HashAgg, [ss_customer_sk#2], [partial_sum(act_sales#3)], [sum#5, isEmpty#6], 0
                         +- NativeProject [ss_customer_sk#2, CASE WHEN isnotnull(sr_return_quantity#7) THEN (cast((ss_quantity#8 - sr_return_quantity#7) as decimal(10,0)) * ss_sales_price#9) ELSE (cast(ss_quantity#8 as decimal(10,0)) * ss_sales_price#9) END AS act_sales#3]
@@ -13,21 +13,21 @@ AdaptiveSparkPlan isFinalPlan=true
                               :- NativeSort [sr_reason_sk#10 ASC NULLS FIRST], false
                               :  +- InputAdapter
                               :     +- AQEShuffleRead coalesced
-                              :        +- ShuffleQueryStage 3
+                              :        +- ShuffleQueryStage X
                               :           +- NativeShuffleExchange hashpartitioning(sr_reason_sk#10, 100), ENSURE_REQUIREMENTS, [plan_id=2]
                               :              +- NativeProject [ss_customer_sk#2, ss_quantity#8, ss_sales_price#9, sr_reason_sk#10, sr_return_quantity#7]
                               :                 +- NativeSortMergeJoin [ss_item_sk#12, ss_ticket_number#13], [sr_item_sk#14, sr_ticket_number#15], Inner
                               :                    :- NativeSort [ss_item_sk#12 ASC NULLS FIRST, ss_ticket_number#13 ASC NULLS FIRST], false
                               :                    :  +- InputAdapter
                               :                    :     +- AQEShuffleRead coalesced
-                              :                    :        +- ShuffleQueryStage 0
+                              :                    :        +- ShuffleQueryStage X
                               :                    :           +- NativeShuffleExchange hashpartitioning(ss_item_sk#12, ss_ticket_number#13, 100), ENSURE_REQUIREMENTS, [plan_id=3]
                               :                    :              +- InputAdapter [#12, #2, #13, #8, #9]
                               :                    :                 +- NativeParquetScan  (FileScan parquet [ss_item_sk#12,ss_customer_sk#2,ss_ticket_number#13,ss_quantity#8,ss_sales_price#9] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<ss_item_sk:int,ss_customer_sk:int,ss_ticket_number:int,ss_quantity:int,ss_sales_price:deci...)
                               :                    +- NativeSort [sr_item_sk#14 ASC NULLS FIRST, sr_ticket_number#15 ASC NULLS FIRST], false
                               :                       +- InputAdapter
                               :                          +- AQEShuffleRead coalesced
-                              :                             +- ShuffleQueryStage 1
+                              :                             +- ShuffleQueryStage X
                               :                                +- NativeShuffleExchange hashpartitioning(sr_item_sk#14, sr_ticket_number#15, 100), ENSURE_REQUIREMENTS, [plan_id=4]
                               :                                   +- NativeFilter ((isnotnull(sr_item_sk#14) AND isnotnull(sr_ticket_number#15)) AND isnotnull(sr_reason_sk#10))
                               :                                      +- InputAdapter [#14, #10, #15, #7]
@@ -35,7 +35,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               +- NativeSort [r_reason_sk#11 ASC NULLS FIRST], false
                                  +- InputAdapter
                                     +- AQEShuffleRead coalesced
-                                       +- ShuffleQueryStage 2
+                                       +- ShuffleQueryStage X
                                           +- NativeShuffleExchange hashpartitioning(r_reason_sk#11, 100), ENSURE_REQUIREMENTS, [plan_id=5]
                                              +- NativeProject [r_reason_sk#11]
                                                 +- NativeFilter ((isnotnull(r_reason_desc#16) AND (r_reason_desc#16 = reason 28)) AND isnotnull(r_reason_sk#11))

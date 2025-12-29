@@ -2,7 +2,7 @@ AdaptiveSparkPlan isFinalPlan=true
 +- == Final Plan ==
    NativeProject [count(1)#1 AS count(1)#2]
    +- NativeHashAggregate HashAgg, List(), [count(1)], [count(1)#1], 0
-      +- ShuffleQueryStage 6
+      +- ShuffleQueryStage X
          +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=1]
             +- NativeHashAggregate HashAgg, [partial_count(1)], [count#3], 0
                +- NativeProject
@@ -10,21 +10,21 @@ AdaptiveSparkPlan isFinalPlan=true
                      :- NativeSort [ss_store_sk#4 ASC NULLS FIRST], false
                      :  +- InputAdapter
                      :     +- AQEShuffleRead coalesced
-                     :        +- ShuffleQueryStage 5
+                     :        +- ShuffleQueryStage X
                      :           +- NativeShuffleExchange hashpartitioning(ss_store_sk#4, 100), ENSURE_REQUIREMENTS, [plan_id=2]
                      :              +- NativeProject [ss_store_sk#4]
                      :                 +- NativeSortMergeJoin [ss_sold_time_sk#6], [t_time_sk#7], Inner
                      :                    :- NativeSort [ss_sold_time_sk#6 ASC NULLS FIRST], false
                      :                    :  +- InputAdapter
                      :                    :     +- AQEShuffleRead coalesced
-                     :                    :        +- ShuffleQueryStage 4
+                     :                    :        +- ShuffleQueryStage X
                      :                    :           +- NativeShuffleExchange hashpartitioning(ss_sold_time_sk#6, 100), ENSURE_REQUIREMENTS, [plan_id=3]
                      :                    :              +- NativeProject [ss_sold_time_sk#6, ss_store_sk#4]
                      :                    :                 +- NativeSortMergeJoin [ss_hdemo_sk#8], [hd_demo_sk#9], Inner
                      :                    :                    :- NativeSort [ss_hdemo_sk#8 ASC NULLS FIRST], false
                      :                    :                    :  +- InputAdapter
                      :                    :                    :     +- AQEShuffleRead coalesced
-                     :                    :                    :        +- ShuffleQueryStage 0
+                     :                    :                    :        +- ShuffleQueryStage X
                      :                    :                    :           +- NativeShuffleExchange hashpartitioning(ss_hdemo_sk#8, 100), ENSURE_REQUIREMENTS, [plan_id=4]
                      :                    :                    :              +- NativeFilter ((isnotnull(ss_hdemo_sk#8) AND isnotnull(ss_sold_time_sk#6)) AND isnotnull(ss_store_sk#4))
                      :                    :                    :                 +- InputAdapter [#6, #8, #4]
@@ -32,7 +32,7 @@ AdaptiveSparkPlan isFinalPlan=true
                      :                    :                    +- NativeSort [hd_demo_sk#9 ASC NULLS FIRST], false
                      :                    :                       +- InputAdapter
                      :                    :                          +- AQEShuffleRead coalesced
-                     :                    :                             +- ShuffleQueryStage 1
+                     :                    :                             +- ShuffleQueryStage X
                      :                    :                                +- NativeShuffleExchange hashpartitioning(hd_demo_sk#9, 100), ENSURE_REQUIREMENTS, [plan_id=5]
                      :                    :                                   +- NativeProject [hd_demo_sk#9]
                      :                    :                                      +- NativeFilter ((isnotnull(hd_dep_count#10) AND (hd_dep_count#10 = 7)) AND isnotnull(hd_demo_sk#9))
@@ -41,16 +41,16 @@ AdaptiveSparkPlan isFinalPlan=true
                      :                    +- NativeSort [t_time_sk#7 ASC NULLS FIRST], false
                      :                       +- InputAdapter
                      :                          +- AQEShuffleRead coalesced
-                     :                             +- ShuffleQueryStage 2
+                     :                             +- ShuffleQueryStage X
                      :                                +- NativeShuffleExchange hashpartitioning(t_time_sk#7, 100), ENSURE_REQUIREMENTS, [plan_id=6]
                      :                                   +- NativeProject [t_time_sk#7]
                      :                                      +- NativeFilter ((((isnotnull(t_hour#11) AND isnotnull(t_minute#12)) AND (t_hour#11 = 20)) AND (t_minute#12 >= 30)) AND isnotnull(t_time_sk#7))
                      :                                         +- InputAdapter [#7, #11, #12]
-                     :                                            +- NativeParquetScan  (FileScan parquet [t_time_sk#7,t_hour#11,t_minute#12] Batched: true, DataFilters: [isnotnull(t_hour#11), isnotnull(t_minute#12), (t_hour#11 = 20), (t_minute#12 >= 30),..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(t_hour), IsNotNull(t_minute), EqualTo(t_hour,20), GreaterThanOrEqual(t_minute,30), IsN..., ReadSchema: struct<t_time_sk:int,t_hour:int,t_minute:int>)
+                     :                                            +- NativeParquetScan  (FileScan parquet [t_time_sk#7,t_hour#11,t_minute#12] Batched: true, DataFilters: [isnotnull(t_hour#11), isnotnull(t_minute#12), (t_hour#11 = 20), (t_minute#12 >= 30), isn..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(t_hour), IsNotNull(t_minute), EqualTo(t_hour,20), GreaterThanOrEqual(t_minute,30), IsN..., ReadSchema: struct<t_time_sk:int,t_hour:int,t_minute:int>)
                      +- NativeSort [s_store_sk#5 ASC NULLS FIRST], false
                         +- InputAdapter
                            +- AQEShuffleRead coalesced
-                              +- ShuffleQueryStage 3
+                              +- ShuffleQueryStage X
                                  +- NativeShuffleExchange hashpartitioning(s_store_sk#5, 100), ENSURE_REQUIREMENTS, [plan_id=7]
                                     +- NativeProject [s_store_sk#5]
                                        +- NativeFilter ((isnotnull(s_store_name#13) AND (s_store_name#13 = ese)) AND isnotnull(s_store_sk#5))
@@ -83,7 +83,7 @@ AdaptiveSparkPlan isFinalPlan=true
                :              +- Exchange hashpartitioning(t_time_sk#7, 100), ENSURE_REQUIREMENTS, [plan_id=13]
                :                 +- Project [t_time_sk#7]
                :                    +- Filter ((((isnotnull(t_hour#11) AND isnotnull(t_minute#12)) AND (t_hour#11 = 20)) AND (t_minute#12 >= 30)) AND isnotnull(t_time_sk#7))
-               :                       +- FileScan parquet [t_time_sk#7,t_hour#11,t_minute#12] Batched: true, DataFilters: [isnotnull(t_hour#11), isnotnull(t_minute#12), (t_hour#11 = 20), (t_minute#12 >= 30),..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(t_hour), IsNotNull(t_minute), EqualTo(t_hour,20), GreaterThanOrEqual(t_minute,30), IsN..., ReadSchema: struct<t_time_sk:int,t_hour:int,t_minute:int>
+               :                       +- FileScan parquet [t_time_sk#7,t_hour#11,t_minute#12] Batched: true, DataFilters: [isnotnull(t_hour#11), isnotnull(t_minute#12), (t_hour#11 = 20), (t_minute#12 >= 30), isn..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(t_hour), IsNotNull(t_minute), EqualTo(t_hour,20), GreaterThanOrEqual(t_minute,30), IsN..., ReadSchema: struct<t_time_sk:int,t_hour:int,t_minute:int>
                +- Sort [s_store_sk#5 ASC NULLS FIRST], false, 0
                   +- Exchange hashpartitioning(s_store_sk#5, 100), ENSURE_REQUIREMENTS, [plan_id=14]
                      +- Project [s_store_sk#5]

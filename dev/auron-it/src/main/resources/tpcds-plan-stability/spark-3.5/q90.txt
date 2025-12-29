@@ -4,7 +4,7 @@ AdaptiveSparkPlan isFinalPlan=true
    +- CartesianProduct
       :- NativeProject [count(1)#4 AS amc#1]
       :  +- NativeHashAggregate HashAgg, List(), [count(1)], [count(1)#4], 0
-      :     +- ShuffleQueryStage 16
+      :     +- ShuffleQueryStage X
       :        +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=1]
       :           +- NativeHashAggregate HashAgg, [partial_count(1)], [count#5], 0
       :              +- NativeProject
@@ -12,93 +12,93 @@ AdaptiveSparkPlan isFinalPlan=true
       :                    :- NativeSort [ws_web_page_sk#6 ASC NULLS FIRST], false
       :                    :  +- InputAdapter
       :                    :     +- AQEShuffleRead coalesced
-      :                    :        +- ShuffleQueryStage 14
+      :                    :        +- ShuffleQueryStage X
       :                    :           +- NativeShuffleExchange hashpartitioning(ws_web_page_sk#6, 100), ENSURE_REQUIREMENTS, [plan_id=2]
       :                    :              +- NativeProject [ws_web_page_sk#6]
       :                    :                 +- NativeSortMergeJoin [ws_sold_time_sk#8], [t_time_sk#9], Inner
       :                    :                    :- NativeSort [ws_sold_time_sk#8 ASC NULLS FIRST], false
       :                    :                    :  +- InputAdapter
       :                    :                    :     +- AQEShuffleRead coalesced
-      :                    :                    :        +- ShuffleQueryStage 11
+      :                    :                    :        +- ShuffleQueryStage X
       :                    :                    :           +- NativeShuffleExchange hashpartitioning(ws_sold_time_sk#8, 100), ENSURE_REQUIREMENTS, [plan_id=3]
       :                    :                    :              +- NativeProject [ws_sold_time_sk#8, ws_web_page_sk#6]
       :                    :                    :                 +- NativeSortMergeJoin [ws_ship_hdemo_sk#10], [hd_demo_sk#11], Inner
       :                    :                    :                    :- NativeSort [ws_ship_hdemo_sk#10 ASC NULLS FIRST], false
       :                    :                    :                    :  +- InputAdapter
       :                    :                    :                    :     +- AQEShuffleRead coalesced
-      :                    :                    :                    :        +- ShuffleQueryStage 0
+      :                    :                    :                    :        +- ShuffleQueryStage X
       :                    :                    :                    :           +- NativeShuffleExchange hashpartitioning(ws_ship_hdemo_sk#10, 100), ENSURE_REQUIREMENTS, [plan_id=4]
       :                    :                    :                    :              +- NativeFilter ((isnotnull(ws_ship_hdemo_sk#10) AND isnotnull(ws_sold_time_sk#8)) AND isnotnull(ws_web_page_sk#6))
       :                    :                    :                    :                 +- InputAdapter [#8, #10, #6]
-      :                    :                    :                    :                    +- NativeParquetScan  (FileScan parquet [ws_sold_time_sk#8,ws_ship_hdemo_sk#10,ws_web_page_sk#6] Batched: true, DataFilters: [isnotnull(ws_ship_hdemo_sk#10), isnotnull(ws_sold_time_sk#8), isnotnull(ws_web_page_sk#12..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ws_ship_hdemo_sk), IsNotNull(ws_sold_time_sk), IsNotNull(ws_web_page_sk)], ReadSchema: struct<ws_sold_time_sk:int,ws_ship_hdemo_sk:int,ws_web_page_sk:int>)
+      :                    :                    :                    :                    +- NativeParquetScan  (FileScan parquet [ws_sold_time_sk#8,ws_ship_hdemo_sk#10,ws_web_page_sk#6] Batched: true, DataFilters: [isnotnull(ws_ship_hdemo_sk#10), isnotnull(ws_sold_time_sk#8), isnotnull(ws_web_page_sk#6)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ws_ship_hdemo_sk), IsNotNull(ws_sold_time_sk), IsNotNull(ws_web_page_sk)], ReadSchema: struct<ws_sold_time_sk:int,ws_ship_hdemo_sk:int,ws_web_page_sk:int>)
       :                    :                    :                    +- NativeSort [hd_demo_sk#11 ASC NULLS FIRST], false
       :                    :                    :                       +- InputAdapter
       :                    :                    :                          +- AQEShuffleRead coalesced
-      :                    :                    :                             +- ShuffleQueryStage 1
+      :                    :                    :                             +- ShuffleQueryStage X
       :                    :                    :                                +- NativeShuffleExchange hashpartitioning(hd_demo_sk#11, 100), ENSURE_REQUIREMENTS, [plan_id=5]
       :                    :                    :                                   +- NativeProject [hd_demo_sk#11]
-      :                    :                    :                                      +- NativeFilter ((isnotnull(hd_dep_count#13) AND (hd_dep_count#13 = 6)) AND isnotnull(hd_demo_sk#11))
-      :                    :                    :                                         +- InputAdapter [#11, #13]
-      :                    :                    :                                            +- NativeParquetScan  (FileScan parquet [hd_demo_sk#11,hd_dep_count#13] Batched: true, DataFilters: [isnotnull(hd_dep_count#13), (hd_dep_count#13 = 6), isnotnull(hd_demo_sk#11)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(hd_dep_count), EqualTo(hd_dep_count,6), IsNotNull(hd_demo_sk)], ReadSchema: struct<hd_demo_sk:int,hd_dep_count:int>)
+      :                    :                    :                                      +- NativeFilter ((isnotnull(hd_dep_count#12) AND (hd_dep_count#12 = 6)) AND isnotnull(hd_demo_sk#11))
+      :                    :                    :                                         +- InputAdapter [#11, #12]
+      :                    :                    :                                            +- NativeParquetScan  (FileScan parquet [hd_demo_sk#11,hd_dep_count#12] Batched: true, DataFilters: [isnotnull(hd_dep_count#12), (hd_dep_count#12 = 6), isnotnull(hd_demo_sk#11)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(hd_dep_count), EqualTo(hd_dep_count,6), IsNotNull(hd_demo_sk)], ReadSchema: struct<hd_demo_sk:int,hd_dep_count:int>)
       :                    :                    +- NativeSort [t_time_sk#9 ASC NULLS FIRST], false
       :                    :                       +- InputAdapter
       :                    :                          +- AQEShuffleRead coalesced
-      :                    :                             +- ShuffleQueryStage 2
+      :                    :                             +- ShuffleQueryStage X
       :                    :                                +- NativeShuffleExchange hashpartitioning(t_time_sk#9, 100), ENSURE_REQUIREMENTS, [plan_id=6]
       :                    :                                   +- NativeProject [t_time_sk#9]
-      :                    :                                      +- NativeFilter (((isnotnull(t_hour#14) AND (t_hour#14 >= 8)) AND (t_hour#14 <= 9)) AND isnotnull(t_time_sk#9))
-      :                    :                                         +- InputAdapter [#9, #14]
-      :                    :                                            +- NativeParquetScan  (FileScan parquet [t_time_sk#9,t_hour#14] Batched: true, DataFilters: [isnotnull(t_hour#14), (t_hour#14 >= 8), (t_hour#14 <= 9), isnotnull(t_time_sk#9)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(t_hour), GreaterThanOrEqual(t_hour,8), LessThanOrEqual(t_hour,9), IsNotNull(t_time_sk)], ReadSchema: struct<t_time_sk:int,t_hour:int>)
+      :                    :                                      +- NativeFilter (((isnotnull(t_hour#13) AND (t_hour#13 >= 8)) AND (t_hour#13 <= 9)) AND isnotnull(t_time_sk#9))
+      :                    :                                         +- InputAdapter [#9, #13]
+      :                    :                                            +- NativeParquetScan  (FileScan parquet [t_time_sk#9,t_hour#13] Batched: true, DataFilters: [isnotnull(t_hour#13), (t_hour#13 >= 8), (t_hour#13 <= 9), isnotnull(t_time_sk#9)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(t_hour), GreaterThanOrEqual(t_hour,8), LessThanOrEqual(t_hour,9), IsNotNull(t_time_sk)], ReadSchema: struct<t_time_sk:int,t_hour:int>)
       :                    +- NativeSort [wp_web_page_sk#7 ASC NULLS FIRST], false
       :                       +- InputAdapter
       :                          +- AQEShuffleRead coalesced
-      :                             +- ShuffleQueryStage 3
+      :                             +- ShuffleQueryStage X
       :                                +- NativeShuffleExchange hashpartitioning(wp_web_page_sk#7, 100), ENSURE_REQUIREMENTS, [plan_id=7]
       :                                   +- NativeProject [wp_web_page_sk#7]
-      :                                      +- NativeFilter (((isnotnull(wp_char_count#15) AND (wp_char_count#15 >= 5000)) AND (wp_char_count#15 <= 5200)) AND isnotnull(wp_web_page_sk#7))
-      :                                         +- InputAdapter [#7, #15]
-      :                                            +- NativeParquetScan  (FileScan parquet [wp_web_page_sk#7,wp_char_count#15] Batched: true, DataFilters: [isnotnull(wp_char_count#15), (wp_char_count#15 >= 5000), (wp_char_count#15 <= 5200), is..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(wp_char_count), GreaterThanOrEqual(wp_char_count,5000), LessThanOrEqual(wp_char_count,..., ReadSchema: struct<wp_web_page_sk:int,wp_char_count:int>)
-      +- NativeProject [count(1)#16 AS pmc#2]
-         +- NativeHashAggregate HashAgg, List(), [count(1)], [count(1)#16], 0
-            +- ShuffleQueryStage 17
+      :                                      +- NativeFilter (((isnotnull(wp_char_count#14) AND (wp_char_count#14 >= 5000)) AND (wp_char_count#14 <= 5200)) AND isnotnull(wp_web_page_sk#7))
+      :                                         +- InputAdapter [#7, #14]
+      :                                            +- NativeParquetScan  (FileScan parquet [wp_web_page_sk#7,wp_char_count#14] Batched: true, DataFilters: [isnotnull(wp_char_count#14), (wp_char_count#14 >= 5000), (wp_char_count#14 <= 5200), isnot..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(wp_char_count), GreaterThanOrEqual(wp_char_count,5000), LessThanOrEqual(wp_char_count,..., ReadSchema: struct<wp_web_page_sk:int,wp_char_count:int>)
+      +- NativeProject [count(1)#15 AS pmc#2]
+         +- NativeHashAggregate HashAgg, List(), [count(1)], [count(1)#15], 0
+            +- ShuffleQueryStage X
                +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=8]
-                  +- NativeHashAggregate HashAgg, [partial_count(1)], [count#17], 0
+                  +- NativeHashAggregate HashAgg, [partial_count(1)], [count#16], 0
                      +- NativeProject
-                        +- NativeSortMergeJoin [ws_web_page_sk#18], [wp_web_page_sk#19], Inner
-                           :- NativeSort [ws_web_page_sk#18 ASC NULLS FIRST], false
+                        +- NativeSortMergeJoin [ws_web_page_sk#17], [wp_web_page_sk#18], Inner
+                           :- NativeSort [ws_web_page_sk#17 ASC NULLS FIRST], false
                            :  +- InputAdapter
                            :     +- AQEShuffleRead coalesced
-                           :        +- ShuffleQueryStage 15
-                           :           +- NativeShuffleExchange hashpartitioning(ws_web_page_sk#18, 100), ENSURE_REQUIREMENTS, [plan_id=9]
-                           :              +- NativeProject [ws_web_page_sk#18]
-                           :                 +- NativeSortMergeJoin [ws_sold_time_sk#20], [t_time_sk#21], Inner
-                           :                    :- NativeSort [ws_sold_time_sk#20 ASC NULLS FIRST], false
+                           :        +- ShuffleQueryStage X
+                           :           +- NativeShuffleExchange hashpartitioning(ws_web_page_sk#17, 100), ENSURE_REQUIREMENTS, [plan_id=9]
+                           :              +- NativeProject [ws_web_page_sk#17]
+                           :                 +- NativeSortMergeJoin [ws_sold_time_sk#19], [t_time_sk#20], Inner
+                           :                    :- NativeSort [ws_sold_time_sk#19 ASC NULLS FIRST], false
                            :                    :  +- InputAdapter
-                           :                    :     +- InputAdapter [#20, #18]
+                           :                    :     +- InputAdapter [#19, #17]
                            :                    :        +- AQEShuffleRead coalesced
-                           :                    :           +- ShuffleQueryStage 13
-                           :                    :              +- ReusedExchange [ws_sold_time_sk#20, ws_web_page_sk#18], NativeShuffleExchange hashpartitioning(ws_sold_time_sk#8, 100), ENSURE_REQUIREMENTS, [plan_id=3]
-                           :                    +- NativeSort [t_time_sk#21 ASC NULLS FIRST], false
+                           :                    :           +- ShuffleQueryStage X
+                           :                    :              +- ReusedExchange [ws_sold_time_sk#19, ws_web_page_sk#17], NativeShuffleExchange hashpartitioning(ws_sold_time_sk#8, 100), ENSURE_REQUIREMENTS, [plan_id=3]
+                           :                    +- NativeSort [t_time_sk#20 ASC NULLS FIRST], false
                            :                       +- InputAdapter
                            :                          +- AQEShuffleRead coalesced
-                           :                             +- ShuffleQueryStage 8
-                           :                                +- NativeShuffleExchange hashpartitioning(t_time_sk#21, 100), ENSURE_REQUIREMENTS, [plan_id=10]
-                           :                                   +- NativeProject [t_time_sk#21]
-                           :                                      +- NativeFilter (((isnotnull(t_hour#22) AND (t_hour#22 >= 19)) AND (t_hour#22 <= 20)) AND isnotnull(t_time_sk#21))
-                           :                                         +- InputAdapter [#21, #22]
-                           :                                            +- NativeParquetScan  (FileScan parquet [t_time_sk#21,t_hour#22] Batched: true, DataFilters: [isnotnull(t_hour#22), (t_hour#22 >= 19), (t_hour#22 <= 20), isnotnull(t_time_sk#21)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(t_hour), GreaterThanOrEqual(t_hour,19), LessThanOrEqual(t_hour,20), IsNotNull(t_time_sk)], ReadSchema: struct<t_time_sk:int,t_hour:int>)
-                           +- NativeSort [wp_web_page_sk#19 ASC NULLS FIRST], false
+                           :                             +- ShuffleQueryStage X
+                           :                                +- NativeShuffleExchange hashpartitioning(t_time_sk#20, 100), ENSURE_REQUIREMENTS, [plan_id=10]
+                           :                                   +- NativeProject [t_time_sk#20]
+                           :                                      +- NativeFilter (((isnotnull(t_hour#21) AND (t_hour#21 >= 19)) AND (t_hour#21 <= 20)) AND isnotnull(t_time_sk#20))
+                           :                                         +- InputAdapter [#20, #21]
+                           :                                            +- NativeParquetScan  (FileScan parquet [t_time_sk#20,t_hour#21] Batched: true, DataFilters: [isnotnull(t_hour#21), (t_hour#21 >= 19), (t_hour#21 <= 20), isnotnull(t_time_sk#20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(t_hour), GreaterThanOrEqual(t_hour,19), LessThanOrEqual(t_hour,20), IsNotNull(t_time_sk)], ReadSchema: struct<t_time_sk:int,t_hour:int>)
+                           +- NativeSort [wp_web_page_sk#18 ASC NULLS FIRST], false
                               +- InputAdapter
-                                 +- InputAdapter [#19]
+                                 +- InputAdapter [#18]
                                     +- AQEShuffleRead coalesced
-                                       +- ShuffleQueryStage 10
-                                          +- ReusedExchange [wp_web_page_sk#19], NativeShuffleExchange hashpartitioning(wp_web_page_sk#7, 100), ENSURE_REQUIREMENTS, [plan_id=7]
+                                       +- ShuffleQueryStage X
+                                          +- ReusedExchange [wp_web_page_sk#18], NativeShuffleExchange hashpartitioning(wp_web_page_sk#7, 100), ENSURE_REQUIREMENTS, [plan_id=7]
 +- == Initial Plan ==
    Project [(cast(amc#1 as decimal(15,4)) / cast(pmc#2 as decimal(15,4))) AS am_pm_ratio#3]
    +- CartesianProduct
       :- HashAggregate(keys=[], functions=[count(1)], output=[amc#1])
       :  +- Exchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=11]
-      :     +- HashAggregate(keys=[], functions=[partial_count(1)], output=[count#23])
+      :     +- HashAggregate(keys=[], functions=[partial_count(1)], output=[count#22])
       :        +- Project
       :           +- SortMergeJoin [ws_web_page_sk#6], [wp_web_page_sk#7], Inner
       :              :- Sort [ws_web_page_sk#6 ASC NULLS FIRST], false, 0
@@ -112,51 +112,51 @@ AdaptiveSparkPlan isFinalPlan=true
       :              :           :           :- Sort [ws_ship_hdemo_sk#10 ASC NULLS FIRST], false, 0
       :              :           :           :  +- Exchange hashpartitioning(ws_ship_hdemo_sk#10, 100), ENSURE_REQUIREMENTS, [plan_id=14]
       :              :           :           :     +- Filter ((isnotnull(ws_ship_hdemo_sk#10) AND isnotnull(ws_sold_time_sk#8)) AND isnotnull(ws_web_page_sk#6))
-      :              :           :           :        +- FileScan parquet [ws_sold_time_sk#8,ws_ship_hdemo_sk#10,ws_web_page_sk#6] Batched: true, DataFilters: [isnotnull(ws_ship_hdemo_sk#10), isnotnull(ws_sold_time_sk#8), isnotnull(ws_web_page_sk#12..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ws_ship_hdemo_sk), IsNotNull(ws_sold_time_sk), IsNotNull(ws_web_page_sk)], ReadSchema: struct<ws_sold_time_sk:int,ws_ship_hdemo_sk:int,ws_web_page_sk:int>
+      :              :           :           :        +- FileScan parquet [ws_sold_time_sk#8,ws_ship_hdemo_sk#10,ws_web_page_sk#6] Batched: true, DataFilters: [isnotnull(ws_ship_hdemo_sk#10), isnotnull(ws_sold_time_sk#8), isnotnull(ws_web_page_sk#6)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ws_ship_hdemo_sk), IsNotNull(ws_sold_time_sk), IsNotNull(ws_web_page_sk)], ReadSchema: struct<ws_sold_time_sk:int,ws_ship_hdemo_sk:int,ws_web_page_sk:int>
       :              :           :           +- Sort [hd_demo_sk#11 ASC NULLS FIRST], false, 0
       :              :           :              +- Exchange hashpartitioning(hd_demo_sk#11, 100), ENSURE_REQUIREMENTS, [plan_id=15]
       :              :           :                 +- Project [hd_demo_sk#11]
-      :              :           :                    +- Filter ((isnotnull(hd_dep_count#13) AND (hd_dep_count#13 = 6)) AND isnotnull(hd_demo_sk#11))
-      :              :           :                       +- FileScan parquet [hd_demo_sk#11,hd_dep_count#13] Batched: true, DataFilters: [isnotnull(hd_dep_count#13), (hd_dep_count#13 = 6), isnotnull(hd_demo_sk#11)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(hd_dep_count), EqualTo(hd_dep_count,6), IsNotNull(hd_demo_sk)], ReadSchema: struct<hd_demo_sk:int,hd_dep_count:int>
+      :              :           :                    +- Filter ((isnotnull(hd_dep_count#12) AND (hd_dep_count#12 = 6)) AND isnotnull(hd_demo_sk#11))
+      :              :           :                       +- FileScan parquet [hd_demo_sk#11,hd_dep_count#12] Batched: true, DataFilters: [isnotnull(hd_dep_count#12), (hd_dep_count#12 = 6), isnotnull(hd_demo_sk#11)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(hd_dep_count), EqualTo(hd_dep_count,6), IsNotNull(hd_demo_sk)], ReadSchema: struct<hd_demo_sk:int,hd_dep_count:int>
       :              :           +- Sort [t_time_sk#9 ASC NULLS FIRST], false, 0
       :              :              +- Exchange hashpartitioning(t_time_sk#9, 100), ENSURE_REQUIREMENTS, [plan_id=16]
       :              :                 +- Project [t_time_sk#9]
-      :              :                    +- Filter (((isnotnull(t_hour#14) AND (t_hour#14 >= 8)) AND (t_hour#14 <= 9)) AND isnotnull(t_time_sk#9))
-      :              :                       +- FileScan parquet [t_time_sk#9,t_hour#14] Batched: true, DataFilters: [isnotnull(t_hour#14), (t_hour#14 >= 8), (t_hour#14 <= 9), isnotnull(t_time_sk#9)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(t_hour), GreaterThanOrEqual(t_hour,8), LessThanOrEqual(t_hour,9), IsNotNull(t_time_sk)], ReadSchema: struct<t_time_sk:int,t_hour:int>
+      :              :                    +- Filter (((isnotnull(t_hour#13) AND (t_hour#13 >= 8)) AND (t_hour#13 <= 9)) AND isnotnull(t_time_sk#9))
+      :              :                       +- FileScan parquet [t_time_sk#9,t_hour#13] Batched: true, DataFilters: [isnotnull(t_hour#13), (t_hour#13 >= 8), (t_hour#13 <= 9), isnotnull(t_time_sk#9)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(t_hour), GreaterThanOrEqual(t_hour,8), LessThanOrEqual(t_hour,9), IsNotNull(t_time_sk)], ReadSchema: struct<t_time_sk:int,t_hour:int>
       :              +- Sort [wp_web_page_sk#7 ASC NULLS FIRST], false, 0
       :                 +- Exchange hashpartitioning(wp_web_page_sk#7, 100), ENSURE_REQUIREMENTS, [plan_id=17]
       :                    +- Project [wp_web_page_sk#7]
-      :                       +- Filter (((isnotnull(wp_char_count#15) AND (wp_char_count#15 >= 5000)) AND (wp_char_count#15 <= 5200)) AND isnotnull(wp_web_page_sk#7))
-      :                          +- FileScan parquet [wp_web_page_sk#7,wp_char_count#15] Batched: true, DataFilters: [isnotnull(wp_char_count#15), (wp_char_count#15 >= 5000), (wp_char_count#15 <= 5200), is..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(wp_char_count), GreaterThanOrEqual(wp_char_count,5000), LessThanOrEqual(wp_char_count,..., ReadSchema: struct<wp_web_page_sk:int,wp_char_count:int>
+      :                       +- Filter (((isnotnull(wp_char_count#14) AND (wp_char_count#14 >= 5000)) AND (wp_char_count#14 <= 5200)) AND isnotnull(wp_web_page_sk#7))
+      :                          +- FileScan parquet [wp_web_page_sk#7,wp_char_count#14] Batched: true, DataFilters: [isnotnull(wp_char_count#14), (wp_char_count#14 >= 5000), (wp_char_count#14 <= 5200), isnot..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(wp_char_count), GreaterThanOrEqual(wp_char_count,5000), LessThanOrEqual(wp_char_count,..., ReadSchema: struct<wp_web_page_sk:int,wp_char_count:int>
       +- HashAggregate(keys=[], functions=[count(1)], output=[pmc#2])
          +- Exchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=18]
-            +- HashAggregate(keys=[], functions=[partial_count(1)], output=[count#24])
+            +- HashAggregate(keys=[], functions=[partial_count(1)], output=[count#23])
                +- Project
-                  +- SortMergeJoin [ws_web_page_sk#18], [wp_web_page_sk#19], Inner
-                     :- Sort [ws_web_page_sk#18 ASC NULLS FIRST], false, 0
-                     :  +- Exchange hashpartitioning(ws_web_page_sk#18, 100), ENSURE_REQUIREMENTS, [plan_id=19]
-                     :     +- Project [ws_web_page_sk#18]
-                     :        +- SortMergeJoin [ws_sold_time_sk#20], [t_time_sk#21], Inner
-                     :           :- Sort [ws_sold_time_sk#20 ASC NULLS FIRST], false, 0
-                     :           :  +- Exchange hashpartitioning(ws_sold_time_sk#20, 100), ENSURE_REQUIREMENTS, [plan_id=20]
-                     :           :     +- Project [ws_sold_time_sk#20, ws_web_page_sk#18]
-                     :           :        +- SortMergeJoin [ws_ship_hdemo_sk#25], [hd_demo_sk#26], Inner
-                     :           :           :- Sort [ws_ship_hdemo_sk#25 ASC NULLS FIRST], false, 0
-                     :           :           :  +- Exchange hashpartitioning(ws_ship_hdemo_sk#25, 100), ENSURE_REQUIREMENTS, [plan_id=21]
-                     :           :           :     +- Filter ((isnotnull(ws_ship_hdemo_sk#25) AND isnotnull(ws_sold_time_sk#20)) AND isnotnull(ws_web_page_sk#18))
-                     :           :           :        +- FileScan parquet [ws_sold_time_sk#20,ws_ship_hdemo_sk#25,ws_web_page_sk#18] Batched: true, DataFilters: [isnotnull(ws_ship_hdemo_sk#25), isnotnull(ws_sold_time_sk#20), isnotnull(ws_web_page_sk#27..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ws_ship_hdemo_sk), IsNotNull(ws_sold_time_sk), IsNotNull(ws_web_page_sk)], ReadSchema: struct<ws_sold_time_sk:int,ws_ship_hdemo_sk:int,ws_web_page_sk:int>
-                     :           :           +- Sort [hd_demo_sk#26 ASC NULLS FIRST], false, 0
-                     :           :              +- Exchange hashpartitioning(hd_demo_sk#26, 100), ENSURE_REQUIREMENTS, [plan_id=22]
-                     :           :                 +- Project [hd_demo_sk#26]
-                     :           :                    +- Filter ((isnotnull(hd_dep_count#28) AND (hd_dep_count#28 = 6)) AND isnotnull(hd_demo_sk#26))
-                     :           :                       +- FileScan parquet [hd_demo_sk#26,hd_dep_count#28] Batched: true, DataFilters: [isnotnull(hd_dep_count#28), (hd_dep_count#28 = 6), isnotnull(hd_demo_sk#26)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(hd_dep_count), EqualTo(hd_dep_count,6), IsNotNull(hd_demo_sk)], ReadSchema: struct<hd_demo_sk:int,hd_dep_count:int>
-                     :           +- Sort [t_time_sk#21 ASC NULLS FIRST], false, 0
-                     :              +- Exchange hashpartitioning(t_time_sk#21, 100), ENSURE_REQUIREMENTS, [plan_id=23]
-                     :                 +- Project [t_time_sk#21]
-                     :                    +- Filter (((isnotnull(t_hour#22) AND (t_hour#22 >= 19)) AND (t_hour#22 <= 20)) AND isnotnull(t_time_sk#21))
-                     :                       +- FileScan parquet [t_time_sk#21,t_hour#22] Batched: true, DataFilters: [isnotnull(t_hour#22), (t_hour#22 >= 19), (t_hour#22 <= 20), isnotnull(t_time_sk#21)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(t_hour), GreaterThanOrEqual(t_hour,19), LessThanOrEqual(t_hour,20), IsNotNull(t_time_sk)], ReadSchema: struct<t_time_sk:int,t_hour:int>
-                     +- Sort [wp_web_page_sk#19 ASC NULLS FIRST], false, 0
-                        +- Exchange hashpartitioning(wp_web_page_sk#19, 100), ENSURE_REQUIREMENTS, [plan_id=24]
-                           +- Project [wp_web_page_sk#19]
-                              +- Filter (((isnotnull(wp_char_count#29) AND (wp_char_count#29 >= 5000)) AND (wp_char_count#29 <= 5200)) AND isnotnull(wp_web_page_sk#19))
-                                 +- FileScan parquet [wp_web_page_sk#19,wp_char_count#29] Batched: true, DataFilters: [isnotnull(wp_char_count#29), (wp_char_count#29 >= 5000), (wp_char_count#29 <= 5200), is..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(wp_char_count), GreaterThanOrEqual(wp_char_count,5000), LessThanOrEqual(wp_char_count,..., ReadSchema: struct<wp_web_page_sk:int,wp_char_count:int>
+                  +- SortMergeJoin [ws_web_page_sk#17], [wp_web_page_sk#18], Inner
+                     :- Sort [ws_web_page_sk#17 ASC NULLS FIRST], false, 0
+                     :  +- Exchange hashpartitioning(ws_web_page_sk#17, 100), ENSURE_REQUIREMENTS, [plan_id=19]
+                     :     +- Project [ws_web_page_sk#17]
+                     :        +- SortMergeJoin [ws_sold_time_sk#19], [t_time_sk#20], Inner
+                     :           :- Sort [ws_sold_time_sk#19 ASC NULLS FIRST], false, 0
+                     :           :  +- Exchange hashpartitioning(ws_sold_time_sk#19, 100), ENSURE_REQUIREMENTS, [plan_id=20]
+                     :           :     +- Project [ws_sold_time_sk#19, ws_web_page_sk#17]
+                     :           :        +- SortMergeJoin [ws_ship_hdemo_sk#24], [hd_demo_sk#25], Inner
+                     :           :           :- Sort [ws_ship_hdemo_sk#24 ASC NULLS FIRST], false, 0
+                     :           :           :  +- Exchange hashpartitioning(ws_ship_hdemo_sk#24, 100), ENSURE_REQUIREMENTS, [plan_id=21]
+                     :           :           :     +- Filter ((isnotnull(ws_ship_hdemo_sk#24) AND isnotnull(ws_sold_time_sk#19)) AND isnotnull(ws_web_page_sk#17))
+                     :           :           :        +- FileScan parquet [ws_sold_time_sk#19,ws_ship_hdemo_sk#24,ws_web_page_sk#17] Batched: true, DataFilters: [isnotnull(ws_ship_hdemo_sk#24), isnotnull(ws_sold_time_sk#19), isnotnull(ws_web_page_sk#26..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ws_ship_hdemo_sk), IsNotNull(ws_sold_time_sk), IsNotNull(ws_web_page_sk)], ReadSchema: struct<ws_sold_time_sk:int,ws_ship_hdemo_sk:int,ws_web_page_sk:int>
+                     :           :           +- Sort [hd_demo_sk#25 ASC NULLS FIRST], false, 0
+                     :           :              +- Exchange hashpartitioning(hd_demo_sk#25, 100), ENSURE_REQUIREMENTS, [plan_id=22]
+                     :           :                 +- Project [hd_demo_sk#25]
+                     :           :                    +- Filter ((isnotnull(hd_dep_count#27) AND (hd_dep_count#27 = 6)) AND isnotnull(hd_demo_sk#25))
+                     :           :                       +- FileScan parquet [hd_demo_sk#25,hd_dep_count#27] Batched: true, DataFilters: [isnotnull(hd_dep_count#27), (hd_dep_count#27 = 6), isnotnull(hd_demo_sk#25)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>, PartitionFilters: [], PushedFilters: [IsNotNull(hd_dep_count), EqualTo(hd_dep_count,6), IsNotNull(hd_demo_sk)], ReadSchema: struct<hd_demo_sk:int,hd_dep_count:int>
+                     :           +- Sort [t_time_sk#20 ASC NULLS FIRST], false, 0
+                     :              +- Exchange hashpartitioning(t_time_sk#20, 100), ENSURE_REQUIREMENTS, [plan_id=23]
+                     :                 +- Project [t_time_sk#20]
+                     :                    +- Filter (((isnotnull(t_hour#21) AND (t_hour#21 >= 19)) AND (t_hour#21 <= 20)) AND isnotnull(t_time_sk#20))
+                     :                       +- FileScan parquet [t_time_sk#20,t_hour#21] Batched: true, DataFilters: [isnotnull(t_hour#21), (t_hour#21 >= 19), (t_hour#21 <= 20), isnotnull(t_time_sk#20)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(t_hour), GreaterThanOrEqual(t_hour,19), LessThanOrEqual(t_hour,20), IsNotNull(t_time_sk)], ReadSchema: struct<t_time_sk:int,t_hour:int>
+                     +- Sort [wp_web_page_sk#18 ASC NULLS FIRST], false, 0
+                        +- Exchange hashpartitioning(wp_web_page_sk#18, 100), ENSURE_REQUIREMENTS, [plan_id=24]
+                           +- Project [wp_web_page_sk#18]
+                              +- Filter (((isnotnull(wp_char_count#28) AND (wp_char_count#28 >= 5000)) AND (wp_char_count#28 <= 5200)) AND isnotnull(wp_web_page_sk#18))
+                                 +- FileScan parquet [wp_web_page_sk#18,wp_char_count#28] Batched: true, DataFilters: [isnotnull(wp_char_count#28), (wp_char_count#28 >= 5000), (wp_char_count#28 <= 5200), is..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(wp_char_count), GreaterThanOrEqual(wp_char_count,5000), LessThanOrEqual(wp_char_count,..., ReadSchema: struct<wp_web_page_sk:int,wp_char_count:int>

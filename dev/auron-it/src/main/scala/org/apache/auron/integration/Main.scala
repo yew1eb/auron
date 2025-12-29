@@ -79,6 +79,7 @@ object Main {
                    |Extra Spark Conf: ${args.extraSparkConf.mkString("", "; ", "")}
                    |Plan Check: ${if (args.enablePlanCheck) "Enabled" else "Disabled"}
                    |Regen Golden Files: ${if (args.regenGoldenFiles) "Yes" else "No"}
+                   |Result Check: ${if (!args.disableResultCheck) "Enabled" else "Disabled"}
           """.stripMargin)
 
         val suite = createSuite(args)
@@ -86,6 +87,7 @@ object Main {
         try {
           exitCode = suite.run()
         } finally {
+          // Thread.sleep(1000000000)
           suite.close()
         }
 

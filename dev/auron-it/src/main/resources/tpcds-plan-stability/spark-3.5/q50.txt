@@ -5,7 +5,7 @@ AdaptiveSparkPlan isFinalPlan=true
       +- NativeHashAggregate HashAgg, ArrayBuffer(s_store_name#1, s_company_id#2, s_street_number#3, s_street_name#4, s_street_type#5, s_suite_number#6, s_city#7, s_county#8, s_state#9, s_zip#10), [s_store_name#1, s_company_id#2, s_street_number#3, s_street_name#4, s_street_type#5, s_suite_number#6, s_city#7, s_county#8, s_state#9, s_zip#10], [sum(CASE WHEN ((sr_returned_date_sk#11 - ss_sold_date_sk#12) <= 30) THEN 1 ELSE 0 END), sum(CASE WHEN (((sr_returned_date_sk#11 - ss_sold_date_sk#12) > 30) AND ((sr_returned_date_sk#11 - ss_sold_date_sk#12) <= 60)) THEN 1 ELSE 0 END), sum(CASE WHEN (((sr_returned_date_sk#11 - ss_sold_date_sk#12) > 60) AND ((sr_returned_date_sk#11 - ss_sold_date_sk#12) <= 90)) THEN 1 ELSE 0 END), sum(CASE WHEN (((sr_returned_date_sk#11 - ss_sold_date_sk#12) > 90) AND ((sr_returned_date_sk#11 - ss_sold_date_sk#12) <= 120)) THEN 1 ELSE 0 END), sum(CASE WHEN ((sr_returned_date_sk#11 - ss_sold_date_sk#12) > 120) THEN 1 ELSE 0 END)], [sum(CASE WHEN ((sr_returned_date_sk#11 - ss_sold_date_sk#12) <= 30) THEN 1 ELSE 0 END)#13, sum(CASE WHEN (((sr_returned_date_sk#11 - ss_sold_date_sk#12) > 30) AND ((sr_returned_date_sk#11 - ss_sold_date_sk#12) <= 60)) THEN 1 ELSE 0 END)#15, sum(CASE WHEN (((sr_returned_date_sk#11 - ss_sold_date_sk#12) > 60) AND ((sr_returned_date_sk#11 - ss_sold_date_sk#12) <= 90)) THEN 1 ELSE 0 END)#17, sum(CASE WHEN (((sr_returned_date_sk#11 - ss_sold_date_sk#12) > 90) AND ((sr_returned_date_sk#11 - ss_sold_date_sk#12) <= 120)) THEN 1 ELSE 0 END)#19, sum(CASE WHEN ((sr_returned_date_sk#11 - ss_sold_date_sk#12) > 120) THEN 1 ELSE 0 END)#21], 10
          +- InputAdapter
             +- AQEShuffleRead coalesced
-               +- ShuffleQueryStage 8
+               +- ShuffleQueryStage X
                   +- NativeShuffleExchange hashpartitioning(s_store_name#1, s_company_id#2, s_street_number#3, s_street_name#4, s_street_type#5, s_suite_number#6, s_city#7, s_county#8, s_state#9, s_zip#10, 100), ENSURE_REQUIREMENTS, [plan_id=1]
                      +- NativeHashAggregate HashAgg, [s_store_name#1, s_company_id#2, s_street_number#3, s_street_name#4, s_street_type#5, s_suite_number#6, s_city#7, s_county#8, s_state#9, s_zip#10], [partial_sum(_c10#23), partial_sum(_c11#24), partial_sum(_c12#25), partial_sum(_c13#26), partial_sum(_c14#27)], [sum#28, sum#29, sum#30, sum#31, sum#32], 0
                         +- NativeProject [s_store_name#1 AS s_store_name#1, s_company_id#2 AS s_company_id#2, s_street_number#3 AS s_street_number#3, s_street_name#4 AS s_street_name#4, s_street_type#5 AS s_street_type#5, s_suite_number#6 AS s_suite_number#6, s_city#7 AS s_city#7, s_county#8 AS s_county#8, s_state#9 AS s_state#9, s_zip#10 AS s_zip#10, CASE WHEN ((sr_returned_date_sk#11 - ss_sold_date_sk#12) <= 30) THEN 1 ELSE 0 END AS _c10#23, CASE WHEN (((sr_returned_date_sk#11 - ss_sold_date_sk#12) > 30) AND ((sr_returned_date_sk#11 - ss_sold_date_sk#12) <= 60)) THEN 1 ELSE 0 END AS _c11#24, CASE WHEN (((sr_returned_date_sk#11 - ss_sold_date_sk#12) > 60) AND ((sr_returned_date_sk#11 - ss_sold_date_sk#12) <= 90)) THEN 1 ELSE 0 END AS _c12#25, CASE WHEN (((sr_returned_date_sk#11 - ss_sold_date_sk#12) > 90) AND ((sr_returned_date_sk#11 - ss_sold_date_sk#12) <= 120)) THEN 1 ELSE 0 END AS _c13#26, CASE WHEN ((sr_returned_date_sk#11 - ss_sold_date_sk#12) > 120) THEN 1 ELSE 0 END AS _c14#27]
@@ -14,44 +14,44 @@ AdaptiveSparkPlan isFinalPlan=true
                                  :- NativeSort [sr_returned_date_sk#11 ASC NULLS FIRST], false
                                  :  +- InputAdapter
                                  :     +- AQEShuffleRead coalesced
-                                 :        +- ShuffleQueryStage 7
+                                 :        +- ShuffleQueryStage X
                                  :           +- NativeShuffleExchange hashpartitioning(sr_returned_date_sk#11, 100), ENSURE_REQUIREMENTS, [plan_id=2]
                                  :              +- NativeProject [ss_sold_date_sk#12, sr_returned_date_sk#11, s_store_name#1, s_company_id#2, s_street_number#3, s_street_name#4, s_street_type#5, s_suite_number#6, s_city#7, s_county#8, s_state#9, s_zip#10]
                                  :                 +- NativeSortMergeJoin [ss_sold_date_sk#12], [d_date_sk#34], Inner
                                  :                    :- NativeSort [ss_sold_date_sk#12 ASC NULLS FIRST], false
                                  :                    :  +- InputAdapter
                                  :                    :     +- AQEShuffleRead coalesced
-                                 :                    :        +- ShuffleQueryStage 6
+                                 :                    :        +- ShuffleQueryStage X
                                  :                    :           +- NativeShuffleExchange hashpartitioning(ss_sold_date_sk#12, 100), ENSURE_REQUIREMENTS, [plan_id=3]
                                  :                    :              +- NativeProject [ss_sold_date_sk#12, sr_returned_date_sk#11, s_store_name#1, s_company_id#2, s_street_number#3, s_street_name#4, s_street_type#5, s_suite_number#6, s_city#7, s_county#8, s_state#9, s_zip#10]
                                  :                    :                 +- NativeSortMergeJoin [ss_store_sk#35], [s_store_sk#36], Inner
                                  :                    :                    :- NativeSort [ss_store_sk#35 ASC NULLS FIRST], false
                                  :                    :                    :  +- InputAdapter
                                  :                    :                    :     +- AQEShuffleRead coalesced
-                                 :                    :                    :        +- ShuffleQueryStage 5
+                                 :                    :                    :        +- ShuffleQueryStage X
                                  :                    :                    :           +- NativeShuffleExchange hashpartitioning(ss_store_sk#35, 100), ENSURE_REQUIREMENTS, [plan_id=4]
                                  :                    :                    :              +- NativeProject [ss_sold_date_sk#12, ss_store_sk#35, sr_returned_date_sk#11]
                                  :                    :                    :                 +- NativeSortMergeJoin [ss_ticket_number#37, ss_item_sk#38, ss_customer_sk#39], [sr_ticket_number#40, sr_item_sk#41, sr_customer_sk#42], Inner
                                  :                    :                    :                    :- NativeSort [ss_ticket_number#37 ASC NULLS FIRST, ss_item_sk#38 ASC NULLS FIRST, ss_customer_sk#39 ASC NULLS FIRST], false
                                  :                    :                    :                    :  +- InputAdapter
                                  :                    :                    :                    :     +- AQEShuffleRead coalesced
-                                 :                    :                    :                    :        +- ShuffleQueryStage 0
+                                 :                    :                    :                    :        +- ShuffleQueryStage X
                                  :                    :                    :                    :           +- NativeShuffleExchange hashpartitioning(ss_ticket_number#37, ss_item_sk#38, ss_customer_sk#39, 100), ENSURE_REQUIREMENTS, [plan_id=5]
                                  :                    :                    :                    :              +- NativeFilter ((((isnotnull(ss_ticket_number#37) AND isnotnull(ss_item_sk#38)) AND isnotnull(ss_customer_sk#39)) AND isnotnull(ss_store_sk#35)) AND isnotnull(ss_sold_date_sk#12))
                                  :                    :                    :                    :                 +- InputAdapter [#12, #38, #39, #35, #37]
-                                 :                    :                    :                    :                    +- NativeParquetScan  (FileScan parquet [ss_sold_date_sk#12,ss_item_sk#38,ss_customer_sk#39,ss_store_sk#35,ss_ticket_number#37] Batched: true, DataFilters: [isnotnull(ss_ticket_number#37), isnotnull(ss_item_sk#38), isnotnull(ss_customer_sk#39),..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_ticket_number), IsNotNull(ss_item_sk), IsNotNull(ss_customer_sk), IsNotNull(ss_stor..., ReadSchema: struct<ss_sold_date_sk:int,ss_item_sk:int,ss_customer_sk:int,ss_store_sk:int,ss_ticket_number:int>)
+                                 :                    :                    :                    :                    +- NativeParquetScan  (FileScan parquet [ss_sold_date_sk#12,ss_item_sk#38,ss_customer_sk#39,ss_store_sk#35,ss_ticket_number#37] Batched: true, DataFilters: [isnotnull(ss_ticket_number#37), isnotnull(ss_item_sk#38), isnotnull(ss_customer_sk#39), is..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_ticket_number), IsNotNull(ss_item_sk), IsNotNull(ss_customer_sk), IsNotNull(ss_stor..., ReadSchema: struct<ss_sold_date_sk:int,ss_item_sk:int,ss_customer_sk:int,ss_store_sk:int,ss_ticket_number:int>)
                                  :                    :                    :                    +- NativeSort [sr_ticket_number#40 ASC NULLS FIRST, sr_item_sk#41 ASC NULLS FIRST, sr_customer_sk#42 ASC NULLS FIRST], false
                                  :                    :                    :                       +- InputAdapter
                                  :                    :                    :                          +- AQEShuffleRead coalesced
-                                 :                    :                    :                             +- ShuffleQueryStage 1
+                                 :                    :                    :                             +- ShuffleQueryStage X
                                  :                    :                    :                                +- NativeShuffleExchange hashpartitioning(sr_ticket_number#40, sr_item_sk#41, sr_customer_sk#42, 100), ENSURE_REQUIREMENTS, [plan_id=6]
                                  :                    :                    :                                   +- NativeFilter (((isnotnull(sr_ticket_number#40) AND isnotnull(sr_item_sk#41)) AND isnotnull(sr_customer_sk#42)) AND isnotnull(sr_returned_date_sk#11))
                                  :                    :                    :                                      +- InputAdapter [#11, #41, #42, #40]
-                                 :                    :                    :                                         +- NativeParquetScan  (FileScan parquet [sr_returned_date_sk#11,sr_item_sk#41,sr_customer_sk#42,sr_ticket_number#40] Batched: true, DataFilters: [isnotnull(sr_ticket_number#40), isnotnull(sr_item_sk#41), isnotnull(sr_customer_sk#42),..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(sr_ticket_number), IsNotNull(sr_item_sk), IsNotNull(sr_customer_sk), IsNotNull(sr_retu..., ReadSchema: struct<sr_returned_date_sk:int,sr_item_sk:int,sr_customer_sk:int,sr_ticket_number:int>)
+                                 :                    :                    :                                         +- NativeParquetScan  (FileScan parquet [sr_returned_date_sk#11,sr_item_sk#41,sr_customer_sk#42,sr_ticket_number#40] Batched: true, DataFilters: [isnotnull(sr_ticket_number#40), isnotnull(sr_item_sk#41), isnotnull(sr_customer_sk#42), is..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(sr_ticket_number), IsNotNull(sr_item_sk), IsNotNull(sr_customer_sk), IsNotNull(sr_retu..., ReadSchema: struct<sr_returned_date_sk:int,sr_item_sk:int,sr_customer_sk:int,sr_ticket_number:int>)
                                  :                    :                    +- NativeSort [s_store_sk#36 ASC NULLS FIRST], false
                                  :                    :                       +- InputAdapter
                                  :                    :                          +- AQEShuffleRead coalesced
-                                 :                    :                             +- ShuffleQueryStage 2
+                                 :                    :                             +- ShuffleQueryStage X
                                  :                    :                                +- NativeShuffleExchange hashpartitioning(s_store_sk#36, 100), ENSURE_REQUIREMENTS, [plan_id=7]
                                  :                    :                                   +- NativeFilter isnotnull(s_store_sk#36)
                                  :                    :                                      +- InputAdapter [#36, #1, #2, #3, #4, #5, #6, #7, #8, #9, #10]
@@ -59,7 +59,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                  :                    +- NativeSort [d_date_sk#34 ASC NULLS FIRST], false
                                  :                       +- InputAdapter
                                  :                          +- AQEShuffleRead coalesced
-                                 :                             +- ShuffleQueryStage 3
+                                 :                             +- ShuffleQueryStage X
                                  :                                +- NativeShuffleExchange hashpartitioning(d_date_sk#34, 100), ENSURE_REQUIREMENTS, [plan_id=8]
                                  :                                   +- NativeFilter isnotnull(d_date_sk#34)
                                  :                                      +- InputAdapter [#34]
@@ -67,7 +67,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                  +- NativeSort [d_date_sk#33 ASC NULLS FIRST], false
                                     +- InputAdapter
                                        +- AQEShuffleRead coalesced
-                                          +- ShuffleQueryStage 4
+                                          +- ShuffleQueryStage X
                                              +- NativeShuffleExchange hashpartitioning(d_date_sk#33, 100), ENSURE_REQUIREMENTS, [plan_id=9]
                                                 +- NativeProject [d_date_sk#33]
                                                    +- NativeFilter ((((isnotnull(d_year#43) AND isnotnull(d_moy#44)) AND (d_year#43 = 2001)) AND (d_moy#44 = 8)) AND isnotnull(d_date_sk#33))
@@ -95,11 +95,11 @@ AdaptiveSparkPlan isFinalPlan=true
                   :           :           :           :- Sort [ss_ticket_number#37 ASC NULLS FIRST, ss_item_sk#38 ASC NULLS FIRST, ss_customer_sk#39 ASC NULLS FIRST], false, 0
                   :           :           :           :  +- Exchange hashpartitioning(ss_ticket_number#37, ss_item_sk#38, ss_customer_sk#39, 100), ENSURE_REQUIREMENTS, [plan_id=14]
                   :           :           :           :     +- Filter ((((isnotnull(ss_ticket_number#37) AND isnotnull(ss_item_sk#38)) AND isnotnull(ss_customer_sk#39)) AND isnotnull(ss_store_sk#35)) AND isnotnull(ss_sold_date_sk#12))
-                  :           :           :           :        +- FileScan parquet [ss_sold_date_sk#12,ss_item_sk#38,ss_customer_sk#39,ss_store_sk#35,ss_ticket_number#37] Batched: true, DataFilters: [isnotnull(ss_ticket_number#37), isnotnull(ss_item_sk#38), isnotnull(ss_customer_sk#39),..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_ticket_number), IsNotNull(ss_item_sk), IsNotNull(ss_customer_sk), IsNotNull(ss_stor..., ReadSchema: struct<ss_sold_date_sk:int,ss_item_sk:int,ss_customer_sk:int,ss_store_sk:int,ss_ticket_number:int>
+                  :           :           :           :        +- FileScan parquet [ss_sold_date_sk#12,ss_item_sk#38,ss_customer_sk#39,ss_store_sk#35,ss_ticket_number#37] Batched: true, DataFilters: [isnotnull(ss_ticket_number#37), isnotnull(ss_item_sk#38), isnotnull(ss_customer_sk#39), is..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(ss_ticket_number), IsNotNull(ss_item_sk), IsNotNull(ss_customer_sk), IsNotNull(ss_stor..., ReadSchema: struct<ss_sold_date_sk:int,ss_item_sk:int,ss_customer_sk:int,ss_store_sk:int,ss_ticket_number:int>
                   :           :           :           +- Sort [sr_ticket_number#40 ASC NULLS FIRST, sr_item_sk#41 ASC NULLS FIRST, sr_customer_sk#42 ASC NULLS FIRST], false, 0
                   :           :           :              +- Exchange hashpartitioning(sr_ticket_number#40, sr_item_sk#41, sr_customer_sk#42, 100), ENSURE_REQUIREMENTS, [plan_id=15]
                   :           :           :                 +- Filter (((isnotnull(sr_ticket_number#40) AND isnotnull(sr_item_sk#41)) AND isnotnull(sr_customer_sk#42)) AND isnotnull(sr_returned_date_sk#11))
-                  :           :           :                    +- FileScan parquet [sr_returned_date_sk#11,sr_item_sk#41,sr_customer_sk#42,sr_ticket_number#40] Batched: true, DataFilters: [isnotnull(sr_ticket_number#40), isnotnull(sr_item_sk#41), isnotnull(sr_customer_sk#42),..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(sr_ticket_number), IsNotNull(sr_item_sk), IsNotNull(sr_customer_sk), IsNotNull(sr_retu..., ReadSchema: struct<sr_returned_date_sk:int,sr_item_sk:int,sr_customer_sk:int,sr_ticket_number:int>
+                  :           :           :                    +- FileScan parquet [sr_returned_date_sk#11,sr_item_sk#41,sr_customer_sk#42,sr_ticket_number#40] Batched: true, DataFilters: [isnotnull(sr_ticket_number#40), isnotnull(sr_item_sk#41), isnotnull(sr_customer_sk#42), is..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(sr_ticket_number), IsNotNull(sr_item_sk), IsNotNull(sr_customer_sk), IsNotNull(sr_retu..., ReadSchema: struct<sr_returned_date_sk:int,sr_item_sk:int,sr_customer_sk:int,sr_ticket_number:int>
                   :           :           +- Sort [s_store_sk#36 ASC NULLS FIRST], false, 0
                   :           :              +- Exchange hashpartitioning(s_store_sk#36, 100), ENSURE_REQUIREMENTS, [plan_id=16]
                   :           :                 +- Filter isnotnull(s_store_sk#36)

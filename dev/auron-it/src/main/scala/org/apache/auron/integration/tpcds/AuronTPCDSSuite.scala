@@ -16,7 +16,7 @@
  */
 package org.apache.auron.integration.runner
 
-import org.apache.auron.integration.{QueryRunner, Suite, SuiteArgs}
+import org.apache.auron.integration.{QueryRunner, SingleQueryResult, Suite, SuiteArgs}
 import org.apache.auron.integration.comparator.{ComparisonResult, PlanStabilityChecker, QueryResultComparator}
 import org.apache.auron.integration.tpcds.TPCDSFeatures
 
@@ -61,11 +61,19 @@ class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
 
   private def executeBenchmark(queries: Seq[String]): Seq[ComparisonResult] = {
     println("execute baseline ....")
-    setupTables(args.dataLocation, sessions.baselineSession)
-    val baselineResults = queryRunner.runQueries(sessions.baselineSession, queries)
+    var baselineResults: Map[String, SingleQueryResult] = Map.empty
+    if (!args.disableResultCheck) {
+      setupTables(args.dataLocation, sessions.baselineSession)
+      baselineResults = queryRunner.runQueries(sessions.baselineSession, queries)
+    }
+
     println("execute auron ....")
     setupTables(args.dataLocation, sessions.auronSession)
     val auronResults = queryRunner.runQueries(sessions.auronSession, queries)
+
+    if (args.disableResultCheck) {
+      baselineResults = auronResults
+    }
 
     val comparisonResults = queries.map { queryId =>
       resutComparator.compare(baselineResults(queryId), auronResults(queryId))
