@@ -123,6 +123,7 @@ class PlanStabilityChecker(
     val argumentsNormalized = planIdNormalized
       .replaceAll("Arguments: [0-9]+, [0-9]+", "Arguments: X, X")
       .replaceAll("Arguments: [0-9]+", "Arguments: X")
+      .replaceAll("ShuffleQueryStage [0-9]+", "ShuffleQueryStage X")
 
     normalizeLocation(argumentsNormalized)
   }

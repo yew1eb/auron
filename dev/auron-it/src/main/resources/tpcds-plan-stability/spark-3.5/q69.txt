@@ -5,7 +5,7 @@ AdaptiveSparkPlan isFinalPlan=true
       +- NativeHashAggregate HashAgg, ArrayBuffer(cd_gender#1, cd_marital_status#2, cd_education_status#3, cd_purchase_estimate#4, cd_credit_rating#5), [cd_gender#1, cd_marital_status#2, cd_education_status#3, cd_purchase_estimate#4, cd_credit_rating#5], [count(1)], [count(1)#6], 5
          +- InputAdapter
             +- AQEShuffleRead coalesced
-               +- ShuffleQueryStage 16
+               +- ShuffleQueryStage X
                   +- NativeShuffleExchange hashpartitioning(cd_gender#1, cd_marital_status#2, cd_education_status#3, cd_purchase_estimate#4, cd_credit_rating#5, 100), ENSURE_REQUIREMENTS, [plan_id=1]
                      +- NativeHashAggregate HashAgg, [cd_gender#1, cd_marital_status#2, cd_education_status#3, cd_purchase_estimate#4, cd_credit_rating#5], [partial_count(1)], [count#10], 0
                         +- NativeProject [cd_gender#1, cd_marital_status#2, cd_education_status#3, cd_purchase_estimate#4, cd_credit_rating#5]
@@ -13,14 +13,14 @@ AdaptiveSparkPlan isFinalPlan=true
                               :- NativeSort [c_current_cdemo_sk#11 ASC NULLS FIRST], false
                               :  +- InputAdapter
                               :     +- AQEShuffleRead coalesced
-                              :        +- ShuffleQueryStage 15
+                              :        +- ShuffleQueryStage X
                               :           +- NativeShuffleExchange hashpartitioning(c_current_cdemo_sk#11, 100), ENSURE_REQUIREMENTS, [plan_id=2]
                               :              +- NativeProject [c_current_cdemo_sk#11]
                               :                 +- NativeSortMergeJoin [c_current_addr_sk#13], [ca_address_sk#14], Inner
                               :                    :- NativeSort [c_current_addr_sk#13 ASC NULLS FIRST], false
                               :                    :  +- InputAdapter
                               :                    :     +- AQEShuffleRead coalesced
-                              :                    :        +- ShuffleQueryStage 14
+                              :                    :        +- ShuffleQueryStage X
                               :                    :           +- NativeShuffleExchange hashpartitioning(c_current_addr_sk#13, 100), ENSURE_REQUIREMENTS, [plan_id=3]
                               :                    :              +- NativeProject [c_current_cdemo_sk#11, c_current_addr_sk#13]
                               :                    :                 +- NativeSortMergeJoin [c_customer_sk#15], [cs_ship_customer_sk#16], LeftAnti
@@ -29,7 +29,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               :                    :                    :  :  :- NativeSort [c_customer_sk#15 ASC NULLS FIRST], false
                               :                    :                    :  :  :  +- InputAdapter
                               :                    :                    :  :  :     +- AQEShuffleRead coalesced
-                              :                    :                    :  :  :        +- ShuffleQueryStage 0
+                              :                    :                    :  :  :        +- ShuffleQueryStage X
                               :                    :                    :  :  :           +- NativeShuffleExchange hashpartitioning(c_customer_sk#15, 100), ENSURE_REQUIREMENTS, [plan_id=4]
                               :                    :                    :  :  :              +- NativeFilter (isnotnull(c_current_addr_sk#13) AND isnotnull(c_current_cdemo_sk#11))
                               :                    :                    :  :  :                 +- InputAdapter [#15, #11, #13]
@@ -37,14 +37,14 @@ AdaptiveSparkPlan isFinalPlan=true
                               :                    :                    :  :  +- NativeSort [ss_customer_sk#18 ASC NULLS FIRST], false
                               :                    :                    :  :     +- InputAdapter
                               :                    :                    :  :        +- AQEShuffleRead coalesced
-                              :                    :                    :  :           +- ShuffleQueryStage 11
+                              :                    :                    :  :           +- ShuffleQueryStage X
                               :                    :                    :  :              +- NativeShuffleExchange hashpartitioning(ss_customer_sk#18, 100), ENSURE_REQUIREMENTS, [plan_id=5]
                               :                    :                    :  :                 +- NativeProject [ss_customer_sk#18]
                               :                    :                    :  :                    +- NativeSortMergeJoin [ss_sold_date_sk#19], [d_date_sk#20], Inner
                               :                    :                    :  :                       :- NativeSort [ss_sold_date_sk#19 ASC NULLS FIRST], false
                               :                    :                    :  :                       :  +- InputAdapter
                               :                    :                    :  :                       :     +- AQEShuffleRead coalesced
-                              :                    :                    :  :                       :        +- ShuffleQueryStage 1
+                              :                    :                    :  :                       :        +- ShuffleQueryStage X
                               :                    :                    :  :                       :           +- NativeShuffleExchange hashpartitioning(ss_sold_date_sk#19, 100), ENSURE_REQUIREMENTS, [plan_id=6]
                               :                    :                    :  :                       :              +- NativeFilter isnotnull(ss_sold_date_sk#19)
                               :                    :                    :  :                       :                 +- InputAdapter [#19, #18]
@@ -52,23 +52,23 @@ AdaptiveSparkPlan isFinalPlan=true
                               :                    :                    :  :                       +- NativeSort [d_date_sk#20 ASC NULLS FIRST], false
                               :                    :                    :  :                          +- InputAdapter
                               :                    :                    :  :                             +- AQEShuffleRead coalesced
-                              :                    :                    :  :                                +- ShuffleQueryStage 2
+                              :                    :                    :  :                                +- ShuffleQueryStage X
                               :                    :                    :  :                                   +- NativeShuffleExchange hashpartitioning(d_date_sk#20, 100), ENSURE_REQUIREMENTS, [plan_id=7]
                               :                    :                    :  :                                      +- NativeProject [d_date_sk#20]
                               :                    :                    :  :                                         +- NativeFilter (((((isnotnull(d_year#21) AND isnotnull(d_moy#22)) AND (d_year#21 = 2001)) AND (d_moy#22 >= 4)) AND (d_moy#22 <= 6)) AND isnotnull(d_date_sk#20))
                               :                    :                    :  :                                            +- InputAdapter [#20, #21, #22]
-                              :                    :                    :  :                                               +- NativeParquetScan  (FileScan parquet [d_date_sk#20,d_year#21,d_moy#22] Batched: true, DataFilters: [isnotnull(d_year#21), isnotnull(d_moy#22), (d_year#21 = 2001), (d_moy#22 >= 4), (d_m..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(d_year), IsNotNull(d_moy), EqualTo(d_year,2001), GreaterThanOrEqual(d_moy,4), LessThan..., ReadSchema: struct<d_date_sk:int,d_year:int,d_moy:int>)
+                              :                    :                    :  :                                               +- NativeParquetScan  (FileScan parquet [d_date_sk#20,d_year#21,d_moy#22] Batched: true, DataFilters: [isnotnull(d_year#21), isnotnull(d_moy#22), (d_year#21 = 2001), (d_moy#22 >= 4), (d_moy#22 <..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(d_year), IsNotNull(d_moy), EqualTo(d_year,2001), GreaterThanOrEqual(d_moy,4), LessThan..., ReadSchema: struct<d_date_sk:int,d_year:int,d_moy:int>)
                               :                    :                    :  +- NativeSort [ws_bill_customer_sk#17 ASC NULLS FIRST], false
                               :                    :                    :     +- InputAdapter
                               :                    :                    :        +- AQEShuffleRead coalesced
-                              :                    :                    :           +- ShuffleQueryStage 12
+                              :                    :                    :           +- ShuffleQueryStage X
                               :                    :                    :              +- NativeShuffleExchange hashpartitioning(ws_bill_customer_sk#17, 100), ENSURE_REQUIREMENTS, [plan_id=8]
                               :                    :                    :                 +- NativeProject [ws_bill_customer_sk#17]
                               :                    :                    :                    +- NativeSortMergeJoin [ws_sold_date_sk#23], [d_date_sk#24], Inner
                               :                    :                    :                       :- NativeSort [ws_sold_date_sk#23 ASC NULLS FIRST], false
                               :                    :                    :                       :  +- InputAdapter
                               :                    :                    :                       :     +- AQEShuffleRead coalesced
-                              :                    :                    :                       :        +- ShuffleQueryStage 3
+                              :                    :                    :                       :        +- ShuffleQueryStage X
                               :                    :                    :                       :           +- NativeShuffleExchange hashpartitioning(ws_sold_date_sk#23, 100), ENSURE_REQUIREMENTS, [plan_id=9]
                               :                    :                    :                       :              +- NativeFilter isnotnull(ws_sold_date_sk#23)
                               :                    :                    :                       :                 +- InputAdapter [#23, #17]
@@ -77,19 +77,19 @@ AdaptiveSparkPlan isFinalPlan=true
                               :                    :                    :                          +- InputAdapter
                               :                    :                    :                             +- InputAdapter [#24]
                               :                    :                    :                                +- AQEShuffleRead coalesced
-                              :                    :                    :                                   +- ShuffleQueryStage 5
+                              :                    :                    :                                   +- ShuffleQueryStage X
                               :                    :                    :                                      +- ReusedExchange [d_date_sk#24], NativeShuffleExchange hashpartitioning(d_date_sk#20, 100), ENSURE_REQUIREMENTS, [plan_id=7]
                               :                    :                    +- NativeSort [cs_ship_customer_sk#16 ASC NULLS FIRST], false
                               :                    :                       +- InputAdapter
                               :                    :                          +- AQEShuffleRead coalesced
-                              :                    :                             +- ShuffleQueryStage 13
+                              :                    :                             +- ShuffleQueryStage X
                               :                    :                                +- NativeShuffleExchange hashpartitioning(cs_ship_customer_sk#16, 100), ENSURE_REQUIREMENTS, [plan_id=10]
                               :                    :                                   +- NativeProject [cs_ship_customer_sk#16]
                               :                    :                                      +- NativeSortMergeJoin [cs_sold_date_sk#25], [d_date_sk#26], Inner
                               :                    :                                         :- NativeSort [cs_sold_date_sk#25 ASC NULLS FIRST], false
                               :                    :                                         :  +- InputAdapter
                               :                    :                                         :     +- AQEShuffleRead coalesced
-                              :                    :                                         :        +- ShuffleQueryStage 6
+                              :                    :                                         :        +- ShuffleQueryStage X
                               :                    :                                         :           +- NativeShuffleExchange hashpartitioning(cs_sold_date_sk#25, 100), ENSURE_REQUIREMENTS, [plan_id=11]
                               :                    :                                         :              +- NativeFilter isnotnull(cs_sold_date_sk#25)
                               :                    :                                         :                 +- InputAdapter [#25, #16]
@@ -98,12 +98,12 @@ AdaptiveSparkPlan isFinalPlan=true
                               :                    :                                            +- InputAdapter
                               :                    :                                               +- InputAdapter [#26]
                               :                    :                                                  +- AQEShuffleRead coalesced
-                              :                    :                                                     +- ShuffleQueryStage 8
+                              :                    :                                                     +- ShuffleQueryStage X
                               :                    :                                                        +- ReusedExchange [d_date_sk#26], NativeShuffleExchange hashpartitioning(d_date_sk#20, 100), ENSURE_REQUIREMENTS, [plan_id=7]
                               :                    +- NativeSort [ca_address_sk#14 ASC NULLS FIRST], false
                               :                       +- InputAdapter
                               :                          +- AQEShuffleRead coalesced
-                              :                             +- ShuffleQueryStage 9
+                              :                             +- ShuffleQueryStage X
                               :                                +- NativeShuffleExchange hashpartitioning(ca_address_sk#14, 100), ENSURE_REQUIREMENTS, [plan_id=12]
                               :                                   +- NativeProject [ca_address_sk#14]
                               :                                      +- NativeFilter (ca_state#27 IN (KY,GA,NM) AND isnotnull(ca_address_sk#14))
@@ -112,7 +112,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               +- NativeSort [cd_demo_sk#12 ASC NULLS FIRST], false
                                  +- InputAdapter
                                     +- AQEShuffleRead coalesced
-                                       +- ShuffleQueryStage 10
+                                       +- ShuffleQueryStage X
                                           +- NativeShuffleExchange hashpartitioning(cd_demo_sk#12, 100), ENSURE_REQUIREMENTS, [plan_id=13]
                                              +- NativeFilter isnotnull(cd_demo_sk#12)
                                                 +- InputAdapter [#12, #1, #2, #3, #4, #5]
@@ -150,7 +150,7 @@ AdaptiveSparkPlan isFinalPlan=true
                   :           :           :  :                 +- Exchange hashpartitioning(d_date_sk#20, 100), ENSURE_REQUIREMENTS, [plan_id=20]
                   :           :           :  :                    +- Project [d_date_sk#20]
                   :           :           :  :                       +- Filter (((((isnotnull(d_year#21) AND isnotnull(d_moy#22)) AND (d_year#21 = 2001)) AND (d_moy#22 >= 4)) AND (d_moy#22 <= 6)) AND isnotnull(d_date_sk#20))
-                  :           :           :  :                          +- FileScan parquet [d_date_sk#20,d_year#21,d_moy#22] Batched: true, DataFilters: [isnotnull(d_year#21), isnotnull(d_moy#22), (d_year#21 = 2001), (d_moy#22 >= 4), (d_m..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(d_year), IsNotNull(d_moy), EqualTo(d_year,2001), GreaterThanOrEqual(d_moy,4), LessThan..., ReadSchema: struct<d_date_sk:int,d_year:int,d_moy:int>
+                  :           :           :  :                          +- FileScan parquet [d_date_sk#20,d_year#21,d_moy#22] Batched: true, DataFilters: [isnotnull(d_year#21), isnotnull(d_moy#22), (d_year#21 = 2001), (d_moy#22 >= 4), (d_moy#22 <..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(d_year), IsNotNull(d_moy), EqualTo(d_year,2001), GreaterThanOrEqual(d_moy,4), LessThan..., ReadSchema: struct<d_date_sk:int,d_year:int,d_moy:int>
                   :           :           :  +- Sort [ws_bill_customer_sk#17 ASC NULLS FIRST], false, 0
                   :           :           :     +- Exchange hashpartitioning(ws_bill_customer_sk#17, 100), ENSURE_REQUIREMENTS, [plan_id=21]
                   :           :           :        +- Project [ws_bill_customer_sk#17]

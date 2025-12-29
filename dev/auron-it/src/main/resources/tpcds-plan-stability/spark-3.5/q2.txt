@@ -3,7 +3,7 @@ AdaptiveSparkPlan isFinalPlan=true
    NativeSort [d_week_seq1#1 ASC NULLS FIRST], true
    +- InputAdapter
       +- AQEShuffleRead coalesced
-         +- ShuffleQueryStage 12
+         +- ShuffleQueryStage X
             +- NativeShuffleExchange rangepartitioning(d_week_seq1#1 ASC NULLS FIRST, 100), ENSURE_REQUIREMENTS, [plan_id=1]
                +- ConvertToNative
                   +- *(1) Project [d_week_seq1#1, round((sun_sales1#2 / sun_sales2#3), 2) AS round((sun_sales1 / sun_sales2), 2)#4, round((mon_sales1#5 / mon_sales2#6), 2) AS round((mon_sales1 / mon_sales2), 2)#7, round((tue_sales1#8 / tue_sales2#9), 2) AS round((tue_sales1 / tue_sales2), 2)#10, round((wed_sales1#11 / wed_sales2#12), 2) AS round((wed_sales1 / wed_sales2), 2)#13, round((thu_sales1#14 / thu_sales2#15), 2) AS round((thu_sales1 / thu_sales2), 2)#16, round((fri_sales1#17 / fri_sales2#18), 2) AS round((fri_sales1 / fri_sales2), 2)#19, round((sat_sales1#20 / sat_sales2#21), 2) AS round((sat_sales1 / sat_sales2), 2)#22]
@@ -15,7 +15,7 @@ AdaptiveSparkPlan isFinalPlan=true
                         :     :     +- NativeHashAggregate HashAgg, ArrayBuffer(d_week_seq#24), [d_week_seq#24], [sum(UnscaledValue(CASE WHEN (d_day_name#33 = Sunday) THEN sales_price#34 END)), sum(UnscaledValue(CASE WHEN (d_day_name#33 = Monday) THEN sales_price#34 END)), sum(UnscaledValue(CASE WHEN (d_day_name#33 = Tuesday) THEN sales_price#34 END)), sum(UnscaledValue(CASE WHEN (d_day_name#33 = Wednesday) THEN sales_price#34 END)), sum(UnscaledValue(CASE WHEN (d_day_name#33 = Thursday) THEN sales_price#34 END)), sum(UnscaledValue(CASE WHEN (d_day_name#33 = Friday) THEN sales_price#34 END)), sum(UnscaledValue(CASE WHEN (d_day_name#33 = Saturday) THEN sales_price#34 END))], [sum(UnscaledValue(CASE WHEN (d_day_name#33 = Sunday) THEN sales_price#34 END))#35, sum(UnscaledValue(CASE WHEN (d_day_name#33 = Monday) THEN sales_price#34 END))#36, sum(UnscaledValue(CASE WHEN (d_day_name#33 = Tuesday) THEN sales_price#34 END))#37, sum(UnscaledValue(CASE WHEN (d_day_name#33 = Wednesday) THEN sales_price#34 END))#38, sum(UnscaledValue(CASE WHEN (d_day_name#33 = Thursday) THEN sales_price#34 END))#39, sum(UnscaledValue(CASE WHEN (d_day_name#33 = Friday) THEN sales_price#34 END))#40, sum(UnscaledValue(CASE WHEN (d_day_name#33 = Saturday) THEN sales_price#34 END))#41], 1
                         :     :        +- InputAdapter
                         :     :           +- AQEShuffleRead coalesced
-                        :     :              +- ShuffleQueryStage 8
+                        :     :              +- ShuffleQueryStage X
                         :     :                 +- NativeShuffleExchange hashpartitioning(d_week_seq#24, 100), ENSURE_REQUIREMENTS, [plan_id=2]
                         :     :                    +- NativeHashAggregate HashAgg, [d_week_seq#24], [partial_sum(_c1#42), partial_sum(_c2#43), partial_sum(_c3#44), partial_sum(_c4#45), partial_sum(_c5#46), partial_sum(_c6#47), partial_sum(_c7#48)], [sum#49, sum#50, sum#51, sum#52, sum#53, sum#54, sum#55], 0
                         :     :                       +- NativeProject [d_week_seq#24 AS d_week_seq#24, UnscaledValue(CASE WHEN (d_day_name#33 = Sunday) THEN sales_price#34 END) AS _c1#42, UnscaledValue(CASE WHEN (d_day_name#33 = Monday) THEN sales_price#34 END) AS _c2#43, UnscaledValue(CASE WHEN (d_day_name#33 = Tuesday) THEN sales_price#34 END) AS _c3#44, UnscaledValue(CASE WHEN (d_day_name#33 = Wednesday) THEN sales_price#34 END) AS _c4#45, UnscaledValue(CASE WHEN (d_day_name#33 = Thursday) THEN sales_price#34 END) AS _c5#46, UnscaledValue(CASE WHEN (d_day_name#33 = Friday) THEN sales_price#34 END) AS _c6#47, UnscaledValue(CASE WHEN (d_day_name#33 = Saturday) THEN sales_price#34 END) AS _c7#48]
@@ -24,7 +24,7 @@ AdaptiveSparkPlan isFinalPlan=true
                         :     :                                :- NativeSort [sold_date_sk#56 ASC NULLS FIRST], false
                         :     :                                :  +- InputAdapter
                         :     :                                :     +- AQEShuffleRead coalesced
-                        :     :                                :        +- ShuffleQueryStage 0
+                        :     :                                :        +- ShuffleQueryStage X
                         :     :                                :           +- NativeShuffleExchange hashpartitioning(sold_date_sk#56, 100), ENSURE_REQUIREMENTS, [plan_id=3]
                         :     :                                :              +- InputAdapter [#56, #34]
                         :     :                                :                 +- NativeUnion [sold_date_sk#56, sales_price#34]
@@ -39,7 +39,7 @@ AdaptiveSparkPlan isFinalPlan=true
                         :     :                                +- NativeSort [d_date_sk#57 ASC NULLS FIRST], false
                         :     :                                   +- InputAdapter
                         :     :                                      +- AQEShuffleRead coalesced
-                        :     :                                         +- ShuffleQueryStage 1
+                        :     :                                         +- ShuffleQueryStage X
                         :     :                                            +- NativeShuffleExchange hashpartitioning(d_date_sk#57, 100), ENSURE_REQUIREMENTS, [plan_id=4]
                         :     :                                               +- NativeFilter (isnotnull(d_date_sk#57) AND isnotnull(d_week_seq#24))
                         :     :                                                  +- InputAdapter [#57, #24, #33]
@@ -47,7 +47,7 @@ AdaptiveSparkPlan isFinalPlan=true
                         :     +- NativeSort [d_week_seq#32 ASC NULLS FIRST], false
                         :        +- InputAdapter
                         :           +- AQEShuffleRead coalesced
-                        :              +- ShuffleQueryStage 2
+                        :              +- ShuffleQueryStage X
                         :                 +- NativeShuffleExchange hashpartitioning(d_week_seq#32, 100), ENSURE_REQUIREMENTS, [plan_id=5]
                         :                    +- NativeProject [d_week_seq#32]
                         :                       +- NativeFilter ((isnotnull(d_year#64) AND (d_year#64 = 2001)) AND isnotnull(d_week_seq#32))
@@ -56,7 +56,7 @@ AdaptiveSparkPlan isFinalPlan=true
                         +- NativeSort [(d_week_seq2#23 - 53) ASC NULLS FIRST], false
                            +- InputAdapter
                               +- AQEShuffleRead coalesced
-                                 +- ShuffleQueryStage 11
+                                 +- ShuffleQueryStage X
                                     +- NativeShuffleExchange hashpartitioning((d_week_seq2#23 - 53), 100), ENSURE_REQUIREMENTS, [plan_id=6]
                                        +- NativeProject [d_week_seq#65 AS d_week_seq2#23, sun_sales#66 AS sun_sales2#3, mon_sales#67 AS mon_sales2#6, tue_sales#68 AS tue_sales2#9, wed_sales#69 AS wed_sales2#12, thu_sales#70 AS thu_sales2#15, fri_sales#71 AS fri_sales2#18, sat_sales#72 AS sat_sales2#21]
                                           +- NativeSortMergeJoin [d_week_seq#65], [d_week_seq#73], Inner
@@ -66,12 +66,12 @@ AdaptiveSparkPlan isFinalPlan=true
                                              :        +- InputAdapter
                                              :           +- InputAdapter [#65, #75, #76, #77, #78, #79, #80, #81]
                                              :              +- AQEShuffleRead coalesced
-                                             :                 +- ShuffleQueryStage 10
+                                             :                 +- ShuffleQueryStage X
                                              :                    +- ReusedExchange [d_week_seq#65, sum#82, sum#83, sum#84, sum#85, sum#86, sum#87, sum#88], NativeShuffleExchange hashpartitioning(d_week_seq#24, 100), ENSURE_REQUIREMENTS, [plan_id=2]
                                              +- NativeSort [d_week_seq#73 ASC NULLS FIRST], false
                                                 +- InputAdapter
                                                    +- AQEShuffleRead coalesced
-                                                      +- ShuffleQueryStage 7
+                                                      +- ShuffleQueryStage X
                                                          +- NativeShuffleExchange hashpartitioning(d_week_seq#73, 100), ENSURE_REQUIREMENTS, [plan_id=7]
                                                             +- NativeProject [d_week_seq#73]
                                                                +- NativeFilter ((isnotnull(d_year#89) AND (d_year#89 = 2002)) AND isnotnull(d_week_seq#73))

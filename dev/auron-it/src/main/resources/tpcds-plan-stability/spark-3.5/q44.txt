@@ -6,14 +6,14 @@ AdaptiveSparkPlan isFinalPlan=true
          :- NativeSort [item_sk#6 ASC NULLS FIRST], false
          :  +- InputAdapter
          :     +- AQEShuffleRead coalesced
-         :        +- ShuffleQueryStage 9
+         :        +- ShuffleQueryStage X
          :           +- NativeShuffleExchange hashpartitioning(item_sk#6, 100), ENSURE_REQUIREMENTS, [plan_id=1]
          :              +- NativeProject [rnk#1, item_sk#6, i_product_name#2]
          :                 +- NativeSortMergeJoin [item_sk#8], [i_item_sk#9], Inner
          :                    :- NativeSort [item_sk#8 ASC NULLS FIRST], false
          :                    :  +- InputAdapter
          :                    :     +- AQEShuffleRead coalesced
-         :                    :        +- ShuffleQueryStage 8
+         :                    :        +- ShuffleQueryStage X
          :                    :           +- NativeShuffleExchange hashpartitioning(item_sk#8, 100), ENSURE_REQUIREMENTS, [plan_id=2]
          :                    :              +- NativeProject [item_sk#8, rnk#1, item_sk#6]
          :                    :                 +- NativeSortMergeJoin [rnk#1], [rnk#10], Inner
@@ -23,7 +23,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :                    :                    :        +- NativeWindow [rank(rank_col#11) windowspecdefinition(rank_col#11 ASC NULLS FIRST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS rnk#1], [rank_col#11 ASC NULLS FIRST]
          :                    :                    :           +- NativeWindowGroupLimit [rank(rank_col#11) windowspecdefinition(rank_col#11 ASC NULLS FIRST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS __window_expression__#12], [rank_col#11 ASC NULLS FIRST], 10
          :                    :                    :              +- NativeSort [rank_col#11 ASC NULLS FIRST], false
-         :                    :                    :                 +- ShuffleQueryStage 6
+         :                    :                    :                 +- ShuffleQueryStage X
          :                    :                    :                    +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=3]
          :                    :                    :                       +- NativeWindowGroupLimit [rank(rank_col#11) windowspecdefinition(rank_col#11 ASC NULLS FIRST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS __window_expression__#13], [rank_col#11 ASC NULLS FIRST], 10
          :                    :                    :                          +- NativeSort [rank_col#11 ASC NULLS FIRST], false
@@ -35,7 +35,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                                                                              +- NativeHashAggregate HashAgg, ArrayBuffer(ss_store_sk#19), [ss_store_sk#19], [avg(UnscaledValue(ss_net_profit#16))], [avg(UnscaledValue(ss_net_profit#16))#17], 1
                                                                                                 +- InputAdapter
                                                                                                    +- AQEShuffleRead coalesced
-                                                                                                      +- ShuffleQueryStage 0
+                                                                                                      +- ShuffleQueryStage X
                                                                                                          +- NativeShuffleExchange hashpartitioning(ss_store_sk#19, 100), ENSURE_REQUIREMENTS, [plan_id=4]
                                                                                                             +- NativeHashAggregate HashAgg, [ss_store_sk#19], [partial_avg(_c1#20)], [sum#21, count#22], 0
                                                                                                                +- NativeProject [ss_store_sk#19 AS ss_store_sk#19, UnscaledValue(ss_net_profit#16) AS _c1#20]
@@ -54,7 +54,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :                    :                    :                                   +- NativeHashAggregate HashAgg, ArrayBuffer(ss_item_sk#26), [ss_item_sk#26], [avg(UnscaledValue(ss_net_profit#27))], [avg(UnscaledValue(ss_net_profit#27))#28], 1
          :                    :                    :                                      +- InputAdapter
          :                    :                    :                                         +- AQEShuffleRead coalesced
-         :                    :                    :                                            +- ShuffleQueryStage 0
+         :                    :                    :                                            +- ShuffleQueryStage X
          :                    :                    :                                               +- NativeShuffleExchange hashpartitioning(ss_item_sk#26, 100), ENSURE_REQUIREMENTS, [plan_id=6]
          :                    :                    :                                                  +- NativeHashAggregate HashAgg, [ss_item_sk#26], [partial_avg(_c1#29)], [sum#30, count#31], 0
          :                    :                    :                                                     +- NativeProject [ss_item_sk#26 AS ss_item_sk#26, UnscaledValue(ss_net_profit#27) AS _c1#29]
@@ -68,7 +68,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :                    :                             +- NativeWindow [rank(rank_col#33) windowspecdefinition(rank_col#33 DESC NULLS LAST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS rnk#10], [rank_col#33 DESC NULLS LAST]
          :                    :                                +- NativeWindowGroupLimit [rank(rank_col#33) windowspecdefinition(rank_col#33 DESC NULLS LAST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS __window_expression__#34], [rank_col#33 DESC NULLS LAST], 10
          :                    :                                   +- NativeSort [rank_col#33 DESC NULLS LAST], false
-         :                    :                                      +- ShuffleQueryStage 7
+         :                    :                                      +- ShuffleQueryStage X
          :                    :                                         +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=7]
          :                    :                                            +- NativeWindowGroupLimit [rank(rank_col#33) windowspecdefinition(rank_col#33 DESC NULLS LAST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS __window_expression__#35], [rank_col#33 DESC NULLS LAST], 10
          :                    :                                               +- NativeSort [rank_col#33 DESC NULLS LAST], false
@@ -79,12 +79,12 @@ AdaptiveSparkPlan isFinalPlan=true
          :                    :                                                           +- InputAdapter
          :                    :                                                              +- InputAdapter [#36, #39, #40]
          :                    :                                                                 +- AQEShuffleRead coalesced
-         :                    :                                                                    +- ShuffleQueryStage 2
+         :                    :                                                                    +- ShuffleQueryStage X
          :                    :                                                                       +- ReusedExchange [ss_item_sk#36, sum#39, count#41], NativeShuffleExchange hashpartitioning(ss_item_sk#26, 100), ENSURE_REQUIREMENTS, [plan_id=6]
          :                    +- NativeSort [i_item_sk#9 ASC NULLS FIRST], false
          :                       +- InputAdapter
          :                          +- AQEShuffleRead coalesced
-         :                             +- ShuffleQueryStage 3
+         :                             +- ShuffleQueryStage X
          :                                +- NativeShuffleExchange hashpartitioning(i_item_sk#9, 100), ENSURE_REQUIREMENTS, [plan_id=8]
          :                                   +- NativeFilter isnotnull(i_item_sk#9)
          :                                      +- InputAdapter [#9, #2]
@@ -93,7 +93,7 @@ AdaptiveSparkPlan isFinalPlan=true
             +- InputAdapter
                +- InputAdapter [#7, #4]
                   +- AQEShuffleRead coalesced
-                     +- ShuffleQueryStage 5
+                     +- ShuffleQueryStage X
                         +- ReusedExchange [i_item_sk#7, i_product_name#4], NativeShuffleExchange hashpartitioning(i_item_sk#9, 100), ENSURE_REQUIREMENTS, [plan_id=8]
 +- == Initial Plan ==
    TakeOrderedAndProject(limit=100, orderBy=[rnk#1 ASC NULLS FIRST], output=[rnk#1,best_performing#3,worst_performing#5])
@@ -124,7 +124,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                                                         +- NativeHashAggregate HashAgg, ArrayBuffer(ss_store_sk#19), [ss_store_sk#19], [avg(UnscaledValue(ss_net_profit#16))], [avg(UnscaledValue(ss_net_profit#16))#17], 1
                                                                            +- InputAdapter
                                                                               +- AQEShuffleRead coalesced
-                                                                                 +- ShuffleQueryStage 0
+                                                                                 +- ShuffleQueryStage X
                                                                                     +- NativeShuffleExchange hashpartitioning(ss_store_sk#19, 100), ENSURE_REQUIREMENTS, [plan_id=4]
                                                                                        +- NativeHashAggregate HashAgg, [ss_store_sk#19], [partial_avg(_c1#20)], [sum#21, count#22], 0
                                                                                           +- NativeProject [ss_store_sk#19 AS ss_store_sk#19, UnscaledValue(ss_net_profit#16) AS _c1#20]

@@ -5,7 +5,7 @@ AdaptiveSparkPlan isFinalPlan=true
       +- NativeHashAggregate HashAgg, ArrayBuffer(d_year#1, i_brand#5, i_brand_id#4), [d_year#1, i_brand#5, i_brand_id#4], [sum(UnscaledValue(ss_ext_sales_price#7))], [sum(UnscaledValue(ss_ext_sales_price#7))#8], 3
          +- InputAdapter
             +- AQEShuffleRead coalesced
-               +- ShuffleQueryStage 4
+               +- ShuffleQueryStage X
                   +- NativeShuffleExchange hashpartitioning(d_year#1, i_brand#5, i_brand_id#4, 100), ENSURE_REQUIREMENTS, [plan_id=1]
                      +- NativeHashAggregate HashAgg, [d_year#1, i_brand#5, i_brand_id#4], [partial_sum(_c3#9)], [sum#10], 0
                         +- NativeProject [d_year#1 AS d_year#1, i_brand#5 AS i_brand#5, i_brand_id#4 AS i_brand_id#4, UnscaledValue(ss_ext_sales_price#7) AS _c3#9]
@@ -14,14 +14,14 @@ AdaptiveSparkPlan isFinalPlan=true
                                  :- NativeSort [ss_item_sk#11 ASC NULLS FIRST], false
                                  :  +- InputAdapter
                                  :     +- AQEShuffleRead coalesced
-                                 :        +- ShuffleQueryStage 3
+                                 :        +- ShuffleQueryStage X
                                  :           +- NativeShuffleExchange hashpartitioning(ss_item_sk#11, 100), ENSURE_REQUIREMENTS, [plan_id=2]
                                  :              +- NativeProject [d_year#1, ss_item_sk#11, ss_ext_sales_price#7]
                                  :                 +- NativeSortMergeJoin [d_date_sk#13], [ss_sold_date_sk#14], Inner
                                  :                    :- NativeSort [d_date_sk#13 ASC NULLS FIRST], false
                                  :                    :  +- InputAdapter
                                  :                    :     +- AQEShuffleRead coalesced
-                                 :                    :        +- ShuffleQueryStage 0
+                                 :                    :        +- ShuffleQueryStage X
                                  :                    :           +- NativeShuffleExchange hashpartitioning(d_date_sk#13, 100), ENSURE_REQUIREMENTS, [plan_id=3]
                                  :                    :              +- NativeProject [d_date_sk#13, d_year#1]
                                  :                    :                 +- NativeFilter ((isnotnull(d_moy#15) AND (d_moy#15 = 11)) AND isnotnull(d_date_sk#13))
@@ -30,7 +30,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                  :                    +- NativeSort [ss_sold_date_sk#14 ASC NULLS FIRST], false
                                  :                       +- InputAdapter
                                  :                          +- AQEShuffleRead coalesced
-                                 :                             +- ShuffleQueryStage 1
+                                 :                             +- ShuffleQueryStage X
                                  :                                +- NativeShuffleExchange hashpartitioning(ss_sold_date_sk#14, 100), ENSURE_REQUIREMENTS, [plan_id=4]
                                  :                                   +- NativeFilter (isnotnull(ss_sold_date_sk#14) AND isnotnull(ss_item_sk#11))
                                  :                                      +- InputAdapter [#14, #11, #7]
@@ -38,7 +38,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                  +- NativeSort [i_item_sk#12 ASC NULLS FIRST], false
                                     +- InputAdapter
                                        +- AQEShuffleRead coalesced
-                                          +- ShuffleQueryStage 2
+                                          +- ShuffleQueryStage X
                                              +- NativeShuffleExchange hashpartitioning(i_item_sk#12, 100), ENSURE_REQUIREMENTS, [plan_id=5]
                                                 +- NativeProject [i_item_sk#12, i_brand_id#4, i_brand#5]
                                                    +- NativeFilter ((isnotnull(i_manufact_id#16) AND (i_manufact_id#16 = 128)) AND isnotnull(i_item_sk#12))

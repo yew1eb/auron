@@ -5,7 +5,7 @@ AdaptiveSparkPlan isFinalPlan=true
       +- NativeHashAggregate HashAgg, List(i_product_name#1), [i_product_name#1], 1
          +- InputAdapter
             +- AQEShuffleRead coalesced
-               +- ShuffleQueryStage 2
+               +- ShuffleQueryStage X
                   +- NativeShuffleExchange hashpartitioning(i_product_name#1, 100), ENSURE_REQUIREMENTS, [plan_id=1]
                      +- NativeHashAggregate HashAgg, [i_product_name#1], 0
                         +- NativeProject [i_product_name#1]
@@ -13,12 +13,12 @@ AdaptiveSparkPlan isFinalPlan=true
                               :- NativeSort [i_manufact#2 ASC NULLS FIRST], false
                               :  +- InputAdapter
                               :     +- AQEShuffleRead coalesced
-                              :        +- ShuffleQueryStage 0
+                              :        +- ShuffleQueryStage X
                               :           +- NativeShuffleExchange hashpartitioning(i_manufact#2, 100), ENSURE_REQUIREMENTS, [plan_id=2]
                               :              +- NativeProject [i_manufact#2, i_product_name#1]
                               :                 +- NativeFilter (((isnotnull(i_manufact_id#4) AND (i_manufact_id#4 >= 738)) AND (i_manufact_id#4 <= 778)) AND isnotnull(i_manufact#2))
                               :                    +- InputAdapter [#4, #2, #1]
-                              :                       +- NativeParquetScan  (FileScan parquet [i_manufact_id#4,i_manufact#2,i_product_name#1] Batched: true, DataFilters: [isnotnull(i_manufact_id#4), (i_manufact_id#4 >= 738), (i_manufact_id#4 <= 778), isno..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(i_manufact_id), GreaterThanOrEqual(i_manufact_id,738), LessThanOrEqual(i_manufact_id,7..., ReadSchema: struct<i_manufact_id:int,i_manufact:string,i_product_name:string>)
+                              :                       +- NativeParquetScan  (FileScan parquet [i_manufact_id#4,i_manufact#2,i_product_name#1] Batched: true, DataFilters: [isnotnull(i_manufact_id#4), (i_manufact_id#4 >= 738), (i_manufact_id#4 <= 778), isnotnull(..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(i_manufact_id), GreaterThanOrEqual(i_manufact_id,738), LessThanOrEqual(i_manufact_id,7..., ReadSchema: struct<i_manufact_id:int,i_manufact:string,i_product_name:string>)
                               +- NativeSort [i_manufact#3 ASC NULLS FIRST], false
                                  +- NativeProject [i_manufact#3]
                                     +- NativeFilter (item_cnt#5 > 0)
@@ -26,7 +26,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                           +- NativeHashAggregate HashAgg, List(i_manufact#3), [i_manufact#3], [count(1)], [count(1)#6], 1
                                              +- InputAdapter
                                                 +- AQEShuffleRead coalesced
-                                                   +- ShuffleQueryStage 1
+                                                   +- ShuffleQueryStage X
                                                       +- NativeShuffleExchange hashpartitioning(i_manufact#3, 100), ENSURE_REQUIREMENTS, [plan_id=3]
                                                          +- NativeHashAggregate HashAgg, [i_manufact#3], [partial_count(1)], [count#7], 0
                                                             +- NativeProject [i_manufact#3]
@@ -44,7 +44,7 @@ AdaptiveSparkPlan isFinalPlan=true
                   :  +- Exchange hashpartitioning(i_manufact#2, 100), ENSURE_REQUIREMENTS, [plan_id=5]
                   :     +- Project [i_manufact#2, i_product_name#1]
                   :        +- Filter (((isnotnull(i_manufact_id#4) AND (i_manufact_id#4 >= 738)) AND (i_manufact_id#4 <= 778)) AND isnotnull(i_manufact#2))
-                  :           +- FileScan parquet [i_manufact_id#4,i_manufact#2,i_product_name#1] Batched: true, DataFilters: [isnotnull(i_manufact_id#4), (i_manufact_id#4 >= 738), (i_manufact_id#4 <= 778), isno..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(i_manufact_id), GreaterThanOrEqual(i_manufact_id,738), LessThanOrEqual(i_manufact_id,7..., ReadSchema: struct<i_manufact_id:int,i_manufact:string,i_product_name:string>
+                  :           +- FileScan parquet [i_manufact_id#4,i_manufact#2,i_product_name#1] Batched: true, DataFilters: [isnotnull(i_manufact_id#4), (i_manufact_id#4 >= 738), (i_manufact_id#4 <= 778), isnotnull(..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(i_manufact_id), GreaterThanOrEqual(i_manufact_id,738), LessThanOrEqual(i_manufact_id,7..., ReadSchema: struct<i_manufact_id:int,i_manufact:string,i_product_name:string>
                   +- Sort [i_manufact#3 ASC NULLS FIRST], false, 0
                      +- Project [i_manufact#3]
                         +- Filter (item_cnt#5 > 0)

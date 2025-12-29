@@ -16,10 +16,11 @@
  */
 package org.apache.auron.integration
 
-import org.apache.spark.sql.QueryTest
-import org.apache.spark.sql.test.SharedSparkSession
+import org.apache.spark.sql.{QueryTest, SparkSession}
 
-class MainTest extends QueryTest with SharedSparkSession {
+class MainTest extends QueryTest {
+
+  override protected def spark: SparkSession = null
 
   protected val tpcdsDataPath: String =
     sys.env.getOrElse("SPARK_TPCDS_DATA", "/Users/yew1eb/workspaces/tpcds-validator/tpcds_1g")
@@ -76,9 +77,8 @@ class MainTest extends QueryTest with SharedSparkSession {
       "tpcds",
       "--data-location",
       tpcdsDataPath,
-      "--query-filter",
-      "q1,q8",
-      "--regen-golden")
+      "--regen-golden",
+      "--disable-result-check")
     Main.main(args)
   }
 
@@ -96,14 +96,22 @@ class MainTest extends QueryTest with SharedSparkSession {
       "--data-location",
       tpcdsDataPath,
       "--query-filter",
-      "q17,q22,q27")
+      "q1,q17,q22,q27",
+      "--plan-check")
     Main.main(args)
   }
 
-  test("q17") {
+  test("q1") {
     assume(tpcdsDataPath.nonEmpty, "Skip: SPARK_TPCDS_DATA env not set")
     val args =
-      Array[String]("--type", "tpcds", "--data-location", tpcdsDataPath, "--query-filter", "q17")
+      Array[String](
+        "--type",
+        "tpcds",
+        "--data-location",
+        tpcdsDataPath,
+        "--query-filter",
+        "q1",
+        "--plan-check")
     Main.main(args)
   }
 }

@@ -10,14 +10,14 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :     :- NativeSort [customer_id#2 ASC NULLS FIRST], false
          :     :     :  +- InputAdapter
          :     :     :     +- AQEShuffleRead coalesced
-         :     :     :        +- ShuffleQueryStage 29
+         :     :     :        +- ShuffleQueryStage X
          :     :     :           +- NativeShuffleExchange hashpartitioning(customer_id#2, 100), ENSURE_REQUIREMENTS, [plan_id=1]
          :     :     :              +- NativeFilter (isnotnull(year_total#6) AND (year_total#6 > 0.00))
          :     :     :                 +- NativeProject [c_customer_id#10 AS customer_id#2, MakeDecimal(sum(UnscaledValue((ss_ext_list_price#11 - ss_ext_discount_amt#12)))#13,18,2) AS year_total#6]
          :     :     :                    +- NativeHashAggregate HashAgg, Vector(c_customer_id#10, c_first_name#14, c_last_name#15, d_year#16, c_preferred_cust_flag#17, c_birth_country#18, c_login#19, c_email_address#20), [c_customer_id#10, c_first_name#14, c_last_name#15, d_year#16, c_preferred_cust_flag#17, c_birth_country#18, c_login#19, c_email_address#20], [sum(UnscaledValue((ss_ext_list_price#11 - ss_ext_discount_amt#12)))], [sum(UnscaledValue((ss_ext_list_price#11 - ss_ext_discount_amt#12)))#13], 8
          :     :     :                       +- InputAdapter
          :     :     :                          +- AQEShuffleRead coalesced
-         :     :     :                             +- ShuffleQueryStage 25
+         :     :     :                             +- ShuffleQueryStage X
          :     :     :                                +- NativeShuffleExchange hashpartitioning(c_customer_id#10, c_first_name#14, c_last_name#15, d_year#16, c_preferred_cust_flag#17, c_birth_country#18, c_login#19, c_email_address#20, 100), ENSURE_REQUIREMENTS, [plan_id=2]
          :     :     :                                   +- NativeHashAggregate HashAgg, [c_customer_id#10, c_first_name#14, c_last_name#15, d_year#16, c_preferred_cust_flag#17, c_birth_country#18, c_login#19, c_email_address#20], [partial_sum(_c8#21)], [sum#22], 0
          :     :     :                                      +- NativeProject [c_customer_id#10 AS c_customer_id#10, c_first_name#14 AS c_first_name#14, c_last_name#15 AS c_last_name#15, d_year#16 AS d_year#16, c_preferred_cust_flag#17 AS c_preferred_cust_flag#17, c_birth_country#18 AS c_birth_country#18, c_login#19 AS c_login#19, c_email_address#20 AS c_email_address#20, UnscaledValue((ss_ext_list_price#11 - ss_ext_discount_amt#12)) AS _c8#21]
@@ -26,14 +26,14 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :     :                                               :- NativeSort [ss_sold_date_sk#23 ASC NULLS FIRST], false
          :     :     :                                               :  +- InputAdapter
          :     :     :                                               :     +- AQEShuffleRead coalesced
-         :     :     :                                               :        +- ShuffleQueryStage 19
+         :     :     :                                               :        +- ShuffleQueryStage X
          :     :     :                                               :           +- NativeShuffleExchange hashpartitioning(ss_sold_date_sk#23, 100), ENSURE_REQUIREMENTS, [plan_id=3]
          :     :     :                                               :              +- NativeProject [c_customer_id#10, c_first_name#14, c_last_name#15, c_preferred_cust_flag#17, c_birth_country#18, c_login#19, c_email_address#20, ss_sold_date_sk#23, ss_ext_discount_amt#12, ss_ext_list_price#11]
          :     :     :                                               :                 +- NativeSortMergeJoin [c_customer_sk#25], [ss_customer_sk#26], Inner
          :     :     :                                               :                    :- NativeSort [c_customer_sk#25 ASC NULLS FIRST], false
          :     :     :                                               :                    :  +- InputAdapter
          :     :     :                                               :                    :     +- AQEShuffleRead coalesced
-         :     :     :                                               :                    :        +- ShuffleQueryStage 0
+         :     :     :                                               :                    :        +- ShuffleQueryStage X
          :     :     :                                               :                    :           +- NativeShuffleExchange hashpartitioning(c_customer_sk#25, 100), ENSURE_REQUIREMENTS, [plan_id=4]
          :     :     :                                               :                    :              +- NativeFilter (isnotnull(c_customer_sk#25) AND isnotnull(c_customer_id#10))
          :     :     :                                               :                    :                 +- InputAdapter [#25, #10, #14, #15, #17, #18, #19, #20]
@@ -41,7 +41,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :     :                                               :                    +- NativeSort [ss_customer_sk#26 ASC NULLS FIRST], false
          :     :     :                                               :                       +- InputAdapter
          :     :     :                                               :                          +- AQEShuffleRead coalesced
-         :     :     :                                               :                             +- ShuffleQueryStage 1
+         :     :     :                                               :                             +- ShuffleQueryStage X
          :     :     :                                               :                                +- NativeShuffleExchange hashpartitioning(ss_customer_sk#26, 100), ENSURE_REQUIREMENTS, [plan_id=5]
          :     :     :                                               :                                   +- NativeFilter (isnotnull(ss_customer_sk#26) AND isnotnull(ss_sold_date_sk#23))
          :     :     :                                               :                                      +- InputAdapter [#23, #26, #12, #11]
@@ -49,7 +49,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :     :                                               +- NativeSort [d_date_sk#24 ASC NULLS FIRST], false
          :     :     :                                                  +- InputAdapter
          :     :     :                                                     +- AQEShuffleRead coalesced
-         :     :     :                                                        +- ShuffleQueryStage 2
+         :     :     :                                                        +- ShuffleQueryStage X
          :     :     :                                                           +- NativeShuffleExchange hashpartitioning(d_date_sk#24, 100), ENSURE_REQUIREMENTS, [plan_id=6]
          :     :     :                                                              +- NativeFilter ((isnotnull(d_year#16) AND (d_year#16 = 2001)) AND isnotnull(d_date_sk#24))
          :     :     :                                                                 +- InputAdapter [#24, #16]
@@ -57,13 +57,13 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :     +- NativeSort [customer_id#9 ASC NULLS FIRST], false
          :     :        +- InputAdapter
          :     :           +- AQEShuffleRead coalesced
-         :     :              +- ShuffleQueryStage 30
+         :     :              +- ShuffleQueryStage X
          :     :                 +- NativeShuffleExchange hashpartitioning(customer_id#9, 100), ENSURE_REQUIREMENTS, [plan_id=7]
          :     :                    +- NativeProject [c_customer_id#27 AS customer_id#9, c_preferred_cust_flag#28 AS customer_preferred_cust_flag#1, MakeDecimal(sum(UnscaledValue((ss_ext_list_price#29 - ss_ext_discount_amt#30)))#13,18,2) AS year_total#7]
          :     :                       +- NativeHashAggregate HashAgg, Vector(c_customer_id#27, c_first_name#31, c_last_name#32, d_year#33, c_preferred_cust_flag#28, c_birth_country#34, c_login#35, c_email_address#36), [c_customer_id#27, c_first_name#31, c_last_name#32, d_year#33, c_preferred_cust_flag#28, c_birth_country#34, c_login#35, c_email_address#36], [sum(UnscaledValue((ss_ext_list_price#29 - ss_ext_discount_amt#30)))], [sum(UnscaledValue((ss_ext_list_price#29 - ss_ext_discount_amt#30)))#13], 8
          :     :                          +- InputAdapter
          :     :                             +- AQEShuffleRead coalesced
-         :     :                                +- ShuffleQueryStage 26
+         :     :                                +- ShuffleQueryStage X
          :     :                                   +- NativeShuffleExchange hashpartitioning(c_customer_id#27, c_first_name#31, c_last_name#32, d_year#33, c_preferred_cust_flag#28, c_birth_country#34, c_login#35, c_email_address#36, 100), ENSURE_REQUIREMENTS, [plan_id=8]
          :     :                                      +- NativeHashAggregate HashAgg, [c_customer_id#27, c_first_name#31, c_last_name#32, d_year#33, c_preferred_cust_flag#28, c_birth_country#34, c_login#35, c_email_address#36], [partial_sum(_c8#37)], [sum#38], 0
          :     :                                         +- NativeProject [c_customer_id#27 AS c_customer_id#27, c_first_name#31 AS c_first_name#31, c_last_name#32 AS c_last_name#32, d_year#33 AS d_year#33, c_preferred_cust_flag#28 AS c_preferred_cust_flag#28, c_birth_country#34 AS c_birth_country#34, c_login#35 AS c_login#35, c_email_address#36 AS c_email_address#36, UnscaledValue((ss_ext_list_price#29 - ss_ext_discount_amt#30)) AS _c8#37]
@@ -73,12 +73,12 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :                                                  :  +- InputAdapter
          :     :                                                  :     +- InputAdapter [#27, #31, #32, #28, #34, #35, #36, #39, #30, #29]
          :     :                                                  :        +- AQEShuffleRead coalesced
-         :     :                                                  :           +- ShuffleQueryStage 21
+         :     :                                                  :           +- ShuffleQueryStage X
          :     :                                                  :              +- ReusedExchange [c_customer_id#27, c_first_name#31, c_last_name#32, c_preferred_cust_flag#28, c_birth_country#34, c_login#35, c_email_address#36, ss_sold_date_sk#39, ss_ext_discount_amt#30, ss_ext_list_price#29], NativeShuffleExchange hashpartitioning(ss_sold_date_sk#23, 100), ENSURE_REQUIREMENTS, [plan_id=3]
          :     :                                                  +- NativeSort [d_date_sk#40 ASC NULLS FIRST], false
          :     :                                                     +- InputAdapter
          :     :                                                        +- AQEShuffleRead coalesced
-         :     :                                                           +- ShuffleQueryStage 7
+         :     :                                                           +- ShuffleQueryStage X
          :     :                                                              +- NativeShuffleExchange hashpartitioning(d_date_sk#40, 100), ENSURE_REQUIREMENTS, [plan_id=9]
          :     :                                                                 +- NativeFilter ((isnotnull(d_year#33) AND (d_year#33 = 2002)) AND isnotnull(d_date_sk#40))
          :     :                                                                    +- InputAdapter [#40, #33]
@@ -86,14 +86,14 @@ AdaptiveSparkPlan isFinalPlan=true
          :     +- NativeSort [customer_id#8 ASC NULLS FIRST], false
          :        +- InputAdapter
          :           +- AQEShuffleRead coalesced
-         :              +- ShuffleQueryStage 31
+         :              +- ShuffleQueryStage X
          :                 +- NativeShuffleExchange hashpartitioning(customer_id#8, 100), ENSURE_REQUIREMENTS, [plan_id=10]
          :                    +- NativeFilter (isnotnull(year_total#4) AND (year_total#4 > 0.00))
          :                       +- NativeProject [c_customer_id#41 AS customer_id#8, MakeDecimal(sum(UnscaledValue((ws_ext_list_price#42 - ws_ext_discount_amt#43)))#44,18,2) AS year_total#4]
          :                          +- NativeHashAggregate HashAgg, ArrayBuffer(c_customer_id#41, c_first_name#45, c_last_name#46, c_preferred_cust_flag#47, c_birth_country#48, c_login#49, c_email_address#50, d_year#51), [c_customer_id#41, c_first_name#45, c_last_name#46, c_preferred_cust_flag#47, c_birth_country#48, c_login#49, c_email_address#50, d_year#51], [sum(UnscaledValue((ws_ext_list_price#42 - ws_ext_discount_amt#43)))], [sum(UnscaledValue((ws_ext_list_price#42 - ws_ext_discount_amt#43)))#44], 8
          :                             +- InputAdapter
          :                                +- AQEShuffleRead coalesced
-         :                                   +- ShuffleQueryStage 27
+         :                                   +- ShuffleQueryStage X
          :                                      +- NativeShuffleExchange hashpartitioning(c_customer_id#41, c_first_name#45, c_last_name#46, c_preferred_cust_flag#47, c_birth_country#48, c_login#49, c_email_address#50, d_year#51, 100), ENSURE_REQUIREMENTS, [plan_id=11]
          :                                         +- NativeHashAggregate HashAgg, [c_customer_id#41, c_first_name#45, c_last_name#46, c_preferred_cust_flag#47, c_birth_country#48, c_login#49, c_email_address#50, d_year#51], [partial_sum(_c8#52)], [sum#53], 0
          :                                            +- NativeProject [c_customer_id#41 AS c_customer_id#41, c_first_name#45 AS c_first_name#45, c_last_name#46 AS c_last_name#46, c_preferred_cust_flag#47 AS c_preferred_cust_flag#47, c_birth_country#48 AS c_birth_country#48, c_login#49 AS c_login#49, c_email_address#50 AS c_email_address#50, d_year#51 AS d_year#51, UnscaledValue((ws_ext_list_price#42 - ws_ext_discount_amt#43)) AS _c8#52]
@@ -102,7 +102,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :                                                     :- NativeSort [ws_sold_date_sk#54 ASC NULLS FIRST], false
          :                                                     :  +- InputAdapter
          :                                                     :     +- AQEShuffleRead coalesced
-         :                                                     :        +- ShuffleQueryStage 22
+         :                                                     :        +- ShuffleQueryStage X
          :                                                     :           +- NativeShuffleExchange hashpartitioning(ws_sold_date_sk#54, 100), ENSURE_REQUIREMENTS, [plan_id=12]
          :                                                     :              +- NativeProject [c_customer_id#41, c_first_name#45, c_last_name#46, c_preferred_cust_flag#47, c_birth_country#48, c_login#49, c_email_address#50, ws_sold_date_sk#54, ws_ext_discount_amt#43, ws_ext_list_price#42]
          :                                                     :                 +- NativeSortMergeJoin [c_customer_sk#56], [ws_bill_customer_sk#57], Inner
@@ -110,12 +110,12 @@ AdaptiveSparkPlan isFinalPlan=true
          :                                                     :                    :  +- InputAdapter
          :                                                     :                    :     +- InputAdapter [#56, #41, #45, #46, #47, #48, #49, #50]
          :                                                     :                    :        +- AQEShuffleRead coalesced
-         :                                                     :                    :           +- ShuffleQueryStage 9
+         :                                                     :                    :           +- ShuffleQueryStage X
          :                                                     :                    :              +- ReusedExchange [c_customer_sk#56, c_customer_id#41, c_first_name#45, c_last_name#46, c_preferred_cust_flag#47, c_birth_country#48, c_login#49, c_email_address#50], NativeShuffleExchange hashpartitioning(c_customer_sk#25, 100), ENSURE_REQUIREMENTS, [plan_id=4]
          :                                                     :                    +- NativeSort [ws_bill_customer_sk#57 ASC NULLS FIRST], false
          :                                                     :                       +- InputAdapter
          :                                                     :                          +- AQEShuffleRead coalesced
-         :                                                     :                             +- ShuffleQueryStage 10
+         :                                                     :                             +- ShuffleQueryStage X
          :                                                     :                                +- NativeShuffleExchange hashpartitioning(ws_bill_customer_sk#57, 100), ENSURE_REQUIREMENTS, [plan_id=13]
          :                                                     :                                   +- NativeFilter (isnotnull(ws_bill_customer_sk#57) AND isnotnull(ws_sold_date_sk#54))
          :                                                     :                                      +- InputAdapter [#54, #57, #43, #42]
@@ -124,18 +124,18 @@ AdaptiveSparkPlan isFinalPlan=true
          :                                                        +- InputAdapter
          :                                                           +- InputAdapter [#55, #51]
          :                                                              +- AQEShuffleRead coalesced
-         :                                                                 +- ShuffleQueryStage 12
+         :                                                                 +- ShuffleQueryStage X
          :                                                                    +- ReusedExchange [d_date_sk#55, d_year#51], NativeShuffleExchange hashpartitioning(d_date_sk#24, 100), ENSURE_REQUIREMENTS, [plan_id=6]
          +- NativeSort [customer_id#3 ASC NULLS FIRST], false
             +- InputAdapter
                +- AQEShuffleRead coalesced
-                  +- ShuffleQueryStage 32
+                  +- ShuffleQueryStage X
                      +- NativeShuffleExchange hashpartitioning(customer_id#3, 100), ENSURE_REQUIREMENTS, [plan_id=14]
                         +- NativeProject [c_customer_id#58 AS customer_id#3, MakeDecimal(sum(UnscaledValue((ws_ext_list_price#59 - ws_ext_discount_amt#60)))#44,18,2) AS year_total#5]
                            +- NativeHashAggregate HashAgg, ArrayBuffer(c_customer_id#58, c_first_name#61, c_last_name#62, c_preferred_cust_flag#63, c_birth_country#64, c_login#65, c_email_address#66, d_year#67), [c_customer_id#58, c_first_name#61, c_last_name#62, c_preferred_cust_flag#63, c_birth_country#64, c_login#65, c_email_address#66, d_year#67], [sum(UnscaledValue((ws_ext_list_price#59 - ws_ext_discount_amt#60)))], [sum(UnscaledValue((ws_ext_list_price#59 - ws_ext_discount_amt#60)))#44], 8
                               +- InputAdapter
                                  +- AQEShuffleRead coalesced
-                                    +- ShuffleQueryStage 28
+                                    +- ShuffleQueryStage X
                                        +- NativeShuffleExchange hashpartitioning(c_customer_id#58, c_first_name#61, c_last_name#62, c_preferred_cust_flag#63, c_birth_country#64, c_login#65, c_email_address#66, d_year#67, 100), ENSURE_REQUIREMENTS, [plan_id=15]
                                           +- NativeHashAggregate HashAgg, [c_customer_id#58, c_first_name#61, c_last_name#62, c_preferred_cust_flag#63, c_birth_country#64, c_login#65, c_email_address#66, d_year#67], [partial_sum(_c8#68)], [sum#69], 0
                                              +- NativeProject [c_customer_id#58 AS c_customer_id#58, c_first_name#61 AS c_first_name#61, c_last_name#62 AS c_last_name#62, c_preferred_cust_flag#63 AS c_preferred_cust_flag#63, c_birth_country#64 AS c_birth_country#64, c_login#65 AS c_login#65, c_email_address#66 AS c_email_address#66, d_year#67 AS d_year#67, UnscaledValue((ws_ext_list_price#59 - ws_ext_discount_amt#60)) AS _c8#68]
@@ -145,13 +145,13 @@ AdaptiveSparkPlan isFinalPlan=true
                                                       :  +- InputAdapter
                                                       :     +- InputAdapter [#58, #61, #62, #63, #64, #65, #66, #70, #60, #59]
                                                       :        +- AQEShuffleRead coalesced
-                                                      :           +- ShuffleQueryStage 24
+                                                      :           +- ShuffleQueryStage X
                                                       :              +- ReusedExchange [c_customer_id#58, c_first_name#61, c_last_name#62, c_preferred_cust_flag#63, c_birth_country#64, c_login#65, c_email_address#66, ws_sold_date_sk#70, ws_ext_discount_amt#60, ws_ext_list_price#59], NativeShuffleExchange hashpartitioning(ws_sold_date_sk#54, 100), ENSURE_REQUIREMENTS, [plan_id=12]
                                                       +- NativeSort [d_date_sk#71 ASC NULLS FIRST], false
                                                          +- InputAdapter
                                                             +- InputAdapter [#71, #67]
                                                                +- AQEShuffleRead coalesced
-                                                                  +- ShuffleQueryStage 18
+                                                                  +- ShuffleQueryStage X
                                                                      +- ReusedExchange [d_date_sk#71, d_year#67], NativeShuffleExchange hashpartitioning(d_date_sk#40, 100), ENSURE_REQUIREMENTS, [plan_id=9]
 +- == Initial Plan ==
    TakeOrderedAndProject(limit=100, orderBy=[customer_preferred_cust_flag#1 ASC NULLS FIRST], output=[customer_preferred_cust_flag#1])
