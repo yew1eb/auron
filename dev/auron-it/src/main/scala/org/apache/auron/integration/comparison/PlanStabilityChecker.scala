@@ -127,6 +127,8 @@ class PlanStabilityChecker(
     val argumentsNormalized = planIdNormalized
       .replaceAll("Arguments: [0-9]+, [0-9]+", "Arguments: X, X")
       .replaceAll("Arguments: [0-9]+", "Arguments: X")
+      // for unexpected blank
+      .replaceAll("Scan parquet ", "Scan parquet")
 
     normalizeLocation(argumentsNormalized)
   }
