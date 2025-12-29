@@ -67,7 +67,7 @@ AdaptiveSparkPlan isFinalPlan=true
                               :        +- NativeSort [currency_ratio#40 ASC NULLS FIRST], false
                               :           +- NativeWindow [rank(return_ratio#37) windowspecdefinition(return_ratio#37 ASC NULLS FIRST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS return_rank#38], [return_ratio#37 ASC NULLS FIRST]
                               :              +- NativeSort [return_ratio#37 ASC NULLS FIRST], false
-                              :                 +- ShuffleQueryStage 18
+                              :                 +- ShuffleQueryStage 16
                               :                    +- NativeShuffleExchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=8]
                               :                       +- NativeProject [cs_item_sk#41 AS item#36, (cast(sum(coalesce(cr_return_quantity#42, 0))#43 as decimal(15,4)) / cast(sum(coalesce(cs_quantity#44, 0))#45 as decimal(15,4))) AS return_ratio#37, (cast(sum(coalesce(cast(cr_return_amount#46 as decimal(12,2)), 0.00))#47 as decimal(15,4)) / cast(sum(coalesce(cast(cs_net_paid#48 as decimal(12,2)), 0.00))#49 as decimal(15,4))) AS currency_ratio#40]
                               :                          +- NativeHashAggregate HashAgg, ArrayBuffer(cs_item_sk#41), [cs_item_sk#41], [sum(coalesce(cr_return_quantity#42, 0)), sum(coalesce(cs_quantity#44, 0)), sum(coalesce(cast(cr_return_amount#46 as decimal(12,2)), 0.00)), sum(coalesce(cast(cs_net_paid#48 as decimal(12,2)), 0.00))], [sum(coalesce(cr_return_quantity#42, 0))#43, sum(coalesce(cs_quantity#44, 0))#45, sum(coalesce(cast(cr_return_amount#46 as decimal(12,2)), 0.00))#47, sum(coalesce(cast(cs_net_paid#48 as decimal(12,2)), 0.00))#49], 1
@@ -121,7 +121,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                                          +- NativeHashAggregate HashAgg, ArrayBuffer(ss_item_sk#72), [ss_item_sk#72], [sum(coalesce(sr_return_quantity#73, 0)), sum(coalesce(ss_quantity#75, 0)), sum(coalesce(cast(sr_return_amt#77 as decimal(12,2)), 0.00)), sum(coalesce(cast(ss_net_paid#79 as decimal(12,2)), 0.00))], [sum(coalesce(sr_return_quantity#73, 0))#74, sum(coalesce(ss_quantity#75, 0))#76, sum(coalesce(cast(sr_return_amt#77 as decimal(12,2)), 0.00))#78, sum(coalesce(cast(ss_net_paid#79 as decimal(12,2)), 0.00))#80], 1
                                                             +- InputAdapter
                                                                +- AQEShuffleRead coalesced
-                                                                  +- ShuffleQueryStage 16
+                                                                  +- ShuffleQueryStage 18
                                                                      +- NativeShuffleExchange hashpartitioning(ss_item_sk#72, 100), ENSURE_REQUIREMENTS, [plan_id=14]
                                                                         +- NativeHashAggregate HashAgg, [ss_item_sk#72], [partial_sum(_c1#81), partial_sum(_c2#82), partial_sum(_c3#83), partial_sum(_c4#84)], [sum#85, sum#86, sum#87, isEmpty#88, sum#89, isEmpty#90], 0
                                                                            +- NativeProject [ss_item_sk#72 AS ss_item_sk#72, coalesce(sr_return_quantity#73, 0) AS _c1#81, coalesce(ss_quantity#75, 0) AS _c2#82, coalesce(cast(sr_return_amt#77 as decimal(12,2)), 0.00) AS _c3#83, coalesce(cast(ss_net_paid#79 as decimal(12,2)), 0.00) AS _c4#84]

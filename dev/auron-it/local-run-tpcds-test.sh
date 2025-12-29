@@ -26,7 +26,9 @@ AURON_DIR="$SCRIPT_DIR/../.."
 #   --data-location dev/tpcds_1g \
 #   --query-filter q1,q2,a3 \
 #   --plan-check
+#   --regen-golden
 $SCRIPT_DIR/auron-it.sh \
     --conf spark.serializer=org.apache.spark.serializer.KryoSerializer  --conf spark.celeborn.client.spark.shuffle.writer=hash \
     --type tpcds \
     --data-location /Users/yew1eb/workspaces/tpcds-validator/tpcds_1g \
+    --plan-check

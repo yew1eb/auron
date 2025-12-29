@@ -61,7 +61,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :        :     :  +- NativeSort [customer_id#1 ASC NULLS FIRST], false
          :     :        :     :     +- InputAdapter
          :     :        :     :        +- AQEShuffleRead coalesced
-         :     :        :     :           +- ShuffleQueryStage 47
+         :     :        :     :           +- ShuffleQueryStage 46
          :     :        :     :              +- NativeShuffleExchange hashpartitioning(customer_id#1, 100), ENSURE_REQUIREMENTS, [plan_id=7]
          :     :        :     :                 +- NativeProject [c_customer_id#39 AS customer_id#1, c_first_name#40 AS customer_first_name#2, c_last_name#41 AS customer_last_name#3, c_preferred_cust_flag#42 AS customer_preferred_cust_flag#4, c_birth_country#43 AS customer_birth_country#5, c_login#44 AS customer_login#6, c_email_address#45 AS customer_email_address#7, sum(((((ss_ext_list_price#46 - ss_ext_wholesale_cost#47) - ss_ext_discount_amt#48) + ss_ext_sales_price#49) / 2))#24 AS year_total#17]
          :     :        :     :                    +- NativeHashAggregate HashAgg, ArrayBuffer(c_customer_id#39, c_first_name#40, c_last_name#41, c_preferred_cust_flag#42, c_birth_country#43, c_login#44, c_email_address#45, d_year#50), [c_customer_id#39, c_first_name#40, c_last_name#41, c_preferred_cust_flag#42, c_birth_country#43, c_login#44, c_email_address#45, d_year#50], [sum(((((ss_ext_list_price#46 - ss_ext_wholesale_cost#47) - ss_ext_discount_amt#48) + ss_ext_sales_price#49) / 2))], [sum(((((ss_ext_list_price#46 - ss_ext_wholesale_cost#47) - ss_ext_discount_amt#48) + ss_ext_sales_price#49) / 2))#24], 8
@@ -90,7 +90,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :        :     +- NativeSort [customer_id#18 ASC NULLS FIRST], false
          :     :        :        +- InputAdapter
          :     :        :           +- AQEShuffleRead coalesced
-         :     :        :              +- ShuffleQueryStage 46
+         :     :        :              +- ShuffleQueryStage 47
          :     :        :                 +- NativeShuffleExchange hashpartitioning(customer_id#18, 100), ENSURE_REQUIREMENTS, [plan_id=10]
          :     :        :                    +- NativeFilter (isnotnull(year_total#10) AND (year_total#10 > 0.000000))
          :     :        :                       +- NativeProject [c_customer_id#56 AS customer_id#18, sum(((((cs_ext_list_price#57 - cs_ext_wholesale_cost#58) - cs_ext_discount_amt#59) + cs_ext_sales_price#60) / 2))#61 AS year_total#10]
