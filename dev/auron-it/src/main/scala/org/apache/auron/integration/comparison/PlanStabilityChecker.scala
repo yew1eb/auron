@@ -89,7 +89,7 @@ class PlanStabilityChecker(
 
     // Normalize file location
     def normalizeLocation(plan: String): String = {
-      plan.replaceAll("""file:/[^,\s\]\)]+""", "file:/<warehouse_dir>")
+      plan.replaceAll("""file:/[^,\s\]\)]+""", "file:/<dir>")
     }
 
     // Create a normalized map for regex matches

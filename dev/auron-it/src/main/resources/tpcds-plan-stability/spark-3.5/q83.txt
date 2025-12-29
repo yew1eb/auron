@@ -29,7 +29,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :                             :                    :           +- NativeShuffleExchange hashpartitioning(sr_item_sk#17, 100), ENSURE_REQUIREMENTS, [plan_id=3]
          :     :                             :                    :              +- NativeFilter (isnotnull(sr_item_sk#17) AND isnotnull(sr_returned_date_sk#15))
          :     :                             :                    :                 +- InputAdapter [#15, #17, #12]
-         :     :                             :                    :                    +- NativeParquetScan  (FileScan parquet [sr_returned_date_sk#15,sr_item_sk#17,sr_return_quantity#12] Batched: true, DataFilters: [isnotnull(sr_item_sk#17), isnotnull(sr_returned_date_sk#15)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(sr_item_sk), IsNotNull(sr_returned_date_sk)], ReadSchema: struct<sr_returned_date_sk:int,sr_item_sk:int,sr_return_quantity:int>)
+         :     :                             :                    :                    +- NativeParquetScan  (FileScan parquet [sr_returned_date_sk#15,sr_item_sk#17,sr_return_quantity#12] Batched: true, DataFilters: [isnotnull(sr_item_sk#17), isnotnull(sr_returned_date_sk#15)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(sr_item_sk), IsNotNull(sr_returned_date_sk)], ReadSchema: struct<sr_returned_date_sk:int,sr_item_sk:int,sr_return_quantity:int>)
          :     :                             :                    +- NativeSort [i_item_sk#18 ASC NULLS FIRST], false
          :     :                             :                       +- InputAdapter
          :     :                             :                          +- AQEShuffleRead coalesced
@@ -37,7 +37,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :                             :                                +- NativeShuffleExchange hashpartitioning(i_item_sk#18, 100), ENSURE_REQUIREMENTS, [plan_id=4]
          :     :                             :                                   +- NativeFilter (isnotnull(i_item_sk#18) AND isnotnull(i_item_id#11))
          :     :                             :                                      +- InputAdapter [#18, #11]
-         :     :                             :                                         +- NativeParquetScan  (FileScan parquet [i_item_sk#18,i_item_id#11] Batched: true, DataFilters: [isnotnull(i_item_sk#18), isnotnull(i_item_id#11)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(i_item_sk), IsNotNull(i_item_id)], ReadSchema: struct<i_item_sk:int,i_item_id:string>)
+         :     :                             :                                         +- NativeParquetScan  (FileScan parquet [i_item_sk#18,i_item_id#11] Batched: true, DataFilters: [isnotnull(i_item_sk#18), isnotnull(i_item_id#11)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(i_item_sk), IsNotNull(i_item_id)], ReadSchema: struct<i_item_sk:int,i_item_id:string>)
          :     :                             +- NativeSort [d_date_sk#16 ASC NULLS FIRST], false
          :     :                                +- InputAdapter
          :     :                                   +- AQEShuffleRead coalesced
@@ -52,7 +52,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :                                                  :           +- NativeShuffleExchange hashpartitioning(d_date#19, 100), ENSURE_REQUIREMENTS, [plan_id=6]
          :     :                                                  :              +- NativeFilter isnotnull(d_date_sk#16)
          :     :                                                  :                 +- InputAdapter [#16, #19]
-         :     :                                                  :                    +- NativeParquetScan  (FileScan parquet [d_date_sk#16,d_date#19] Batched: true, DataFilters: [isnotnull(d_date_sk#16)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_date:date>)
+         :     :                                                  :                    +- NativeParquetScan  (FileScan parquet [d_date_sk#16,d_date#19] Batched: true, DataFilters: [isnotnull(d_date_sk#16)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_date:date>)
          :     :                                                  +- NativeSort [d_date#20 ASC NULLS FIRST], false
          :     :                                                     +- InputAdapter
          :     :                                                        +- AQEShuffleRead coalesced
@@ -66,7 +66,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :                                                                       :        +- ShuffleQueryStage X
          :     :                                                                       :           +- NativeShuffleExchange hashpartitioning(d_week_seq#21, 100), ENSURE_REQUIREMENTS, [plan_id=8]
          :     :                                                                       :              +- InputAdapter [#20, #21]
-         :     :                                                                       :                 +- NativeParquetScan  (FileScan parquet [d_date#20,d_week_seq#21] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>)
+         :     :                                                                       :                 +- NativeParquetScan  (FileScan parquet [d_date#20,d_week_seq#21] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>)
          :     :                                                                       +- NativeSort [d_week_seq#22 ASC NULLS FIRST], false
          :     :                                                                          +- InputAdapter
          :     :                                                                             +- AQEShuffleRead coalesced
@@ -75,7 +75,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :                                                                                      +- NativeProject [d_week_seq#22]
          :     :                                                                                         +- NativeFilter cast(d_date#23 as string) IN (2000-06-30,2000-09-27,2000-11-17)
          :     :                                                                                            +- InputAdapter [#23, #22]
-         :     :                                                                                               +- NativeParquetScan  (FileScan parquet [d_date#23,d_week_seq#22] Batched: true, DataFilters: [cast(d_date#23 as string) IN (2000-06-30,2000-09-27,2000-11-17)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>)
+         :     :                                                                                               +- NativeParquetScan  (FileScan parquet [d_date#23,d_week_seq#22] Batched: true, DataFilters: [cast(d_date#23 as string) IN (2000-06-30,2000-09-27,2000-11-17)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>)
          :     +- NativeSort [item_id#10 ASC NULLS FIRST], false
          :        +- NativeProject [i_item_id#24 AS item_id#10, sum(cr_return_quantity#25)#26 AS cr_item_qty#3]
          :           +- NativeHashAggregate HashAgg, ArrayBuffer(i_item_id#24), [i_item_id#24], [sum(cr_return_quantity#25)], [sum(cr_return_quantity#25)#26], 1
@@ -100,7 +100,7 @@ AdaptiveSparkPlan isFinalPlan=true
          :                                   :                    :           +- NativeShuffleExchange hashpartitioning(cr_item_sk#30, 100), ENSURE_REQUIREMENTS, [plan_id=12]
          :                                   :                    :              +- NativeFilter (isnotnull(cr_item_sk#30) AND isnotnull(cr_returned_date_sk#28))
          :                                   :                    :                 +- InputAdapter [#28, #30, #25]
-         :                                   :                    :                    +- NativeParquetScan  (FileScan parquet [cr_returned_date_sk#28,cr_item_sk#30,cr_return_quantity#25] Batched: true, DataFilters: [isnotnull(cr_item_sk#30), isnotnull(cr_returned_date_sk#28)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(cr_item_sk), IsNotNull(cr_returned_date_sk)], ReadSchema: struct<cr_returned_date_sk:int,cr_item_sk:int,cr_return_quantity:int>)
+         :                                   :                    :                    +- NativeParquetScan  (FileScan parquet [cr_returned_date_sk#28,cr_item_sk#30,cr_return_quantity#25] Batched: true, DataFilters: [isnotnull(cr_item_sk#30), isnotnull(cr_returned_date_sk#28)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(cr_item_sk), IsNotNull(cr_returned_date_sk)], ReadSchema: struct<cr_returned_date_sk:int,cr_item_sk:int,cr_return_quantity:int>)
          :                                   :                    +- NativeSort [i_item_sk#31 ASC NULLS FIRST], false
          :                                   :                       +- InputAdapter
          :                                   :                          +- InputAdapter [#31, #24]
@@ -137,7 +137,7 @@ AdaptiveSparkPlan isFinalPlan=true
                                        :                    :           +- NativeShuffleExchange hashpartitioning(wr_item_sk#38, 100), ENSURE_REQUIREMENTS, [plan_id=15]
                                        :                    :              +- NativeFilter (isnotnull(wr_item_sk#38) AND isnotnull(wr_returned_date_sk#36))
                                        :                    :                 +- InputAdapter [#36, #38, #33]
-                                       :                    :                    +- NativeParquetScan  (FileScan parquet [wr_returned_date_sk#36,wr_item_sk#38,wr_return_quantity#33] Batched: true, DataFilters: [isnotnull(wr_item_sk#38), isnotnull(wr_returned_date_sk#36)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(wr_item_sk), IsNotNull(wr_returned_date_sk)], ReadSchema: struct<wr_returned_date_sk:int,wr_item_sk:int,wr_return_quantity:int>)
+                                       :                    :                    +- NativeParquetScan  (FileScan parquet [wr_returned_date_sk#36,wr_item_sk#38,wr_return_quantity#33] Batched: true, DataFilters: [isnotnull(wr_item_sk#38), isnotnull(wr_returned_date_sk#36)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(wr_item_sk), IsNotNull(wr_returned_date_sk)], ReadSchema: struct<wr_returned_date_sk:int,wr_item_sk:int,wr_return_quantity:int>)
                                        :                    +- NativeSort [i_item_sk#39 ASC NULLS FIRST], false
                                        :                       +- InputAdapter
                                        :                          +- InputAdapter [#39, #32]
@@ -169,11 +169,11 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :                 :           :- Sort [sr_item_sk#17 ASC NULLS FIRST], false, 0
          :     :                 :           :  +- Exchange hashpartitioning(sr_item_sk#17, 100), ENSURE_REQUIREMENTS, [plan_id=18]
          :     :                 :           :     +- Filter (isnotnull(sr_item_sk#17) AND isnotnull(sr_returned_date_sk#15))
-         :     :                 :           :        +- FileScan parquet [sr_returned_date_sk#15,sr_item_sk#17,sr_return_quantity#12] Batched: true, DataFilters: [isnotnull(sr_item_sk#17), isnotnull(sr_returned_date_sk#15)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(sr_item_sk), IsNotNull(sr_returned_date_sk)], ReadSchema: struct<sr_returned_date_sk:int,sr_item_sk:int,sr_return_quantity:int>
+         :     :                 :           :        +- FileScan parquet [sr_returned_date_sk#15,sr_item_sk#17,sr_return_quantity#12] Batched: true, DataFilters: [isnotnull(sr_item_sk#17), isnotnull(sr_returned_date_sk#15)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(sr_item_sk), IsNotNull(sr_returned_date_sk)], ReadSchema: struct<sr_returned_date_sk:int,sr_item_sk:int,sr_return_quantity:int>
          :     :                 :           +- Sort [i_item_sk#18 ASC NULLS FIRST], false, 0
          :     :                 :              +- Exchange hashpartitioning(i_item_sk#18, 100), ENSURE_REQUIREMENTS, [plan_id=19]
          :     :                 :                 +- Filter (isnotnull(i_item_sk#18) AND isnotnull(i_item_id#11))
-         :     :                 :                    +- FileScan parquet [i_item_sk#18,i_item_id#11] Batched: true, DataFilters: [isnotnull(i_item_sk#18), isnotnull(i_item_id#11)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(i_item_sk), IsNotNull(i_item_id)], ReadSchema: struct<i_item_sk:int,i_item_id:string>
+         :     :                 :                    +- FileScan parquet [i_item_sk#18,i_item_id#11] Batched: true, DataFilters: [isnotnull(i_item_sk#18), isnotnull(i_item_id#11)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(i_item_sk), IsNotNull(i_item_id)], ReadSchema: struct<i_item_sk:int,i_item_id:string>
          :     :                 +- Sort [d_date_sk#16 ASC NULLS FIRST], false, 0
          :     :                    +- Exchange hashpartitioning(d_date_sk#16, 100), ENSURE_REQUIREMENTS, [plan_id=20]
          :     :                       +- Project [d_date_sk#16]
@@ -181,19 +181,19 @@ AdaptiveSparkPlan isFinalPlan=true
          :     :                             :- Sort [d_date#19 ASC NULLS FIRST], false, 0
          :     :                             :  +- Exchange hashpartitioning(d_date#19, 100), ENSURE_REQUIREMENTS, [plan_id=21]
          :     :                             :     +- Filter isnotnull(d_date_sk#16)
-         :     :                             :        +- FileScan parquet [d_date_sk#16,d_date#19] Batched: true, DataFilters: [isnotnull(d_date_sk#16)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_date:date>
+         :     :                             :        +- FileScan parquet [d_date_sk#16,d_date#19] Batched: true, DataFilters: [isnotnull(d_date_sk#16)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_date:date>
          :     :                             +- Sort [d_date#20 ASC NULLS FIRST], false, 0
          :     :                                +- Exchange hashpartitioning(d_date#20, 100), ENSURE_REQUIREMENTS, [plan_id=22]
          :     :                                   +- Project [d_date#20]
          :     :                                      +- SortMergeJoin [d_week_seq#21], [d_week_seq#22], LeftSemi
          :     :                                         :- Sort [d_week_seq#21 ASC NULLS FIRST], false, 0
          :     :                                         :  +- Exchange hashpartitioning(d_week_seq#21, 100), ENSURE_REQUIREMENTS, [plan_id=23]
-         :     :                                         :     +- FileScan parquet [d_date#20,d_week_seq#21] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>
+         :     :                                         :     +- FileScan parquet [d_date#20,d_week_seq#21] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>
          :     :                                         +- Sort [d_week_seq#22 ASC NULLS FIRST], false, 0
          :     :                                            +- Exchange hashpartitioning(d_week_seq#22, 100), ENSURE_REQUIREMENTS, [plan_id=24]
          :     :                                               +- Project [d_week_seq#22]
          :     :                                                  +- Filter cast(d_date#23 as string) IN (2000-06-30,2000-09-27,2000-11-17)
-         :     :                                                     +- FileScan parquet [d_date#23,d_week_seq#22] Batched: true, DataFilters: [cast(d_date#23 as string) IN (2000-06-30,2000-09-27,2000-11-17)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>
+         :     :                                                     +- FileScan parquet [d_date#23,d_week_seq#22] Batched: true, DataFilters: [cast(d_date#23 as string) IN (2000-06-30,2000-09-27,2000-11-17)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>
          :     +- Sort [item_id#10 ASC NULLS FIRST], false, 0
          :        +- HashAggregate(keys=[i_item_id#24], functions=[sum(cr_return_quantity#25)], output=[item_id#10, cr_item_qty#3])
          :           +- Exchange hashpartitioning(i_item_id#24, 100), ENSURE_REQUIREMENTS, [plan_id=25]
@@ -207,11 +207,11 @@ AdaptiveSparkPlan isFinalPlan=true
          :                       :           :- Sort [cr_item_sk#30 ASC NULLS FIRST], false, 0
          :                       :           :  +- Exchange hashpartitioning(cr_item_sk#30, 100), ENSURE_REQUIREMENTS, [plan_id=27]
          :                       :           :     +- Filter (isnotnull(cr_item_sk#30) AND isnotnull(cr_returned_date_sk#28))
-         :                       :           :        +- FileScan parquet [cr_returned_date_sk#28,cr_item_sk#30,cr_return_quantity#25] Batched: true, DataFilters: [isnotnull(cr_item_sk#30), isnotnull(cr_returned_date_sk#28)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(cr_item_sk), IsNotNull(cr_returned_date_sk)], ReadSchema: struct<cr_returned_date_sk:int,cr_item_sk:int,cr_return_quantity:int>
+         :                       :           :        +- FileScan parquet [cr_returned_date_sk#28,cr_item_sk#30,cr_return_quantity#25] Batched: true, DataFilters: [isnotnull(cr_item_sk#30), isnotnull(cr_returned_date_sk#28)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(cr_item_sk), IsNotNull(cr_returned_date_sk)], ReadSchema: struct<cr_returned_date_sk:int,cr_item_sk:int,cr_return_quantity:int>
          :                       :           +- Sort [i_item_sk#31 ASC NULLS FIRST], false, 0
          :                       :              +- Exchange hashpartitioning(i_item_sk#31, 100), ENSURE_REQUIREMENTS, [plan_id=28]
          :                       :                 +- Filter (isnotnull(i_item_sk#31) AND isnotnull(i_item_id#24))
-         :                       :                    +- FileScan parquet [i_item_sk#31,i_item_id#24] Batched: true, DataFilters: [isnotnull(i_item_sk#31), isnotnull(i_item_id#24)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(i_item_sk), IsNotNull(i_item_id)], ReadSchema: struct<i_item_sk:int,i_item_id:string>
+         :                       :                    +- FileScan parquet [i_item_sk#31,i_item_id#24] Batched: true, DataFilters: [isnotnull(i_item_sk#31), isnotnull(i_item_id#24)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(i_item_sk), IsNotNull(i_item_id)], ReadSchema: struct<i_item_sk:int,i_item_id:string>
          :                       +- Sort [d_date_sk#29 ASC NULLS FIRST], false, 0
          :                          +- Exchange hashpartitioning(d_date_sk#29, 100), ENSURE_REQUIREMENTS, [plan_id=29]
          :                             +- Project [d_date_sk#29]
@@ -219,19 +219,19 @@ AdaptiveSparkPlan isFinalPlan=true
          :                                   :- Sort [d_date#42 ASC NULLS FIRST], false, 0
          :                                   :  +- Exchange hashpartitioning(d_date#42, 100), ENSURE_REQUIREMENTS, [plan_id=30]
          :                                   :     +- Filter isnotnull(d_date_sk#29)
-         :                                   :        +- FileScan parquet [d_date_sk#29,d_date#42] Batched: true, DataFilters: [isnotnull(d_date_sk#29)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_date:date>
+         :                                   :        +- FileScan parquet [d_date_sk#29,d_date#42] Batched: true, DataFilters: [isnotnull(d_date_sk#29)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_date:date>
          :                                   +- Sort [d_date#43 ASC NULLS FIRST], false, 0
          :                                      +- Exchange hashpartitioning(d_date#43, 100), ENSURE_REQUIREMENTS, [plan_id=31]
          :                                         +- Project [d_date#43]
          :                                            +- SortMergeJoin [d_week_seq#44], [d_week_seq#45], LeftSemi
          :                                               :- Sort [d_week_seq#44 ASC NULLS FIRST], false, 0
          :                                               :  +- Exchange hashpartitioning(d_week_seq#44, 100), ENSURE_REQUIREMENTS, [plan_id=32]
-         :                                               :     +- FileScan parquet [d_date#43,d_week_seq#44] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>
+         :                                               :     +- FileScan parquet [d_date#43,d_week_seq#44] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>
          :                                               +- Sort [d_week_seq#45 ASC NULLS FIRST], false, 0
          :                                                  +- Exchange hashpartitioning(d_week_seq#45, 100), ENSURE_REQUIREMENTS, [plan_id=33]
          :                                                     +- Project [d_week_seq#45]
          :                                                        +- Filter cast(d_date#46 as string) IN (2000-06-30,2000-09-27,2000-11-17)
-         :                                                           +- FileScan parquet [d_date#46,d_week_seq#45] Batched: true, DataFilters: [cast(d_date#46 as string) IN (2000-06-30,2000-09-27,2000-11-17)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>
+         :                                                           +- FileScan parquet [d_date#46,d_week_seq#45] Batched: true, DataFilters: [cast(d_date#46 as string) IN (2000-06-30,2000-09-27,2000-11-17)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>
          +- Sort [item_id#9 ASC NULLS FIRST], false, 0
             +- HashAggregate(keys=[i_item_id#32], functions=[sum(wr_return_quantity#33)], output=[item_id#9, wr_item_qty#4])
                +- Exchange hashpartitioning(i_item_id#32, 100), ENSURE_REQUIREMENTS, [plan_id=34]
@@ -245,11 +245,11 @@ AdaptiveSparkPlan isFinalPlan=true
                            :           :- Sort [wr_item_sk#38 ASC NULLS FIRST], false, 0
                            :           :  +- Exchange hashpartitioning(wr_item_sk#38, 100), ENSURE_REQUIREMENTS, [plan_id=36]
                            :           :     +- Filter (isnotnull(wr_item_sk#38) AND isnotnull(wr_returned_date_sk#36))
-                           :           :        +- FileScan parquet [wr_returned_date_sk#36,wr_item_sk#38,wr_return_quantity#33] Batched: true, DataFilters: [isnotnull(wr_item_sk#38), isnotnull(wr_returned_date_sk#36)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(wr_item_sk), IsNotNull(wr_returned_date_sk)], ReadSchema: struct<wr_returned_date_sk:int,wr_item_sk:int,wr_return_quantity:int>
+                           :           :        +- FileScan parquet [wr_returned_date_sk#36,wr_item_sk#38,wr_return_quantity#33] Batched: true, DataFilters: [isnotnull(wr_item_sk#38), isnotnull(wr_returned_date_sk#36)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(wr_item_sk), IsNotNull(wr_returned_date_sk)], ReadSchema: struct<wr_returned_date_sk:int,wr_item_sk:int,wr_return_quantity:int>
                            :           +- Sort [i_item_sk#39 ASC NULLS FIRST], false, 0
                            :              +- Exchange hashpartitioning(i_item_sk#39, 100), ENSURE_REQUIREMENTS, [plan_id=37]
                            :                 +- Filter (isnotnull(i_item_sk#39) AND isnotnull(i_item_id#32))
-                           :                    +- FileScan parquet [i_item_sk#39,i_item_id#32] Batched: true, DataFilters: [isnotnull(i_item_sk#39), isnotnull(i_item_id#32)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(i_item_sk), IsNotNull(i_item_id)], ReadSchema: struct<i_item_sk:int,i_item_id:string>
+                           :                    +- FileScan parquet [i_item_sk#39,i_item_id#32] Batched: true, DataFilters: [isnotnull(i_item_sk#39), isnotnull(i_item_id#32)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(i_item_sk), IsNotNull(i_item_id)], ReadSchema: struct<i_item_sk:int,i_item_id:string>
                            +- Sort [d_date_sk#37 ASC NULLS FIRST], false, 0
                               +- Exchange hashpartitioning(d_date_sk#37, 100), ENSURE_REQUIREMENTS, [plan_id=38]
                                  +- Project [d_date_sk#37]
@@ -257,16 +257,16 @@ AdaptiveSparkPlan isFinalPlan=true
                                        :- Sort [d_date#48 ASC NULLS FIRST], false, 0
                                        :  +- Exchange hashpartitioning(d_date#48, 100), ENSURE_REQUIREMENTS, [plan_id=39]
                                        :     +- Filter isnotnull(d_date_sk#37)
-                                       :        +- FileScan parquet [d_date_sk#37,d_date#48] Batched: true, DataFilters: [isnotnull(d_date_sk#37)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_date:date>
+                                       :        +- FileScan parquet [d_date_sk#37,d_date#48] Batched: true, DataFilters: [isnotnull(d_date_sk#37)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [IsNotNull(d_date_sk)], ReadSchema: struct<d_date_sk:int,d_date:date>
                                        +- Sort [d_date#49 ASC NULLS FIRST], false, 0
                                           +- Exchange hashpartitioning(d_date#49, 100), ENSURE_REQUIREMENTS, [plan_id=40]
                                              +- Project [d_date#49]
                                                 +- SortMergeJoin [d_week_seq#50], [d_week_seq#51], LeftSemi
                                                    :- Sort [d_week_seq#50 ASC NULLS FIRST], false, 0
                                                    :  +- Exchange hashpartitioning(d_week_seq#50, 100), ENSURE_REQUIREMENTS, [plan_id=41]
-                                                   :     +- FileScan parquet [d_date#49,d_week_seq#50] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>
+                                                   :     +- FileScan parquet [d_date#49,d_week_seq#50] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>
                                                    +- Sort [d_week_seq#51 ASC NULLS FIRST], false, 0
                                                       +- Exchange hashpartitioning(d_week_seq#51, 100), ENSURE_REQUIREMENTS, [plan_id=42]
                                                          +- Project [d_week_seq#51]
                                                             +- Filter cast(d_date#52 as string) IN (2000-06-30,2000-09-27,2000-11-17)
-                                                               +- FileScan parquet [d_date#52,d_week_seq#51] Batched: true, DataFilters: [cast(d_date#52 as string) IN (2000-06-30,2000-09-27,2000-11-17)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<warehouse_dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>
+                                                               +- FileScan parquet [d_date#52,d_week_seq#51] Batched: true, DataFilters: [cast(d_date#52 as string) IN (2000-06-30,2000-09-27,2000-11-17)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/<dir>], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<d_date:date,d_week_seq:int>
