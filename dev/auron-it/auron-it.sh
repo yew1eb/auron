@@ -24,6 +24,7 @@ set -exo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 AURON_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 MVN_CMD="${AURON_DIR}/build/mvn"
+RUST_BACKTRACE=1
 SPARK_VERSION="${SPARK_VERSION:-spark-3.5}"
 SCALA_VERSION="${SCALA_VERSION:-2.12}"
 PROFILES="-P${SPARK_VERSION},scala-${SCALA_VERSION}"

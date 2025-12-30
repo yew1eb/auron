@@ -376,13 +376,6 @@ jobs:
             --query-filter ${{ matrix.query }} \
             --plan-check
 
-      - name: Upload tpcds test log
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: tpcds-test-logs-${{ inputs.hadoop-profile }}-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
-          path: "**/auron-it/target/unit-tests.log"
-
       - name: Upload RSS log
         if: ${{ failure() && (inputs.celebornver != '' || inputs.unifflever != '') }}
         uses: actions/upload-artifact@v4

@@ -6,7 +6,7 @@ AdaptiveSparkPlan (261)
       +- NativeHashAggregate (164)
          +- InputAdapter (163)
             +- AQEShuffleRead (162)
-               +- ShuffleQueryStage (161), Statistics(sizeInBytes=110.9 KiB, rowCount=686)
+               +- ShuffleQueryStage (161), Statistics(X)
                   +- NativeShuffleExchange (160)
                      +- NativeHashAggregate (159)
                         +- NativeExpand (158)
@@ -16,7 +16,7 @@ AdaptiveSparkPlan (261)
                                  :  +- NativeHashAggregate (48)
                                  :     +- InputAdapter (47)
                                  :        +- AQEShuffleRead (46)
-                                 :           +- ShuffleQueryStage (45), Statistics(sizeInBytes=952.0 B, rowCount=6)
+                                 :           +- ShuffleQueryStage (45), Statistics(X)
                                  :              +- NativeShuffleExchange (44)
                                  :                 +- NativeHashAggregate (43)
                                  :                    +- NativeProject (42)
@@ -25,14 +25,14 @@ AdaptiveSparkPlan (261)
                                  :                             :- NativeSort (31)
                                  :                             :  +- InputAdapter (30)
                                  :                             :     +- AQEShuffleRead (29)
-                                 :                             :        +- ShuffleQueryStage (28), Statistics(sizeInBytes=2.0 MiB, rowCount=3.08E+4)
+                                 :                             :        +- ShuffleQueryStage (28), Statistics(X)
                                  :                             :           +- NativeShuffleExchange (27)
                                  :                             :              +- NativeProject (26)
                                  :                             :                 +- NativeSortMergeJoin Inner (25)
                                  :                             :                    :- NativeSort (15)
                                  :                             :                    :  +- InputAdapter (14)
                                  :                             :                    :     +- AQEShuffleRead (13)
-                                 :                             :                    :        +- ShuffleQueryStage (12), Statistics(sizeInBytes=204.2 MiB, rowCount=2.96E+6)
+                                 :                             :                    :        +- ShuffleQueryStage (12), Statistics(X)
                                  :                             :                    :           +- NativeShuffleExchange (11)
                                  :                             :                    :              +- InputAdapter (10)
                                  :                             :                    :                 +- NativeUnion (9)
@@ -47,7 +47,7 @@ AdaptiveSparkPlan (261)
                                  :                             :                    +- NativeSort (24)
                                  :                             :                       +- InputAdapter (23)
                                  :                             :                          +- AQEShuffleRead (22)
-                                 :                             :                             +- ShuffleQueryStage (21), Statistics(sizeInBytes=268.0 B, rowCount=15)
+                                 :                             :                             +- ShuffleQueryStage (21), Statistics(X)
                                  :                             :                                +- NativeShuffleExchange (20)
                                  :                             :                                   +- NativeProject (19)
                                  :                             :                                      +- NativeFilter (18)
@@ -56,7 +56,7 @@ AdaptiveSparkPlan (261)
                                  :                             +- NativeSort (39)
                                  :                                +- InputAdapter (38)
                                  :                                   +- AQEShuffleRead (37)
-                                 :                                      +- ShuffleQueryStage (36), Statistics(sizeInBytes=708.0 B, rowCount=12)
+                                 :                                      +- ShuffleQueryStage (36), Statistics(X)
                                  :                                         +- NativeShuffleExchange (35)
                                  :                                            +- NativeFilter (34)
                                  :                                               +- InputAdapter (33)
@@ -65,7 +65,7 @@ AdaptiveSparkPlan (261)
                                  :  +- NativeHashAggregate (94)
                                  :     +- InputAdapter (93)
                                  :        +- AQEShuffleRead (92)
-                                 :           +- ShuffleQueryStage (91), Statistics(sizeInBytes=48.0 KiB, rowCount=659)
+                                 :           +- ShuffleQueryStage (91), Statistics(X)
                                  :              +- NativeShuffleExchange (90)
                                  :                 +- NativeHashAggregate (89)
                                  :                    +- NativeProject (88)
@@ -74,14 +74,14 @@ AdaptiveSparkPlan (261)
                                  :                             :- NativeSort (77)
                                  :                             :  +- InputAdapter (76)
                                  :                             :     +- AQEShuffleRead (75)
-                                 :                             :        +- ShuffleQueryStage (74), Statistics(sizeInBytes=1076.9 KiB, rowCount=1.60E+4)
+                                 :                             :        +- ShuffleQueryStage (74), Statistics(X)
                                  :                             :           +- NativeShuffleExchange (73)
                                  :                             :              +- NativeProject (72)
                                  :                             :                 +- NativeSortMergeJoin Inner (71)
                                  :                             :                    :- NativeSort (64)
                                  :                             :                    :  +- InputAdapter (63)
                                  :                             :                    :     +- AQEShuffleRead (62)
-                                 :                             :                    :        +- ShuffleQueryStage (61), Statistics(sizeInBytes=108.3 MiB, rowCount=1.57E+6)
+                                 :                             :                    :        +- ShuffleQueryStage (61), Statistics(X)
                                  :                             :                    :           +- NativeShuffleExchange (60)
                                  :                             :                    :              +- InputAdapter (59)
                                  :                             :                    :                 +- NativeUnion (58)
@@ -97,12 +97,12 @@ AdaptiveSparkPlan (261)
                                  :                             :                       +- InputAdapter (69)
                                  :                             :                          +- InputAdapter (68)
                                  :                             :                             +- AQEShuffleRead (67)
-                                 :                             :                                +- ShuffleQueryStage (66), Statistics(sizeInBytes=268.0 B, rowCount=15)
+                                 :                             :                                +- ShuffleQueryStage (66), Statistics(X)
                                  :                             :                                   +- ReusedExchange (65)
                                  :                             +- NativeSort (85)
                                  :                                +- InputAdapter (84)
                                  :                                   +- AQEShuffleRead (83)
-                                 :                                      +- ShuffleQueryStage (82), Statistics(sizeInBytes=314.5 KiB, rowCount=1.17E+4)
+                                 :                                      +- ShuffleQueryStage (82), Statistics(X)
                                  :                                         +- NativeShuffleExchange (81)
                                  :                                            +- NativeFilter (80)
                                  :                                               +- InputAdapter (79)
@@ -111,7 +111,7 @@ AdaptiveSparkPlan (261)
                                     +- NativeHashAggregate (154)
                                        +- InputAdapter (153)
                                           +- AQEShuffleRead (152)
-                                             +- ShuffleQueryStage (151), Statistics(sizeInBytes=1848.0 B, rowCount=15)
+                                             +- ShuffleQueryStage (151), Statistics(X)
                                                 +- NativeShuffleExchange (150)
                                                    +- NativeHashAggregate (149)
                                                       +- NativeProject (148)
@@ -120,14 +120,14 @@ AdaptiveSparkPlan (261)
                                                                :- NativeSort (137)
                                                                :  +- InputAdapter (136)
                                                                :     +- AQEShuffleRead (135)
-                                                               :        +- ShuffleQueryStage (134), Statistics(sizeInBytes=566.6 KiB, rowCount=8.40E+3)
+                                                               :        +- ShuffleQueryStage (134), Statistics(X)
                                                                :           +- NativeShuffleExchange (133)
                                                                :              +- NativeProject (132)
                                                                :                 +- NativeSortMergeJoin Inner (131)
                                                                :                    :- NativeSort (124)
                                                                :                    :  +- InputAdapter (123)
                                                                :                    :     +- AQEShuffleRead (122)
-                                                               :                    :        +- ShuffleQueryStage (121), Statistics(sizeInBytes=54.2 MiB, rowCount=7.88E+5)
+                                                               :                    :        +- ShuffleQueryStage (121), Statistics(X)
                                                                :                    :           +- NativeShuffleExchange (120)
                                                                :                    :              +- InputAdapter (119)
                                                                :                    :                 +- NativeUnion (118)
@@ -140,7 +140,7 @@ AdaptiveSparkPlan (261)
                                                                :                    :                          :- NativeSort (107)
                                                                :                    :                          :  +- InputAdapter (106)
                                                                :                    :                          :     +- AQEShuffleRead (105)
-                                                               :                    :                          :        +- ShuffleQueryStage (104), Statistics(sizeInBytes=2.9 MiB, rowCount=6.86E+4)
+                                                               :                    :                          :        +- ShuffleQueryStage (104), Statistics(X)
                                                                :                    :                          :           +- NativeShuffleExchange (103)
                                                                :                    :                          :              +- NativeFilter (102)
                                                                :                    :                          :                 +- InputAdapter (101)
@@ -148,7 +148,7 @@ AdaptiveSparkPlan (261)
                                                                :                    :                          +- NativeSort (115)
                                                                :                    :                             +- InputAdapter (114)
                                                                :                    :                                +- AQEShuffleRead (113)
-                                                               :                    :                                   +- ShuffleQueryStage (112), Statistics(sizeInBytes=8.3 MiB, rowCount=7.19E+5)
+                                                               :                    :                                   +- ShuffleQueryStage (112), Statistics(X)
                                                                :                    :                                      +- NativeShuffleExchange (111)
                                                                :                    :                                         +- NativeFilter (110)
                                                                :                    :                                            +- InputAdapter (109)
@@ -157,12 +157,12 @@ AdaptiveSparkPlan (261)
                                                                :                       +- InputAdapter (129)
                                                                :                          +- InputAdapter (128)
                                                                :                             +- AQEShuffleRead (127)
-                                                               :                                +- ShuffleQueryStage (126), Statistics(sizeInBytes=268.0 B, rowCount=15)
+                                                               :                                +- ShuffleQueryStage (126), Statistics(X)
                                                                :                                   +- ReusedExchange (125)
                                                                +- NativeSort (145)
                                                                   +- InputAdapter (144)
                                                                      +- AQEShuffleRead (143)
-                                                                        +- ShuffleQueryStage (142), Statistics(sizeInBytes=1140.0 B, rowCount=30)
+                                                                        +- ShuffleQueryStage (142), Statistics(X)
                                                                            +- NativeShuffleExchange (141)
                                                                               +- NativeFilter (140)
                                                                                  +- InputAdapter (139)
@@ -188,19 +188,19 @@ AdaptiveSparkPlan (261)
                   :              :           :     +- Union (173)
                   :              :           :        :- Project (169)
                   :              :           :        :  +- Filter (168)
-                  :              :           :        :     +- Scan parquet  (167)
+                  :              :           :        :     +- Scan parquet (167)
                   :              :           :        +- Project (172)
                   :              :           :           +- Filter (171)
-                  :              :           :              +- Scan parquet  (170)
+                  :              :           :              +- Scan parquet (170)
                   :              :           +- Sort (180)
                   :              :              +- Exchange (179)
                   :              :                 +- Project (178)
                   :              :                    +- Filter (177)
-                  :              :                       +- Scan parquet  (176)
+                  :              :                       +- Scan parquet (176)
                   :              +- Sort (188)
                   :                 +- Exchange (187)
                   :                    +- Filter (186)
-                  :                       +- Scan parquet  (185)
+                  :                       +- Scan parquet (185)
                   :- HashAggregate (220)
                   :  +- Exchange (219)
                   :     +- HashAggregate (218)
@@ -215,19 +215,19 @@ AdaptiveSparkPlan (261)
                   :              :           :     +- Union (200)
                   :              :           :        :- Project (196)
                   :              :           :        :  +- Filter (195)
-                  :              :           :        :     +- Scan parquet  (194)
+                  :              :           :        :     +- Scan parquet (194)
                   :              :           :        +- Project (199)
                   :              :           :           +- Filter (198)
-                  :              :           :              +- Scan parquet  (197)
+                  :              :           :              +- Scan parquet (197)
                   :              :           +- Sort (207)
                   :              :              +- Exchange (206)
                   :              :                 +- Project (205)
                   :              :                    +- Filter (204)
-                  :              :                       +- Scan parquet  (203)
+                  :              :                       +- Scan parquet (203)
                   :              +- Sort (215)
                   :                 +- Exchange (214)
                   :                    +- Filter (213)
-                  :                       +- Scan parquet  (212)
+                  :                       +- Scan parquet (212)
                   +- HashAggregate (254)
                      +- Exchange (253)
                         +- HashAggregate (252)
@@ -242,29 +242,29 @@ AdaptiveSparkPlan (261)
                                  :           :     +- Union (234)
                                  :           :        :- Project (223)
                                  :           :        :  +- Filter (222)
-                                 :           :        :     +- Scan parquet  (221)
+                                 :           :        :     +- Scan parquet (221)
                                  :           :        +- Project (233)
                                  :           :           +- SortMergeJoin Inner (232)
                                  :           :              :- Sort (227)
                                  :           :              :  +- Exchange (226)
                                  :           :              :     +- Filter (225)
-                                 :           :              :        +- Scan parquet  (224)
+                                 :           :              :        +- Scan parquet (224)
                                  :           :              +- Sort (231)
                                  :           :                 +- Exchange (230)
                                  :           :                    +- Filter (229)
-                                 :           :                       +- Scan parquet  (228)
+                                 :           :                       +- Scan parquet (228)
                                  :           +- Sort (241)
                                  :              +- Exchange (240)
                                  :                 +- Project (239)
                                  :                    +- Filter (238)
-                                 :                       +- Scan parquet  (237)
+                                 :                       +- Scan parquet (237)
                                  +- Sort (249)
                                     +- Exchange (248)
                                        +- Filter (247)
-                                          +- Scan parquet  (246)
+                                          +- Scan parquet (246)
 
 
-(167) Scan parquet 
+(167) Scan parquet
 Output [4]: [ss_sold_date_sk#1, ss_store_sk#2, ss_ext_sales_price#3, ss_net_profit#4]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -283,7 +283,7 @@ Condition : (isnotnull(ss_sold_date_sk#1) AND isnotnull(ss_store_sk#2))
 Output [6]: [ss_store_sk#2 AS store_sk#5, ss_sold_date_sk#1 AS date_sk#6, ss_ext_sales_price#3 AS sales_price#7, ss_net_profit#4 AS profit#8, 0.00 AS return_amt#9, 0.00 AS net_loss#10]
 Input [4]: [#1#1, #2#2, #3#3, #4#4]
 
-(170) Scan parquet 
+(170) Scan parquet
 Output [4]: [sr_returned_date_sk#11, sr_store_sk#12, sr_return_amt#13, sr_net_loss#14]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -328,7 +328,7 @@ Input [6]: [#5#5, #6#6, #7#7, #8#8, #9#9, #10#10]
 Input [6]: [#5#5, #6#6, #7#7, #8#8, #9#9, #10#10]
 Arguments: [date_sk#6 ASC NULLS FIRST], false
 
-(176) Scan parquet 
+(176) Scan parquet
 Output [2]: [d_date_sk#21, d_date#22]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -395,7 +395,7 @@ Input [5]: [store_sk#5, sales_price#7, profit#8, return_amt#9, net_loss#10]
 Input [5]: [store_sk#5, sales_price#7, profit#8, return_amt#9, net_loss#10]
 Arguments: [store_sk#5 ASC NULLS FIRST], false
 
-(185) Scan parquet 
+(185) Scan parquet
 Output [2]: [s_store_sk#23, s_store_id#24]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -476,7 +476,7 @@ Results [5]: [s_store_id#24, sum(UnscaledValue(sales_price#7))#34, sum(UnscaledV
 Output [5]: [MakeDecimal(sum(UnscaledValue(sales_price#7))#34,17,2) AS sales#38, MakeDecimal(sum(UnscaledValue(return_amt#9))#35,17,2) AS returns#39, (MakeDecimal(sum(UnscaledValue(profit#8))#36,17,2) - MakeDecimal(sum(UnscaledValue(net_loss#10))#37,17,2)) AS profit#40, store channel AS channel#41, concat(store, s_store_id#24) AS id#42]
 Input [5]: [s_store_id#24, sum(UnscaledValue(sales_price#7))#34, sum(UnscaledValue(return_amt#9))#35, sum(UnscaledValue(profit#8))#36, sum(UnscaledValue(net_loss#10))#37]
 
-(194) Scan parquet 
+(194) Scan parquet
 Output [4]: [cs_sold_date_sk#43, cs_catalog_page_sk#44, cs_ext_sales_price#45, cs_net_profit#46]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -495,7 +495,7 @@ Condition : (isnotnull(cs_sold_date_sk#43) AND isnotnull(cs_catalog_page_sk#44))
 Output [6]: [cs_catalog_page_sk#44 AS page_sk#47, cs_sold_date_sk#43 AS date_sk#48, cs_ext_sales_price#45 AS sales_price#49, cs_net_profit#46 AS profit#50, 0.00 AS return_amt#51, 0.00 AS net_loss#52]
 Input [4]: [#43#43, #44#44, #45#45, #46#46]
 
-(197) Scan parquet 
+(197) Scan parquet
 Output [4]: [cr_returned_date_sk#53, cr_catalog_page_sk#54, cr_return_amount#55, cr_net_loss#56]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -591,7 +591,7 @@ Input [5]: [page_sk#47, sales_price#49, profit#50, return_amt#51, net_loss#52]
 Input [5]: [page_sk#47, sales_price#49, profit#50, return_amt#51, net_loss#52]
 Arguments: [page_sk#47 ASC NULLS FIRST], false
 
-(212) Scan parquet 
+(212) Scan parquet
 Output [2]: [cp_catalog_page_sk#64, cp_catalog_page_id#65]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -672,7 +672,7 @@ Results [5]: [cp_catalog_page_id#65, sum(UnscaledValue(sales_price#49))#74, sum(
 Output [5]: [MakeDecimal(sum(UnscaledValue(sales_price#49))#74,17,2) AS sales#78, MakeDecimal(sum(UnscaledValue(return_amt#51))#75,17,2) AS returns#79, (MakeDecimal(sum(UnscaledValue(profit#50))#76,17,2) - MakeDecimal(sum(UnscaledValue(net_loss#52))#77,17,2)) AS profit#80, catalog channel AS channel#81, concat(catalog_page, cp_catalog_page_id#65) AS id#82]
 Input [5]: [cp_catalog_page_id#65, sum(UnscaledValue(sales_price#49))#74, sum(UnscaledValue(return_amt#51))#75, sum(UnscaledValue(profit#50))#76, sum(UnscaledValue(net_loss#52))#77]
 
-(221) Scan parquet 
+(221) Scan parquet
 Output [4]: [ws_sold_date_sk#83, ws_web_site_sk#84, ws_ext_sales_price#85, ws_net_profit#86]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -691,7 +691,7 @@ Condition : (isnotnull(ws_sold_date_sk#83) AND isnotnull(ws_web_site_sk#84))
 Output [6]: [ws_web_site_sk#84 AS wsr_web_site_sk#87, ws_sold_date_sk#83 AS date_sk#88, ws_ext_sales_price#85 AS sales_price#89, ws_net_profit#86 AS profit#90, 0.00 AS return_amt#91, 0.00 AS net_loss#92]
 Input [4]: [#83#83, #84#84, #85#85, #86#86]
 
-(224) Scan parquet 
+(224) Scan parquet
 Output [5]: [wr_returned_date_sk#93, wr_item_sk#94, wr_order_number#95, wr_return_amt#96, wr_net_loss#97]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -725,7 +725,7 @@ Input [5]: [#93#93, #94#94, #95#95, #96#96, #97#97]
 Input [5]: [#93#93, #94#94, #95#95, #96#96, #97#97]
 Arguments: [wr_item_sk#94 ASC NULLS FIRST, wr_order_number#95 ASC NULLS FIRST], false
 
-(228) Scan parquet 
+(228) Scan parquet
 Output [3]: [ws_item_sk#98, ws_web_site_sk#99, ws_order_number#100]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -846,7 +846,7 @@ Input [5]: [wsr_web_site_sk#87, sales_price#89, profit#90, return_amt#91, net_lo
 Input [5]: [wsr_web_site_sk#87, sales_price#89, profit#90, return_amt#91, net_loss#92]
 Arguments: [wsr_web_site_sk#87 ASC NULLS FIRST], false
 
-(246) Scan parquet 
+(246) Scan parquet
 Output [2]: [web_site_sk#108, web_site_id#109]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -975,7 +975,7 @@ Input [6]: [channel#127, id#128, spark_grouping_id#129, sum(sales#38)#136, sum(r
 Input [5]: [channel#127, id#128, sales#139, returns#140, profit#141]
 Arguments: X, [channel#127 ASC NULLS FIRST, id#128 ASC NULLS FIRST]
 
-(167) Scan parquet 
+(167) Scan parquet
 Output [4]: [ss_sold_date_sk#1, ss_store_sk#2, ss_ext_sales_price#3, ss_net_profit#4]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -990,7 +990,7 @@ Condition : (isnotnull(ss_sold_date_sk#1) AND isnotnull(ss_store_sk#2))
 Output [6]: [ss_store_sk#2 AS store_sk#5, ss_sold_date_sk#1 AS date_sk#6, ss_ext_sales_price#3 AS sales_price#7, ss_net_profit#4 AS profit#8, 0.00 AS return_amt#9, 0.00 AS net_loss#10]
 Input [4]: [ss_sold_date_sk#1, ss_store_sk#2, ss_ext_sales_price#3, ss_net_profit#4]
 
-(170) Scan parquet 
+(170) Scan parquet
 Output [4]: [sr_returned_date_sk#11, sr_store_sk#12, sr_return_amt#13, sr_net_loss#14]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -1015,7 +1015,7 @@ Arguments: hashpartitioning(date_sk#6, 100), ENSURE_REQUIREMENTS, [plan_id=17]
 Input [6]: [store_sk#5, date_sk#6, sales_price#7, profit#8, return_amt#9, net_loss#10]
 Arguments: [date_sk#6 ASC NULLS FIRST], false, 0
 
-(176) Scan parquet 
+(176) Scan parquet
 Output [2]: [d_date_sk#21, d_date#22]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -1056,7 +1056,7 @@ Arguments: hashpartitioning(store_sk#5, 100), ENSURE_REQUIREMENTS, [plan_id=19]
 Input [5]: [store_sk#5, sales_price#7, profit#8, return_amt#9, net_loss#10]
 Arguments: [store_sk#5 ASC NULLS FIRST], false, 0
 
-(185) Scan parquet 
+(185) Scan parquet
 Output [2]: [s_store_sk#23, s_store_id#24]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -1103,7 +1103,7 @@ Functions [4]: [sum(UnscaledValue(sales_price#7)), sum(UnscaledValue(return_amt#
 Aggregate Attributes [4]: [sum(UnscaledValue(sales_price#7))#34, sum(UnscaledValue(return_amt#9))#35, sum(UnscaledValue(profit#8))#36, sum(UnscaledValue(net_loss#10))#37]
 Results [5]: [MakeDecimal(sum(UnscaledValue(sales_price#7))#34,17,2) AS sales#38, MakeDecimal(sum(UnscaledValue(return_amt#9))#35,17,2) AS returns#39, (MakeDecimal(sum(UnscaledValue(profit#8))#36,17,2) - MakeDecimal(sum(UnscaledValue(net_loss#10))#37,17,2)) AS profit#40, store channel AS channel#41, concat(store, s_store_id#24) AS id#42]
 
-(194) Scan parquet 
+(194) Scan parquet
 Output [4]: [cs_sold_date_sk#43, cs_catalog_page_sk#44, cs_ext_sales_price#45, cs_net_profit#46]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -1118,7 +1118,7 @@ Condition : (isnotnull(cs_sold_date_sk#43) AND isnotnull(cs_catalog_page_sk#44))
 Output [6]: [cs_catalog_page_sk#44 AS page_sk#47, cs_sold_date_sk#43 AS date_sk#48, cs_ext_sales_price#45 AS sales_price#49, cs_net_profit#46 AS profit#50, 0.00 AS return_amt#51, 0.00 AS net_loss#52]
 Input [4]: [cs_sold_date_sk#43, cs_catalog_page_sk#44, cs_ext_sales_price#45, cs_net_profit#46]
 
-(197) Scan parquet 
+(197) Scan parquet
 Output [4]: [cr_returned_date_sk#53, cr_catalog_page_sk#54, cr_return_amount#55, cr_net_loss#56]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -1143,7 +1143,7 @@ Arguments: hashpartitioning(date_sk#48, 100), ENSURE_REQUIREMENTS, [plan_id=22]
 Input [6]: [page_sk#47, date_sk#48, sales_price#49, profit#50, return_amt#51, net_loss#52]
 Arguments: [date_sk#48 ASC NULLS FIRST], false, 0
 
-(203) Scan parquet 
+(203) Scan parquet
 Output [2]: [d_date_sk#63, d_date#146]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -1184,7 +1184,7 @@ Arguments: hashpartitioning(page_sk#47, 100), ENSURE_REQUIREMENTS, [plan_id=24]
 Input [5]: [page_sk#47, sales_price#49, profit#50, return_amt#51, net_loss#52]
 Arguments: [page_sk#47 ASC NULLS FIRST], false, 0
 
-(212) Scan parquet 
+(212) Scan parquet
 Output [2]: [cp_catalog_page_sk#64, cp_catalog_page_id#65]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -1231,7 +1231,7 @@ Functions [4]: [sum(UnscaledValue(sales_price#49)), sum(UnscaledValue(return_amt
 Aggregate Attributes [4]: [sum(UnscaledValue(sales_price#49))#74, sum(UnscaledValue(return_amt#51))#75, sum(UnscaledValue(profit#50))#76, sum(UnscaledValue(net_loss#52))#77]
 Results [5]: [MakeDecimal(sum(UnscaledValue(sales_price#49))#74,17,2) AS sales#78, MakeDecimal(sum(UnscaledValue(return_amt#51))#75,17,2) AS returns#79, (MakeDecimal(sum(UnscaledValue(profit#50))#76,17,2) - MakeDecimal(sum(UnscaledValue(net_loss#52))#77,17,2)) AS profit#80, catalog channel AS channel#81, concat(catalog_page, cp_catalog_page_id#65) AS id#82]
 
-(221) Scan parquet 
+(221) Scan parquet
 Output [4]: [ws_sold_date_sk#83, ws_web_site_sk#84, ws_ext_sales_price#85, ws_net_profit#86]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -1246,7 +1246,7 @@ Condition : (isnotnull(ws_sold_date_sk#83) AND isnotnull(ws_web_site_sk#84))
 Output [6]: [ws_web_site_sk#84 AS wsr_web_site_sk#87, ws_sold_date_sk#83 AS date_sk#88, ws_ext_sales_price#85 AS sales_price#89, ws_net_profit#86 AS profit#90, 0.00 AS return_amt#91, 0.00 AS net_loss#92]
 Input [4]: [ws_sold_date_sk#83, ws_web_site_sk#84, ws_ext_sales_price#85, ws_net_profit#86]
 
-(224) Scan parquet 
+(224) Scan parquet
 Output [5]: [wr_returned_date_sk#93, wr_item_sk#94, wr_order_number#95, wr_return_amt#96, wr_net_loss#97]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -1265,7 +1265,7 @@ Arguments: hashpartitioning(wr_item_sk#94, wr_order_number#95, 100), ENSURE_REQU
 Input [5]: [wr_returned_date_sk#93, wr_item_sk#94, wr_order_number#95, wr_return_amt#96, wr_net_loss#97]
 Arguments: [wr_item_sk#94 ASC NULLS FIRST, wr_order_number#95 ASC NULLS FIRST], false, 0
 
-(228) Scan parquet 
+(228) Scan parquet
 Output [3]: [ws_item_sk#98, ws_web_site_sk#99, ws_order_number#100]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -1304,7 +1304,7 @@ Arguments: hashpartitioning(date_sk#88, 100), ENSURE_REQUIREMENTS, [plan_id=29]
 Input [6]: [wsr_web_site_sk#87, date_sk#88, sales_price#89, profit#90, return_amt#91, net_loss#92]
 Arguments: [date_sk#88 ASC NULLS FIRST], false, 0
 
-(237) Scan parquet 
+(237) Scan parquet
 Output [2]: [d_date_sk#107, d_date#151]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -1345,7 +1345,7 @@ Arguments: hashpartitioning(wsr_web_site_sk#87, 100), ENSURE_REQUIREMENTS, [plan
 Input [5]: [wsr_web_site_sk#87, sales_price#89, profit#90, return_amt#91, net_loss#92]
 Arguments: [wsr_web_site_sk#87 ASC NULLS FIRST], false, 0
 
-(246) Scan parquet 
+(246) Scan parquet
 Output [2]: [web_site_sk#108, web_site_id#109]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
