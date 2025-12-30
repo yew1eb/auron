@@ -379,7 +379,7 @@ jobs:
           SCALA_VERSION: ${{ inputs.scalaver }}
           SPARK_HOME: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
         run: |
-          dev/auron-it/auron-it.sh  \
+          dev/auron-it/run-it.sh  \
             ${{ inputs.extrasparkconf }} \
             --type tpcds \
             --data-location dev/tpcds_1g \

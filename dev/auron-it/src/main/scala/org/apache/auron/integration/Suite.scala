@@ -16,8 +16,18 @@
  */
 package org.apache.auron.integration
 
-abstract class Suite(val args: SuiteArgs) {
-  protected val sessions = new SessionManager(args.extraSparkConf)
+case class SuiteArgs(
+                      benchType: String = "",
+                      dataLocation: String = "",
+                      queryFilter: Seq[String] = Nil,
+                      extraSparkConf: Map[String, String] = Map.empty,
+                      disableResultCheck: Boolean = false,
+                      enablePlanCheck: Boolean = false,
+                      regenGoldenFiles: Boolean = false)
+
+
+abstract class Suite(val args: SuiteArgs, protected val sessions: SessionManager) {
+  def this(args: SuiteArgs) = this(args, new SessionManager(args.extraSparkConf))
 
   def run(): Int
 
