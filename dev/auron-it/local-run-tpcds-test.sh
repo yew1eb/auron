@@ -31,5 +31,5 @@ $SCRIPT_DIR/auron-it.sh \
     --conf spark.serializer=org.apache.spark.serializer.KryoSerializer  --conf spark.celeborn.client.spark.shuffle.writer=hash \
     --type tpcds \
     --data-location /Users/yew1eb/workspaces/tpcds-validator/tpcds_1g \
-    --query-filter q64 \
-    --plan-check
+    --plan-check \
+    --disable-result-check

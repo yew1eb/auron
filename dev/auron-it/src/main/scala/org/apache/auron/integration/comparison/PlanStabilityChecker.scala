@@ -129,6 +129,7 @@ class PlanStabilityChecker(
       .replaceAll("Arguments: [0-9]+", "Arguments: X")
       // for unexpected blank
       .replaceAll("Scan parquet ", "Scan parquet")
+      .replaceAll("Statistics[(A-Za-z0-9=. ,+)]*", "Statistics(X)")
 
     normalizeLocation(argumentsNormalized)
   }

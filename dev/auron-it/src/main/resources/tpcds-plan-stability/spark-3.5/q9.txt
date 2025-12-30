@@ -8,10 +8,10 @@ AdaptiveSparkPlan (8)
 +- == Initial Plan ==
    Project (7)
    +- Filter (6)
-      +- Scan parquet  (5)
+      +- Scan parquet (5)
 
 
-(5) Scan parquet 
+(5) Scan parquet
 Output [1]: [r_reason_sk#1]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -30,7 +30,7 @@ Condition : (isnotnull(r_reason_sk#1) AND (r_reason_sk#1 = 1))
 Output [5]: [CASE WHEN (Subquery subquery#2, [id=#3].count(1) > 62316685) THEN ReusedSubquery Subquery subquery#2, [id=#3].avg(ss_ext_discount_amt) ELSE ReusedSubquery Subquery subquery#2, [id=#3].avg(ss_net_paid) END AS bucket1#4, CASE WHEN (Subquery subquery#5, [id=#6].count(1) > 19045798) THEN ReusedSubquery Subquery subquery#5, [id=#6].avg(ss_ext_discount_amt) ELSE ReusedSubquery Subquery subquery#5, [id=#6].avg(ss_net_paid) END AS bucket2#7, CASE WHEN (Subquery subquery#8, [id=#9].count(1) > 365541424) THEN ReusedSubquery Subquery subquery#8, [id=#9].avg(ss_ext_discount_amt) ELSE ReusedSubquery Subquery subquery#8, [id=#9].avg(ss_net_paid) END AS bucket3#10, CASE WHEN (Subquery subquery#11, [id=#12].count(1) > 216357808) THEN ReusedSubquery Subquery subquery#11, [id=#12].avg(ss_ext_discount_amt) ELSE ReusedSubquery Subquery subquery#11, [id=#12].avg(ss_net_paid) END AS bucket4#13, CASE WHEN (Subquery subquery#14, [id=#15].count(1) > 184483884) THEN ReusedSubquery Subquery subquery#14, [id=#15].avg(ss_ext_discount_amt) ELSE ReusedSubquery Subquery subquery#14, [id=#15].avg(ss_net_paid) END AS bucket5#16]
 Input [1]: [#1#1]
 
-(5) Scan parquet 
+(5) Scan parquet
 Output [1]: [r_reason_sk#1]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -57,7 +57,7 @@ AdaptiveSparkPlan (27)
    NativeProject (19)
    +- NativeProject (18)
       +- NativeHashAggregate (17)
-         +- ShuffleQueryStage (16), Statistics(sizeInBytes=3.5 KiB, rowCount=10)
+         +- ShuffleQueryStage (16), Statistics(X)
             +- NativeShuffleExchange (15)
                +- NativeHashAggregate (14)
                   +- NativeProject (13)
@@ -72,10 +72,10 @@ AdaptiveSparkPlan (27)
          +- HashAggregate (23)
             +- Project (22)
                +- Filter (21)
-                  +- Scan parquet  (20)
+                  +- Scan parquet (20)
 
 
-(20) Scan parquet 
+(20) Scan parquet
 Output [3]: [ss_quantity#37, ss_ext_discount_amt#38, ss_net_paid#39]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -128,7 +128,7 @@ Input [3]: [count(1)#48, avg(UnscaledValue(ss_ext_discount_amt#38))#49, avg(Unsc
 Output [1]: [named_struct(count(1), count(1)#51, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#52, avg(ss_net_paid), avg(ss_net_paid)#53) AS mergedValue#54]
 Input [3]: [count(1)#51, avg(ss_ext_discount_amt)#52, avg(ss_net_paid)#53]
 
-(20) Scan parquet 
+(20) Scan parquet
 Output [3]: [ss_quantity#37, ss_ext_discount_amt#38, ss_net_paid#39]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -179,7 +179,7 @@ AdaptiveSparkPlan (46)
    NativeProject (38)
    +- NativeProject (37)
       +- NativeHashAggregate (36)
-         +- ShuffleQueryStage (35), Statistics(sizeInBytes=3.5 KiB, rowCount=10)
+         +- ShuffleQueryStage (35), Statistics(X)
             +- NativeShuffleExchange (34)
                +- NativeHashAggregate (33)
                   +- NativeProject (32)
@@ -194,10 +194,10 @@ AdaptiveSparkPlan (46)
          +- HashAggregate (42)
             +- Project (41)
                +- Filter (40)
-                  +- Scan parquet  (39)
+                  +- Scan parquet (39)
 
 
-(39) Scan parquet 
+(39) Scan parquet
 Output [3]: [ss_quantity#60, ss_ext_discount_amt#61, ss_net_paid#62]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -250,7 +250,7 @@ Input [3]: [count(1)#70, avg(UnscaledValue(ss_ext_discount_amt#61))#71, avg(Unsc
 Output [1]: [named_struct(count(1), count(1)#73, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#74, avg(ss_net_paid), avg(ss_net_paid)#75) AS mergedValue#76]
 Input [3]: [count(1)#73, avg(ss_ext_discount_amt)#74, avg(ss_net_paid)#75]
 
-(39) Scan parquet 
+(39) Scan parquet
 Output [3]: [ss_quantity#60, ss_ext_discount_amt#61, ss_net_paid#62]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -301,7 +301,7 @@ AdaptiveSparkPlan (65)
    NativeProject (57)
    +- NativeProject (56)
       +- NativeHashAggregate (55)
-         +- ShuffleQueryStage (54), Statistics(sizeInBytes=3.5 KiB, rowCount=10)
+         +- ShuffleQueryStage (54), Statistics(X)
             +- NativeShuffleExchange (53)
                +- NativeHashAggregate (52)
                   +- NativeProject (51)
@@ -316,10 +316,10 @@ AdaptiveSparkPlan (65)
          +- HashAggregate (61)
             +- Project (60)
                +- Filter (59)
-                  +- Scan parquet  (58)
+                  +- Scan parquet (58)
 
 
-(58) Scan parquet 
+(58) Scan parquet
 Output [3]: [ss_quantity#82, ss_ext_discount_amt#83, ss_net_paid#84]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -372,7 +372,7 @@ Input [3]: [count(1)#92, avg(UnscaledValue(ss_ext_discount_amt#83))#93, avg(Unsc
 Output [1]: [named_struct(count(1), count(1)#95, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#96, avg(ss_net_paid), avg(ss_net_paid)#97) AS mergedValue#98]
 Input [3]: [count(1)#95, avg(ss_ext_discount_amt)#96, avg(ss_net_paid)#97]
 
-(58) Scan parquet 
+(58) Scan parquet
 Output [3]: [ss_quantity#82, ss_ext_discount_amt#83, ss_net_paid#84]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -423,7 +423,7 @@ AdaptiveSparkPlan (84)
    NativeProject (76)
    +- NativeProject (75)
       +- NativeHashAggregate (74)
-         +- ShuffleQueryStage (73), Statistics(sizeInBytes=3.5 KiB, rowCount=10)
+         +- ShuffleQueryStage (73), Statistics(X)
             +- NativeShuffleExchange (72)
                +- NativeHashAggregate (71)
                   +- NativeProject (70)
@@ -438,10 +438,10 @@ AdaptiveSparkPlan (84)
          +- HashAggregate (80)
             +- Project (79)
                +- Filter (78)
-                  +- Scan parquet  (77)
+                  +- Scan parquet (77)
 
 
-(77) Scan parquet 
+(77) Scan parquet
 Output [3]: [ss_quantity#104, ss_ext_discount_amt#105, ss_net_paid#106]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -494,7 +494,7 @@ Input [3]: [count(1)#114, avg(UnscaledValue(ss_ext_discount_amt#105))#115, avg(U
 Output [1]: [named_struct(count(1), count(1)#117, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#118, avg(ss_net_paid), avg(ss_net_paid)#119) AS mergedValue#120]
 Input [3]: [count(1)#117, avg(ss_ext_discount_amt)#118, avg(ss_net_paid)#119]
 
-(77) Scan parquet 
+(77) Scan parquet
 Output [3]: [ss_quantity#104, ss_ext_discount_amt#105, ss_net_paid#106]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -545,7 +545,7 @@ AdaptiveSparkPlan (103)
    NativeProject (95)
    +- NativeProject (94)
       +- NativeHashAggregate (93)
-         +- ShuffleQueryStage (92), Statistics(sizeInBytes=3.5 KiB, rowCount=10)
+         +- ShuffleQueryStage (92), Statistics(X)
             +- NativeShuffleExchange (91)
                +- NativeHashAggregate (90)
                   +- NativeProject (89)
@@ -560,10 +560,10 @@ AdaptiveSparkPlan (103)
          +- HashAggregate (99)
             +- Project (98)
                +- Filter (97)
-                  +- Scan parquet  (96)
+                  +- Scan parquet (96)
 
 
-(96) Scan parquet 
+(96) Scan parquet
 Output [3]: [ss_quantity#126, ss_ext_discount_amt#127, ss_net_paid#128]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -616,7 +616,7 @@ Input [3]: [count(1)#136, avg(UnscaledValue(ss_ext_discount_amt#127))#137, avg(U
 Output [1]: [named_struct(count(1), count(1)#139, avg(ss_ext_discount_amt), avg(ss_ext_discount_amt)#140, avg(ss_net_paid), avg(ss_net_paid)#141) AS mergedValue#142]
 Input [3]: [count(1)#139, avg(ss_ext_discount_amt)#140, avg(ss_net_paid)#141]
 
-(96) Scan parquet 
+(96) Scan parquet
 Output [3]: [ss_quantity#126, ss_ext_discount_amt#127, ss_net_paid#128]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]

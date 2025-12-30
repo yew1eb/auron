@@ -6,7 +6,7 @@ AdaptiveSparkPlan (69)
       +- NativeHashAggregate (42)
          +- InputAdapter (41)
             +- AQEShuffleRead (40)
-               +- ShuffleQueryStage (39), Statistics(sizeInBytes=1256.0 B, rowCount=10)
+               +- ShuffleQueryStage (39), Statistics(X)
                   +- NativeShuffleExchange (38)
                      +- NativeHashAggregate (37)
                         +- NativeProject (36)
@@ -15,14 +15,14 @@ AdaptiveSparkPlan (69)
                                  :- NativeSort (24)
                                  :  +- InputAdapter (23)
                                  :     +- AQEShuffleRead (22)
-                                 :        +- ShuffleQueryStage (21), Statistics(sizeInBytes=2.0 MiB, rowCount=8.87E+4)
+                                 :        +- ShuffleQueryStage (21), Statistics(X)
                                  :           +- NativeShuffleExchange (20)
                                  :              +- NativeProject (19)
                                  :                 +- NativeSortMergeJoin Inner (18)
                                  :                    :- NativeSort (9)
                                  :                    :  +- InputAdapter (8)
                                  :                    :     +- AQEShuffleRead (7)
-                                 :                    :        +- ShuffleQueryStage (6), Statistics(sizeInBytes=632.0 B, rowCount=30)
+                                 :                    :        +- ShuffleQueryStage (6), Statistics(X)
                                  :                    :           +- NativeShuffleExchange (5)
                                  :                    :              +- NativeProject (4)
                                  :                    :                 +- NativeFilter (3)
@@ -31,7 +31,7 @@ AdaptiveSparkPlan (69)
                                  :                    +- NativeSort (17)
                                  :                       +- InputAdapter (16)
                                  :                          +- AQEShuffleRead (15)
-                                 :                             +- ShuffleQueryStage (14), Statistics(sizeInBytes=63.4 MiB, rowCount=2.75E+6)
+                                 :                             +- ShuffleQueryStage (14), Statistics(X)
                                  :                                +- NativeShuffleExchange (13)
                                  :                                   +- NativeFilter (12)
                                  :                                      +- InputAdapter (11)
@@ -39,7 +39,7 @@ AdaptiveSparkPlan (69)
                                  +- NativeSort (33)
                                     +- InputAdapter (32)
                                        +- AQEShuffleRead (31)
-                                          +- ShuffleQueryStage (30), Statistics(sizeInBytes=7.0 KiB, rowCount=321)
+                                          +- ShuffleQueryStage (30), Statistics(X)
                                              +- NativeShuffleExchange (29)
                                                 +- NativeProject (28)
                                                    +- NativeFilter (27)
@@ -60,19 +60,19 @@ AdaptiveSparkPlan (69)
                   :           :  +- Exchange (48)
                   :           :     +- Project (47)
                   :           :        +- Filter (46)
-                  :           :           +- Scan parquet  (45)
+                  :           :           +- Scan parquet (45)
                   :           +- Sort (53)
                   :              +- Exchange (52)
                   :                 +- Filter (51)
-                  :                    +- Scan parquet  (50)
+                  :                    +- Scan parquet (50)
                   +- Sort (62)
                      +- Exchange (61)
                         +- Project (60)
                            +- Filter (59)
-                              +- Scan parquet  (58)
+                              +- Scan parquet (58)
 
 
-(45) Scan parquet 
+(45) Scan parquet
 Output [3]: [d_date_sk#1, d_year#2, d_moy#3]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -110,7 +110,7 @@ Input [2]: [d_date_sk#1, d_year#2]
 Input [2]: [d_date_sk#1, d_year#2]
 Arguments: [d_date_sk#1 ASC NULLS FIRST], false
 
-(50) Scan parquet 
+(50) Scan parquet
 Output [3]: [ss_sold_date_sk#4, ss_item_sk#5, ss_ext_sales_price#6]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -173,7 +173,7 @@ Input [3]: [d_year#2, ss_item_sk#5, ss_ext_sales_price#6]
 Input [3]: [d_year#2, ss_item_sk#5, ss_ext_sales_price#6]
 Arguments: [ss_item_sk#5 ASC NULLS FIRST], false
 
-(58) Scan parquet 
+(58) Scan parquet
 Output [4]: [i_item_sk#7, i_category_id#8, i_category#9, i_manager_id#10]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -262,7 +262,7 @@ Input [4]: [d_year#2, i_category_id#8, i_category#9, sum(UnscaledValue(ss_ext_sa
 Input [4]: [d_year#2, i_category_id#8, i_category#9, sum(ss_ext_sales_price)#15]
 Arguments: X, [sum(ss_ext_sales_price)#15 DESC NULLS LAST, d_year#2 ASC NULLS FIRST, i_category_id#8 ASC NULLS FIRST, i_category#9 ASC NULLS FIRST]
 
-(45) Scan parquet 
+(45) Scan parquet
 Output [3]: [d_date_sk#1, d_year#2, d_moy#3]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -285,7 +285,7 @@ Arguments: hashpartitioning(d_date_sk#1, 100), ENSURE_REQUIREMENTS, [plan_id=6]
 Input [2]: [d_date_sk#1, d_year#2]
 Arguments: [d_date_sk#1 ASC NULLS FIRST], false, 0
 
-(50) Scan parquet 
+(50) Scan parquet
 Output [3]: [ss_sold_date_sk#4, ss_item_sk#5, ss_ext_sales_price#6]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -322,7 +322,7 @@ Arguments: hashpartitioning(ss_item_sk#5, 100), ENSURE_REQUIREMENTS, [plan_id=8]
 Input [3]: [d_year#2, ss_item_sk#5, ss_ext_sales_price#6]
 Arguments: [ss_item_sk#5 ASC NULLS FIRST], false, 0
 
-(58) Scan parquet 
+(58) Scan parquet
 Output [4]: [i_item_sk#7, i_category_id#8, i_category#9, i_manager_id#10]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]

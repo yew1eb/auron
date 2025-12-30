@@ -8,13 +8,13 @@ AdaptiveSparkPlan (161)
    :  :  :  :- CartesianProduct Inner (33)
    :  :  :  :  :- NativeProject (16)
    :  :  :  :  :  +- NativeHashAggregate (15)
-   :  :  :  :  :     +- ShuffleQueryStage (14), Statistics(sizeInBytes=360.0 B, rowCount=1)
+   :  :  :  :  :     +- ShuffleQueryStage (14), Statistics(X)
    :  :  :  :  :        +- NativeShuffleExchange (13)
    :  :  :  :  :           +- NativeHashAggregate (12)
    :  :  :  :  :              +- NativeHashAggregate (11)
    :  :  :  :  :                 +- InputAdapter (10)
    :  :  :  :  :                    +- AQEShuffleRead (9)
-   :  :  :  :  :                       +- ShuffleQueryStage (8), Statistics(sizeInBytes=956.6 KiB, rowCount=2.89E+4)
+   :  :  :  :  :                       +- ShuffleQueryStage (8), Statistics(X)
    :  :  :  :  :                          +- NativeShuffleExchange (7)
    :  :  :  :  :                             +- NativeHashAggregate (6)
    :  :  :  :  :                                +- NativeProject (5)
@@ -24,13 +24,13 @@ AdaptiveSparkPlan (161)
    :  :  :  :  :                                            +- NativeParquetScan  (1)
    :  :  :  :  +- NativeProject (32)
    :  :  :  :     +- NativeHashAggregate (31)
-   :  :  :  :        +- ShuffleQueryStage (30), Statistics(sizeInBytes=360.0 B, rowCount=1)
+   :  :  :  :        +- ShuffleQueryStage (30), Statistics(X)
    :  :  :  :           +- NativeShuffleExchange (29)
    :  :  :  :              +- NativeHashAggregate (28)
    :  :  :  :                 +- NativeHashAggregate (27)
    :  :  :  :                    +- InputAdapter (26)
    :  :  :  :                       +- AQEShuffleRead (25)
-   :  :  :  :                          +- ShuffleQueryStage (24), Statistics(sizeInBytes=842.9 KiB, rowCount=2.63E+4)
+   :  :  :  :                          +- ShuffleQueryStage (24), Statistics(X)
    :  :  :  :                             +- NativeShuffleExchange (23)
    :  :  :  :                                +- NativeHashAggregate (22)
    :  :  :  :                                   +- NativeProject (21)
@@ -40,13 +40,13 @@ AdaptiveSparkPlan (161)
    :  :  :  :                                               +- NativeParquetScan  (17)
    :  :  :  +- NativeProject (49)
    :  :  :     +- NativeHashAggregate (48)
-   :  :  :        +- ShuffleQueryStage (47), Statistics(sizeInBytes=360.0 B, rowCount=1)
+   :  :  :        +- ShuffleQueryStage (47), Statistics(X)
    :  :  :           +- NativeShuffleExchange (46)
    :  :  :              +- NativeHashAggregate (45)
    :  :  :                 +- NativeHashAggregate (44)
    :  :  :                    +- InputAdapter (43)
    :  :  :                       +- AQEShuffleRead (42)
-   :  :  :                          +- ShuffleQueryStage (41), Statistics(sizeInBytes=801.4 KiB, rowCount=2.43E+4)
+   :  :  :                          +- ShuffleQueryStage (41), Statistics(X)
    :  :  :                             +- NativeShuffleExchange (40)
    :  :  :                                +- NativeHashAggregate (39)
    :  :  :                                   +- NativeProject (38)
@@ -56,13 +56,13 @@ AdaptiveSparkPlan (161)
    :  :  :                                               +- NativeParquetScan  (34)
    :  :  +- NativeProject (66)
    :  :     +- NativeHashAggregate (65)
-   :  :        +- ShuffleQueryStage (64), Statistics(sizeInBytes=360.0 B, rowCount=1)
+   :  :        +- ShuffleQueryStage (64), Statistics(X)
    :  :           +- NativeShuffleExchange (63)
    :  :              +- NativeHashAggregate (62)
    :  :                 +- NativeHashAggregate (61)
    :  :                    +- InputAdapter (60)
    :  :                       +- AQEShuffleRead (59)
-   :  :                          +- ShuffleQueryStage (58), Statistics(sizeInBytes=823.4 KiB, rowCount=2.54E+4)
+   :  :                          +- ShuffleQueryStage (58), Statistics(X)
    :  :                             +- NativeShuffleExchange (57)
    :  :                                +- NativeHashAggregate (56)
    :  :                                   +- NativeProject (55)
@@ -72,13 +72,13 @@ AdaptiveSparkPlan (161)
    :  :                                               +- NativeParquetScan  (51)
    :  +- NativeProject (83)
    :     +- NativeHashAggregate (82)
-   :        +- ShuffleQueryStage (81), Statistics(sizeInBytes=360.0 B, rowCount=1)
+   :        +- ShuffleQueryStage (81), Statistics(X)
    :           +- NativeShuffleExchange (80)
    :              +- NativeHashAggregate (79)
    :                 +- NativeHashAggregate (78)
    :                    +- InputAdapter (77)
    :                       +- AQEShuffleRead (76)
-   :                          +- ShuffleQueryStage (75), Statistics(sizeInBytes=867.0 KiB, rowCount=2.76E+4)
+   :                          +- ShuffleQueryStage (75), Statistics(X)
    :                             +- NativeShuffleExchange (74)
    :                                +- NativeHashAggregate (73)
    :                                   +- NativeProject (72)
@@ -88,13 +88,13 @@ AdaptiveSparkPlan (161)
    :                                               +- NativeParquetScan  (68)
    +- NativeProject (100)
       +- NativeHashAggregate (99)
-         +- ShuffleQueryStage (98), Statistics(sizeInBytes=360.0 B, rowCount=1)
+         +- ShuffleQueryStage (98), Statistics(X)
             +- NativeShuffleExchange (97)
                +- NativeHashAggregate (96)
                   +- NativeHashAggregate (95)
                      +- InputAdapter (94)
                         +- AQEShuffleRead (93)
-                           +- ShuffleQueryStage (92), Statistics(sizeInBytes=749.9 KiB, rowCount=2.16E+4)
+                           +- ShuffleQueryStage (92), Statistics(X)
                               +- NativeShuffleExchange (91)
                                  +- NativeHashAggregate (90)
                                     +- NativeProject (89)
@@ -116,7 +116,7 @@ AdaptiveSparkPlan (161)
    :  :  :  :  :              +- HashAggregate (105)
    :  :  :  :  :                 +- Project (104)
    :  :  :  :  :                    +- Filter (103)
-   :  :  :  :  :                       +- Scan parquet  (102)
+   :  :  :  :  :                       +- Scan parquet (102)
    :  :  :  :  +- HashAggregate (119)
    :  :  :  :     +- Exchange (118)
    :  :  :  :        +- HashAggregate (117)
@@ -125,7 +125,7 @@ AdaptiveSparkPlan (161)
    :  :  :  :                 +- HashAggregate (114)
    :  :  :  :                    +- Project (113)
    :  :  :  :                       +- Filter (112)
-   :  :  :  :                          +- Scan parquet  (111)
+   :  :  :  :                          +- Scan parquet (111)
    :  :  :  +- HashAggregate (129)
    :  :  :     +- Exchange (128)
    :  :  :        +- HashAggregate (127)
@@ -134,7 +134,7 @@ AdaptiveSparkPlan (161)
    :  :  :                 +- HashAggregate (124)
    :  :  :                    +- Project (123)
    :  :  :                       +- Filter (122)
-   :  :  :                          +- Scan parquet  (121)
+   :  :  :                          +- Scan parquet (121)
    :  :  +- HashAggregate (139)
    :  :     +- Exchange (138)
    :  :        +- HashAggregate (137)
@@ -143,7 +143,7 @@ AdaptiveSparkPlan (161)
    :  :                 +- HashAggregate (134)
    :  :                    +- Project (133)
    :  :                       +- Filter (132)
-   :  :                          +- Scan parquet  (131)
+   :  :                          +- Scan parquet (131)
    :  +- HashAggregate (149)
    :     +- Exchange (148)
    :        +- HashAggregate (147)
@@ -152,7 +152,7 @@ AdaptiveSparkPlan (161)
    :                 +- HashAggregate (144)
    :                    +- Project (143)
    :                       +- Filter (142)
-   :                          +- Scan parquet  (141)
+   :                          +- Scan parquet (141)
    +- HashAggregate (159)
       +- Exchange (158)
          +- HashAggregate (157)
@@ -161,10 +161,10 @@ AdaptiveSparkPlan (161)
                   +- HashAggregate (154)
                      +- Project (153)
                         +- Filter (152)
-                           +- Scan parquet  (151)
+                           +- Scan parquet (151)
 
 
-(102) Scan parquet 
+(102) Scan parquet
 Output [4]: [ss_quantity#1, ss_wholesale_cost#2, ss_list_price#3, ss_coupon_amt#4]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -242,7 +242,7 @@ Results [3]: [avg(UnscaledValue(ss_list_price#3))#6, count(ss_list_price#3)#7, c
 Output [3]: [cast((avg(UnscaledValue(ss_list_price#3))#6 / 100.0) as decimal(11,6)) AS B1_LP#10, count(ss_list_price#3)#7 AS B1_CNT#11, count(ss_list_price#3)#9 AS B1_CNTD#12]
 Input [3]: [avg(UnscaledValue(ss_list_price#3))#6, count(ss_list_price#3)#7, count(ss_list_price#3)#9]
 
-(111) Scan parquet 
+(111) Scan parquet
 Output [4]: [ss_quantity#13, ss_wholesale_cost#14, ss_list_price#15, ss_coupon_amt#16]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -324,7 +324,7 @@ Input [3]: [avg(UnscaledValue(ss_list_price#15))#18, count(ss_list_price#15)#19,
 Join type: Inner
 Join condition: None
 
-(121) Scan parquet 
+(121) Scan parquet
 Output [4]: [ss_quantity#24, ss_wholesale_cost#25, ss_list_price#26, ss_coupon_amt#27]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -406,7 +406,7 @@ Input [3]: [avg(UnscaledValue(ss_list_price#26))#29, count(ss_list_price#26)#30,
 Join type: Inner
 Join condition: None
 
-(131) Scan parquet 
+(131) Scan parquet
 Output [4]: [ss_quantity#35, ss_wholesale_cost#36, ss_list_price#37, ss_coupon_amt#38]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -488,7 +488,7 @@ Input [3]: [avg(UnscaledValue(ss_list_price#37))#40, count(ss_list_price#37)#41,
 Join type: Inner
 Join condition: None
 
-(141) Scan parquet 
+(141) Scan parquet
 Output [4]: [ss_quantity#46, ss_wholesale_cost#47, ss_list_price#48, ss_coupon_amt#49]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -570,7 +570,7 @@ Input [3]: [avg(UnscaledValue(ss_list_price#48))#51, count(ss_list_price#48)#52,
 Join type: Inner
 Join condition: None
 
-(151) Scan parquet 
+(151) Scan parquet
 Output [4]: [ss_quantity#57, ss_wholesale_cost#58, ss_list_price#59, ss_coupon_amt#60]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -652,7 +652,7 @@ Input [3]: [avg(UnscaledValue(ss_list_price#59))#62, count(ss_list_price#59)#63,
 Join type: Inner
 Join condition: None
 
-(102) Scan parquet 
+(102) Scan parquet
 Output [4]: [ss_quantity#1, ss_wholesale_cost#2, ss_list_price#3, ss_coupon_amt#4]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -703,7 +703,7 @@ Functions [3]: [avg(UnscaledValue(ss_list_price#3)), count(ss_list_price#3), cou
 Aggregate Attributes [3]: [avg(UnscaledValue(ss_list_price#3))#6, count(ss_list_price#3)#7, count(ss_list_price#3)#9]
 Results [3]: [cast((avg(UnscaledValue(ss_list_price#3))#6 / 100.0) as decimal(11,6)) AS B1_LP#10, count(ss_list_price#3)#7 AS B1_CNT#11, count(ss_list_price#3)#9 AS B1_CNTD#12]
 
-(111) Scan parquet 
+(111) Scan parquet
 Output [4]: [ss_quantity#13, ss_wholesale_cost#14, ss_list_price#15, ss_coupon_amt#16]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -758,7 +758,7 @@ Results [3]: [cast((avg(UnscaledValue(ss_list_price#15))#18 / 100.0) as decimal(
 Join type: Inner
 Join condition: None
 
-(121) Scan parquet 
+(121) Scan parquet
 Output [4]: [ss_quantity#24, ss_wholesale_cost#25, ss_list_price#26, ss_coupon_amt#27]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -813,7 +813,7 @@ Results [3]: [cast((avg(UnscaledValue(ss_list_price#26))#29 / 100.0) as decimal(
 Join type: Inner
 Join condition: None
 
-(131) Scan parquet 
+(131) Scan parquet
 Output [4]: [ss_quantity#35, ss_wholesale_cost#36, ss_list_price#37, ss_coupon_amt#38]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -868,7 +868,7 @@ Results [3]: [cast((avg(UnscaledValue(ss_list_price#37))#40 / 100.0) as decimal(
 Join type: Inner
 Join condition: None
 
-(141) Scan parquet 
+(141) Scan parquet
 Output [4]: [ss_quantity#46, ss_wholesale_cost#47, ss_list_price#48, ss_coupon_amt#49]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
@@ -923,7 +923,7 @@ Results [3]: [cast((avg(UnscaledValue(ss_list_price#48))#51 / 100.0) as decimal(
 Join type: Inner
 Join condition: None
 
-(151) Scan parquet 
+(151) Scan parquet
 Output [4]: [ss_quantity#57, ss_wholesale_cost#58, ss_list_price#59, ss_coupon_amt#60]
 Batched: true
 Location: InMemoryFileIndex [file:/<warehouse_dir>]
