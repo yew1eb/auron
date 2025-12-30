@@ -16,12 +16,12 @@
  */
 package org.apache.auron.integration
 
-import org.apache.spark.sql.auron.Shims
-import scopt.OParser
-import org.apache.auron.integration.runner.AuronTPCDSSuite
-
 import java.io.File
 
+import org.apache.spark.sql.auron.Shims
+import scopt.OParser
+
+import org.apache.auron.integration.runner.AuronTPCDSSuite
 
 object Main {
   val parser = {
@@ -61,7 +61,6 @@ object Main {
       opt[Unit]("regen-golden")
         .action((_, c) => c.copy(regenGoldenFiles = true))
         .text("regenerate golden files"),
-
       help('h', "help"))
   }
 
@@ -72,7 +71,6 @@ object Main {
   def main(mainArgs: Array[String]): Unit = {
     parseArgs(mainArgs) match {
       case Some(args) =>
-
         if (!new File(args.dataLocation).exists()) {
           println(s"Error: Data location ${args.dataLocation} does not exist.")
           sys.exit(1)
@@ -115,8 +113,12 @@ object Main {
                |Auron Integration Test (type: ${args.benchType})
                |Spark Version: ${Shims.get.shimVersion}
                |Data: ${args.dataLocation}
-               |Queries: [${args.queryFilter.mkString(", ")}] (${if (args.queryFilter.isEmpty) "all" else args.queryFilter.length} queries)
-               |Extra Spark Conf: ${args.extraSparkConf.map { case (k, v) => s"$k=$v" }.mkString("; ")}
+               |Queries: [${args.queryFilter.mkString(", ")}] (${if (args.queryFilter.isEmpty)
+      "all"
+    else args.queryFilter.length} queries)
+               |Extra Spark Conf: ${args.extraSparkConf
+      .map { case (k, v) => s"$k=$v" }
+      .mkString("; ")}
           """.stripMargin)
     if (args.disableResultCheck) {
       println("Result Check : Disabled")
