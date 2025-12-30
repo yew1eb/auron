@@ -20,7 +20,7 @@ import org.apache.auron.integration.{QueryRunner, SingleQueryResult, Suite, Suit
 import org.apache.auron.integration.comparator.{ComparisonResult, PlanStabilityChecker, QueryResultComparator}
 import org.apache.auron.integration.tpcds.TPCDSFeatures
 
-class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
+class TPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
 
   val queryRunner = new QueryRunner(loadQuerySql = (qid: String) => this.loadQuerySql(qid))
 
@@ -158,6 +158,6 @@ class AuronTPCDSSuite(args: SuiteArgs) extends Suite(args) with TPCDSFeatures {
   }
 }
 
-object AuronTPCDSSuite {
-  def apply(args: SuiteArgs): Suite = new AuronTPCDSSuite(args)
+object TPCDSSuite {
+  def apply(args: SuiteArgs): Suite = new TPCDSSuite(args)
 }
