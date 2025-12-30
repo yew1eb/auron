@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.auron.integration.comparator
+package org.apache.auron.integration.comparison
 
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -25,29 +25,27 @@ import scala.util.matching.Regex
 import org.apache.commons.io.FileUtils
 import org.apache.spark.sql.auron.Shims
 
-import org.apache.auron.integration.SingleQueryResult
+import org.apache.auron.integration.QueryExecutionResult
 
 class PlanStabilityChecker(
-    readGoldenPlan: String => String,
-    writeGoldenPlan: (String, String) => Unit,
+    readGolden: String => String,
+    writeGolden: (String, String) => Unit,
     regenGoldenFiles: Boolean = false,
     planCheck: Boolean = false) {
 
-  def shouldVerifyPhysicalPlan(): Boolean = {
-    Shims.get.shimVersion match {
-      case "spark-3.5" => true
-      case _ => false // TODO: Support for other Spark versions in the future
-    }
+  private lazy val isSupported: Boolean = Shims.get.shimVersion match {
+    case "spark-3.5" => true
+    case other =>
+      println(s"[PlanCheck] Unsupported Spark version: $other. Skipping.")
+      false
   }
 
-  def validate(test: SingleQueryResult): Boolean = {
-    if (!shouldVerifyPhysicalPlan()) {
-      println(s"Skip validate PhysicalPlan for ${Shims.get.shimVersion}")
-    }
+  def validate(test: QueryExecutionResult): Boolean = {
+    if (!isSupported) return true
 
     if (regenGoldenFiles) {
       generatePlanGolden(test.queryId, test.plan)
-    } else if (planCheck && shouldVerifyPhysicalPlan) {
+    } else if (planCheck) {
       return comparePlanGolden(test.queryId, test.plan)
     }
     true
@@ -55,21 +53,13 @@ class PlanStabilityChecker(
 
   private def generatePlanGolden(queryId: String, rawPlan: String): Unit = {
     val normalized = normalizePlan(rawPlan)
-    writeGoldenPlan(queryId, normalized)
+    writeGolden(queryId, normalized)
   }
 
   private def comparePlanGolden(queryId: String, rawPlan: String): Boolean = {
-    val expectedPlan = readGoldenPlan(queryId)
+    val expectedPlan = readGolden(queryId)
     val actualPlan = normalizePlan(rawPlan)
     if (expectedPlan == actualPlan) {
-      println(s"""[DEBUG] comparePlanGolden, queryId: $queryId
-                 |--- Expected ---
-                 |$expectedPlan
-                 |
-                 |--- Actual ---
-                 |$actualPlan
-                 |""".stripMargin)
-
       true
     } else {
       val actualTempFile = new File(FileUtils.getTempDirectory, s"actual.golden.$queryId.txt")
@@ -123,11 +113,9 @@ class PlanStabilityChecker(
     val planIdNormalized =
       replaceWithNormalizedValues(exprIdNormalized, planIdRegex, planIdMap, "plan_id=")
 
-    // QueryStageExec will take its id as argument, replace it with X
     val argumentsNormalized = planIdNormalized
       .replaceAll("Arguments: [0-9]+, [0-9]+", "Arguments: X, X")
       .replaceAll("Arguments: [0-9]+", "Arguments: X")
-      // for unexpected blank
       .replaceAll("Scan parquet ", "Scan parquet")
       .replaceAll("Statistics[(A-Za-z0-9=. ,+)]*", "Statistics(X)")
 

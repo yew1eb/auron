@@ -24,6 +24,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.auron.Shims
 
 trait TPCDSFeatures {
+
   val tpcdsQueries: Seq[String] = Seq(
     "q1",
     "q2",
@@ -157,18 +158,11 @@ trait TPCDSFeatures {
 
   def setupTables(dataLocation: String, spark: SparkSession): Map[String, Long] = {
     println(s"Setting up TPC-DS tables from: $dataLocation")
-
     tpcdsTables.map { tableName =>
-      val tablePath = new File(dataLocation, tableName).getAbsolutePath
-      require(
-        new File(tablePath).exists() || new File(s"$tablePath.parquet").exists(),
-        s"TPC-DS table not found: $tablePath")
-
-      val tableDF = spark.read.format("parquet").load(tablePath)
-      tableDF.createOrReplaceTempView(tableName)
-
+      val tablePath = s"$dataLocation/$tableName"
+      spark.read.parquet(tablePath).createOrReplaceTempView(tableName)
       val count = spark.table(tableName).count()
-      println(s"Registered table $tableName: $count rows")
+      println(s"Registered TPC-DS temp view '$tableName' with $count rows from $tablePath")
       tableName -> count
     }.toMap
   }
@@ -180,7 +174,7 @@ trait TPCDSFeatures {
     }
   }
 
-  def loadQuerySql(queryId: String): String = {
+  def readQuery(queryId: String): String = {
     val resourcePath = s"tpcds-queries/$queryId.sql"
     val is =
       Option(Thread.currentThread().getContextClassLoader.getResourceAsStream(resourcePath))
@@ -191,7 +185,7 @@ trait TPCDSFeatures {
     finally src.close()
   }
 
-  def readGoldenPlan(queryId: String): String = {
+  def readGolden(queryId: String): String = {
     val resourcePath = s"tpcds-plan-stability/${Shims.get.shimVersion}/$queryId.txt"
     val is =
       Option(Thread.currentThread().getContextClassLoader.getResourceAsStream(resourcePath))
@@ -210,7 +204,7 @@ trait TPCDSFeatures {
     dir
   }
 
-  def writeGoldenPlan(queryId: String, normalized: String): File = {
+  def writeGolden(queryId: String, normalized: String): File = {
     val path: Path = new File(goldenOutputDir, s"$queryId.txt").toPath
     println(s"[GoldenPlan] queryId=$queryId, saved to ${path.toAbsolutePath}")
     Files.write(path, normalized.getBytes(StandardCharsets.UTF_8))
