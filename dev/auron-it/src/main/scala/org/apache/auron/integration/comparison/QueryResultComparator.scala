@@ -29,7 +29,6 @@ case class ComparisonResult(
     testTime: Double,
     rowMatch: Boolean,
     dataMatch: Boolean,
-    speedup: Double,
     success: Boolean = false,
     var planStable: Boolean = true)
 
@@ -42,8 +41,6 @@ class QueryResultComparator extends QueryComparator {
   override def compare(baseline: SingleQueryResult, test: SingleQueryResult): ComparisonResult = {
     val rowMatch = baseline.rowCount == test.rowCount
     val dataMatch = checkQueryResult(baseline.queryId, baseline.rows, test.rows)
-
-    val speedup = if (baseline.durationSec > 0) test.durationSec / baseline.durationSec else 0.0
     val success = rowMatch && dataMatch && (baseline.success == test.success)
 
     ComparisonResult(
@@ -54,7 +51,6 @@ class QueryResultComparator extends QueryComparator {
       test.durationSec,
       rowMatch,
       dataMatch,
-      speedup,
       success)
   }
 

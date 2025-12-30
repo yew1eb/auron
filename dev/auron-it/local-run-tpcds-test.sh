@@ -31,5 +31,5 @@ $SCRIPT_DIR/run-it.sh \
     --conf spark.serializer=org.apache.spark.serializer.KryoSerializer  --conf spark.celeborn.client.spark.shuffle.writer=hash \
     --type tpcds \
     --data-location /Users/yew1eb/workspaces/tpcds-validator/tpcds_1g \
-    --plan-check \
-    --disable-result-check
+    --query-filter q1,q2,q3,q4,q5,q6,q7,q8,q9 \
+    --plan-check
