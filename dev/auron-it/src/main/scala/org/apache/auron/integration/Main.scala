@@ -21,7 +21,7 @@ import java.io.File
 import org.apache.spark.sql.auron.Shims
 import scopt.OParser
 
-import org.apache.auron.integration.runner.AuronTPCDSSuite
+import org.apache.auron.integration.runner.TPCDSSuite
 
 object Main {
   val parser = {
@@ -52,9 +52,12 @@ object Main {
           if (x.contains("=")) Right(()) else Left(s"--conf expects k=v, got: $x")
         }
         .text("Spark configuration, repeatable: --conf k=v --conf a=b"),
-      opt[Unit]("disable-result-check")
-        .action((_, c) => c.copy(disableResultCheck = true))
-        .text("disable query result check (default: enabled)"),
+      opt[Unit]("auron-only")
+        .action((_, c) => c.copy(auronOnly = true))
+        .text("run Auron only; skip baseline and result comparison (default: false)"),
+      opt[Unit]("result-check")
+        .action((_, c) => c.copy(auronOnly = false))
+        .text("enable query result check (default: enabled)"),
       opt[Unit]("plan-check")
         .action((_, c) => c.copy(enablePlanCheck = true))
         .text("enable plan stability check(default: false)"),
@@ -76,16 +79,12 @@ object Main {
           sys.exit(1)
         }
 
-        printRunSummary(args)
+        printConfigurationSummary(args)
 
         val suite = createSuite(args)
         var exitCode = 0
         try {
           exitCode = suite.run()
-        } catch {
-          case e: Throwable =>
-            println(s"Error during suite run: ${e.getMessage}")
-            exitCode = 1
         } finally {
           suite.close()
         }
@@ -102,34 +101,26 @@ object Main {
   }
 
   private def createSuite(args: SuiteArgs): Suite = args.benchType match {
-    case "tpcds" => AuronTPCDSSuite(args)
+    case "tpcds" => TPCDSSuite(args)
     case other =>
       println(s"Unsupported benchmark type: $other")
       sys.exit(1)
   }
 
-  private def printRunSummary(args: SuiteArgs): Unit = {
-    println(s"""
-               |Auron Integration Test (type: ${args.benchType})
+  private def printConfigurationSummary(args: SuiteArgs): Unit = {
+    println("\n" + "=" * 60)
+    println(s"""|Auron Integration Test (type: ${args.benchType})
                |Spark Version: ${Shims.get.shimVersion}
                |Data: ${args.dataLocation}
                |Queries: [${args.queryFilter.mkString(", ")}] (${if (args.queryFilter.isEmpty)
       "all"
     else args.queryFilter.length} queries)
-               |Extra Spark Conf: ${args.extraSparkConf
-      .map { case (k, v) => s"$k=$v" }
-      .mkString("; ")}
-          """.stripMargin)
-    if (args.disableResultCheck) {
-      println("Result Check : Disabled")
-    }
+               |Extra Spark Conf: ${args.extraSparkConf}""".stripMargin)
 
-    if (args.enablePlanCheck) {
-      println("Plan Check : Enabled")
-    }
-
-    if (args.regenGoldenFiles) {
-      println("Regenerate golden files : Enabled")
-    }
+    if (args.auronOnly) println("Mode: Auron-only (skip baseline)")
+    if (args.enablePlanCheck) println("Plan Check: Enabled")
+    if (args.regenGoldenFiles) println("Regenerate golden files: Enabled")
+    println("-" * 60)
+    println("")
   }
 }
