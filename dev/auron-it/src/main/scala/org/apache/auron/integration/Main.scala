@@ -16,6 +16,8 @@
  */
 package org.apache.auron.integration
 
+import java.io.File
+
 import org.apache.spark.sql.auron.Shims
 import scopt.OParser
 
@@ -38,8 +40,7 @@ object Main {
         .text("data directory path"),
       opt[String]('q', "query-filter")
         .action((x, c) => c.copy(queryFilter = x.split(",").map(_.trim).filter(_.nonEmpty).toSeq))
-        //.required()
-        .text("query filter (e.g. q1,q2,q3)"),
+        .text("query filter (e.g. q1,q2,q3); empty for all queries"),
       opt[String]("conf")
         .unbounded()
         .valueName("k=v")
@@ -51,15 +52,15 @@ object Main {
           if (x.contains("=")) Right(()) else Left(s"--conf expects k=v, got: $x")
         }
         .text("Spark configuration, repeatable: --conf k=v --conf a=b"),
+      opt[Unit]("disable-result-check")
+        .action((_, c) => c.copy(disableResultCheck = true))
+        .text("disable query result check (default: enabled)"),
       opt[Unit]("plan-check")
         .action((_, c) => c.copy(enablePlanCheck = true))
         .text("enable plan stability check(default: false)"),
       opt[Unit]("regen-golden")
         .action((_, c) => c.copy(regenGoldenFiles = true))
         .text("regenerate golden files"),
-      opt[Unit]("disable-result-check")
-        .action((_, c) => c.copy(disableResultCheck = true))
-        .text("disable query result check (default: enabled)"),
       help('h', "help"))
   }
 
@@ -70,29 +71,30 @@ object Main {
   def main(mainArgs: Array[String]): Unit = {
     parseArgs(mainArgs) match {
       case Some(args) =>
-        println(s"""
-                   |Auron Integration Test (type: ${args.benchType})
-                   |Spark Version: ${Shims.get.shimVersion}
-                   |Data: ${args.dataLocation}
-                   |Queries: [${args.queryFilter
-          .mkString(", ")}] (${args.queryFilter.length} queries)
-                   |Extra Spark Conf: ${args.extraSparkConf.mkString("", "; ", "")}
-                   |Plan Check: ${if (args.enablePlanCheck) "Enabled" else "Disabled"}
-                   |Regen Golden Files: ${if (args.regenGoldenFiles) "Yes" else "No"}
-                   |Result Check: ${if (!args.disableResultCheck) "Enabled" else "Disabled"}
-          """.stripMargin)
+        if (!new File(args.dataLocation).exists()) {
+          println(s"Error: Data location ${args.dataLocation} does not exist.")
+          sys.exit(1)
+        }
+
+        printRunSummary(args)
 
         val suite = createSuite(args)
         var exitCode = 0
         try {
           exitCode = suite.run()
+        } catch {
+          case e: Throwable =>
+            println(s"Error during suite run: ${e.getMessage}")
+            exitCode = 1
         } finally {
-          // Thread.sleep(1000000000)
           suite.close()
         }
 
         if (exitCode != 0) {
+          println("Integration tests failed.")
           sys.exit(exitCode)
+        } else {
+          println("Integration tests completed successfully.")
         }
       case None =>
         sys.exit(1)
@@ -104,5 +106,30 @@ object Main {
     case other =>
       println(s"Unsupported benchmark type: $other")
       sys.exit(1)
+  }
+
+  private def printRunSummary(args: SuiteArgs): Unit = {
+    println(s"""
+               |Auron Integration Test (type: ${args.benchType})
+               |Spark Version: ${Shims.get.shimVersion}
+               |Data: ${args.dataLocation}
+               |Queries: [${args.queryFilter.mkString(", ")}] (${if (args.queryFilter.isEmpty)
+      "all"
+    else args.queryFilter.length} queries)
+               |Extra Spark Conf: ${args.extraSparkConf
+      .map { case (k, v) => s"$k=$v" }
+      .mkString("; ")}
+          """.stripMargin)
+    if (args.disableResultCheck) {
+      println("Result Check : Disabled")
+    }
+
+    if (args.enablePlanCheck) {
+      println("Plan Check : Enabled")
+    }
+
+    if (args.regenGoldenFiles) {
+      println("Regenerate golden files : Enabled")
+    }
   }
 }
