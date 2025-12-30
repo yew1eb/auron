@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-name: Reusable Build and Test
+name: TPC-DS Reusable
 
 on:
   workflow_call:
@@ -123,7 +123,7 @@ jobs:
           cargo --version
           cargo test --workspace --all-features
 
-      - name: Build and Run unit test (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
+      - name: Build auron (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
         run: |
           sed -i 's/opt-level = 1/opt-level = 0/g' Cargo.toml # use opt-level 0
           rm -f .build-checksum_*.cache
@@ -169,7 +169,7 @@ jobs:
         with:
           name: unit-tests-logs-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || '' }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
           path: "**/target/unit-tests.log"
-      - name: Upload Auron JAR (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
+      - name: Upload auron (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
         uses: actions/upload-artifact@v4
         with:
           name: >
@@ -178,17 +178,17 @@ jobs:
             }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
           path: target/auron-${{ inputs.sparkver }}_${{ inputs.scalaver }}-pre-*.jar
           overwrite: true
-      - name: Upload Auron Maven Dependencies (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
+      - name: Upload auron maven artifacts (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
         uses: actions/upload-artifact@v4
         with:
-          name: auron-deps-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
+          name: auron-artifacts-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
             }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || ''
             }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
           path: ~/.m2/repository/org/apache/auron
           if-no-files-found: error
 
   run-tpcds-test:
-    name: Run TPC-DS Queries ${{ matrix.query }}
+    name: Run TPC-DS test ${{ matrix.query }}
     needs: [build-auron-jar]
     runs-on: ubuntu-24.04
     strategy:
@@ -223,7 +223,7 @@ jobs:
         id: cache-spark-bin
         with:
           path: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
-          key: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}-${{ inputs.hadoop-profile }}
+          key: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
 
       - name: Setup Spark (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }})
         id: setup-spark-bin
@@ -257,10 +257,11 @@ jobs:
           echo "AURON_SPARK_JAR=$jar" >> "$GITHUB_ENV"
           cp "$jar" spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}/jars/
 
-      - name: Download All auron Jar Artifacts
+      - name: Download auron maven artifacts
         uses: actions/download-artifact@v4
         with:
-          name: auron-deps-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
+          name: >
+            auron-artifacts-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
             }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || ''
             }}${{ inputs.unifflever && format('-{0}', inputs.unifflever) || '' }}
           path: ~/.m2/repository/org/apache/auron
@@ -371,7 +372,7 @@ jobs:
           ls -la uniffle-bin-${{ steps.get-dependency-version.outputs.uniffleversion }}/jars/client/spark3/
           cp uniffle-bin-${{ steps.get-dependency-version.outputs.uniffleversion }}/jars/client/spark3/*.jar spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}/jars/
 
-      - name: Run TPC-DS Queries ${{ matrix.query }}
+      - name: Run TPC-DS Query ${{ matrix.query }}
         env:
           RUST_LOG: ERROR
           RUST_BACKTRACE: 1
@@ -379,11 +380,13 @@ jobs:
           SCALA_VERSION: ${{ inputs.scalaver }}
           SPARK_HOME: spark-bin-${{ inputs.sparkver }}_${{ inputs.scalaver }}
         run: |
+          ls -la ~/.m2/repository/org/apache/auron
           dev/auron-it/run-it.sh  \
             ${{ inputs.extrasparkconf }} \
             --type tpcds \
             --data-location dev/tpcds_1g \
             --query-filter ${{ matrix.query }} \
+            --result-check \
             --plan-check
 
       - name: Upload RSS log

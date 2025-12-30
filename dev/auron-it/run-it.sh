@@ -29,7 +29,7 @@ SPARK_VERSION="${SPARK_VERSION:-spark-3.5}"
 SCALA_VERSION="${SCALA_VERSION:-2.12}"
 PROFILES="-P${SPARK_VERSION},scala-${SCALA_VERSION}"
 PROJECT_VERSION=$("${MVN_CMD}" -f "${AURON_DIR}/pom.xml" -q $PROFILES help:evaluate -Dexpression=project.version -DforceStdout)
-AURON_SPARK_JAR="${AURON_SPARK_JAR:-$AURON_DIR/dev/mvn-build-helper/assembly/target/auron-${SPARK_VERSION}_$SCALA_VERSION-$PROJECT_VERSION.jar}"
+AURON_SPARK_JAR="${AURON_SPARK_JAR:-${AURON_DIR}/dev/mvn-build-helper/assembly/target/auron-${SPARK_VERSION}_$SCALA_VERSION-$PROJECT_VERSION.jar}"
 
 AURON_IT_JAR=$AURON_DIR/dev/auron-it/target/auron-it-$PROJECT_VERSION-jar-with-dependencies.jar
 
@@ -79,5 +79,5 @@ exec $SPARK_HOME/bin/spark-submit \
   --conf spark.ui.enabled=false \
   --jars "${AURON_SPARK_JAR}" \
   "${SPARK_CONF[@]}" \
-  "$AURON_IT_JAR" \
+  "${AURON_IT_JAR}" \
   "${ARGS[@]}"

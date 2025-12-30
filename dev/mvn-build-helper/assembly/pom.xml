@@ -144,7 +144,6 @@
               <archive>
                 <addMavenDescriptor>false</addMavenDescriptor>
               </archive>
-              <!--              <outputFile>../../../target/auron-${shimName}_${scalaVersion}-${releaseMode}-${os.detected.classifier}-${project.version}.jar</outputFile>-->
             </configuration>
           </execution>
         </executions>
