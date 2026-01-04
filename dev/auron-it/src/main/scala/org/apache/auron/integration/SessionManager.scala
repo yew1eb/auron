@@ -37,8 +37,8 @@ class SessionManager(val extraSparkConf: Map[String, String]) {
     "spark.sql.shuffle.partitions" -> "100",
     "spark.ui.enabled" -> "false",
     "spark.sql.sources.useV1SourceList" -> "parquet",
-    //  "spark.sql.autoBroadcastJoinThreshold" -> "-1" smj
-    "spark.sql.autoBroadcastJoinThreshold" -> "10MB" // bhj
+    // "spark.sql.autoBroadcastJoinThreshold" -> "-1") smj
+    "spark.auron.forceShuffledHashJoin" -> "true" // shj
   )
 
   private lazy val auronSpecificConf: Map[String, String] = Map(
