@@ -41,13 +41,13 @@ if [[ -z "${SPARK_HOME:-}" ]]; then
 fi
 
 if [[ ! -f "${AURON_SPARK_JAR}" ]]; then
-    echo "ERROR: Aurora Spark JAR not found at: ${AURON_SPARK_JAR}"
+    echo "ERROR: Auron Spark JAR not found at: ${AURON_SPARK_JAR}"
     echo "Hint: Rebuild with: ./auron-build.sh"
     exit 1
 fi
 
 if [[ ! -f "$AURON_IT_JAR" ]]; then
-  echo "INFO: Building missing Aurora it jar..."
+  echo "INFO: Building missing Auron it jar..."
   pushd "${SCRIPT_DIR}"
   "${MVN_CMD}" ${PROFILES} package -DskipTests
   popd
