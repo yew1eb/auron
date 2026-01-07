@@ -18,7 +18,7 @@
 infra:
   - changed-files:
     - any-glob-to-any-file: [
-        ".github/**/*",
+        ".github/**",
         ".asf.yaml",
         ".rat-excludes",
         ".gitattributes",
@@ -133,4 +133,3 @@ benchmark:
     - any-glob-to-any-file: [
         "benchmark-results/**"
       ]
-
