@@ -66,18 +66,18 @@ jobs:
             javaver: '21'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
           submodules: recursive
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: 'adopt-hotspot'
           java-version: ${{ matrix.javaver }}
           cache: 'maven'
 
-      - uses: arduino/setup-protoc@v2
+      - uses: arduino/setup-protoc@v3
         with:
           version: "21.7"
           repo-token: ${{ secrets.GITHUB_TOKEN }}

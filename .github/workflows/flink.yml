@@ -47,10 +47,10 @@ jobs:
 
     steps:
     - name: Checkout Auron
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Setup Java and Maven cache
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         distribution: 'adopt-hotspot'
         java-version: ${{ matrix.javaver }}
