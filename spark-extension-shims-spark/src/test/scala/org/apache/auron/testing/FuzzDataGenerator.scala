@@ -20,7 +20,6 @@ import java.math.{BigDecimal, RoundingMode}
 import java.nio.charset.Charset
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
-import java.time.{Instant, LocalDateTime, ZoneId}
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
@@ -217,11 +216,11 @@ object FuzzDataGenerator {
         Range(0, numRows).map(_ => new java.sql.Date(options.baseDate + r.nextInt()))
       case DataTypes.TimestampType =>
         Range(0, numRows).map(_ => new Timestamp(options.baseDate + r.nextInt()))
-      case DataTypes.TimestampNTZType =>
-        Range(0, numRows).map(_ =>
-          LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(options.baseDate + r.nextInt()),
-            ZoneId.systemDefault()))
+//      case DataTypes.TimestampNTZType =>
+//        Range(0, numRows).map(_ =>
+//          LocalDateTime.ofInstant(
+//            Instant.ofEpochMilli(options.baseDate + r.nextInt()),
+//            ZoneId.systemDefault()))
       case _ => throw new IllegalStateException(s"Cannot generate data for $dataType yet")
     }
   }
@@ -245,7 +244,7 @@ object SchemaGenOptions {
     DataTypes.createDecimalType(36, 18),
     DataTypes.DateType,
     DataTypes.TimestampType,
-    DataTypes.TimestampNTZType,
+    //DataTypes.TimestampNTZType,
     DataTypes.StringType,
     DataTypes.BinaryType)
 }

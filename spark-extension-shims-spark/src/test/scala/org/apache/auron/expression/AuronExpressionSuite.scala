@@ -1322,7 +1322,8 @@ class AuronExpressionSuite extends AuronQueryTest with BaseAuronSQLSuite {
     // native error now, we cannot test it here.
     withSQLConf(SQLConf.ANSI_ENABLED.key -> "false") {
       withParquetTable(Seq((1, 0, 1.0, 0.0, -0.0)), "tbl") {
-        checkSparkAnswerAndOperator("SELECT _1 / _2, _3 / _4, _3 / _5, _1, _2, _3, _4, _5 FROM tbl")
+        checkSparkAnswerAndOperator(
+          "SELECT _1 / _2, _3 / _4, _3 / _5, _1, _2, _3, _4, _5 FROM tbl")
         checkSparkAnswerAndOperator("SELECT _1 % _2, _3 % _4, _3 % _5 FROM tbl")
         checkSparkAnswerAndOperator("SELECT _1 / 0, _3 / 0.0, _3 / -0.0 FROM tbl")
         checkSparkAnswerAndOperator("SELECT _1 % 0, _3 % 0.0, _3 % -0.0 FROM tbl")

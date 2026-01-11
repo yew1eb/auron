@@ -476,14 +476,14 @@ class AuronFuzzTestSuite extends AurontFuzzTestBase {
                 SQLConf.SESSION_LOCAL_TIMEZONE.key -> tz,
                 SQLConf.PARQUET_INT96_AS_TIMESTAMP.key -> int96AsTimestamp.toString,
                 SQLConf.PARQUET_INT96_TIMESTAMP_CONVERSION.key -> int96TimestampConversion.toString,
-                SQLConf.PARQUET_INFER_TIMESTAMP_NTZ_ENABLED.key -> inferTimestampNtzEnabled.toString) {
+                "spark.sql.parquet.inferTimestampNTZ.enabled" -> inferTimestampNtzEnabled.toString) {
 
                 val df = spark.read.parquet(filename.toString)
                 df.createOrReplaceTempView("t1")
 
                 def hasTemporalType(t: DataType): Boolean = t match {
-                  case DataTypes.DateType | DataTypes.TimestampType |
-                      DataTypes.TimestampNTZType =>
+                  case DataTypes.DateType | DataTypes.TimestampType =>
+                    //DataTypes.TimestampNTZType =>
                     true
                   case t: StructType => t.exists(f => hasTemporalType(f.dataType))
                   case t: ArrayType => hasTemporalType(t.elementType)

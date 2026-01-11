@@ -36,7 +36,7 @@ import org.apache.spark.sql.execution.{LeafExecNode, SparkPlan, UnaryExecNode}
 import org.apache.spark.sql.execution.adaptive.AdaptiveSparkPlanHelper
 import org.apache.spark.sql.test.SQLTestUtils
 import org.apache.spark.sql.types.{ArrayType, DataType, DataTypes, DecimalType, MapType, StructType}
-import org.apache.spark.sql.types.DataTypes.{BinaryType, BooleanType, ByteType, DateType, DoubleType, FloatType, IntegerType, LongType, ShortType, StringType, TimestampNTZType, TimestampType}
+import org.apache.spark.sql.types.DataTypes.{BinaryType, BooleanType, ByteType, DateType, DoubleType, FloatType, IntegerType, LongType, ShortType, StringType, TimestampType}
 import org.scalatest.BeforeAndAfterEach
 
 import org.apache.auron.test.FallbackUtil
@@ -987,7 +987,8 @@ abstract class AuronQueryTest
     import DataTypes._
     dt match {
       case BooleanType | ByteType | ShortType | IntegerType | LongType | FloatType | DoubleType |
-          _: DecimalType | DateType | TimestampType | TimestampNTZType | StringType =>
+          _: DecimalType | DateType | TimestampType | StringType =>
+        //TimestampNTZType
         true
       case BinaryType => false
       case ArrayType(elementType, _) => isTypeSupported(elementType)

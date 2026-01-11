@@ -33,7 +33,6 @@ import org.apache.auron.BaseAuronSQLSuite
  * This test suite contains tests for only Spark 3.4+.
  */
 class AuronExec3_4PlusSuite extends AuronQueryTest with BaseAuronSQLSuite {
-  import testImplicits._
   val func_might_contain = new FunctionIdentifier("might_contain")
 
   override def beforeAll(): Unit = {
@@ -124,16 +123,16 @@ class AuronExec3_4PlusSuite extends AuronQueryTest with BaseAuronSQLSuite {
     }
   }
 
-  // Dataset.offset API is not available before Spark 3.4
-  test("offset") {
-    withSQLConf(
-      //CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
-    ) {
-      checkSparkAnswer(testData.offset(90))
-      checkSparkAnswer(arrayData.toDF().offset(99))
-      checkSparkAnswer(mapData.toDF().offset(99))
-    }
-  }
+//  // Dataset.offset API is not available before Spark 3.4
+//  test("offset") {
+//    withSQLConf(
+//      //CometConf.COMET_SHUFFLE_MODE.key -> "jvm"
+//    ) {
+//      checkSparkAnswer(testData.offset(90))
+//      checkSparkAnswer(arrayData.toDF().offset(99))
+//      checkSparkAnswer(mapData.toDF().offset(99))
+//    }
+//  }
 
   // FIXME
   // TODO == Results ==

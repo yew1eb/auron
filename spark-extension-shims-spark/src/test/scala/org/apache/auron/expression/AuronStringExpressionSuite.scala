@@ -21,7 +21,6 @@ import scala.util.Random
 
 import org.apache.parquet.hadoop.ParquetOutputFormat
 import org.apache.spark.sql.{AuronQueryTest, DataFrame}
-import org.apache.spark.sql.internal.SQLConf
 import org.apache.spark.sql.types.{DataTypes, StructField, StructType}
 
 import org.apache.auron.BaseAuronSQLSuite
@@ -306,8 +305,7 @@ class AuronStringExpressionSuite extends AuronQueryTest with BaseAuronSQLSuite {
   // Simplified version of "filter pushdown - StringPredicate" that does not generate dictionaries
   test("string predicate filter") {
     Seq(false, true).foreach { pushdown =>
-      withSQLConf(
-        SQLConf.PARQUET_FILTER_PUSHDOWN_STRING_PREDICATE_ENABLED.key -> pushdown.toString) {
+      withSQLConf("spark.sql.parquet.filterPushdown.stringPredicate" -> pushdown.toString) {
         val table = "names"
         withTable(table) {
           sql(s"create table $table(name varchar(20)) using parquet")
@@ -334,8 +332,7 @@ class AuronStringExpressionSuite extends AuronQueryTest with BaseAuronSQLSuite {
         .option(ParquetOutputFormat.ENABLE_DICTIONARY, enableDictionary)
         .parquet(path)
       Seq(true, false).foreach { pushDown =>
-        withSQLConf(
-          SQLConf.PARQUET_FILTER_PUSHDOWN_STRING_PREDICATE_ENABLED.key -> pushDown.toString) {
+        withSQLConf("spark.sql.parquet.filterPushdown.stringPredicate" -> pushDown.toString) {
           val df = spark.read.parquet(path).filter(filter)
           checkSparkAnswerAndOperator(df)
         }
