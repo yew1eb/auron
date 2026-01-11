@@ -182,7 +182,3 @@ abstract class NativeBroadcastJoinBase(
       friendlyName = "NativeRDD.BroadcastJoin")
   }
 }
-
-class BroadcastSide {}
-case object BroadcastLeft extends BroadcastSide {}
-case object BroadcastRight extends BroadcastSide {}

@@ -1038,7 +1038,9 @@ class ShimsImpl extends Shims with Logging {
     exec.inputPlan
   }
 
-  private def convertBuildSide(exec: SparkPlan, isBuildLeft: Any => Boolean): JoinBuildSide = {
+  private def convertJoinBuildSide(
+      exec: SparkPlan,
+      isBuildLeft: Any => Boolean): JoinBuildSide = {
     exec match {
       case shj: ShuffledHashJoinExec =>
         if (isBuildLeft(shj.buildSide)) JoinBuildLeft else JoinBuildRight
@@ -1053,7 +1055,7 @@ class ShimsImpl extends Shims with Logging {
   @sparkver("3.0")
   override def getJoinBuildSide(exec: SparkPlan): JoinBuildSide = {
     import org.apache.spark.sql.execution.joins.BuildLeft
-    convertBuildSide(
+    convertJoinBuildSide(
       exec,
       isBuildLeft = {
         case BuildLeft => true
@@ -1064,7 +1066,7 @@ class ShimsImpl extends Shims with Logging {
   @sparkver("3.1 / 3.2 / 3.3 / 3.4 / 3.5")
   override def getJoinBuildSide(exec: SparkPlan): JoinBuildSide = {
     import org.apache.spark.sql.catalyst.optimizer.BuildLeft
-    convertBuildSide(
+    convertJoinBuildSide(
       exec,
       isBuildLeft = {
         case BuildLeft => true

@@ -586,14 +586,9 @@ object AuronConverters extends Logging {
   }
 
   def convertShuffledHashJoinExec(exec: ShuffledHashJoinExec): SparkPlan = {
-    val (leftKeys, rightKeys, joinType, condition, left, right, buildSide) = (
-      exec.leftKeys,
-      exec.rightKeys,
-      exec.joinType,
-      exec.condition,
-      exec.left,
-      exec.right,
-      Shims.get.getJoinBuildSide(exec))
+    val buildSide = Shims.get.getJoinBuildSide(exec)
+    val (leftKeys, rightKeys, joinType, condition, left, right) =
+      (exec.leftKeys, exec.rightKeys, exec.joinType, exec.condition, exec.left, exec.right)
     logDebugPlanConversion(
       exec,
       Seq(
