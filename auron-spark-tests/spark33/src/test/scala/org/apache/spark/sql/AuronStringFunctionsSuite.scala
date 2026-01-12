@@ -16,6 +16,4 @@
  */
 package org.apache.spark.sql
 
-
 class AuronStringFunctionsSuite extends StringFunctionsSuite with SparkQueryTestsBase
-g
