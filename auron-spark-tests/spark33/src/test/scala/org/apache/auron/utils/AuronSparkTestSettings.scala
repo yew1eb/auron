@@ -42,6 +42,9 @@ class AuronSparkTestSettings extends SparkTestSettings {
 
   enableSuite[AuronTypedImperativeAggregateSuite]
 
+  enableSuite[AuronSubquerySuite]
+
+
   // Will be implemented in the future.
   override def getSQLQueryTestSettings = new SQLQueryTestSettings {
     override def getResourceFilePath: String = ???
