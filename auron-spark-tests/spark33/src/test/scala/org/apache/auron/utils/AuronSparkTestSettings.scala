@@ -28,6 +28,8 @@ class AuronSparkTestSettings extends SparkTestSettings {
     // See https://github.com/apache/auron/issues/1724
     .exclude("string / binary substring function")
 
+  enableSuite[AuronSubquerySuite]
+
   // Will be implemented in the future.
   override def getSQLQueryTestSettings = new SQLQueryTestSettings {
     override def getResourceFilePath: String = ???
