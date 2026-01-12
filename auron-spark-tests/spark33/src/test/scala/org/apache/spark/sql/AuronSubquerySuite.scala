@@ -16,4 +16,39 @@
  */
 package org.apache.spark.sql
 
-class AuronSubquerySuite extends SubquerySuite with SparkQueryTestsBase
+
+class AuronSubquerySuite extends SubquerySuite with SparkQueryTestsBase {
+
+  // Test Canceled: IntegratedUDFTestUtils.shouldTestPythonUDFs was false
+  override def testNameBlackList: Seq[String] = Seq(
+    "SPARK-28441: COUNT bug in WHERE clause (Filter) with PythonUDF",
+    "SPARK-28441: COUNT bug in SELECT clause (Project) with PythonUDF",
+    "SPARK-28441: COUNT bug in Aggregate with PythonUDF",
+    "SPARK-28441: COUNT bug negative examples with PythonUDF",
+    "SPARK-28441: COUNT bug in nested subquery with PythonUDF",
+    "SPARK-28441: COUNT bug with nasty predicate expr with PythonUDF",
+    "SPARK-28441: COUNT bug in HAVING clause (Filter) with PythonUDF",
+    "SPARK-28441: COUNT bug with attribute ref in subquery input and output with PythonUDF"
+  )
+
+  // === Following cases override super class's cases ===
+
+  testAuron("SPARK-26893 Allow pushdown of partition pruning subquery filters to file source") {
+    withTable("a", "b") {
+      spark.range(4).selectExpr("id", "id % 2 AS p").write.partitionBy("p").saveAsTable("a")
+      spark.range(2).write.saveAsTable("b")
+
+      // need to execute the query before we can examine fs.inputRDDs()
+      val df = sql("SELECT * FROM a WHERE p <= (SELECT MIN(id) FROM b)")
+      checkAnswer(df, Seq(Row(0, 0), Row(2, 0)))
+//      assert(stripAQEPlan(df.queryExecution.executedPlan).collectFirst {
+//        case t: WholeStageTransformer => t
+//      } match {
+//        case Some(WholeStageTransformer(fs: FileSourceScanExecTransformer, _)) =>
+//          fs.getPartitionArray
+//            .exists(_.files.exists(_.getPath.toString.contains("p=0")))
+//        case _ => false
+//      })
+    }
+  }
+}
