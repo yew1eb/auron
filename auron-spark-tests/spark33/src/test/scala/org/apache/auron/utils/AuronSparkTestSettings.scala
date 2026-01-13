@@ -44,6 +44,7 @@ class AuronSparkTestSettings extends SparkTestSettings {
 
   enableSuite[AuronSubquerySuite]
 
+  enableSuite[AuronSQLQuerySuite]
 
   // Will be implemented in the future.
   override def getSQLQueryTestSettings = new SQLQueryTestSettings {
