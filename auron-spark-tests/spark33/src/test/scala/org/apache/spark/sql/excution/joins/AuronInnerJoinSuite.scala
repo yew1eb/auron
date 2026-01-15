@@ -16,7 +16,7 @@
  */
 package org.apache.spark.sql.excution.joins
 
+import org.apache.spark.sql.SparkTestsSharedSessionBase
 import org.apache.spark.sql.execution.joins.InnerJoinSuite
-import org.apache.spark.sql.{SparkTestsSharedSessionBase}
 
 class AuronInnerJoinSuite extends InnerJoinSuite with SparkTestsSharedSessionBase {}

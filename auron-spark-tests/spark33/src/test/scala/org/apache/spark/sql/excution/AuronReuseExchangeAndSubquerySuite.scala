@@ -20,5 +20,5 @@ import org.apache.spark.sql.SparkTestsSharedSessionBase
 import org.apache.spark.sql.execution.ReuseExchangeAndSubquerySuite
 
 class AuronReuseExchangeAndSubquerySuite
-  extends ReuseExchangeAndSubquerySuite
-  with SparkTestsSharedSessionBase {}
+    extends ReuseExchangeAndSubquerySuite
+    with SparkTestsSharedSessionBase {}

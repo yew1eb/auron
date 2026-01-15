@@ -16,14 +16,15 @@
  */
 package org.apache.spark.sql.excution.python
 
-import org.apache.spark.sql.{SparkTestsSharedSessionBase}
+import org.apache.spark.sql.SparkTestsSharedSessionBase
 import org.apache.spark.sql.execution.SparkPlan
-import org.apache.spark.sql.execution.datasources.v2.parquet.ParquetScan
 import org.apache.spark.sql.execution.python.{ArrowEvalPythonExec, BatchEvalPythonExec, EvalPythonExec, ExtractPythonUDFsSuite}
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.internal.SQLConf
 
-class GlutenExtractPythonUDFsSuite extends ExtractPythonUDFsSuite with SparkTestsSharedSessionBase {
+class GlutenExtractPythonUDFsSuite
+    extends ExtractPythonUDFsSuite
+    with SparkTestsSharedSessionBase {
 
   import testImplicits._
 
@@ -90,28 +91,27 @@ class GlutenExtractPythonUDFsSuite extends ExtractPythonUDFsSuite with SparkTest
 
   testAuron("Python UDF should not break column pruning/filter pushdown -- Parquet V2") {
     withSQLConf(SQLConf.USE_V1_SOURCE_LIST.key -> "") {
-      withTempPath {
-        f =>
-          spark.range(10).select($"id".as("a"), $"id".as("b")).write.parquet(f.getCanonicalPath)
-          val df = spark.read.parquet(f.getCanonicalPath)
+      withTempPath { f =>
+        spark.range(10).select($"id".as("a"), $"id".as("b")).write.parquet(f.getCanonicalPath)
+        val df = spark.read.parquet(f.getCanonicalPath)
 
-          withClue("column pruning") {
-            val query = df.filter(batchedPythonUDF($"a")).select($"a")
+        withClue("column pruning") {
+          val query = df.filter(batchedPythonUDF($"a")).select($"a")
 
-            val pythonEvalNodes = collectBatchExec(query.queryExecution.executedPlan)
-            assert(pythonEvalNodes.length == 1)
+          val pythonEvalNodes = collectBatchExec(query.queryExecution.executedPlan)
+          assert(pythonEvalNodes.length == 1)
 
 //            val scanNodes = query.queryExecution.executedPlan.collect {
 //              case scan: BatchScanExecTransformer => scan
 //            }
 //            assert(scanNodes.length == 1)
 //            assert(scanNodes.head.output.map(_.name) == Seq("a"))
-          }
+        }
 
-          withClue("filter pushdown") {
-            val query = df.filter($"a" > 1 && batchedPythonUDF($"a"))
-            val pythonEvalNodes = collectBatchExec(query.queryExecution.executedPlan)
-            assert(pythonEvalNodes.length == 1)
+        withClue("filter pushdown") {
+          val query = df.filter($"a" > 1 && batchedPythonUDF($"a"))
+          val pythonEvalNodes = collectBatchExec(query.queryExecution.executedPlan)
+          assert(pythonEvalNodes.length == 1)
 
 //            val scanNodes = query.queryExecution.executedPlan.collect {
 //              case scan: BatchScanExecTransformer => scan
@@ -121,35 +121,34 @@ class GlutenExtractPythonUDFsSuite extends ExtractPythonUDFsSuite with SparkTest
 //            val filters = scanNodes.head.scan.asInstanceOf[ParquetScan].pushedFilters
 //            assert(filters.length == 2)
 //            assert(filters.flatMap(_.references).distinct === Array("a"))
-          }
+        }
       }
     }
   }
 
   testAuron("Python UDF should not break column pruning/filter pushdown -- Parquet V1") {
     withSQLConf(SQLConf.USE_V1_SOURCE_LIST.key -> "parquet") {
-      withTempPath {
-        f =>
-          spark.range(10).select($"id".as("a"), $"id".as("b")).write.parquet(f.getCanonicalPath)
-          val df = spark.read.parquet(f.getCanonicalPath)
+      withTempPath { f =>
+        spark.range(10).select($"id".as("a"), $"id".as("b")).write.parquet(f.getCanonicalPath)
+        val df = spark.read.parquet(f.getCanonicalPath)
 
-          withClue("column pruning") {
-            val query = df.filter(batchedPythonUDF($"a")).select($"a")
+        withClue("column pruning") {
+          val query = df.filter(batchedPythonUDF($"a")).select($"a")
 
-            val pythonEvalNodes = collectBatchExec(query.queryExecution.executedPlan)
-            assert(pythonEvalNodes.length == 1)
+          val pythonEvalNodes = collectBatchExec(query.queryExecution.executedPlan)
+          assert(pythonEvalNodes.length == 1)
 
 //            val scanNodes = query.queryExecution.executedPlan.collect {
 //              case scan: FileSourceScanExecTransformer => scan
 //            }
 //            assert(scanNodes.length == 1)
 //            assert(scanNodes.head.output.map(_.name) == Seq("a"))
-          }
+        }
 
-          withClue("filter pushdown") {
-            val query = df.filter($"a" > 1 && batchedPythonUDF($"a"))
-            val pythonEvalNodes = collectBatchExec(query.queryExecution.executedPlan)
-            assert(pythonEvalNodes.length == 1)
+        withClue("filter pushdown") {
+          val query = df.filter($"a" > 1 && batchedPythonUDF($"a"))
+          val pythonEvalNodes = collectBatchExec(query.queryExecution.executedPlan)
+          assert(pythonEvalNodes.length == 1)
 
 //            val scanNodes = query.queryExecution.executedPlan.collect {
 //              case scan: FileSourceScanExecTransformer => scan
@@ -159,7 +158,7 @@ class GlutenExtractPythonUDFsSuite extends ExtractPythonUDFsSuite with SparkTest
 //            assert(scanNodes.head.dataFilters.length == 2)
 //            assert(
 //              scanNodes.head.dataFilters.flatMap(_.references.map(_.name)).distinct == Seq("a"))
-          }
+        }
       }
     }
   }

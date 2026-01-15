@@ -16,9 +16,9 @@
  */
 package org.apache.spark.sql.excution
 
+import org.apache.spark.sql.{Row, SparkQueryTestsBase}
 import org.apache.spark.sql.execution.SQLWindowFunctionSuite
 import org.apache.spark.sql.execution.auron.plan.NativeWindowExec
-import org.apache.spark.sql.{Row, SparkQueryTestsBase}
 import org.apache.spark.sql.types._
 
 class AuronSQLWindowFunctionSuite extends SQLWindowFunctionSuite with SparkQueryTestsBase {
@@ -29,9 +29,7 @@ class AuronSQLWindowFunctionSuite extends SQLWindowFunctionSuite with SparkQuery
     List(
       StructField("c_custkey", IntegerType),
       StructField("c_nationkey", IntegerType),
-      StructField("c_acctbal", DecimalType(7, 2))
-    )
-  )
+      StructField("c_acctbal", DecimalType(7, 2))))
 
   val customerData = Seq(
     Row(4553, 11, decimal(6388.41)),
@@ -43,8 +41,7 @@ class AuronSQLWindowFunctionSuite extends SQLWindowFunctionSuite with SparkQuery
     Row(127412, 13, decimal(4621.41)),
     Row(148303, 10, decimal(4302.30)),
     Row(9954, 5, decimal(7587.25)),
-    Row(95337, 12, decimal(915.61))
-  )
+    Row(95337, 12, decimal(915.61)))
 
   testAuron("Literal in window partition by and sort") {
     withTable("customer") {
@@ -80,15 +77,11 @@ class AuronSQLWindowFunctionSuite extends SQLWindowFunctionSuite with SparkQuery
           Row(61065, BigDecimal(728477L, 2), 1),
           Row(95337, BigDecimal(91561L, 2), 2),
           Row(127412, BigDecimal(462141L, 2), 2),
-          Row(148303, BigDecimal(430230L, 2), 2)
-        )
-      )
-      assert(
-        getExecutedPlan(df).exists {
-          case _: NativeWindowExec => true
-          case _ => false
-        }
-      )
+          Row(148303, BigDecimal(430230L, 2), 2)))
+      assert(getExecutedPlan(df).exists {
+        case _: NativeWindowExec => true
+        case _ => false
+      })
     }
   }
 
@@ -122,15 +115,11 @@ class AuronSQLWindowFunctionSuite extends SQLWindowFunctionSuite with SparkQuery
           Row(61065, BigDecimal(7284770000L, 6)),
           Row(95337, BigDecimal(3100240000L, 6)),
           Row(127412, BigDecimal(5953090000L, 6)),
-          Row(148303, BigDecimal(5169790000L, 6))
-        )
-      )
-      assert(
-        getExecutedPlan(df).exists {
-          case _: NativeWindowExec => true
-          case _ => false
-        }
-      )
+          Row(148303, BigDecimal(5169790000L, 6))))
+      assert(getExecutedPlan(df).exists {
+        case _: NativeWindowExec => true
+        case _ => false
+      })
     }
   }
 }

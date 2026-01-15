@@ -32,8 +32,7 @@ class AuronDecimalPrecisionSuite extends SparkQueryTestsBase {
     AttributeReference("d2", DecimalType(5, 2))(),
     AttributeReference("u", DecimalType.SYSTEM_DEFAULT)(),
     AttributeReference("f", FloatType)(),
-    AttributeReference("b", DoubleType)()
-  )
+    AttributeReference("b", DoubleType)())
 
   private val i: Expression = UnresolvedAttribute("i")
   private val d1: Expression = UnresolvedAttribute("d1")

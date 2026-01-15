@@ -232,8 +232,7 @@ object AuronSQLQueryTestSettings extends SQLQueryTestSettings {
     "typeCoercion/native/promoteStrings.sql",
     "typeCoercion/native/stringCastAndExpressions.sql",
     "typeCoercion/native/widenSetOperationTypes.sql",
-    "typeCoercion/native/windowFrameCoercion.sql"
-  )
+    "typeCoercion/native/windowFrameCoercion.sql")
 
   private val OVERWRITE_SQL_QUERY_LIST: Set[String] = Set(
     // The calculation formulas for corr, skewness, kurtosis, variance, and stddev in Velox differ
@@ -243,6 +242,5 @@ object AuronSQLQueryTestSettings extends SQLQueryTestSettings {
     // -- Aggregate with nulls.
     // -- SPARK-37613: Support ANSI Aggregate Function: regr_r2
     "group-by.sql",
-    "udf/udf-group-by.sql"
-  )
+    "udf/udf-group-by.sql")
 }

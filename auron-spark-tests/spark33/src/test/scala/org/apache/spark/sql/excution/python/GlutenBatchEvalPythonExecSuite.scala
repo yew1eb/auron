@@ -16,11 +16,12 @@
  */
 package org.apache.spark.sql.excution.python
 
-import org.apache.spark.sql.{SparkTestsSharedSessionBase}
-import org.apache.spark.sql.catalyst.expressions.{And, AttributeReference, GreaterThan, In}
+import org.apache.spark.sql.SparkTestsSharedSessionBase
 import org.apache.spark.sql.execution.python.BatchEvalPythonExecSuite
 
-class GlutenBatchEvalPythonExecSuite extends BatchEvalPythonExecSuite with SparkTestsSharedSessionBase {
+class GlutenBatchEvalPythonExecSuite
+    extends BatchEvalPythonExecSuite
+    with SparkTestsSharedSessionBase {
 
   import testImplicits._
 

@@ -16,13 +16,11 @@
  */
 package org.apache.spark.sql.catalyst.expressions
 
+import java.nio.charset.StandardCharsets
 
-import org.apache.spark.sql.{   SparkTestsSharedSessionBase}
-
+import org.apache.spark.sql.SparkTestsSharedSessionBase
 import org.apache.spark.sql.catalyst.dsl.expressions._
 import org.apache.spark.sql.types._
-
-import java.nio.charset.StandardCharsets
 
 class AuronMathExpressionsSuite extends MathExpressionsSuite with SparkTestsSharedSessionBase {
   override protected def checkResult(
@@ -31,7 +29,7 @@ class AuronMathExpressionsSuite extends MathExpressionsSuite with SparkTestsShar
       exprDataType: DataType,
       exprNullable: Boolean): Boolean = {
 //    if (BackendTestUtils.isVeloxBackendLoaded()) {
-      super.checkResult(result, expected, exprDataType, exprNullable)
+    super.checkResult(result, expected, exprDataType, exprNullable)
 //    } else {
 //      // The result is null for a non-nullable expression
 //      assert(result != null || exprNullable, "exprNullable should be true if result is null")
@@ -66,10 +64,12 @@ class AuronMathExpressionsSuite extends MathExpressionsSuite with SparkTestsShar
       Seq(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.1, 3.14, 3.142, 3.1416, 3.14159, 3.141593)
 
     val floatResults: Seq[Float] =
-      Seq(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 3.0f, 3.1f, 3.14f, 3.142f, 3.1415f, 3.1415f, 3.1415f)
+      Seq(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 3.0f, 3.1f, 3.14f, 3.142f, 3.1415f, 3.1415f,
+        3.1415f)
 
     val bRoundFloatResults: Seq[Float] =
-      Seq(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 3.0f, 3.1f, 3.14f, 3.141f, 3.1415f, 3.1415f, 3.1415f)
+      Seq(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 3.0f, 3.1f, 3.14f, 3.141f, 3.1415f, 3.1415f,
+        3.1415f)
 
     val shortResults: Seq[Short] = Seq[Short](0, 0, 30000, 31000, 31400, 31420) ++
       Seq.fill[Short](7)(31415)
@@ -146,17 +146,16 @@ class AuronMathExpressionsSuite extends MathExpressionsSuite with SparkTestsShar
       Decimal(results(i))
     }
 
-    scales.zipWithIndex.foreach {
-      case (scale, i) =>
-        checkEvaluation(Round(doublePi, scale), doubleResults(i), EmptyRow)
-        checkEvaluation(Round(shortPi, scale), shortResults(i), EmptyRow)
-        checkEvaluation(Round(intPi, scale), intResults(i), EmptyRow)
-        checkEvaluation(Round(longPi, scale), longResults(i), EmptyRow)
-        checkEvaluation(Round(floatPi, scale), floatResults(i), EmptyRow)
-        checkEvaluation(BRound(doublePi, scale), doubleResults(i), EmptyRow)
-        checkEvaluation(BRound(shortPi, scale), shortResults(i), EmptyRow)
-        checkEvaluation(BRound(intPi, scale), intResultsB(i), EmptyRow)
-        checkEvaluation(BRound(longPi, scale), longResults(i), EmptyRow)
+    scales.zipWithIndex.foreach { case (scale, i) =>
+      checkEvaluation(Round(doublePi, scale), doubleResults(i), EmptyRow)
+      checkEvaluation(Round(shortPi, scale), shortResults(i), EmptyRow)
+      checkEvaluation(Round(intPi, scale), intResults(i), EmptyRow)
+      checkEvaluation(Round(longPi, scale), longResults(i), EmptyRow)
+      checkEvaluation(Round(floatPi, scale), floatResults(i), EmptyRow)
+      checkEvaluation(BRound(doublePi, scale), doubleResults(i), EmptyRow)
+      checkEvaluation(BRound(shortPi, scale), shortResults(i), EmptyRow)
+      checkEvaluation(BRound(intPi, scale), intResultsB(i), EmptyRow)
+      checkEvaluation(BRound(longPi, scale), longResults(i), EmptyRow)
 //        checkEvaluation(
 //          BRound(floatPi, scale),
 //          // the velox backend will fallback when executing bround,
@@ -164,46 +163,46 @@ class AuronMathExpressionsSuite extends MathExpressionsSuite with SparkTestsShar
 //          if (BackendTestUtils.isCHBackendLoaded()) floatResults(i) else bRoundFloatResults(i),
 //          EmptyRow
 //        )
-        checkEvaluation(
-          checkDataTypeAndCast(RoundFloor(Literal(doublePi), Literal(scale))),
-          doubleResultsFloor(i),
-          EmptyRow)
-        checkEvaluation(
-          checkDataTypeAndCast(RoundFloor(Literal(shortPi), Literal(scale))),
-          shortResultsFloor(i),
-          EmptyRow)
-        checkEvaluation(
-          checkDataTypeAndCast(RoundFloor(Literal(intPi), Literal(scale))),
-          intResultsFloor(i),
-          EmptyRow)
-        checkEvaluation(
-          checkDataTypeAndCast(RoundFloor(Literal(longPi), Literal(scale))),
-          longResultsFloor(i),
-          EmptyRow)
-        checkEvaluation(
-          checkDataTypeAndCast(RoundFloor(Literal(floatPi), Literal(scale))),
-          floatResultsFloor(i),
-          EmptyRow)
-        checkEvaluation(
-          checkDataTypeAndCast(RoundCeil(Literal(doublePi), Literal(scale))),
-          doubleResultsCeil(i),
-          EmptyRow)
-        checkEvaluation(
-          checkDataTypeAndCast(RoundCeil(Literal(shortPi), Literal(scale))),
-          shortResultsCeil(i),
-          EmptyRow)
-        checkEvaluation(
-          checkDataTypeAndCast(RoundCeil(Literal(intPi), Literal(scale))),
-          intResultsCeil(i),
-          EmptyRow)
-        checkEvaluation(
-          checkDataTypeAndCast(RoundCeil(Literal(longPi), Literal(scale))),
-          longResultsCeil(i),
-          EmptyRow)
-        checkEvaluation(
-          checkDataTypeAndCast(RoundCeil(Literal(floatPi), Literal(scale))),
-          floatResultsCeil(i),
-          EmptyRow)
+      checkEvaluation(
+        checkDataTypeAndCast(RoundFloor(Literal(doublePi), Literal(scale))),
+        doubleResultsFloor(i),
+        EmptyRow)
+      checkEvaluation(
+        checkDataTypeAndCast(RoundFloor(Literal(shortPi), Literal(scale))),
+        shortResultsFloor(i),
+        EmptyRow)
+      checkEvaluation(
+        checkDataTypeAndCast(RoundFloor(Literal(intPi), Literal(scale))),
+        intResultsFloor(i),
+        EmptyRow)
+      checkEvaluation(
+        checkDataTypeAndCast(RoundFloor(Literal(longPi), Literal(scale))),
+        longResultsFloor(i),
+        EmptyRow)
+      checkEvaluation(
+        checkDataTypeAndCast(RoundFloor(Literal(floatPi), Literal(scale))),
+        floatResultsFloor(i),
+        EmptyRow)
+      checkEvaluation(
+        checkDataTypeAndCast(RoundCeil(Literal(doublePi), Literal(scale))),
+        doubleResultsCeil(i),
+        EmptyRow)
+      checkEvaluation(
+        checkDataTypeAndCast(RoundCeil(Literal(shortPi), Literal(scale))),
+        shortResultsCeil(i),
+        EmptyRow)
+      checkEvaluation(
+        checkDataTypeAndCast(RoundCeil(Literal(intPi), Literal(scale))),
+        intResultsCeil(i),
+        EmptyRow)
+      checkEvaluation(
+        checkDataTypeAndCast(RoundCeil(Literal(longPi), Literal(scale))),
+        longResultsCeil(i),
+        EmptyRow)
+      checkEvaluation(
+        checkDataTypeAndCast(RoundCeil(Literal(floatPi), Literal(scale))),
+        floatResultsCeil(i),
+        EmptyRow)
     }
 
     val bdResults: Seq[BigDecimal] = Seq(
@@ -214,8 +213,7 @@ class AuronMathExpressionsSuite extends MathExpressionsSuite with SparkTestsShar
       BigDecimal("3.1416"),
       BigDecimal("3.14159"),
       BigDecimal("3.141593"),
-      BigDecimal("3.1415927")
-    )
+      BigDecimal("3.1415927"))
 
     val bdResultsFloor: Seq[BigDecimal] =
       Seq(
@@ -226,8 +224,7 @@ class AuronMathExpressionsSuite extends MathExpressionsSuite with SparkTestsShar
         BigDecimal("3.1415"),
         BigDecimal("3.14159"),
         BigDecimal("3.141592"),
-        BigDecimal("3.1415927")
-      )
+        BigDecimal("3.1415927"))
 
     val bdResultsCeil: Seq[BigDecimal] = Seq(
       BigDecimal(4),
@@ -237,40 +234,36 @@ class AuronMathExpressionsSuite extends MathExpressionsSuite with SparkTestsShar
       BigDecimal("3.1416"),
       BigDecimal("3.14160"),
       BigDecimal("3.141593"),
-      BigDecimal("3.1415927")
-    )
+      BigDecimal("3.1415927"))
 
-    (0 to 7).foreach {
-      i =>
-        checkEvaluation(Round(bdPi, i), bdResults(i), EmptyRow)
-        checkEvaluation(BRound(bdPi, i), bdResults(i), EmptyRow)
-        checkEvaluation(RoundFloor(bdPi, i), bdResultsFloor(i), EmptyRow)
-        checkEvaluation(RoundCeil(bdPi, i), bdResultsCeil(i), EmptyRow)
+    (0 to 7).foreach { i =>
+      checkEvaluation(Round(bdPi, i), bdResults(i), EmptyRow)
+      checkEvaluation(BRound(bdPi, i), bdResults(i), EmptyRow)
+      checkEvaluation(RoundFloor(bdPi, i), bdResultsFloor(i), EmptyRow)
+      checkEvaluation(RoundCeil(bdPi, i), bdResultsCeil(i), EmptyRow)
     }
-    (8 to 10).foreach {
-      scale =>
-        checkEvaluation(Round(bdPi, scale), bdPi, EmptyRow)
-        checkEvaluation(BRound(bdPi, scale), bdPi, EmptyRow)
-        checkEvaluation(RoundFloor(bdPi, scale), bdPi, EmptyRow)
-        checkEvaluation(RoundCeil(bdPi, scale), bdPi, EmptyRow)
+    (8 to 10).foreach { scale =>
+      checkEvaluation(Round(bdPi, scale), bdPi, EmptyRow)
+      checkEvaluation(BRound(bdPi, scale), bdPi, EmptyRow)
+      checkEvaluation(RoundFloor(bdPi, scale), bdPi, EmptyRow)
+      checkEvaluation(RoundCeil(bdPi, scale), bdPi, EmptyRow)
     }
 
-    DataTypeTestUtils.numericTypes.foreach {
-      dataType =>
-        checkEvaluation(Round(Literal.create(null, dataType), Literal(2)), null)
-        checkEvaluation(
-          Round(Literal.create(null, dataType), Literal.create(null, IntegerType)),
-          null)
-        checkEvaluation(BRound(Literal.create(null, dataType), Literal(2)), null)
-        checkEvaluation(
-          BRound(Literal.create(null, dataType), Literal.create(null, IntegerType)),
-          null)
-        checkEvaluation(
-          checkDataTypeAndCast(RoundFloor(Literal.create(null, dataType), Literal(2))),
-          null)
-        checkEvaluation(
-          checkDataTypeAndCast(RoundCeil(Literal.create(null, dataType), Literal(2))),
-          null)
+    DataTypeTestUtils.numericTypes.foreach { dataType =>
+      checkEvaluation(Round(Literal.create(null, dataType), Literal(2)), null)
+      checkEvaluation(
+        Round(Literal.create(null, dataType), Literal.create(null, IntegerType)),
+        null)
+      checkEvaluation(BRound(Literal.create(null, dataType), Literal(2)), null)
+      checkEvaluation(
+        BRound(Literal.create(null, dataType), Literal.create(null, IntegerType)),
+        null)
+      checkEvaluation(
+        checkDataTypeAndCast(RoundFloor(Literal.create(null, dataType), Literal(2))),
+        null)
+      checkEvaluation(
+        checkDataTypeAndCast(RoundCeil(Literal.create(null, dataType), Literal(2))),
+        null)
     }
 
     checkEvaluation(Round(2.5, 0), 3.0)

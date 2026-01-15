@@ -19,4 +19,6 @@ package org.apache.spark.sql.excution
 import org.apache.spark.sql.SparkTestsSharedSessionBase
 import org.apache.spark.sql.execution.BroadcastExchangeSuite
 
-class AuronBroadcastExchangeSuite extends BroadcastExchangeSuite with SparkTestsSharedSessionBase {}
+class AuronBroadcastExchangeSuite
+    extends BroadcastExchangeSuite
+    with SparkTestsSharedSessionBase {}

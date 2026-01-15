@@ -16,6 +16,8 @@
  */
 package org.apache.spark.sql.catalyst.expressions
 
-import org.apache.spark.sql.{SparkQueryTestsBase, SparkTestsSharedSessionBase}
+import org.apache.spark.sql.SparkTestsSharedSessionBase
 
-class AuronDecimalExpressionSuite extends DecimalExpressionSuite with SparkTestsSharedSessionBase {}
+class AuronDecimalExpressionSuite
+    extends DecimalExpressionSuite
+    with SparkTestsSharedSessionBase {}

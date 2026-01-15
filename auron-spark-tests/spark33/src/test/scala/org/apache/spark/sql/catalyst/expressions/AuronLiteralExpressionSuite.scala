@@ -16,16 +16,18 @@
  */
 package org.apache.spark.sql.catalyst.expressions
 
-import org.apache.spark.sql.{Row, SparkQueryTestsBase, SparkTestsSharedSessionBase}
+import java.nio.charset.StandardCharsets
+import java.time.{Instant, LocalDate}
+
+import org.apache.spark.sql.{Row, SparkTestsSharedSessionBase}
 import org.apache.spark.sql.catalyst.util.DateTimeUtils
 import org.apache.spark.sql.internal.SQLConf
 import org.apache.spark.sql.types._
 import org.apache.spark.unsafe.types.CalendarInterval
 
-import java.nio.charset.StandardCharsets
-import java.time.{Instant, LocalDate}
-
-class AuronLiteralExpressionSuite extends LiteralExpressionSuite with SparkTestsSharedSessionBase {
+class AuronLiteralExpressionSuite
+    extends LiteralExpressionSuite
+    with SparkTestsSharedSessionBase {
   testAuron("default") {
     checkEvaluation(Literal.default(BooleanType), false)
     checkEvaluation(Literal.default(ByteType), 0.toByte)

@@ -16,6 +16,6 @@
  */
 package org.apache.spark.sql.catalyst.expressions
 
-import org.apache.spark.sql.{SparkQueryTestsBase, SparkTestsSharedSessionBase}
+import org.apache.spark.sql.SparkTestsSharedSessionBase
 
 class AuronJsonExpressionsSuite extends JsonExpressionsSuite with SparkTestsSharedSessionBase {}

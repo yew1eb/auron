@@ -16,9 +16,9 @@
  */
 package org.apache.spark.sql.excution
 
-import org.apache.spark.sql.{SparkQueryTestsBase, SparkTestsSharedSessionBase}
+import org.apache.spark.sql.SparkTestsSharedSessionBase
 import org.apache.spark.sql.execution.TakeOrderedAndProjectSuite
 
 class AuronTakeOrderedAndProjectSuite
-  extends TakeOrderedAndProjectSuite
-  with SparkTestsSharedSessionBase {}
+    extends TakeOrderedAndProjectSuite
+    with SparkTestsSharedSessionBase {}

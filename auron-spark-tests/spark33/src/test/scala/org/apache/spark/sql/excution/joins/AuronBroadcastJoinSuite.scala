@@ -16,11 +16,8 @@
  */
 package org.apache.spark.sql.excution.joins
 
-import org.apache.spark.SparkConf
-import org.apache.spark.sql.{SparkQueryTestsBase, SparkSession, SparkTestsSharedSessionBase}
-import org.apache.spark.sql.catalyst.optimizer.{ConstantFolding, ConvertToLocalRelation, NullPropagation}
+import org.apache.spark.sql.{SparkSession, SparkTestsSharedSessionBase}
 import org.apache.spark.sql.execution.joins.BroadcastJoinSuite
-import org.apache.spark.sql.internal.SQLConf
 
 /**
  * This test needs setting for spark test home (its source code), e.g., appending the following
@@ -56,4 +53,3 @@ abstract class BroadcastJoinSuiteWrapper extends SparkTestsSharedSessionBase {
     session
   }
 }
-

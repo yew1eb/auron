@@ -16,6 +16,7 @@
  */
 package org.apache.spark.sql.excution
 
+import org.apache.spark.sql.{catalyst, AuronQueryTestUtil, Row, SparkTestsSharedSessionBase}
 import org.apache.spark.sql.catalyst.analysis.{Resolver, UnresolvedAttribute}
 import org.apache.spark.sql.catalyst.expressions.{Length, SortOrder}
 import org.apache.spark.sql.catalyst.plans.QueryPlan
@@ -23,9 +24,11 @@ import org.apache.spark.sql.execution.SortSuite
 import org.apache.spark.sql.execution.adaptive.AdaptiveSparkPlanHelper
 import org.apache.spark.sql.execution.auron.plan.NativeSortExec
 import org.apache.spark.sql.functions.length
-import org.apache.spark.sql.{AuronQueryTestUtil, Row, SparkQueryTestsBase, SparkTestsSharedSessionBase, catalyst}
 
-class AuronSortSuite extends SortSuite with SparkTestsSharedSessionBase with AdaptiveSparkPlanHelper {
+class AuronSortSuite
+    extends SortSuite
+    with SparkTestsSharedSessionBase
+    with AdaptiveSparkPlanHelper {
   import testImplicits._
 
   protected val resolver: Resolver = conf.resolver
@@ -48,50 +51,35 @@ class AuronSortSuite extends SortSuite with SparkTestsSharedSessionBase with Ada
   }
 
   testAuron("post-project outputOrdering check") {
-    val input = Seq(
-      ("Hello", 4, 2.0),
-      ("Hello Bob", 10, 1.0),
-      ("Hello Bob", 1, 3.0)
-    )
+    val input = Seq(("Hello", 4, 2.0), ("Hello Bob", 10, 1.0), ("Hello Bob", 1, 3.0))
 
     val df = input.toDF("a", "b", "c").orderBy(length($"a").desc, $"b".desc)
     AuronQueryTestUtil.checkAnswer(
       df,
-      Seq(
-        Row("Hello Bob", 10, 1.0),
-        Row("Hello Bob", 1, 3.0),
-        Row("Hello", 4, 2.0)
-      )
-    )
+      Seq(Row("Hello Bob", 10, 1.0), Row("Hello Bob", 1, 3.0), Row("Hello", 4, 2.0)))
 
     val ordering = Seq(
       catalyst.expressions.SortOrder(
         Length(attr("a")),
         catalyst.expressions.Descending,
         catalyst.expressions.NullsLast,
-        Seq.empty
-      ),
+        Seq.empty),
       catalyst.expressions.SortOrder(
         attr("b"),
         catalyst.expressions.Descending,
         catalyst.expressions.NullsLast,
-        Seq.empty
-      )
-    )
+        Seq.empty))
 
-    assert(
-      getExecutedPlan(df).exists {
-        case _: NativeSortExec => true
-        case _ => false
-      }
-    )
+    assert(getExecutedPlan(df).exists {
+      case _: NativeSortExec => true
+      case _ => false
+    })
     val plan = stripAQEPlan(df.queryExecution.executedPlan)
     val actualOrdering = plan.outputOrdering
     val expectedOrdering = ordering.map(resolveAttrs(_, plan).asInstanceOf[SortOrder])
     assert(actualOrdering.length == expectedOrdering.length)
-    actualOrdering.zip(expectedOrdering).foreach {
-      case (actual, expected) =>
-        assert(actual.satisfies(expected), "ordering must satisfy")
+    actualOrdering.zip(expectedOrdering).foreach { case (actual, expected) =>
+      assert(actual.satisfies(expected), "ordering must satisfy")
     }
   }
 }

@@ -16,12 +16,14 @@
  */
 package org.apache.spark.sql.catalyst.expressions
 
-import org.apache.spark.sql.{SparkQueryTestsBase, SparkTestsSharedSessionBase}
-import org.apache.spark.sql.types._
-
 import scala.util.Random
 
-class AuronCollectionExpressionsSuite extends CollectionExpressionsSuite with SparkTestsSharedSessionBase {
+import org.apache.spark.sql.SparkTestsSharedSessionBase
+import org.apache.spark.sql.types._
+
+class AuronCollectionExpressionsSuite
+    extends CollectionExpressionsSuite
+    with SparkTestsSharedSessionBase {
   testAuron("Shuffle") {
     // Primitive-type elements
     val ai0 = Literal.create(Seq(1, 2, 3, 4, 5), ArrayType(IntegerType, containsNull = false))
@@ -45,14 +47,18 @@ class AuronCollectionExpressionsSuite extends CollectionExpressionsSuite with Sp
     // Non-primitive-type elements
     val as0 = Literal.create(Seq("a", "b", "c", "d"), ArrayType(StringType, containsNull = false))
     val as1 = Literal.create(Seq("a", "b", "c"), ArrayType(StringType, containsNull = false))
-    val as2 = Literal.create(Seq(null, "a", null, "c"), ArrayType(StringType, containsNull = true))
-    val as3 = Literal.create(Seq("b", null, "d", null), ArrayType(StringType, containsNull = true))
+    val as2 =
+      Literal.create(Seq(null, "a", null, "c"), ArrayType(StringType, containsNull = true))
+    val as3 =
+      Literal.create(Seq("b", null, "d", null), ArrayType(StringType, containsNull = true))
     val as4 = Literal.create(Seq(null, null, null), ArrayType(StringType, containsNull = true))
     val as5 = Literal.create(Seq("a"), ArrayType(StringType, containsNull = false))
     val as6 = Literal.create(Seq.empty, ArrayType(StringType, containsNull = false))
     val as7 = Literal.create(null, ArrayType(StringType, containsNull = true))
     val aa =
-      Literal.create(Seq(Seq("a", "b"), Seq("c", "d"), Seq("e")), ArrayType(ArrayType(StringType)))
+      Literal.create(
+        Seq(Seq("a", "b"), Seq("c", "d"), Seq("e")),
+        ArrayType(ArrayType(StringType)))
 
     checkEvaluation(Shuffle(as0, Some(0)), Array("b", "a", "c", "d"))
     checkEvaluation(Shuffle(as1, Some(0)), Array("b", "a", "c"))

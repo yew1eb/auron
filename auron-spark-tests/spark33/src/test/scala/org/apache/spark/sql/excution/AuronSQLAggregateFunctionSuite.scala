@@ -16,8 +16,8 @@
  */
 package org.apache.spark.sql.excution
 
+import org.apache.spark.sql.{Row, SparkQueryTestsBase}
 import org.apache.spark.sql.execution.auron.plan.NativeAggBase
-import org.apache.spark.sql.{Row, SparkQueryTestsBase, SparkTestsSharedSessionBase}
 import org.apache.spark.sql.internal.SQLConf
 
 class AuronSQLAggregateFunctionSuite extends SparkQueryTestsBase {
@@ -43,17 +43,14 @@ class AuronSQLAggregateFunctionSuite extends SparkQueryTestsBase {
         |""".stripMargin
     val df = sql(query)
 
-    withSQLConf(
-      SQLConf.LEGACY_STATISTICAL_AGGREGATE.key -> "true"
-    ) {
+    withSQLConf(SQLConf.LEGACY_STATISTICAL_AGGREGATE.key -> "true") {
       checkAnswer(df, Seq(Row(Double.NaN, Double.NaN)))
       assert(getExecutedPlan(df).count(_.isInstanceOf[NativeAggBase]) == 2)
     }
 
     withSQLConf(
       SQLConf.LEGACY_STATISTICAL_AGGREGATE.key ->
-        SQLConf.LEGACY_STATISTICAL_AGGREGATE.defaultValueString
-    ) {
+        SQLConf.LEGACY_STATISTICAL_AGGREGATE.defaultValueString) {
       checkAnswer(df, Seq(Row(null, null)))
       assert(getExecutedPlan(df).count(_.isInstanceOf[NativeAggBase]) == 2)
     }

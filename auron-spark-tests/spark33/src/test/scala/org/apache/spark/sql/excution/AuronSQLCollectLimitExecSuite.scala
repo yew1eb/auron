@@ -17,8 +17,8 @@
 package org.apache.spark.sql.excution
 
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.execution.auron.plan.NativeCollectLimitExec
 import org.apache.spark.sql.{DataFrame, Row, SparkQueryTestsBase}
+import org.apache.spark.sql.execution.auron.plan.NativeCollectLimitExec
 
 class AuronSQLCollectLimitExecSuite extends SparkQueryTestsBase {
 
@@ -32,13 +32,12 @@ class AuronSQLCollectLimitExecSuite extends SparkQueryTestsBase {
       checkMatch: Boolean): Unit = {
     val executedPlan = getExecutedPlan(df)
 
-    val operatorFound = executedPlan.exists {
-      plan =>
-        try {
-          implicitly[reflect.ClassTag[T]].runtimeClass.isInstance(plan)
-        } catch {
-          case _: Throwable => false
-        }
+    val operatorFound = executedPlan.exists { plan =>
+      try {
+        implicitly[reflect.ClassTag[T]].runtimeClass.isInstance(plan)
+      } catch {
+        case _: Throwable => false
+      }
     }
 
     val assertionCondition = operatorFound == checkMatch

@@ -40,8 +40,8 @@ class AuronExchangeSuite extends ExchangeSuite with SparkTestsSharedSessionBase 
       val plan = df.queryExecution.executedPlan
 
       val exchangeIds = plan.collectWithSubqueries { case e: Exchange => e.id }
-      val reusedExchangeIds = plan.collectWithSubqueries {
-        case re: ReusedExchangeExec => re.child.id
+      val reusedExchangeIds = plan.collectWithSubqueries { case re: ReusedExchangeExec =>
+        re.child.id
       }
 
       assert(exchangeIds.size == 2, "Whole plan exchange reusing not working correctly")
@@ -59,8 +59,8 @@ class AuronExchangeSuite extends ExchangeSuite with SparkTestsSharedSessionBase 
       val plan2 = df2.queryExecution.executedPlan
 
       val exchangeIds2 = plan2.collectWithSubqueries { case e: Exchange => e.id }
-      val reusedExchangeIds2 = plan2.collectWithSubqueries {
-        case re: ReusedExchangeExec => re.child.id
+      val reusedExchangeIds2 = plan2.collectWithSubqueries { case re: ReusedExchangeExec =>
+        re.child.id
       }
 
       assert(exchangeIds2.size == 4, "Whole plan exchange reusing not working correctly")

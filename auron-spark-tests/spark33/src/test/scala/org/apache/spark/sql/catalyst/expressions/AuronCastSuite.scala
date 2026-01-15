@@ -16,29 +16,21 @@
  */
 package org.apache.spark.sql.catalyst.expressions
 
-import org.apache.spark.sql.{SparkQueryTestsBase, SparkTestsSharedSessionBase}
-import org.apache.spark.sql.catalyst.util.DateTimeTestUtils.{ALL_TIMEZONES, UTC, UTC_OPT, withDefaultTimeZone}
-import org.apache.spark.sql.catalyst.util.DateTimeUtils.{TimeZoneUTC, fromJavaTimestamp, millisToMicros}
+import java.sql.{Date, Timestamp}
+import java.util.{Calendar, TimeZone}
+
+import org.apache.spark.sql.SparkTestsSharedSessionBase
+import org.apache.spark.sql.catalyst.util.DateTimeTestUtils.{withDefaultTimeZone, ALL_TIMEZONES, UTC, UTC_OPT}
+import org.apache.spark.sql.catalyst.util.DateTimeUtils.{fromJavaTimestamp, millisToMicros, TimeZoneUTC}
 import org.apache.spark.sql.internal.SQLConf
 import org.apache.spark.sql.types._
 import org.apache.spark.utils.DebuggableThreadUtils
 
-import java.sql.{Date, Timestamp}
-import java.util.{Calendar, TimeZone}
- import org.apache.spark.sql.catalyst.util.DateTimeTestUtils.{withDefaultTimeZone, ALL_TIMEZONES, UTC, UTC_OPT}
-import org.apache.spark.sql.catalyst.util.DateTimeUtils.{fromJavaTimestamp, millisToMicros, TimeZoneUTC}
-import org.apache.spark.sql.internal.SQLConf
-import org.apache.spark.sql.types._
-
-import java.sql.{Date, Timestamp}
-import java.util.{Calendar, TimeZone}
-
-
 class AuronCastSuite extends CastSuite with SparkTestsSharedSessionBase {
 
-  override   def beforeAll(): Unit = super.beforeAll()
+  override def beforeAll(): Unit = super.beforeAll()
 
-  override   def afterAll(): Unit = super.afterAll()
+  override def afterAll(): Unit = super.afterAll()
 
   override def cast(v: Any, targetType: DataType, timeZoneId: Option[String] = None): CastBase = {
     v match {
@@ -57,34 +49,31 @@ class AuronCastSuite extends CastSuite with SparkTestsSharedSessionBase {
   UDTRegistration.register(classOf[IExampleSubType].getName, classOf[ExampleSubTypeUDT].getName)
 
   testAuron("missing cases - from boolean") {
-    (DataTypeTestUtils.numericTypeWithoutDecimal + BooleanType).foreach {
-      t =>
-        t match {
-          case BooleanType =>
-            checkEvaluation(cast(cast(true, BooleanType), t), true)
-            checkEvaluation(cast(cast(false, BooleanType), t), false)
-          case _ =>
-            checkEvaluation(cast(cast(true, BooleanType), t), 1)
-            checkEvaluation(cast(cast(false, BooleanType), t), 0)
-        }
+    (DataTypeTestUtils.numericTypeWithoutDecimal + BooleanType).foreach { t =>
+      t match {
+        case BooleanType =>
+          checkEvaluation(cast(cast(true, BooleanType), t), true)
+          checkEvaluation(cast(cast(false, BooleanType), t), false)
+        case _ =>
+          checkEvaluation(cast(cast(true, BooleanType), t), 1)
+          checkEvaluation(cast(cast(false, BooleanType), t), 0)
+      }
     }
   }
 
   testAuron("missing cases - from byte") {
-    DataTypeTestUtils.numericTypeWithoutDecimal.foreach {
-      t =>
-        checkEvaluation(cast(cast(0, ByteType), t), 0)
-        checkEvaluation(cast(cast(-1, ByteType), t), -1)
-        checkEvaluation(cast(cast(1, ByteType), t), 1)
+    DataTypeTestUtils.numericTypeWithoutDecimal.foreach { t =>
+      checkEvaluation(cast(cast(0, ByteType), t), 0)
+      checkEvaluation(cast(cast(-1, ByteType), t), -1)
+      checkEvaluation(cast(cast(1, ByteType), t), 1)
     }
   }
 
   testAuron("missing cases - from short") {
-    DataTypeTestUtils.numericTypeWithoutDecimal.foreach {
-      t =>
-        checkEvaluation(cast(cast(0, ShortType), t), 0)
-        checkEvaluation(cast(cast(-1, ShortType), t), -1)
-        checkEvaluation(cast(cast(1, ShortType), t), 1)
+    DataTypeTestUtils.numericTypeWithoutDecimal.foreach { t =>
+      checkEvaluation(cast(cast(0, ShortType), t), 0)
+      checkEvaluation(cast(cast(-1, ShortType), t), -1)
+      checkEvaluation(cast(cast(1, ShortType), t), 1)
     }
   }
 
@@ -104,9 +93,7 @@ class AuronCastSuite extends CastSuite with SparkTestsSharedSessionBase {
     // SystemV timezones are a legacy way of specifying timezones in Unix-like OS.
     // It is not supported by Velox.
     for (tz <- ALL_TIMEZONES.filterNot(_.getId.contains("SystemV"))) {
-      withSQLConf(
-        SQLConf.SESSION_LOCAL_TIMEZONE.key -> tz.getId
-      ) {
+      withSQLConf(SQLConf.SESSION_LOCAL_TIMEZONE.key -> tz.getId) {
         val timeZoneId = Option(tz.getId)
         var c = Calendar.getInstance(TimeZoneUTC)
         c.set(2015, 2, 8, 2, 30, 0)
@@ -133,9 +120,7 @@ class AuronCastSuite extends CastSuite with SparkTestsSharedSessionBase {
     checkEvaluation(cast(cast(sd, DateType), StringType), sd)
     checkEvaluation(cast(cast(d, StringType), DateType), 0)
 
-    withSQLConf(
-      SQLConf.SESSION_LOCAL_TIMEZONE.key -> UTC_OPT.get
-    ) {
+    withSQLConf(SQLConf.SESSION_LOCAL_TIMEZONE.key -> UTC_OPT.get) {
       checkEvaluation(cast(cast(nts, TimestampType, UTC_OPT), StringType, UTC_OPT), nts)
       checkEvaluation(
         cast(cast(ts, StringType, UTC_OPT), TimestampType, UTC_OPT),
@@ -154,7 +139,9 @@ class AuronCastSuite extends CastSuite with SparkTestsSharedSessionBase {
 
     checkEvaluation(
       cast(
-        cast(cast(cast(cast(cast("5", ByteType), ShortType), IntegerType), FloatType), DoubleType),
+        cast(
+          cast(cast(cast(cast("5", ByteType), ShortType), IntegerType), FloatType),
+          DoubleType),
         LongType),
       5.toLong)
 
@@ -195,8 +182,7 @@ class AuronCastSuite extends CastSuite with SparkTestsSharedSessionBase {
         ("9999-12-31 23:59:59.999", 253402300799L),
         ("1969-12-31 23:59:59.999", -1L),
         ("1969-12-31 23:59:58.500", -2L),
-        ("1900-01-01 12:00:00.000", -2208945600L)
-      )
+        ("1900-01-01 12:00:00.000", -2208945600L))
 
       for ((inputStr, expectedOutput) <- testCases) {
         checkEvaluation(cast(Timestamp.valueOf(inputStr), LongType), expectedOutput)
@@ -217,103 +203,99 @@ class AuronCastSuite extends CastSuite with SparkTestsSharedSessionBase {
         .filterNot(_.getId.contains("Asia/Tehran"))
         .filterNot(_.getId.contains("Iran")),
       prefix = "CastSuiteBase-cast-string-to-timestamp",
-      maxThreads = 1
-    ) {
-      zid =>
-        withSQLConf(
-          SQLConf.SESSION_LOCAL_TIMEZONE.key -> zid.getId
-        ) {
-          def checkCastStringToTimestamp(str: String, expected: Timestamp): Unit = {
-            checkEvaluation(cast(Literal(str), TimestampType, Option(zid.getId)), expected)
-          }
-
-          val tz = TimeZone.getTimeZone(zid)
-          var c = Calendar.getInstance(tz)
-          c.set(2015, 0, 1, 0, 0, 0)
-          c.set(Calendar.MILLISECOND, 0)
-          checkCastStringToTimestamp("2015", new Timestamp(c.getTimeInMillis))
-          c = Calendar.getInstance(tz)
-          c.set(2015, 2, 1, 0, 0, 0)
-          c.set(Calendar.MILLISECOND, 0)
-          checkCastStringToTimestamp("2015-03", new Timestamp(c.getTimeInMillis))
-          c = Calendar.getInstance(tz)
-          c.set(2015, 2, 18, 0, 0, 0)
-          c.set(Calendar.MILLISECOND, 0)
-          checkCastStringToTimestamp("2015-03-18", new Timestamp(c.getTimeInMillis))
-          checkCastStringToTimestamp("2015-03-18 ", new Timestamp(c.getTimeInMillis))
-
-          c = Calendar.getInstance(tz)
-          c.set(2015, 2, 18, 12, 3, 17)
-          c.set(Calendar.MILLISECOND, 0)
-          checkCastStringToTimestamp("2015-03-18 12:03:17", new Timestamp(c.getTimeInMillis))
-          checkCastStringToTimestamp("2015-03-18T12:03:17", new Timestamp(c.getTimeInMillis))
-
-          // If the string value includes timezone string, it represents the timestamp string
-          // in the timezone regardless of the timeZoneId parameter.
-          c = Calendar.getInstance(TimeZone.getTimeZone(UTC))
-          c.set(2015, 2, 18, 12, 3, 17)
-          c.set(Calendar.MILLISECOND, 0)
-          checkCastStringToTimestamp("2015-03-18T12:03:17Z", new Timestamp(c.getTimeInMillis))
-          checkCastStringToTimestamp("2015-03-18 12:03:17Z", new Timestamp(c.getTimeInMillis))
-
-          c = Calendar.getInstance(TimeZone.getTimeZone("GMT-01:00"))
-          c.set(2015, 2, 18, 12, 3, 17)
-          c.set(Calendar.MILLISECOND, 0)
-          // Unsupported timezone format for Velox backend.
-          // checkCastStringToTimestamp("2015-03-18T12:03:17-1:0", new Timestamp(c.getTimeInMillis))
-          checkCastStringToTimestamp("2015-03-18T12:03:17-01:00", new Timestamp(c.getTimeInMillis))
-
-          c = Calendar.getInstance(TimeZone.getTimeZone("GMT+07:30"))
-          c.set(2015, 2, 18, 12, 3, 17)
-          c.set(Calendar.MILLISECOND, 0)
-          checkCastStringToTimestamp("2015-03-18T12:03:17+07:30", new Timestamp(c.getTimeInMillis))
-
-          c = Calendar.getInstance(TimeZone.getTimeZone("GMT+07:03"))
-          c.set(2015, 2, 18, 12, 3, 17)
-          c.set(Calendar.MILLISECOND, 0)
-          // Unsupported timezone format for Velox backend.
-          // checkCastStringToTimestamp("2015-03-18T12:03:17+7:3",
-          // new Timestamp(c.getTimeInMillis))
-
-          // tests for the string including milliseconds.
-          c = Calendar.getInstance(tz)
-          c.set(2015, 2, 18, 12, 3, 17)
-          c.set(Calendar.MILLISECOND, 123)
-          checkCastStringToTimestamp("2015-03-18 12:03:17.123", new Timestamp(c.getTimeInMillis))
-          checkCastStringToTimestamp("2015-03-18T12:03:17.123", new Timestamp(c.getTimeInMillis))
-
-          // If the string value includes timezone string, it represents the timestamp string
-          // in the timezone regardless of the timeZoneId parameter.
-          c = Calendar.getInstance(TimeZone.getTimeZone(UTC))
-          c.set(2015, 2, 18, 12, 3, 17)
-          c.set(Calendar.MILLISECOND, 456)
-          checkCastStringToTimestamp("2015-03-18T12:03:17.456Z", new Timestamp(c.getTimeInMillis))
-          checkCastStringToTimestamp("2015-03-18 12:03:17.456Z", new Timestamp(c.getTimeInMillis))
-
-          c = Calendar.getInstance(TimeZone.getTimeZone("GMT-01:00"))
-          c.set(2015, 2, 18, 12, 3, 17)
-          c.set(Calendar.MILLISECOND, 123)
-          // Unsupported timezone format for Velox backend.
-          // checkCastStringToTimestamp("2015-03-18T12:03:17.123-1:0",
-          // new Timestamp(c.getTimeInMillis))
-          checkCastStringToTimestamp(
-            "2015-03-18T12:03:17.123-01:00",
-            new Timestamp(c.getTimeInMillis))
-
-          c = Calendar.getInstance(TimeZone.getTimeZone("GMT+07:30"))
-          c.set(2015, 2, 18, 12, 3, 17)
-          c.set(Calendar.MILLISECOND, 123)
-          checkCastStringToTimestamp(
-            "2015-03-18T12:03:17.123+07:30",
-            new Timestamp(c.getTimeInMillis))
-
-          c = Calendar.getInstance(TimeZone.getTimeZone("GMT+07:03"))
-          c.set(2015, 2, 18, 12, 3, 17)
-          c.set(Calendar.MILLISECOND, 123)
-          // Unsupported timezone format for Velox backend.
-          // checkCastStringToTimestamp("2015-03-18T12:03:17.123+7:3",
-          // new Timestamp(c.getTimeInMillis))
+      maxThreads = 1) { zid =>
+      withSQLConf(SQLConf.SESSION_LOCAL_TIMEZONE.key -> zid.getId) {
+        def checkCastStringToTimestamp(str: String, expected: Timestamp): Unit = {
+          checkEvaluation(cast(Literal(str), TimestampType, Option(zid.getId)), expected)
         }
+
+        val tz = TimeZone.getTimeZone(zid)
+        var c = Calendar.getInstance(tz)
+        c.set(2015, 0, 1, 0, 0, 0)
+        c.set(Calendar.MILLISECOND, 0)
+        checkCastStringToTimestamp("2015", new Timestamp(c.getTimeInMillis))
+        c = Calendar.getInstance(tz)
+        c.set(2015, 2, 1, 0, 0, 0)
+        c.set(Calendar.MILLISECOND, 0)
+        checkCastStringToTimestamp("2015-03", new Timestamp(c.getTimeInMillis))
+        c = Calendar.getInstance(tz)
+        c.set(2015, 2, 18, 0, 0, 0)
+        c.set(Calendar.MILLISECOND, 0)
+        checkCastStringToTimestamp("2015-03-18", new Timestamp(c.getTimeInMillis))
+        checkCastStringToTimestamp("2015-03-18 ", new Timestamp(c.getTimeInMillis))
+
+        c = Calendar.getInstance(tz)
+        c.set(2015, 2, 18, 12, 3, 17)
+        c.set(Calendar.MILLISECOND, 0)
+        checkCastStringToTimestamp("2015-03-18 12:03:17", new Timestamp(c.getTimeInMillis))
+        checkCastStringToTimestamp("2015-03-18T12:03:17", new Timestamp(c.getTimeInMillis))
+
+        // If the string value includes timezone string, it represents the timestamp string
+        // in the timezone regardless of the timeZoneId parameter.
+        c = Calendar.getInstance(TimeZone.getTimeZone(UTC))
+        c.set(2015, 2, 18, 12, 3, 17)
+        c.set(Calendar.MILLISECOND, 0)
+        checkCastStringToTimestamp("2015-03-18T12:03:17Z", new Timestamp(c.getTimeInMillis))
+        checkCastStringToTimestamp("2015-03-18 12:03:17Z", new Timestamp(c.getTimeInMillis))
+
+        c = Calendar.getInstance(TimeZone.getTimeZone("GMT-01:00"))
+        c.set(2015, 2, 18, 12, 3, 17)
+        c.set(Calendar.MILLISECOND, 0)
+        // Unsupported timezone format for Velox backend.
+        // checkCastStringToTimestamp("2015-03-18T12:03:17-1:0", new Timestamp(c.getTimeInMillis))
+        checkCastStringToTimestamp("2015-03-18T12:03:17-01:00", new Timestamp(c.getTimeInMillis))
+
+        c = Calendar.getInstance(TimeZone.getTimeZone("GMT+07:30"))
+        c.set(2015, 2, 18, 12, 3, 17)
+        c.set(Calendar.MILLISECOND, 0)
+        checkCastStringToTimestamp("2015-03-18T12:03:17+07:30", new Timestamp(c.getTimeInMillis))
+
+        c = Calendar.getInstance(TimeZone.getTimeZone("GMT+07:03"))
+        c.set(2015, 2, 18, 12, 3, 17)
+        c.set(Calendar.MILLISECOND, 0)
+        // Unsupported timezone format for Velox backend.
+        // checkCastStringToTimestamp("2015-03-18T12:03:17+7:3",
+        // new Timestamp(c.getTimeInMillis))
+
+        // tests for the string including milliseconds.
+        c = Calendar.getInstance(tz)
+        c.set(2015, 2, 18, 12, 3, 17)
+        c.set(Calendar.MILLISECOND, 123)
+        checkCastStringToTimestamp("2015-03-18 12:03:17.123", new Timestamp(c.getTimeInMillis))
+        checkCastStringToTimestamp("2015-03-18T12:03:17.123", new Timestamp(c.getTimeInMillis))
+
+        // If the string value includes timezone string, it represents the timestamp string
+        // in the timezone regardless of the timeZoneId parameter.
+        c = Calendar.getInstance(TimeZone.getTimeZone(UTC))
+        c.set(2015, 2, 18, 12, 3, 17)
+        c.set(Calendar.MILLISECOND, 456)
+        checkCastStringToTimestamp("2015-03-18T12:03:17.456Z", new Timestamp(c.getTimeInMillis))
+        checkCastStringToTimestamp("2015-03-18 12:03:17.456Z", new Timestamp(c.getTimeInMillis))
+
+        c = Calendar.getInstance(TimeZone.getTimeZone("GMT-01:00"))
+        c.set(2015, 2, 18, 12, 3, 17)
+        c.set(Calendar.MILLISECOND, 123)
+        // Unsupported timezone format for Velox backend.
+        // checkCastStringToTimestamp("2015-03-18T12:03:17.123-1:0",
+        // new Timestamp(c.getTimeInMillis))
+        checkCastStringToTimestamp(
+          "2015-03-18T12:03:17.123-01:00",
+          new Timestamp(c.getTimeInMillis))
+
+        c = Calendar.getInstance(TimeZone.getTimeZone("GMT+07:30"))
+        c.set(2015, 2, 18, 12, 3, 17)
+        c.set(Calendar.MILLISECOND, 123)
+        checkCastStringToTimestamp(
+          "2015-03-18T12:03:17.123+07:30",
+          new Timestamp(c.getTimeInMillis))
+
+        c = Calendar.getInstance(TimeZone.getTimeZone("GMT+07:03"))
+        c.set(2015, 2, 18, 12, 3, 17)
+        c.set(Calendar.MILLISECOND, 123)
+        // Unsupported timezone format for Velox backend.
+        // checkCastStringToTimestamp("2015-03-18T12:03:17.123+7:3",
+        // new Timestamp(c.getTimeInMillis))
+      }
     }
   }
 }

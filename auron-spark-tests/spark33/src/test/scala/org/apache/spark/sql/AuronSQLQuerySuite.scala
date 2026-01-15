@@ -47,7 +47,9 @@ class AuronSQLQuerySuite extends SQLQuerySuite with SparkQueryTestsBase {
             case i: InMemoryTableScanExec => i
           }
           assert(inMemoryTableScan.size == 2)
-          checkAnswer(queryDf, Row(0, 1) :: Row(1, 2) :: Row(2, 3) :: Row(3, 4) :: Row(4, 5) :: Nil)
+          checkAnswer(
+            queryDf,
+            Row(0, 1) :: Row(1, 2) :: Row(2, 3) :: Row(3, 4) :: Row(4, 5) :: Nil)
         }
       }
     }
@@ -56,45 +58,43 @@ class AuronSQLQuerySuite extends SQLQuerySuite with SparkQueryTestsBase {
 
   testAuron("SPARK-33338: GROUP BY using literal map should not fail") {
     withTable("t") {
-      withTempDir {
-        dir =>
-          sql(
-            s"CREATE TABLE t USING PARQUET LOCATION '${dir.toURI}' AS SELECT map('k1', 'v1') m," +
-              s" 'k1' k")
-          Seq(
-            "SELECT map('k1', 'v1')[k] FROM t GROUP BY 1",
-            "SELECT map('k1', 'v1')[k] FROM t GROUP BY map('k1', 'v1')[k]",
-            "SELECT map('k1', 'v1')[k] a FROM t GROUP BY a"
-          ).foreach(statement => checkAnswer(sql(statement), Row("v1")))
+      withTempDir { dir =>
+        sql(
+          s"CREATE TABLE t USING PARQUET LOCATION '${dir.toURI}' AS SELECT map('k1', 'v1') m," +
+            s" 'k1' k")
+        Seq(
+          "SELECT map('k1', 'v1')[k] FROM t GROUP BY 1",
+          "SELECT map('k1', 'v1')[k] FROM t GROUP BY map('k1', 'v1')[k]",
+          "SELECT map('k1', 'v1')[k] a FROM t GROUP BY a").foreach(statement =>
+          checkAnswer(sql(statement), Row("v1")))
       }
     }
   }
 
   testAuron("SPARK-33593: Vector reader got incorrect data with binary partition value") {
-    Seq("false").foreach(
-      value => {
-        withSQLConf(SQLConf.PARQUET_VECTORIZED_READER_ENABLED.key -> value) {
-          withTable("t1") {
-            sql("""CREATE TABLE t1(name STRING, id BINARY, part BINARY)
+    Seq("false").foreach(value => {
+      withSQLConf(SQLConf.PARQUET_VECTORIZED_READER_ENABLED.key -> value) {
+        withTable("t1") {
+          sql("""CREATE TABLE t1(name STRING, id BINARY, part BINARY)
                   |USING PARQUET PARTITIONED BY (part)""".stripMargin)
-            sql("INSERT INTO t1 PARTITION(part = 'Spark SQL') VALUES('a', X'537061726B2053514C')")
-            checkAnswer(
-              sql("SELECT name, cast(id as string), cast(part as string) FROM t1"),
-              Row("a", "Spark SQL", "Spark SQL"))
-          }
+          sql("INSERT INTO t1 PARTITION(part = 'Spark SQL') VALUES('a', X'537061726B2053514C')")
+          checkAnswer(
+            sql("SELECT name, cast(id as string), cast(part as string) FROM t1"),
+            Row("a", "Spark SQL", "Spark SQL"))
         }
+      }
 
-        withSQLConf(SQLConf.ORC_VECTORIZED_READER_ENABLED.key -> value) {
-          withTable("t2") {
-            sql("""CREATE TABLE t2(name STRING, id BINARY, part BINARY)
+      withSQLConf(SQLConf.ORC_VECTORIZED_READER_ENABLED.key -> value) {
+        withTable("t2") {
+          sql("""CREATE TABLE t2(name STRING, id BINARY, part BINARY)
                   |USING PARQUET PARTITIONED BY (part)""".stripMargin)
-            sql("INSERT INTO t2 PARTITION(part = 'Spark SQL') VALUES('a', X'537061726B2053514C')")
-            checkAnswer(
-              sql("SELECT name, cast(id as string), cast(part as string) FROM t2"),
-              Row("a", "Spark SQL", "Spark SQL"))
-          }
+          sql("INSERT INTO t2 PARTITION(part = 'Spark SQL') VALUES('a', X'537061726B2053514C')")
+          checkAnswer(
+            sql("SELECT name, cast(id as string), cast(part as string) FROM t2"),
+            Row("a", "Spark SQL", "Spark SQL"))
         }
-      })
+      }
+    })
   }
 
   testAuron(
