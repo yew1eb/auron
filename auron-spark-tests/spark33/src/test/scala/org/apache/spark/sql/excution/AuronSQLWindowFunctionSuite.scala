@@ -65,6 +65,8 @@ class AuronSQLWindowFunctionSuite extends SQLWindowFunctionSuite with SparkQuery
           |ORDER BY 1, 2;
           |""".stripMargin
       val df = sql(query)
+      df.collect()
+      println(df.queryExecution.executedPlan)
       checkAnswer(
         df,
         Seq(
@@ -103,6 +105,8 @@ class AuronSQLWindowFunctionSuite extends SQLWindowFunctionSuite with SparkQuery
           |ORDER BY 1, 2;
           |""".stripMargin
       val df = sql(query)
+      df.collect()
+      println(df.queryExecution.executedPlan)
       checkAnswer(
         df,
         Seq(

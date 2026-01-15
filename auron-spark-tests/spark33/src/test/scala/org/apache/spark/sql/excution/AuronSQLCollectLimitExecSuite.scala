@@ -24,7 +24,7 @@ class AuronSQLCollectLimitExecSuite extends SparkQueryTestsBase {
 
   override def sparkConf: SparkConf = {
     super.sparkConf
-      .set("spark.shuffle.manager", "org.apache.spark.shuffle.sort.ColumnarShuffleManager")
+      .set("spark.shuffle.manager", "org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager")
   }
 
   private def assertGlutenOperatorMatch[T: reflect.ClassTag](
@@ -96,7 +96,8 @@ class AuronSQLCollectLimitExecSuite extends SparkQueryTestsBase {
       .distinct()
       .limit(5)
     val expectedData = Seq(Row(0L), Row(1L), Row(2L), Row(3L), Row(4L))
-
+    df.collect()
+    println(df)
     checkAnswer(df, expectedData)
 
     assertGlutenOperatorMatch[NativeCollectLimitExec](df, checkMatch = true)

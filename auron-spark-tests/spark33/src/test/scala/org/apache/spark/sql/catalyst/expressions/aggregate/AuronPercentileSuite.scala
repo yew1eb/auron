@@ -22,6 +22,6 @@ import org.apache.spark.sql.SparkTestsSharedSessionBase
 class AuronPercentileSuite extends PercentileSuite with SparkTestsSharedSessionBase {
   override def sparkConf: SparkConf = {
     super.sparkConf
-      .
+      .set("spark.auron.expression.singleChildFallback.enabled", "false")
   }
 }

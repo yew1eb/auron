@@ -102,11 +102,12 @@ class AuronSQLQueryTestSuite
       .set("spark.sql.files.maxPartitionBytes", "134217728")
       .set("spark.memory.offHeap.enabled", "true")
       .set("spark.memory.offHeap.size", "1024MB")
-      .set("spark.plugins", "org.apache.gluten.GlutenPlugin")
-      .set("spark.shuffle.manager", "org.apache.spark.shuffle.sort.ColumnarShuffleManager")
-      //.set(GlutenConfig.SMALL_FILE_THRESHOLD.key, "0")
+      .set("spark.sql.extensions", "org.apache.spark.sql.auron.AuronSparkSessionExtension")
+      .set(
+        "spark.shuffle.manager",
+        "org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager")
+      .set("spark.auron.enable", "true")
       .set("spark.unsafe.exceptionOnMemoryLeak", "true")
-
     conf
   }
 

@@ -18,11 +18,25 @@ package org.apache.auron
 
 import org.apache.spark.sql.{AuronQueryTest, Row}
 import org.apache.spark.sql.auron.AuronConf
-
 import org.apache.auron.util.AuronTestUtils
+import org.apache.spark.sql.internal.SQLConf
 
 class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQLTestHelper {
   import testImplicits._
+
+  test("SparkToColumnar over RangeExec") {
+    Seq("true", "false").foreach(aqe => {
+      Seq(500, 900).foreach { batchSize =>
+        withSQLConf(
+          SQLConf.ADAPTIVE_EXECUTION_ENABLED.key -> aqe,
+          SQLConf.ARROW_EXECUTION_MAX_RECORDS_PER_BATCH.key -> batchSize.toString) {
+          val df = spark.range(1000).selectExpr("id", "id % 8 as k").groupBy("k").sum("id")
+          df.collect()
+          println(df.queryExecution.executedPlan)
+        }
+      }
+    })
+  }
 
   test("test partition path has url encoded character") {
     withTable("t1") {

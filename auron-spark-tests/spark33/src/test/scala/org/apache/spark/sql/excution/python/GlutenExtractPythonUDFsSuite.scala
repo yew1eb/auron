@@ -97,7 +97,7 @@ class GlutenExtractPythonUDFsSuite
 
         withClue("column pruning") {
           val query = df.filter(batchedPythonUDF($"a")).select($"a")
-
+          println(query.queryExecution.executedPlan)
           val pythonEvalNodes = collectBatchExec(query.queryExecution.executedPlan)
           assert(pythonEvalNodes.length == 1)
 
@@ -134,7 +134,7 @@ class GlutenExtractPythonUDFsSuite
 
         withClue("column pruning") {
           val query = df.filter(batchedPythonUDF($"a")).select($"a")
-
+          println(query.queryExecution.executedPlan)
           val pythonEvalNodes = collectBatchExec(query.queryExecution.executedPlan)
           assert(pythonEvalNodes.length == 1)
 

@@ -29,6 +29,8 @@ class GlutenBatchEvalPythonExecSuite
     val df = Seq(("Hello", 4))
       .toDF("a", "b")
       .where("dummyPythonUDF(b) and dummyPythonUDF(a) and a in (3, 4)")
+    df.collect()
+    println(df.queryExecution.executedPlan)
 //    val qualifiedPlanNodes = df.queryExecution.executedPlan.collect {
 //      case f @ FilterExecTransformer(
 //            And(_: AttributeReference, _: AttributeReference),
@@ -47,6 +49,8 @@ class GlutenBatchEvalPythonExecSuite
     val df = Seq(("Hello", 4))
       .toDF("a", "b")
       .where("dummyPythonUDF(a, dummyPythonUDF(a, b)) and a in (3, 4)")
+    df.collect()
+    println(df.queryExecution.executedPlan)
 //    val qualifiedPlanNodes = df.queryExecution.executedPlan.collect {
 //      case f @ FilterExecTransformer(
 //            _: AttributeReference,
@@ -65,6 +69,8 @@ class GlutenBatchEvalPythonExecSuite
     val df = Seq(("Hello", 4))
       .toDF("a", "b")
       .where("b > 4 and dummyPythonUDF(a) and rand() > 0.3")
+    df.collect()
+    println(df.queryExecution.executedPlan)
 //    val qualifiedPlanNodes = df.queryExecution.executedPlan.collect {
 //      case f @ FilterExecTransformer(
 //            And(_: AttributeReference, _: GreaterThan),
@@ -84,7 +90,8 @@ class GlutenBatchEvalPythonExecSuite
     val df = Seq(("Hello", 4))
       .toDF("a", "b")
       .where("dummyPythonUDF(a) and rand() > 0.3 and b > 4")
-
+    df.collect()
+    println(df.queryExecution.executedPlan)
 //    val qualifiedPlanNodes = df.queryExecution.executedPlan.collect {
 //      case f @ FilterExecTransformer(
 //            And(_: AttributeReference, _: GreaterThan),
