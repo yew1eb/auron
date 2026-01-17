@@ -127,7 +127,7 @@ mod tests {
 
         // 2. Unwrap the result, panicking if it's not the expected type.
         let ColumnarValue::Scalar(ScalarValue::Utf8(actual)) = result else {
-            panic!("expected UTF-8 scalar");
+            unreachable!("Expected UTF-8 scalar, got {:?}", result);
         };
 
         // 3. Assert the actual output matches the expected output.

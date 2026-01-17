@@ -323,6 +323,7 @@ mod bround_tests {
     }
 
     // Test: double data type π value across different scales
+    #[allow(clippy::approx_constant)]
     #[test]
     fn test_bround_double_pi_scales() -> Result<()> {
         let double_pi = std::f64::consts::PI;
@@ -349,6 +350,7 @@ mod bround_tests {
     }
 
     // Test: float data type π value across different scales
+    #[allow(clippy::approx_constant)]
     #[test]
     fn test_bround_float_pi_scales() -> Result<()> {
         let float_pi = 3.1415_f32;
@@ -380,7 +382,7 @@ mod bround_tests {
         let short_pi: i16 = 31415;
         let expected: Vec<i16> = vec![0, 0, 30000, 31000, 31400, 31420]
             .into_iter()
-            .chain(std::iter::repeat(31415).take(7))
+            .chain(std::iter::repeat_n(31415, 7))
             .collect();
 
         for (i, scale) in scales_range().enumerate() {
@@ -409,7 +411,7 @@ mod bround_tests {
             314000000, 314200000, 314160000, 314159000, 314159300, 314159260,
         ]
         .into_iter()
-        .chain(std::iter::repeat(314_159_265).take(7))
+        .chain(std::iter::repeat_n(314_159_265, 7))
         .collect();
 
         for (i, scale) in scales_range().enumerate() {
@@ -443,7 +445,7 @@ mod bround_tests {
             31_415_926_535_897_930,
         ]
         .into_iter()
-        .chain(std::iter::repeat(31_415_926_535_897_932_i128).take(7))
+        .chain(std::iter::repeat_n(31_415_926_535_897_932_i128, 7))
         .collect();
 
         for (i, scale) in scales_range().enumerate() {

@@ -28,8 +28,76 @@ members = [
 ]
 
 [workspace.lints.clippy]
+useless_format = "allow"
+useless_vec = "allow"
+bool_assert_comparison = "allow"
+
 unwrap_used = "deny"
 panic = "deny"
+
+# -------------------------- Pending Processing (Temporarily Allow) --------------------------
+unnecessary_unwrap = "allow" # Disallow unwrap() on guaranteed Ok/Some values
+needless_return = "allow" # Disallow redundant return statements (use last expression directly)
+let_and_return = "allow" # Disallow declaring variable solely for return (e.g. let x=5; return x;)
+identity_op = "allow" # Disallow no-op identity operations (e.g. x + 0, x * 1, x == x)
+needless_borrow = "allow" # Disallow unnecessary borrows (e.g. &(&x), &vec[0] where vec[0] suffices)
+redundant_closure = "allow" # Disallow redundant closure wrappers (e.g. |x| foo(x) → foo)
+useless_conversion = "allow" # Disallow no-op type conversions (e.g. u32 → u32)
+clone_on_copy = "allow" # Disallow clone() on Copy-implementing types (e.g. i32.clone() → i32)
+redundant_locals = "allow" # Disallow unused redundant local variables
+unit_arg = "allow" # Disallow passing unit type `()` where semantically meaningless
+useless_asref = "allow" # Disallow unnecessary AsRef::as_ref() invocations
+needless_as_bytes = "allow" # Disallow unnecessary &str → &[u8] conversions
+unnecessary_cast = "allow" # Disallow no-op type casts (e.g. let x: i32 = (5 as i32);)
+to_string_in_format_args = "allow" # Disallow redundant to_string() in format! arguments
+unnecessary_literal_unwrap = "allow" # Disallow unwrap() on literal Option/Result (e.g. Some(5).unwrap() → 5)
+collapsible_else_if = "allow" # Disallow mergeable else-if chains (prefer match or combined condition)
+collapsible_if = "allow" # Disallow nested if statements that can be merged
+len_zero = "allow" # Disallow len() == 0 checks (prefer is_empty() for readability/performance)
+redundant_pattern_matching = "allow" # Disallow redundant pattern matches (e.g. if let Some(x) = Some(5))
+uninlined_format_args = "allow" # Disallow uninlined format_args! usage (low-moderate fix cost)
+manual_range_contains = "allow" # Disallow manual range checks (e.g. x >=0 && x <10 → (0..10).contains(&x))
+match_like_matches_macro = "allow" # Disallow match expressions replaceable with matches! macro
+explicit_auto_deref = "allow" # Disallow redundant explicit auto-dereferencing (e.g. ***x → *x)
+needless_borrows_for_generic_args = "allow" # Disallow unnecessary borrows in generic function arguments
+while_let_loop = "allow" # Disallow while-let loops replaceable with for loops
+manual_flatten = "allow" # Disallow manual iterator flattening (prefer Iterator::flatten())
+explicit_counter_loop = "allow" # Disallow explicit counter loops (prefer iterators)
+iter_cloned_collect = "allow" # Disallow cloned().collect() patterns (simplify iterator logic)
+get_first = "allow" # Disallow manual first-element retrieval (prefer Iterator::first())
+missing_transmute_annotations = "allow" # Disallow missing transmute annotations (unsafe code, high audit cost)
+needless_range_loop = "allow" # Disallow index-based loops (requires iterator refactoring)
+into_iter_on_ref = "allow" # Disallow into_iter() on references (requires iterator usage adjustment)
+manual_div_ceil = "allow" # Disallow manual ceiling division (requires Rust 1.68+ DivCeil trait)
+bind_instead_of_map = "allow" # Disallow bind-style logic (prefer map() for Option/Result)
+box_collection = "allow" # Disallow Box-wrapped collections (e.g. Box<Vec<T>> → Vec<T>; API changes needed)
+needless_question_mark = "allow" # Disallow unnecessary ? operator (requires error handling refactoring)
+declare_interior_mutable_const = "allow" # Disallow interior mutable constants (thread safety risk)
+borrow_interior_mutable_const = "allow" # Disallow borrowing interior mutable constants (thread safety risk)
+manual_slice_size_calculation = "allow" # Disallow manual slice size calculation (requires array logic refactor)
+macro_metavars_in_unsafe = "allow" # Disallow macro metavariables in unsafe blocks (high risk, full audit required)
+expect_fun_call = "allow" # Disallow function calls in expect() arguments (potential side effects)
+empty_line_after_outer_attr = "allow" # Disallow missing empty lines after outer attributes (style-only, low value)
+module_inception = "allow" # Disallow deep module nesting (requires project structure refactoring)
+len_without_is_empty = "allow" # Disallow len() implementation without is_empty() (trait changes needed)
+mem_replace_option_with_none = "allow" # Disallow manual mem::replace for Option::None
+too_many_arguments = "allow" # Disallow functions with excessive arguments (requires struct encapsulation)
+unnecessary_to_owned = "allow" # Disallow unnecessary to_owned() calls (requires ownership logic adjustment)
+should_implement_trait = "allow" # Disallow missing standard trait implementations (e.g. Display)
+io_other_error = "allow" # Disallow generic io::Error::Other variant (requires specific error types)
+extra_unused_lifetimes = "allow" # Disallow unused lifetime annotations (requires lifetime refactoring)
+uninit_vec = "allow" # Disallow uninitialized Vec creation (unsafe, high risk)
+derived_hash_with_manual_eq = "allow" # Deny derived Hash with manual Eq (may cause inconsistency, requires aligning Hash and Eq)
+while_let_on_iterator = "allow" # Disallow while-let constructs on iterators (requires iterator refactoring)
+ptr_arg = "allow" # Disallow raw pointer arguments (replace with references/smart pointers)
+op_ref = "allow" # Disallow overloaded operators on references (requires trait refactoring)
+upper_case_acronyms = "allow" # Disallow non-camel-case acronyms (e.g. HTTPClient → HttpClient; naming changes needed)
+approx_constant = "allow" # Disallow hardcoded approximate constants (e.g. 3.14 → f32::consts::PI)
+unnecessary_fallible_conversions = "allow" # Disallow unnecessary fallible conversions
+borrowed_box = "allow" # Disallow borrowed Box pointers (e.g. &Box<T> → &T; refactoring needed)
+unnecessary_lazy_evaluations = "allow" # Disallow unnecessary lazy initialization (e.g. lazy_static)
+missing_const_for_thread_local = "allow" # Disallow missing const for thread_local variables (requires thread_local refactoring)
+
 
 [profile.release]
 opt-level = 3

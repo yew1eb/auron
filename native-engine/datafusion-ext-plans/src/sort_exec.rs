@@ -202,6 +202,7 @@ impl ExecutionPlan for SortExec {
         Some(self.metrics.clone_inner())
     }
 
+    #[allow(deprecated)]
     fn statistics(&self) -> Result<Statistics> {
         Statistics::with_fetch(self.input.statistics()?, self.schema(), self.fetch, 0, 1)
     }
@@ -1380,6 +1381,7 @@ impl SortedKeysReader {
     }
 }
 
+#[allow(clippy::int_plus_one)] // lcp + 1 <= min_len
 fn common_prefix_len(a: &[u8], b: &[u8]) -> usize {
     let min_len = a.len().min(b.len());
     let mut lcp = 0;
@@ -1493,6 +1495,7 @@ mod test {
     }
 }
 
+#[allow(deprecated)] // statistics()
 #[cfg(test)]
 mod fuzztest {
     use std::{sync::Arc, time::Instant};

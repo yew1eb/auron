@@ -127,7 +127,7 @@ macro_rules! idx_with_iter {
 #[macro_export]
 macro_rules! idx_for {
     (($var:ident in $iter:expr) => $($s:stmt);* ) => {{
-        crate::idx_with_iter!((iter @ $iter) => {
+        $crate::idx_with_iter!((iter @ $iter) => {
             for $var in iter {
                 $($s)*
             }
@@ -156,8 +156,8 @@ macro_rules! idx_for_zipped {
                 }
             },
             _ => {
-                crate::idx_with_iter!((iter1 @ $iter1) => {
-                    crate::idx_with_iter!((iter2 @ $iter2) => {
+                $crate::idx_with_iter!((iter1 @ $iter1) => {
+                    $crate::idx_with_iter!((iter2 @ $iter2) => {
                         for ($var1, $var2) in iter1.zip(iter2) {
                             $($s)*
                         }

@@ -29,6 +29,7 @@ use datafusion::{
 };
 
 /// cast expression compatible with spark
+#[allow(clippy::derived_hash_with_manual_eq)]
 #[derive(Debug, Eq, Hash)]
 pub struct TryCastExpr {
     pub expr: PhysicalExprRef,

@@ -35,6 +35,7 @@ use datafusion_ext_commons::{df_execution_err, df_unimplemented_err};
 use itertools::Itertools;
 
 /// expression to get value of a key in map array.
+#[allow(clippy::derived_hash_with_manual_eq)]
 #[derive(Debug, Eq, Hash)]
 pub struct GetMapValueExpr {
     arg: PhysicalExprRef,

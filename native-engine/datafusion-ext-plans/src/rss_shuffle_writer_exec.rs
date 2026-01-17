@@ -178,6 +178,7 @@ impl ExecutionPlan for RssShuffleWriterExec {
         Some(self.metrics.clone_inner())
     }
 
+    #[allow(deprecated)]
     fn statistics(&self) -> Result<Statistics> {
         self.input.statistics()
     }

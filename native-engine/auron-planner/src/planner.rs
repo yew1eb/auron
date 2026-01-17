@@ -27,7 +27,7 @@ use arrow::{
 };
 use base64::{Engine, prelude::BASE64_URL_SAFE_NO_PAD};
 use datafusion::{
-    common::{ExprSchema, Result, ScalarValue, stats::Precision},
+    common::{Result, ScalarValue, stats::Precision},
     datasource::{
         file_format::file_compression_type::FileCompressionType,
         listing::{FileRange, PartitionedFile},
@@ -40,7 +40,7 @@ use datafusion::{
         expressions::{LikeExpr, SCAndExpr, SCOrExpr, in_list},
     },
     physical_plan::{
-        ColumnStatistics, ExecutionPlan, PhysicalExpr, Statistics, expressions as phys_expr,
+        ColumnStatistics, ExecutionPlan, Statistics, expressions as phys_expr,
         expressions::{
             BinaryExpr, CaseExpr, CastExpr, Column, IsNotNullExpr, IsNullExpr, Literal,
             NegativeExpr, NotExpr, PhysicalSortExpr,
@@ -108,6 +108,7 @@ pub struct PhysicalPlanner {
     partition_id: usize,
 }
 
+#[allow(clippy::panic)]
 impl PhysicalPlanner {
     pub fn new(partition_id: usize) -> Self {
         Self { partition_id }

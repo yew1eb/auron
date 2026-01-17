@@ -27,6 +27,7 @@ use auron_jni_bridge::{
     jni_call_static, jni_new_global_ref, jni_new_string,
 };
 use bytes::Bytes;
+#[allow(deprecated)] // fetch_parquet_metadata
 use datafusion::{
     datasource::physical_plan::{
         FileMeta, FileOpener, FileScanConfig, FileStream, OnError, ParquetFileMetrics,
@@ -395,6 +396,7 @@ impl AsyncFileReader for ParquetFileReaderRef {
         .boxed()
     }
 
+    #[allow(deprecated)] // fetch_parquet_metadata
     fn get_metadata<'a>(
         &'a mut self,
         _options: Option<&'a ArrowReaderOptions>,
@@ -465,6 +467,7 @@ impl AsyncFileReader for ParquetFileReaderRef {
     }
 }
 
+#[allow(dead_code)]
 fn expr_contains_decimal_type(expr: &PhysicalExprRef, schema: &SchemaRef) -> Result<bool> {
     if matches!(expr.data_type(schema)?, DataType::Decimal128(..)) {
         return Ok(true);

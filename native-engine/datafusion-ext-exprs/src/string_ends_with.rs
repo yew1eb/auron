@@ -33,6 +33,7 @@ use datafusion::{
 };
 use datafusion_ext_commons::df_execution_err;
 
+#[allow(clippy::derived_hash_with_manual_eq)]
 #[derive(Debug, Eq, Hash)]
 pub struct StringEndsWithExpr {
     expr: PhysicalExprRef,

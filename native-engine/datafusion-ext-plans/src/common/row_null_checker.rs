@@ -64,6 +64,7 @@ impl RowNullChecker {
     }
 
     /// Create a FieldConfig from DataType and SortOptions
+    #[allow(clippy::panic)]
     fn create_field_config_from_data_type(
         data_type: &DataType,
         sort_options: SortOptions,

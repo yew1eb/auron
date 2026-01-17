@@ -186,6 +186,7 @@ pub trait UninitializedInit<T> {
 }
 
 impl<T: Copy> UninitializedInit<Vec<T>> for Vec<T> {
+    #[allow(clippy::uninit_vec)]
     fn uninitialized_init(len: usize) -> Vec<T> {
         let mut v = Vec::with_capacity(len);
         unsafe { v.set_len(len) };
@@ -194,6 +195,7 @@ impl<T: Copy> UninitializedInit<Vec<T>> for Vec<T> {
 }
 
 impl<T: Copy, const N: usize> UninitializedInit<SmallVec<T, N>> for SmallVec<T, N> {
+    #[allow(clippy::uninit_vec)]
     fn uninitialized_init(len: usize) -> SmallVec<T, N> {
         let mut v = SmallVec::with_capacity(len);
         unsafe { v.set_len(len) };

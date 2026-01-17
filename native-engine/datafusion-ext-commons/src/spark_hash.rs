@@ -212,6 +212,7 @@ fn hash_array<T: num::PrimInt>(
             DataType::Int16 => create_hashes_dictionary::<Int16Type, _>(array, hashes_buffer, h),
             DataType::Int32 => create_hashes_dictionary::<Int32Type, _>(array, hashes_buffer, h),
             DataType::Int64 => create_hashes_dictionary::<Int64Type, _>(array, hashes_buffer, h),
+            #[allow(clippy::panic)]
             other => panic!("Unsupported dictionary type in hasher hashing: {other}"),
         },
         _ => {
@@ -382,6 +383,7 @@ fn hash_one<T: num::PrimInt>(
                     hash_one(col, idx, hash, h);
                 }
             }
+            #[allow(clippy::panic)]
             other => panic!("Unsupported data type in hasher: {other}"),
         }
     }

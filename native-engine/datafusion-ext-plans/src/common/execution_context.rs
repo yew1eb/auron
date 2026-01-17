@@ -501,6 +501,7 @@ impl ExecutionContext {
         })
     }
 
+    #[allow(clippy::panic)]
     fn output_with_sender_impl<
         T: RecordBatchWithPayload,
         Fut: Future<Output = Result<()>> + Send,
@@ -710,6 +711,7 @@ impl<T: RecordBatchWithPayload> WrappedSender<T> {
         self.exclude_time.get_or_init(|| exclude_time.clone());
     }
 
+    #[allow(clippy::panic)]
     pub async fn send(&self, batch: T) {
         if batch.is_empty() {
             return;

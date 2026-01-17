@@ -35,6 +35,7 @@ mod spark_round;
 mod spark_strings;
 mod spark_unscaled_value;
 
+#[allow(unused_variables)] // spark_partition_id
 pub fn create_auron_ext_function(
     name: &str,
     spark_partition_id: usize,
@@ -43,6 +44,7 @@ pub fn create_auron_ext_function(
     // if used for flink should be start with 'Flink_',
     // same to other engines.
     Ok(match name {
+        #[allow(clippy::panic)]
         "Placeholder" => Arc::new(|_| panic!("placeholder() should never be called")),
         "Spark_NullIf" => Arc::new(spark_null_if::spark_null_if),
         "Spark_NullIfZero" => Arc::new(spark_null_if::spark_null_if_zero),

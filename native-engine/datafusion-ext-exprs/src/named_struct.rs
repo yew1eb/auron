@@ -34,6 +34,7 @@ use datafusion::{
 use datafusion_ext_commons::{df_execution_err, io::recover_named_batch};
 
 /// expression to get a field of from NameStruct.
+#[allow(clippy::derived_hash_with_manual_eq)]
 #[derive(Debug, Eq, Hash)]
 pub struct NamedStructExpr {
     values: Vec<PhysicalExprRef>,

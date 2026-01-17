@@ -17,7 +17,7 @@ use std::{
     any::Any,
     convert::TryInto,
     fmt::{Debug, Formatter},
-    hash::{Hash, Hasher},
+    hash::Hash,
     sync::Arc,
 };
 
@@ -33,6 +33,7 @@ use datafusion::{
 use datafusion_ext_commons::df_execution_err;
 
 /// expression to get a field of a list array.
+#[allow(clippy::derived_hash_with_manual_eq)]
 #[derive(Debug, Eq, Hash)]
 pub struct GetIndexedFieldExpr {
     arg: PhysicalExprRef,

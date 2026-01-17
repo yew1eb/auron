@@ -108,6 +108,7 @@ impl ExecutionPlan for LimitExec {
         execute_limit(input, self.limit, exec_ctx)
     }
 
+    #[allow(deprecated)] // statistics()
     fn statistics(&self) -> Result<Statistics> {
         Statistics::with_fetch(
             self.input.statistics()?,
@@ -144,6 +145,7 @@ fn execute_limit(
         }))
 }
 
+#[allow(deprecated)]
 #[cfg(test)]
 mod test {
     use std::sync::Arc;

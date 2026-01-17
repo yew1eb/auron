@@ -314,6 +314,7 @@ impl<'a> OwnedSpillBufReader<'a> {
         Self { spill, buf_reader }
     }
 
+    #[allow(clippy::borrowed_box)]
     pub fn spill(&self) -> &Box<dyn Spill> {
         &self.spill
     }

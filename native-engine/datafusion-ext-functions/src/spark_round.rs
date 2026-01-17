@@ -299,7 +299,7 @@ mod tests {
         let result = spark_round(&[s, ColumnarValue::Scalar(ScalarValue::Int32(Some(0)))])?;
         match result {
             ColumnarValue::Scalar(ScalarValue::Float64(Some(v))) => assert_eq!(v, -2.0),
-            _ => panic!("wrong result"),
+            other => unreachable!("Expected UTF-8 scalar, got {:?}", other),
         }
         Ok(())
     }
@@ -326,6 +326,7 @@ mod tests {
     }
 
     /// Tests Spark-compatible rounding for Float32.
+    #[allow(clippy::approx_constant)]
     #[test]
     fn test_spark_round_float_pi_scales() -> Result<()> {
         let float_pi = 3.1415_f32;
@@ -352,6 +353,7 @@ mod tests {
     }
 
     /// Tests Spark-compatible rounding for Float64 (Double precision).
+    #[allow(clippy::approx_constant)]
     #[test]
     fn test_spark_round_double_pi_scales() -> Result<()> {
         let double_pi = std::f64::consts::PI;
