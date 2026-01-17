@@ -81,7 +81,6 @@ pub fn array_union(args: &[ColumnarValue]) -> Result<ColumnarValue> {
     offset_buffer.push(offset);
 
     let scalars = (0..num_rows)
-        .into_iter()
         .map(|row_idx| {
             let mut set = HashSet::new();
             let mut valid = true;
@@ -174,7 +173,7 @@ mod test {
             ColumnarValue::Array(list_234n_345n.clone()),
         ])?;
         assert_batches_eq!(
-            vec![
+            [
                 "+------------------------+",
                 "| array_union_actual_ret |",
                 "+------------------------+",
@@ -194,7 +193,7 @@ mod test {
             ColumnarValue::Scalar(ScalarValue::Null),
         ])?;
         assert_batches_eq!(
-            vec![
+            [
                 "+------------------------+",
                 "| array_union_actual_ret |",
                 "+------------------------+",
@@ -214,7 +213,7 @@ mod test {
             ColumnarValue::Scalar(ScalarValue::Null),
         ])?;
         assert_batches_eq!(
-            vec![
+            [
                 "+------------------------+",
                 "| array_union_actual_ret |",
                 "+------------------------+",

@@ -157,7 +157,7 @@ impl Agg for AggAvg {
             let sums = as_decimal128_array(&sums)?;
             let counts = counts_zero_free;
             let avgs =
-                arrow::compute::binary::<_, _, _, Decimal128Type>(&sums, &counts, |sum, count| {
+                arrow::compute::binary::<_, _, _, Decimal128Type>(sums, &counts, |sum, count| {
                     sum.checked_div_euclid(count as i128).unwrap_or_default()
                 })?;
             Ok(Arc::new(avgs.with_precision_and_scale(prec, scale)?))

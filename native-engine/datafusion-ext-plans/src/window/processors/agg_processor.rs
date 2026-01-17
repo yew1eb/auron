@@ -62,7 +62,7 @@ impl WindowFunctionProcessor for AggProcessor {
         for row_idx in 0..batch.num_rows() {
             let same_partition = !context.has_partition() || {
                 let partition_row = partition_rows.row(row_idx);
-                if partition_row.as_ref() != &self.cur_partition {
+                if partition_row.as_ref() != self.cur_partition {
                     self.cur_partition = partition_row.as_ref().into();
                     false
                 } else {

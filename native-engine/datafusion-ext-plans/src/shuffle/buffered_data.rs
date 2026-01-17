@@ -275,7 +275,7 @@ impl<'a> PartitionedBatchesIterator<'a> {
             }
             let batch_interleaver = &mut batches_iter.batch_interleaver;
             let output_batch = batch_interleaver(&indices).expect("error interleaving batches");
-            return Some(output_batch);
+            Some(output_batch)
         });
         Some((chunk_partition_id, batch_iter))
     }
@@ -299,19 +299,19 @@ fn sort_batches_by_partition_id(
             let part_ids = match partitioning {
                 Partitioning::HashPartitioning(..) => {
                     // compute partition indices
-                    let hashes = evaluate_hashes(partitioning, &batch)
+                    let hashes = evaluate_hashes(partitioning, batch)
                         .expect(&format!("error evaluating hashes with {partitioning}"));
                     evaluate_partition_ids(hashes, partitioning.partition_count())
                 }
                 Partitioning::RoundRobinPartitioning(..) => {
                     let part_ids =
-                        evaluate_robin_partition_ids(partitioning, &batch, round_robin_start_rows);
+                        evaluate_robin_partition_ids(partitioning, batch, round_robin_start_rows);
                     round_robin_start_rows += batch.num_rows();
                     round_robin_start_rows %= partitioning.partition_count();
                     part_ids
                 }
                 Partitioning::RangePartitioning(sort_expr, _, bounds) => {
-                    evaluate_range_partition_ids(&batch, sort_expr, bounds)
+                    evaluate_range_partition_ids(batch, sort_expr, bounds)
                         .expect("failed to evaluate range partition ids")
                 }
                 _ => unreachable!("unsupported partitioning: {:?}", partitioning),
@@ -348,7 +348,7 @@ fn sort_batches_by_partition_id(
             .map(|(_, batch_idx, row_idx)| (batch_idx as usize, row_idx as usize))
             .collect::<Vec<_>>(),
     )?;
-    return Ok((partition_offsets, sorted_batch));
+    Ok((partition_offsets, sorted_batch))
 }
 
 #[cfg(test)]
@@ -420,7 +420,7 @@ mod test {
             "| 11 | 8 | 3 |",
             "+----+---+---+",
         ];
-        assert_batches_eq!(expected, &vec![sorted_batch]);
+        assert_batches_eq!(expected, &[sorted_batch]);
         Ok(())
     }
 
@@ -474,7 +474,7 @@ mod test {
             "| 18 | 1 | 6 |",
             "+----+---+---+",
         ];
-        assert_batches_eq!(expected, &vec![sorted_batch]);
+        assert_batches_eq!(expected, &[sorted_batch]);
         Ok(())
     }
 
@@ -536,7 +536,7 @@ mod test {
             "| 18 | 1 | 6 |",
             "+----+---+---+",
         ];
-        assert_batches_eq!(expected, &vec![sorted_batch]);
+        assert_batches_eq!(expected, &[sorted_batch]);
         Ok(())
     }
 }

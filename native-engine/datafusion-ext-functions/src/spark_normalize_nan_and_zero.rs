@@ -101,7 +101,7 @@ mod test {
                     ColumnarValue::Array(Arc::new(<$array_type>::from(input_data)));
 
                 let result =
-                    spark_normalize_nan_and_zero(&vec![input_columnar_value])?.into_array(6)?;
+                    spark_normalize_nan_and_zero(&[input_columnar_value])?.into_array(6)?;
 
                 let expected_data = vec![
                     Some(12345678.0),
@@ -138,7 +138,7 @@ mod test {
                 let input_columnar_value =
                     ColumnarValue::Scalar(ScalarValue::$scalar_variant(Some(-0.0)));
                 let result =
-                    spark_normalize_nan_and_zero(&vec![input_columnar_value])?.into_array(1)?;
+                    spark_normalize_nan_and_zero(&[input_columnar_value])?.into_array(1)?;
                 let expected_array = <$array_type>::from(vec![Some(0.0)]);
                 let expected: ArrayRef = Arc::new(expected_array);
                 assert_eq!(&result, &expected);
@@ -165,7 +165,7 @@ mod test {
             fn $test_name() -> Result<(), Box<dyn Error>> {
                 let input_columnar_value =
                     ColumnarValue::Scalar(ScalarValue::$scalar_variant(None));
-                let result = spark_normalize_nan_and_zero(&vec![input_columnar_value])?;
+                let result = spark_normalize_nan_and_zero(&[input_columnar_value])?;
                 match result {
                     ColumnarValue::Scalar(ScalarValue::$scalar_variant(None)) => Ok(()),
                     other => panic!(

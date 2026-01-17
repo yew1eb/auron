@@ -154,7 +154,7 @@ impl fmt::Display for Partitioning {
                     .map(|e| format!("{e}"))
                     .collect::<Vec<String>>()
                     .join(", ");
-                write!(f, "Range([{phy_exprs_str}], {size}, {:?})", bounds)
+                write!(f, "Range([{phy_exprs_str}], {size}, {bounds:?})")
             }
         }
     }
@@ -165,7 +165,7 @@ fn evaluate_hashes(partitioning: &Partitioning, batch: &RecordBatch) -> ArrowRes
         Partitioning::HashPartitioning(exprs, _) => {
             let arrays = exprs
                 .iter()
-                .map(|expr| Ok(expr.evaluate(batch)?.into_array(batch.num_rows())?))
+                .map(|expr| expr.evaluate(batch)?.into_array(batch.num_rows()))
                 .collect::<Result<Vec<_>>>()?;
 
             // compute hash array, use identical seed as spark hash partition
@@ -203,7 +203,7 @@ fn evaluate_robin_partition_ids(
 
 fn evaluate_range_partition_ids(
     batch: &RecordBatch,
-    sort_expr: &Vec<PhysicalSortExpr>,
+    sort_expr: &[PhysicalSortExpr],
     bound_rows: &Arc<Rows>,
 ) -> Result<Vec<u32>> {
     let num_rows = batch.num_rows();
@@ -224,7 +224,7 @@ fn evaluate_range_partition_ids(
         .iter()
         .map(|expr| {
             expr.expr
-                .evaluate(&batch)
+                .evaluate(batch)
                 .and_then(|cv| cv.into_array(batch.num_rows()))
         })
         .collect::<Result<_>>()?;
@@ -275,7 +275,7 @@ fn binary_search(rows: &Arc<Rows>, target: Row, from_index: isize, to_index: isi
             return mid as usize; // key found
         }
     }
-    return low as usize; // key not found.
+    low as usize // key not found.
 }
 
 pub fn open_shuffle_file<P: AsRef<Path>>(path: P) -> std::io::Result<File> {

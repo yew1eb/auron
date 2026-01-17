@@ -95,7 +95,7 @@ pub fn read_batch(
     let cols = schema
         .fields()
         .into_iter()
-        .map(|field| read_array(&mut input, &field.data_type(), num_rows, &mut transpose_opt))
+        .map(|field| read_array(&mut input, field.data_type(), num_rows, &mut transpose_opt))
         .collect::<Result<_>>()?;
     Ok(Some((num_rows, cols)))
 }
@@ -196,7 +196,7 @@ fn write_bits_buffer<W: Write>(
     bits_len: usize,
     output: &mut W,
 ) -> Result<()> {
-    let mut out_buffer = vec![0u8; (bits_len + 7) / 8];
+    let mut out_buffer = vec![0u8; bits_len.div_ceil(8)];
     let in_ptr = buffer.as_ptr();
     let out_ptr = out_buffer.as_mut_ptr();
 
@@ -212,7 +212,7 @@ fn write_bits_buffer<W: Write>(
 }
 
 fn read_bits_buffer<R: Read>(input: &mut R, bits_len: usize) -> Result<Buffer> {
-    let buf = read_bytes_slice(input, (bits_len + 7) / 8)?;
+    let buf = read_bytes_slice(input, bits_len.div_ceil(8))?;
     Ok(Buffer::from_vec(buf.into()))
 }
 
@@ -741,7 +741,7 @@ mod test {
         ])?;
 
         assert_batches_eq!(
-            vec![
+            [
                 "+-----------+-----------+",
                 "| list1     | list2     |",
                 "+-----------+-----------+",
@@ -761,7 +761,7 @@ mod test {
         let (decoded_num_rows, decoded_cols) =
             read_batch(&mut cursor, &batch.schema())?.expect("non-empty batch");
         assert_batches_eq!(
-            vec![
+            [
                 "+-----------+-----------+",
                 "| list1     | list2     |",
                 "+-----------+-----------+",
@@ -786,7 +786,7 @@ mod test {
         let (decoded_num_rows, decoded_cols) =
             read_batch(&mut cursor, &batch.schema())?.expect("non-empty batch");
         assert_batches_eq!(
-            vec![
+            [
                 "+----------+----------+",
                 "| list1    | list2    |",
                 "+----------+----------+",

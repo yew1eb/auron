@@ -42,6 +42,7 @@ mod tests {
     };
 
     #[derive(Clone, Copy)]
+    #[allow(clippy::upper_case_acronyms)]
     enum TestType {
         SMJ,
         BHJLeftProbed,
@@ -400,7 +401,7 @@ mod tests {
             )];
 
             let (_, batches) = join_collect(test_type, left, right, on, Inner).await?;
-            let expected = vec![
+            let expected = [
                 "+----+----+----+----+----+----+",
                 "| a1 | b1 | c1 | a2 | b1 | c2 |",
                 "+----+----+----+----+----+----+",
@@ -440,7 +441,7 @@ mod tests {
             ];
 
             let (_columns, batches) = join_collect(test_type, left, right, on, Inner).await?;
-            let expected = vec![
+            let expected = [
                 "+----+----+----+----+----+----+",
                 "| a1 | b2 | c1 | a1 | b2 | c2 |",
                 "+----+----+----+----+----+----+",
@@ -480,7 +481,7 @@ mod tests {
             ];
 
             let (_columns, batches) = join_collect(test_type, left, right, on, Inner).await?;
-            let expected = vec![
+            let expected = [
                 "+----+----+----+----+----+----+",
                 "| a1 | b2 | c1 | a1 | b2 | c2 |",
                 "+----+----+----+----+----+----+",
@@ -521,7 +522,7 @@ mod tests {
             ];
 
             let (_, batches) = join_collect(test_type, left, right, on, Inner).await?;
-            let expected = vec![
+            let expected = [
                 "+----+----+----+----+----+----+",
                 "| a1 | b2 | c1 | a1 | b2 | c2 |",
                 "+----+----+----+----+----+----+",
@@ -667,7 +668,7 @@ mod tests {
             )];
 
             let (_, batches) = join_collect(test_type, left, right, on, Left).await?;
-            let expected = vec![
+            let expected = [
                 "+----+----+----+----+----+----+",
                 "| a1 | b1 | c1 | a2 | b1 | c2 |",
                 "+----+----+----+----+----+----+",
@@ -701,7 +702,7 @@ mod tests {
             )];
 
             let (_, batches) = join_collect(test_type, left, right, on, Right).await?;
-            let expected = vec![
+            let expected = [
                 "+----+----+----+----+----+----+",
                 "| a1 | b1 | c1 | a2 | b1 | c2 |",
                 "+----+----+----+----+----+----+",
@@ -735,7 +736,7 @@ mod tests {
             )];
 
             let (_, batches) = join_collect(test_type, left, right, on, Full).await?;
-            let expected = vec![
+            let expected = [
                 "+----+----+----+----+----+-----+",
                 "| a1 | b1 | c1 | a2 | b2 | c2  |",
                 "+----+----+----+----+----+-----+",
@@ -772,7 +773,7 @@ mod tests {
             )];
 
             let (_, batches) = join_collect(test_type, left, right, on, LeftAnti).await?;
-            let expected = vec![
+            let expected = [
                 "+----+----+----+",
                 "| a1 | b1 | c1 |",
                 "+----+----+----+",
@@ -805,7 +806,7 @@ mod tests {
             )];
 
             let (_, batches) = join_collect(test_type, left, right, on, LeftSemi).await?;
-            let expected = vec![
+            let expected = [
                 "+----+----+----+",
                 "| a1 | b1 | c1 |",
                 "+----+----+----+",
@@ -840,7 +841,7 @@ mod tests {
         for test_type in ALL_TEST_TYPE {
             let (_, batches) =
                 join_collect(test_type, left.clone(), right.clone(), on.clone(), LeftAnti).await?;
-            let expected = vec![
+            let expected = [
                 "+----+----+----+",
                 "| a1 | b1 | c1 |",
                 "+----+----+----+",
@@ -874,7 +875,7 @@ mod tests {
             )];
 
             let (_, batches) = join_collect(test_type, left, right, on, Inner).await?;
-            let expected = vec![
+            let expected = [
                 "+---+---+---+----+---+----+",
                 "| a | b | c | a  | b | c  |",
                 "+---+---+---+----+---+----+",
@@ -909,7 +910,7 @@ mod tests {
 
             let (_, batches) = join_collect(test_type, left, right, on, Inner).await?;
 
-            let expected = vec![
+            let expected = [
                 "+------------+------------+------------+------------+------------+------------+",
                 "| a1         | b1         | c1         | a2         | b1         | c2         |",
                 "+------------+------------+------------+------------+------------+------------+",
@@ -945,7 +946,7 @@ mod tests {
             )];
 
             let (_, batches) = join_collect(test_type, left, right, on, Inner).await?;
-            let expected = vec![
+            let expected = [
                 "+-------------------------+---------------------+-------------------------+-------------------------+---------------------+-------------------------+",
                 "| a1                      | b1                  | c1                      | a2                      | b1                  | c2                      |",
                 "+-------------------------+---------------------+-------------------------+-------------------------+---------------------+-------------------------+",
@@ -980,7 +981,7 @@ mod tests {
             )];
 
             let (_, batches) = join_collect(test_type, left, right, on, Left).await?;
-            let expected = vec![
+            let expected = [
                 "+----+----+----+----+----+----+",
                 "| a1 | b1 | c1 | a2 | b2 | c2 |",
                 "+----+----+----+----+----+----+",
@@ -1018,7 +1019,7 @@ mod tests {
             )];
 
             let (_, batches) = join_collect(test_type, left, right, on, Right).await?;
-            let expected = vec![
+            let expected = [
                 "+----+----+----+----+----+----+",
                 "| a1 | b1 | c1 | a2 | b2 | c2 |",
                 "+----+----+----+----+----+----+",
@@ -1219,7 +1220,7 @@ mod tests {
             )];
 
             let (_, batches) = join_collect(test_type, left, right, on, Existence).await?;
-            let expected = vec![
+            let expected = [
                 "+----+----+----+----------+",
                 "| a1 | b1 | c1 | exists#0 |",
                 "+----+----+----+----------+",

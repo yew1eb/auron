@@ -146,7 +146,7 @@ impl DisplayAs for SortExec {
             .map(|e| e.to_string())
             .collect::<Vec<_>>()
             .join(", ");
-        write!(f, "SortExec: {}", exprs)
+        write!(f, "SortExec: {exprs}")
     }
 }
 
@@ -203,7 +203,7 @@ impl ExecutionPlan for SortExec {
     }
 
     fn statistics(&self) -> Result<Statistics> {
-        Statistics::with_fetch(self.input.statistics()?, self.schema(), self.fetch, 0, 1)
+        Statistics::with_fetch(self.input.partition_statistics(None)?, self.schema(), self.fetch, 0, 1)
     }
 }
 
@@ -844,12 +844,11 @@ impl<B: SortedBlock> SortedBlockCursor<B> {
             "calling next_key() on finished sort spill cursor"
         );
 
-        if self.cur_key_row_idx >= self.cur_batches.last().map(|b| b.num_rows()).unwrap_or(0) {
-            if !self.load_next_batch()? {
+        if self.cur_key_row_idx >= self.cur_batches.last().map(|b| b.num_rows()).unwrap_or(0)
+            && !self.load_next_batch()? {
                 self.finished = true;
                 return Ok(());
             }
-        }
         self.input.next_key()?;
         self.cur_key_row_idx += 1;
         Ok(())
@@ -1036,7 +1035,7 @@ fn merge_blocks<B: SortedBlock, KC: KeyCollector>(
     while let Some((key_collector, pruned_batch)) = merger.next::<KC>(sub_batch_size)? {
         block_builder.add_batch_and_keys(pruned_batch, key_collector)?;
     }
-    Ok(block_builder.finish()?)
+    block_builder.finish()
 }
 
 fn create_zero_column_batch(num_rows: usize) -> RecordBatch {
@@ -1380,6 +1379,7 @@ impl SortedKeysReader {
     }
 }
 
+#[allow(clippy::int_plus_one)]
 fn common_prefix_len(a: &[u8], b: &[u8]) -> usize {
     let min_len = a.len().min(b.len());
     let mut lcp = 0;
@@ -1475,7 +1475,7 @@ mod test {
         let sort = SortExec::new(input, sort_exprs, Some(6));
         let output = sort.execute(0, task_ctx)?;
         let batches = common::collect(output).await?;
-        let expected = vec![
+        let expected = [
             "+---+---+---+",
             "| a | b | c |",
             "+---+---+---+",
@@ -1545,17 +1545,17 @@ mod fuzztest {
                     .collect::<StringArray>(),
             );
             let rand_key2: ArrayRef = Arc::new(
-                std::iter::repeat_with(|| rand::random::<u32>())
+                std::iter::repeat_with(rand::random::<u32>)
                     .take((n - num_rows).min(10000))
                     .collect::<UInt32Array>(),
             );
             let rand_val1: ArrayRef = Arc::new(
-                std::iter::repeat_with(|| rand::random::<u32>())
+                std::iter::repeat_with(rand::random::<u32>)
                     .take((n - num_rows).min(10000))
                     .collect::<UInt32Array>(),
             );
             let rand_val2: ArrayRef = Arc::new(
-                std::iter::repeat_with(|| rand::random::<u32>())
+                std::iter::repeat_with(rand::random::<u32>)
                     .take((n - num_rows).min(10000))
                     .collect::<UInt32Array>(),
             );
@@ -1588,7 +1588,7 @@ mod fuzztest {
         let sort = Arc::new(SortExec::new(input, sort_exprs.clone(), None));
         let output = datafusion::physical_plan::collect(sort.clone(), task_ctx.clone()).await?;
         let a = concat_batches(&schema, &output)?;
-        let a_row_count = sort.clone().statistics()?.num_rows;
+        let a_row_count = sort.clone().partition_statistics(None)?.num_rows;
 
         let input = Arc::new(TestMemoryExec::try_new(
             &[batches.clone()],
@@ -1601,7 +1601,7 @@ mod fuzztest {
         ));
         let output = datafusion::physical_plan::collect(sort.clone(), task_ctx.clone()).await?;
         let b = concat_batches(&schema, &output)?;
-        let b_row_count = sort.clone().statistics()?.num_rows;
+        let b_row_count = sort.clone().partition_statistics(None)?.num_rows;
 
         assert_eq!(a.num_rows(), b.num_rows());
         assert_eq!(a_row_count, b_row_count);

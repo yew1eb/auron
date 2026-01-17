@@ -162,12 +162,12 @@ pub fn cast_impl(
                         // correct orc map entries field name from "keys" to "key", "values" to
                         // "value"
                         if col.is_none() && (origin.eq("key") || origin.eq("value")) {
-                            let adjust = format!("{}s", origin);
+                            let adjust = format!("{origin}s");
                             col = struct_.column_by_name(adjust.as_str());
                         }
-                        if col.is_some() {
+                        if let Some(col_value) = col {
                             cast_impl(
-                                col.expect("column missing"),
+                                col_value,
                                 field.data_type(),
                                 match_struct_fields,
                             )
@@ -300,6 +300,7 @@ pub fn cast_impl(
                             row_str.push_str(string_columns[0].value(row_idx));
                         }
 
+                        #[allow(clippy::needless_range_loop)]
                         for col_idx in 1..num_columns {
                             row_str.push(',');
                             if struct_array.column(col_idx).is_null(row_idx) {
@@ -383,7 +384,7 @@ fn try_cast_string_array_to_date(array: &dyn Array) -> Result<ArrayRef> {
     let strings = array.as_string::<i32>();
     let mut converted_values = Vec::with_capacity(strings.len());
     for s in strings {
-        converted_values.push(s.and_then(|s| to_date(s)));
+        converted_values.push(s.and_then(to_date));
     }
     Ok(Arc::new(Date32Array::from(converted_values)))
 }
@@ -502,7 +503,7 @@ fn to_date(s: &str) -> Option<i32> {
             i += 1;
         } else {
             let parsed_value = (b - b'0') as i32;
-            if parsed_value < 0 || parsed_value > 9 {
+            if !(0..=9).contains(&parsed_value) {
                 return None;
             } else {
                 current_segment_value = current_segment_value * 10 + parsed_value;

@@ -277,7 +277,7 @@ impl AccColumn for AccSetColumn {
                 self.set[idx] = AccSet::default();
             }
         }
-        self.set.resize_with(len, || AccSet::default());
+        self.set.resize_with(len, AccSet::default);
     }
 
     fn shrink_to_fit(&mut self) {
@@ -389,7 +389,7 @@ impl AccColumn for AccListColumn {
                 self.list[idx] = AccList::default();
             }
         }
-        self.list.resize_with(len, || AccList::default());
+        self.list.resize_with(len, AccList::default);
     }
 
     fn shrink_to_fit(&mut self) {
@@ -442,7 +442,7 @@ impl AccList {
     }
 
     pub fn append(&mut self, value: &ScalarValue, nullable: bool) {
-        write_scalar(&value, nullable, &mut self.raw).expect("write scalar failed");
+        write_scalar(value, nullable, &mut self.raw).expect("write scalar failed");
     }
 
     pub fn merge(&mut self, other: &mut Self) {

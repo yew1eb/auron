@@ -327,9 +327,10 @@ mod tests {
 
     /// Tests Spark-compatible rounding for Float32.
     #[test]
+    #[allow(clippy::approx_constant)]
     fn test_spark_round_float_pi_scales() -> Result<()> {
         let float_pi = 3.1415_f32;
-        let expected = vec![
+        let expected = [
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.1, 3.14, 3.141, 3.1415, 3.1415, 3.1415,
         ];
 
@@ -353,9 +354,10 @@ mod tests {
 
     /// Tests Spark-compatible rounding for Float64 (Double precision).
     #[test]
+    #[allow(clippy::approx_constant)]
     fn test_spark_round_double_pi_scales() -> Result<()> {
         let double_pi = std::f64::consts::PI;
-        let expected = vec![
+        let expected = [
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.1, 3.14, 3.142, 3.1416, 3.14159, 3.141593,
         ];
 
@@ -382,7 +384,7 @@ mod tests {
     #[test]
     fn test_spark_round_int_pi_scales() -> Result<()> {
         let int_pi = 314159265_i32;
-        let expected = vec![
+        let expected = [
             314000000, 314200000, 314160000, 314159000, 314159300, 314159270, 314159265, 314159265,
             314159265, 314159265, 314159265, 314159265, 314159265,
         ];

@@ -16,6 +16,7 @@
 // under the License.
 
 //! Execution plan for reading Parquet files
+#![allow(deprecated)]  // deprecated fetch_parquet_metadata
 
 use std::{any::Any, fmt, fmt::Formatter, ops::Range, pin::Pin, sync::Arc};
 
@@ -449,7 +450,7 @@ impl AsyncFileReader for ParquetFileReaderRef {
                         size_hint,
                     )
                     .await
-                    .map(|parquet_metadata| Arc::new(parquet_metadata))
+                    .map(Arc::new)
                 })
                 .map(|parquet_metadata| parquet_metadata.cloned())
                 .await
@@ -465,12 +466,13 @@ impl AsyncFileReader for ParquetFileReaderRef {
     }
 }
 
+#[allow(dead_code)]
 fn expr_contains_decimal_type(expr: &PhysicalExprRef, schema: &SchemaRef) -> Result<bool> {
     if matches!(expr.data_type(schema)?, DataType::Decimal128(..)) {
         return Ok(true);
     }
     for child_expr in expr.children().iter() {
-        if expr_contains_decimal_type(&child_expr, schema)? {
+        if expr_contains_decimal_type(child_expr, schema)? {
             return Ok(true);
         }
     }

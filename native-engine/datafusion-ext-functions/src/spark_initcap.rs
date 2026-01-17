@@ -27,7 +27,7 @@ pub fn string_initcap(args: &[ColumnarValue]) -> Result<ColumnarValue> {
         ColumnarValue::Array(array) => {
             let input_array = as_string_array(array)?;
             let output_array =
-                StringArray::from_iter(input_array.into_iter().map(|s| s.map(|s| initcap(s))));
+                StringArray::from_iter(input_array.into_iter().map(|s| s.map(initcap)));
             Ok(ColumnarValue::Array(Arc::new(output_array) as ArrayRef))
         }
         ColumnarValue::Scalar(ScalarValue::Utf8(Some(str))) => {
@@ -91,7 +91,7 @@ mod test {
         ];
         let input_columnar_value = ColumnarValue::Array(Arc::new(StringArray::from(input_data)));
 
-        let result = string_initcap(&vec![input_columnar_value])?.into_array(6)?;
+        let result = string_initcap(&[input_columnar_value])?.into_array(6)?;
 
         let expected_data = vec![
             None,
@@ -111,7 +111,7 @@ mod test {
     #[test]
     fn test_initcap_scalar() -> Result<()> {
         let input_columnar_value = ColumnarValue::Scalar(ScalarValue::from("abC c3D4"));
-        let result = string_initcap(&vec![input_columnar_value])?.into_array(1)?;
+        let result = string_initcap(&[input_columnar_value])?.into_array(1)?;
         let expected: ArrayRef = Arc::new(StringArray::from(vec![Some("Abc C3d4")]));
         assert_eq!(&result, &expected);
         Ok(())

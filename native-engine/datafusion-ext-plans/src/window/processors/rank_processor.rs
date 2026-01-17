@@ -52,7 +52,7 @@ impl WindowFunctionProcessor for RankProcessor {
         for row_idx in 0..batch.num_rows() {
             let same_partition = !context.has_partition() || {
                 let partition_row = partition_rows.row(row_idx);
-                if partition_row.as_ref() != &self.cur_partition {
+                if partition_row.as_ref() != self.cur_partition {
                     self.cur_partition = partition_row.as_ref().into();
                     false
                 } else {
@@ -62,7 +62,7 @@ impl WindowFunctionProcessor for RankProcessor {
             let order_row = order_rows.row(row_idx);
 
             if same_partition {
-                if order_row.as_ref() == &self.cur_order {
+                if order_row.as_ref() == self.cur_order {
                     self.cur_equals += 1;
                 } else {
                     self.cur_rank += if !self.is_dense { self.cur_equals } else { 1 };

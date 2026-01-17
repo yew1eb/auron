@@ -258,7 +258,7 @@ impl Table {
                 if let Some(pos) = (hash_matched | empty).first_set() {
                     hashes[i] = unsafe {
                         // safety: transmute MapValue(u32) to u32
-                        std::mem::transmute(self.map[e].values[pos])
+                        std::mem::transmute::<MapValue, u32>(self.map[e].values[pos])
                     };
                     break;
                 }
@@ -298,9 +298,9 @@ impl JoinHashMap {
         let key_columns: Vec<ArrayRef> = key_exprs
             .iter()
             .map(|expr| {
-                Ok(expr
+                expr
                     .evaluate(&data_batch)?
-                    .into_array(data_batch.num_rows())?)
+                    .into_array(data_batch.num_rows())
             })
             .collect::<Result<_>>()?;
 
@@ -350,9 +350,9 @@ impl JoinHashMap {
         let key_columns: Vec<ArrayRef> = key_exprs
             .iter()
             .map(|expr| {
-                Ok(expr
+                expr
                     .evaluate(&data_batch)?
-                    .into_array(data_batch.num_rows())?)
+                    .into_array(data_batch.num_rows())
             })
             .collect::<Result<_>>()?;
         Ok(Self {
@@ -380,7 +380,7 @@ impl JoinHashMap {
 
         Ok(RecordBatch::try_new(
             schema,
-            vec![self.data_batch.columns().to_vec(), vec![table_col]].concat(),
+            [self.data_batch.columns().to_vec(), vec![table_col]].concat(),
         )?)
     }
 

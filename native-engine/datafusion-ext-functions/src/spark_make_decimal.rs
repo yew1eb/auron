@@ -33,8 +33,7 @@ pub fn spark_make_decimal(args: &[ColumnarValue]) -> Result<ColumnarValue> {
     };
     assert!(
         precision >= 1,
-        "make_decimal: illegal precision: {}",
-        precision
+        "make_decimal: illegal precision: {precision}"
     );
 
     Ok(match &args[0] {
@@ -81,7 +80,7 @@ mod test {
             Some(1234567890),
             None,
         ]);
-        let result = spark_make_decimal(&vec![
+        let result = spark_make_decimal(&[
             ColumnarValue::Array(Arc::new(array)),
             ColumnarValue::Scalar(ScalarValue::Int32(Some(10))), // precision
             ColumnarValue::Scalar(ScalarValue::Int32(Some(5))),  // scale

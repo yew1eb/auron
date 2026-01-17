@@ -14,7 +14,10 @@
 // limitations under the License.
 
 pub mod acc;
+
+#[allow(clippy::module_inception)]
 pub mod agg;
+
 pub mod agg_ctx;
 pub mod agg_hash_map;
 pub mod agg_table;

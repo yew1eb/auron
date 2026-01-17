@@ -35,6 +35,7 @@ use datafusion_ext_commons::{df_execution_err, io::recover_named_batch};
 
 /// expression to get a field of from NameStruct.
 #[derive(Debug, Eq, Hash)]
+#[allow(clippy::derived_hash_with_manual_eq)]
 pub struct NamedStructExpr {
     values: Vec<PhysicalExprRef>,
     return_type: DataType,
@@ -163,7 +164,7 @@ mod test {
         let output_batch =
             RecordBatch::try_from_iter_with_nullable(vec![("cccccc1", output_array, true)])?;
 
-        let expected = vec![
+        let expected = [
             "+--------------------------------------------------------+",
             "| cccccc1                                                |",
             "+--------------------------------------------------------+",

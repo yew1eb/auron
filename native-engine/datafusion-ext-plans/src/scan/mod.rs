@@ -144,7 +144,7 @@ fn schema_adapter_cast_column(col: &ArrayRef, field: &Field) -> Result<ArrayRef>
             DataType::List(_from_field) => {
                 let col = col.as_list::<i32>();
                 let from_inner = col.values();
-                let to_inner = schema_adapter_cast_column(from_inner, &to_field)?;
+                let to_inner = schema_adapter_cast_column(from_inner, to_field)?;
                 Ok(Arc::new(ListArray::try_new(
                     to_field.clone(),
                     col.offsets().clone(),

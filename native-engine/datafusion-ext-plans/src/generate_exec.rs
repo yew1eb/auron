@@ -199,7 +199,7 @@ fn execute_generate(
     let input_schema = input_stream.schema();
     let child_output_dts: Vec<DataType> = child_output_cols
         .iter()
-        .map(|col| Ok(col.data_type(&input_schema)?))
+        .map(|col| col.data_type(&input_schema))
         .collect::<Result<Vec<_>>>()?;
 
     Ok(exec_ctx
@@ -392,7 +392,7 @@ mod test {
             ("b", col_b, true),
             ("c", col_c, true),
         ])?;
-        let input = vec![
+        let input = [
             "+---+-----------------+----------------+",
             "| a | b               | c              |",
             "+---+-----------------+----------------+",
@@ -426,7 +426,7 @@ mod test {
 
         let output = generate.execute(0, task_ctx.clone())?;
         let batches = common::collect(output).await?;
-        let expected = vec![
+        let expected = [
             "+---+----------------+-----+",
             "| a | c              | b   |",
             "+---+----------------+-----+",
@@ -444,7 +444,7 @@ mod test {
         let generate = generate.with_outer(true);
         let output = generate.execute(0, task_ctx.clone())?;
         let batches = common::collect(output).await?;
-        let expected = vec![
+        let expected = [
             "+---+----------------+-----+",
             "| a | c              | b   |",
             "+---+----------------+-----+",
@@ -479,7 +479,7 @@ mod test {
 
         let output = generate.execute(0, task_ctx.clone())?;
         let batches = common::collect(output).await?;
-        let expected = vec![
+        let expected = [
             "+---+-----------------+----+----+",
             "| a | b               | ck | cv |",
             "+---+-----------------+----+----+",
@@ -497,7 +497,7 @@ mod test {
         let generate = generate.with_outer(true);
         let output = generate.execute(0, task_ctx.clone())?;
         let batches = common::collect(output).await?;
-        let expected = vec![
+        let expected = [
             "+---+-----------------+----+----+",
             "| a | b               | ck | cv |",
             "+---+-----------------+----+----+",
@@ -531,7 +531,7 @@ mod test {
         )?);
         let output = generate.execute(0, task_ctx.clone())?;
         let batches = common::collect(output).await?;
-        let expected = vec![
+        let expected = [
             "+---+-----------------+------+----+----+",
             "| a | b               | cpos | ck | cv |",
             "+---+-----------------+------+----+----+",

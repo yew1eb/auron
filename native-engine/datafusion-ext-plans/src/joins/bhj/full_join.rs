@@ -118,9 +118,9 @@ impl<const P: JoinerParams> FullJoiner<P> {
         let probed_key_columns: Vec<ArrayRef> = probed_key_exprs
             .iter()
             .map(|expr| {
-                Ok(expr
+                expr
                     .evaluate(probed_batch)?
-                    .into_array(probed_batch.num_rows())?)
+                    .into_array(probed_batch.num_rows())
             })
             .collect::<Result<_>>()?;
         Ok(probed_key_columns)

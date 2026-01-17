@@ -27,7 +27,7 @@ pub fn spark_murmur3_hash(args: &[ColumnarValue]) -> Result<ColumnarValue> {
     spark_hash(args, |len, is_scalar, arrays| {
         // use identical seed as spark hash partition
         let spark_murmur3_default_seed = 42i32;
-        let hash_buffer = create_murmur3_hashes(len, &arrays, spark_murmur3_default_seed);
+        let hash_buffer = create_murmur3_hashes(len, arrays, spark_murmur3_default_seed);
         if is_scalar {
             ColumnarValue::Scalar(ScalarValue::from(hash_buffer[0]))
         } else {
@@ -89,7 +89,7 @@ mod test {
 
     #[test]
     fn test_murmur3_hash_int64() -> Result<(), Box<dyn Error>> {
-        let result = spark_murmur3_hash(&vec![ColumnarValue::Array(Arc::new(Int64Array::from(
+        let result = spark_murmur3_hash(&[ColumnarValue::Array(Arc::new(Int64Array::from(
             vec![Some(1), Some(0), Some(-1), Some(i64::MAX), Some(i64::MIN)],
         )))])?
         .into_array(5)?;
@@ -109,7 +109,7 @@ mod test {
 
     #[test]
     fn test_murmur3_hash_string() -> Result<(), Box<dyn Error>> {
-        let result = spark_murmur3_hash(&vec![ColumnarValue::Array(Arc::new(
+        let result = spark_murmur3_hash(&[ColumnarValue::Array(Arc::new(
             StringArray::from_iter_values(["hello", "bar", "", "😁", "天地"]),
         ))])?
         .into_array(5)?;
@@ -128,7 +128,7 @@ mod test {
     }
     #[test]
     fn test_xxhash64_int64() -> Result<(), Box<dyn Error>> {
-        let result = spark_xxhash64(&vec![ColumnarValue::Array(Arc::new(Int64Array::from(
+        let result = spark_xxhash64(&[ColumnarValue::Array(Arc::new(Int64Array::from(
             vec![Some(1), Some(0), Some(-1), Some(i64::MAX), Some(i64::MIN)],
         )))])?
         .into_array(5)?;
@@ -148,7 +148,7 @@ mod test {
 
     #[test]
     fn test_xxhash64_string() -> Result<(), Box<dyn Error>> {
-        let result = spark_xxhash64(&vec![ColumnarValue::Array(Arc::new(
+        let result = spark_xxhash64(&[ColumnarValue::Array(Arc::new(
             StringArray::from_iter_values(["hello", "bar", "", "😁", "天地"]),
         ))])?
         .into_array(5)?;

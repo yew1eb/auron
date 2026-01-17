@@ -17,7 +17,6 @@ use std::{
     any::Any,
     fmt::{Debug, Display, Formatter},
     hash::{Hash, Hasher},
-    io::Write,
     sync::Arc,
 };
 
@@ -60,7 +59,7 @@ impl SparkScalarSubqueryWrapperExpr {
 
 impl Display for SparkScalarSubqueryWrapperExpr {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
+        write!(f, "{self:?}")
     }
 }
 
@@ -113,7 +112,7 @@ impl PhysicalExpr for SparkScalarSubqueryWrapperExpr {
                 self.return_type.clone(),
                 self.return_nullable,
                 vec![],
-                format!("Subquery"),
+                "Subquery".to_string(),
             )?;
             let stub_batch = RecordBatch::try_new_with_options(
                 Arc::new(Schema::empty()),

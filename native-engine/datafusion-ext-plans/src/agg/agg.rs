@@ -48,7 +48,7 @@ pub trait Agg: Send + Sync + Debug {
 
     fn prepare_partial_args(&self, partial_inputs: &[ArrayRef]) -> Result<Vec<ArrayRef>> {
         // default implementation: directly return the inputs
-        Ok(partial_inputs.iter().cloned().collect())
+        Ok(partial_inputs.to_vec())
     }
 
     fn partial_update(
@@ -78,6 +78,7 @@ pub enum IdxSelection<'a> {
     Range(usize, usize),
 }
 
+#[allow(clippy::len_without_is_empty)]
 impl IdxSelection<'_> {
     pub fn len(&self) -> usize {
         match *self {
@@ -127,7 +128,7 @@ macro_rules! idx_with_iter {
 #[macro_export]
 macro_rules! idx_for {
     (($var:ident in $iter:expr) => $($s:stmt);* ) => {{
-        crate::idx_with_iter!((iter @ $iter) => {
+        $crate::idx_with_iter!((iter @ $iter) => {
             for $var in iter {
                 $($s)*
             }
@@ -156,8 +157,8 @@ macro_rules! idx_for_zipped {
                 }
             },
             _ => {
-                crate::idx_with_iter!((iter1 @ $iter1) => {
-                    crate::idx_with_iter!((iter2 @ $iter2) => {
+                $crate::idx_with_iter!((iter1 @ $iter1) => {
+                    $crate::idx_with_iter!((iter2 @ $iter2) => {
                         for ($var1, $var2) in iter1.zip(iter2) {
                             $($s)*
                         }

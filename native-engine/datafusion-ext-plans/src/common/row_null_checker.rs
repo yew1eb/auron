@@ -126,7 +126,7 @@ impl RowNullChecker {
             }
             other => {
                 // For unsupported types, panic
-                panic!("unsupported data type in RowNullChecker: {:?}", other)
+                panic!("unsupported data type in RowNullChecker: {other:?}")
             }
         }
     }
@@ -724,7 +724,7 @@ mod tests {
 
         // Convert RecordBatch to Rows
         let converter = RowConverter::new(sort_fields.clone())?;
-        let rows = converter.convert_columns(&batch.columns())?;
+        let rows = converter.convert_columns(batch.columns())?;
 
         // Create field configs for RowNullChecker
         let field_configs: Vec<(DataType, SortOptions)> = schema
@@ -745,10 +745,10 @@ mod tests {
         // Row 2: (null, "Charlie") - has null -> should be false (invalid)
         // Row 3: (4, "David") - no nulls -> should be true (valid)
         assert_eq!(null_buffer.len(), 4);
-        assert_eq!(null_buffer.is_valid(0), true); // No nulls
-        assert_eq!(null_buffer.is_valid(1), false); // Has null in name
-        assert_eq!(null_buffer.is_valid(2), false); // Has null in id
-        assert_eq!(null_buffer.is_valid(3), true); // No nulls
+        assert!(null_buffer.is_valid(0)); // No nulls
+        assert!(!null_buffer.is_valid(1)); // Has null in name
+        assert!(!null_buffer.is_valid(2)); // Has null in id
+        assert!(null_buffer.is_valid(3)); // No nulls
         Ok(())
     }
 
@@ -775,7 +775,7 @@ mod tests {
             .collect();
 
         let converter = RowConverter::new(sort_fields.clone())?;
-        let rows = converter.convert_columns(&batch.columns())?;
+        let rows = converter.convert_columns(batch.columns())?;
 
         let null_buffer = checker.has_nulls(&rows);
         assert_eq!(null_buffer.len(), 0);
@@ -800,7 +800,7 @@ mod tests {
             .collect();
 
         let converter = RowConverter::new(sort_fields.clone())?;
-        let rows = converter.convert_columns(&batch.columns())?;
+        let rows = converter.convert_columns(batch.columns())?;
 
         let field_configs: Vec<(DataType, SortOptions)> = schema
             .fields()
@@ -814,7 +814,7 @@ mod tests {
         // All rows should be invalid (false) since they all contain nulls
         assert_eq!(null_buffer.len(), 3);
         for i in 0..3 {
-            assert_eq!(null_buffer.is_valid(i), false);
+            assert!(!null_buffer.is_valid(i));
         }
         Ok(())
     }
@@ -841,7 +841,7 @@ mod tests {
             .collect();
 
         let converter = RowConverter::new(sort_fields.clone())?;
-        let rows = converter.convert_columns(&batch.columns())?;
+        let rows = converter.convert_columns(batch.columns())?;
 
         let field_configs: Vec<(DataType, SortOptions)> = schema
             .fields()
@@ -855,7 +855,7 @@ mod tests {
         // All rows should be valid (true) since none contain nulls
         assert_eq!(null_buffer.len(), 3);
         for i in 0..3 {
-            assert_eq!(null_buffer.is_valid(i), true);
+            assert!(null_buffer.is_valid(i));
         }
         Ok(())
     }

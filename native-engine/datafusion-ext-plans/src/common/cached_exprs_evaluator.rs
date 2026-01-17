@@ -66,7 +66,7 @@ impl CachedExprsEvaluator {
             transformed_exprs.split_at(filter_exprs.len());
 
         let transformed_pruned_filter_exprs = transformed_filter_exprs
-            .into_iter()
+            .iter()
             .map(|expr| prune_expr_cols(expr))
             .collect();
         let transformed_projection_exprs = transformed_projection_exprs.to_vec();
@@ -174,11 +174,11 @@ fn transform_to_cached_exprs(exprs: &[PhysicalExprRef]) -> Result<(Vec<PhysicalE
             .or_insert(1);
         expr.children()
             .iter()
-            .for_each(|child| count(&child, expr_counts));
+            .for_each(|child| count(child, expr_counts));
     }
     let mut expr_counts = HashMap::new();
     for expr in exprs {
-        count(&expr, &mut expr_counts);
+        count(expr, &mut expr_counts);
     }
 
     // find all duplicated exprs (which count is larger than its parent)
@@ -212,7 +212,7 @@ fn transform_to_cached_exprs(exprs: &[PhysicalExprRef]) -> Result<(Vec<PhysicalE
         {
             // short circuiting expression - only first child can be cached
             // first `when` expr can also be cached
-            collect_dups(&expr.children()[0], current_count, expr_counts, dups);
+            collect_dups(expr.children()[0], current_count, expr_counts, dups);
             if let Ok(case_expr) = downcast_any!(expr, CaseExpr) {
                 if case_expr.expr().is_some() {
                     let children = case_expr.children();
@@ -304,13 +304,14 @@ fn transform_to_cached_exprs(exprs: &[PhysicalExprRef]) -> Result<(Vec<PhysicalE
     let cache = Cache::new(cached_expr_ids.len());
     let transformed_exprs = exprs
         .iter()
-        .map(|expr| Ok(transform(expr.clone(), &cached_expr_ids, &cache)?))
+        .map(|expr| transform(expr.clone(), &cached_expr_ids, &cache))
         .collect::<Result<_>>()?;
     Ok((transformed_exprs, cache))
 }
 
 /// A physical expr wrapper to use in HashSet/HashMap
 #[derive(Clone, Debug, Hash)]
+#[allow(clippy::derived_hash_with_manual_eq)]
 struct ExprKey(PhysicalExprRef);
 
 impl PartialEq for ExprKey {
@@ -331,7 +332,7 @@ struct CachedExpr {
 
 impl Display for CachedExpr {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
+        write!(f, "{self:?}")
     }
 }
 
@@ -417,7 +418,7 @@ impl Cache {
 
     fn with<T>(&self, func: impl Fn(&Self) -> Result<T>) -> Result<T> {
         self.reset(); // reset before using cache
-        let result = func(&self);
+        let result = func(self);
         self.reset(); // reset after using cache (to release holding arrays)
         result
     }
@@ -442,7 +443,7 @@ impl Cache {
         let current_values = self.values.lock().clone();
         let updated_values = current_values
             .into_iter()
-            .map(|value| on_update(value))
+            .map(on_update)
             .collect::<Result<_>>()?;
         *self.values.lock() = updated_values;
         Ok(())

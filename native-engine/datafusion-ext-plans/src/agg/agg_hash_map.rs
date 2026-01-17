@@ -198,6 +198,7 @@ pub struct AggHashMap {
     map: Table,
 }
 
+#[allow(clippy::len_without_is_empty)]
 impl AggHashMap {
     pub fn len(&self) -> usize {
         self.map.len()

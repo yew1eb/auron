@@ -220,7 +220,7 @@ impl AggContext {
         let grouping_arrays: Vec<ArrayRef> = self
             .groupings
             .iter()
-            .map(|grouping| grouping.expr.evaluate(&input_batch))
+            .map(|grouping| grouping.expr.evaluate(input_batch))
             .map(|r| r.and_then(|columnar| columnar.into_array(input_batch.num_rows())))
             .collect::<Result<_>>()
             .map_err(|err| err.context("agg: evaluating grouping arrays error"))?;
@@ -253,7 +253,7 @@ impl AggContext {
 
         // partial update
         if self.need_partial_update {
-            let agg_exprs_batch = self.agg_expr_evaluator.filter_project(&batch)?;
+            let agg_exprs_batch = self.agg_expr_evaluator.filter_project(batch)?;
             let mut input_arrays = Vec::with_capacity(self.aggs.len());
             let mut offset = 0;
             for agg in &self.aggs {
@@ -459,7 +459,7 @@ impl AggContext {
             .baseline_metrics()
             .record_output(output_batch.num_rows());
         sender.send(output_batch).await;
-        return Ok(());
+        Ok(())
     }
 
     pub fn num_spill_buckets(&self, mem_size: usize) -> usize {
@@ -474,6 +474,6 @@ impl AggContext {
 
     pub fn get_or_try_init_udaf_mem_tracker(&self) -> Result<&SparkUDAFMemTracker> {
         self.udaf_mem_tracker
-            .get_or_try_init(|| SparkUDAFMemTracker::try_new())
+            .get_or_try_init(SparkUDAFMemTracker::try_new)
     }
 }

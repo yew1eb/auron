@@ -141,7 +141,7 @@ mod test {
 
     #[test]
     fn test_null_if_zero_int() -> Result<(), Box<dyn Error>> {
-        let result = spark_null_if_zero(&vec![ColumnarValue::Array(Arc::new(Int32Array::from(
+        let result = spark_null_if_zero(&[ColumnarValue::Array(Arc::new(Int32Array::from(
             vec![Some(1), None, Some(-1), Some(0)],
         )))])?
         .into_array(4)?;
@@ -155,7 +155,7 @@ mod test {
 
     #[test]
     fn test_null_if_zero_decimal() -> Result<(), Box<dyn Error>> {
-        let result = spark_null_if_zero(&vec![ColumnarValue::Scalar(ScalarValue::Decimal128(
+        let result = spark_null_if_zero(&[ColumnarValue::Scalar(ScalarValue::Decimal128(
             Some(1230427389124691),
             20,
             2,
@@ -172,7 +172,7 @@ mod test {
 
     #[test]
     fn test_null_if_zero_float() -> Result<(), Box<dyn Error>> {
-        let result = spark_null_if_zero(&vec![ColumnarValue::Scalar(ScalarValue::Float32(Some(
+        let result = spark_null_if_zero(&[ColumnarValue::Scalar(ScalarValue::Float32(Some(
             0.0,
         )))])?
         .into_array(1)?;

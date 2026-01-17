@@ -54,7 +54,7 @@ impl WindowContext {
         output_window_cols: bool,
     ) -> Result<Self> {
         let output_schema = Arc::new(Schema::new(
-            vec![
+            [
                 input_schema.fields().to_vec(),
                 if output_window_cols {
                     window_exprs

@@ -326,7 +326,7 @@ impl<T: ArrowNativeType> AccColumn for AccPrimColumn<T> {
     }
 
     fn mem_used(&self) -> usize {
-        self.values.allocated_size() + (self.valids.capacity() + 7) / 8
+        self.values.allocated_size() + self.valids.capacity().div_ceil(8)
     }
 
     fn freeze_to_rows(&self, idx: IdxSelection<'_>, array: &mut [Vec<u8>]) -> Result<()> {
@@ -400,6 +400,7 @@ impl<T: ArrowNativeType> AccColumn for AccPrimColumn<T> {
         let mut read_values: Vec<T> = Vec::uninitialized_init(num_valids);
         let mut read_value_pos = 0;
         r.read_exact(read_values.as_raw_bytes_mut())?;
+        #[allow(clippy::explicit_counter_loop)]
         for i in self.valids.iter_ones() {
             self.values[i] = read_values[read_value_pos];
             read_value_pos += 1;
@@ -467,6 +468,7 @@ impl AccBytesColumn {
 
     fn refresh_heap_mem_used(&mut self) {
         self.heap_mem_used = 0;
+        #[allow(clippy::manual_flatten)]
         for item in &self.items {
             if let Some(v) = item {
                 if v.spilled() {

@@ -222,7 +222,7 @@ fn read_ipc(
                         let staging_cols_cloned = staging_cols.clone();
                         let mut staging_cols = staging_cols_cloned.lock();
                         let mut cols_mem_size = 0;
-                        staging_cols.resize_with(cols.len(), || vec![]);
+                        staging_cols.resize_with(cols.len(), Vec::new);
                         for (col_idx, col) in cols.into_iter().enumerate() {
                             cols_mem_size += col.get_array_mem_size();
                             staging_cols[col_idx].push(col);

@@ -173,7 +173,7 @@ impl Agg for AggBloomFilter {
             ((acc_idx, merging_acc_idx) in (acc_idx, merging_acc_idx)) => {
                 if acc_idx < accs.num_records() {
                     let acc_bloom_filter = &mut accs.bloom_filters[acc_idx];
-                    let merging_acc_bloom_filter = std::mem::replace(&mut merging_accs.bloom_filters[merging_acc_idx], None);
+                    let merging_acc_bloom_filter = merging_accs.bloom_filters[merging_acc_idx].take();
 
                     if let Some(merging_acc_bloom_filter) = merging_acc_bloom_filter {
                         if let Some(acc_bloom_filter) = acc_bloom_filter {
@@ -183,7 +183,7 @@ impl Agg for AggBloomFilter {
                         }
                     }
                 } else {
-                    let merging_acc_bloom_filter = std::mem::replace(&mut merging_accs.bloom_filters[merging_acc_idx], None);
+                    let merging_acc_bloom_filter = merging_accs.bloom_filters[merging_acc_idx].take();
                     accs.bloom_filters.push(merging_acc_bloom_filter);
                 }
             }

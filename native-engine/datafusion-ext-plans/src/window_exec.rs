@@ -370,7 +370,7 @@ mod test {
         )?);
         let stream = window.execute(0, task_ctx.clone())?;
         let batches = datafusion::physical_plan::common::collect(stream).await?;
-        let expected = vec![
+        let expected = [
             "+----+----+----+---------------+---------+---------------+--------+",
             "| a1 | b1 | c1 | b1_row_number | b1_rank | b1_dense_rank | b1_sum |",
             "+----+----+----+---------------+---------+---------------+--------+",
@@ -430,7 +430,7 @@ mod test {
         )?);
         let stream = window.execute(0, task_ctx.clone())?;
         let batches = datafusion::physical_plan::common::collect(stream).await?;
-        let expected = vec![
+        let expected = [
             "+----+----+----+---------------+---------+---------------+--------+",
             "| a1 | b1 | c1 | b1_row_number | b1_rank | b1_dense_rank | b1_sum |",
             "+----+----+----+---------------+---------+---------------+--------+",
@@ -477,7 +477,7 @@ mod test {
         )?);
         let stream = window.execute(0, task_ctx.clone())?;
         let batches = datafusion::physical_plan::common::collect(stream).await?;
-        let expected = vec![
+        let expected = [
             "+----+----+----+---------------+",
             "| a1 | b1 | c1 | b1_row_number |",
             "+----+----+----+---------------+",

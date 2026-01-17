@@ -432,7 +432,7 @@ mod test {
         let projections = vec![vec![binary(
             col("test_str", &schema)?,
             Operator::StringConcat,
-            lit(Some("app").expect("app")),
+            lit("app"),
             &schema,
         )?]];
 
@@ -442,7 +442,7 @@ mod test {
         let task_ctx = session_ctx.task_ctx();
         let output = expand_exec.execute(0, task_ctx)?;
         let batches = common::collect(output).await?;
-        let expected = vec![
+        let expected = [
             "+----------+",
             "| a        |",
             "+----------+",
@@ -485,7 +485,7 @@ mod test {
         let task_ctx = session_ctx.task_ctx();
         let output = expand_exec.execute(0, task_ctx)?;
         let batches = common::collect(output).await?;
-        let expected = vec![
+        let expected = [
             "+-------+",
             "| a     |",
             "+-------+",

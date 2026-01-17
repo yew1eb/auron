@@ -55,7 +55,7 @@ mod test {
 
     #[test]
     fn test_unscaled_value_array() -> Result<(), Box<dyn Error>> {
-        let result = spark_unscaled_value(&vec![ColumnarValue::Array(Arc::new(
+        let result = spark_unscaled_value(&[ColumnarValue::Array(Arc::new(
             Decimal128Array::from(vec![
                 Some(1234567890987654321),
                 Some(9876543210),
@@ -81,7 +81,7 @@ mod test {
 
     #[test]
     fn test_unscaled_value_scalar() -> Result<(), Box<dyn Error>> {
-        let result = spark_unscaled_value(&vec![ColumnarValue::Scalar(ScalarValue::Decimal128(
+        let result = spark_unscaled_value(&[ColumnarValue::Scalar(ScalarValue::Decimal128(
             Some(123),
             3,
             2,

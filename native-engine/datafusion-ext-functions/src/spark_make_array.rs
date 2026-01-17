@@ -153,7 +153,7 @@ mod test {
 
     #[test]
     fn test_make_array_int() -> Result<(), Box<dyn Error>> {
-        let result = array(&vec![ColumnarValue::Array(Arc::new(Int32Array::from(
+        let result = array(&[ColumnarValue::Array(Arc::new(Int32Array::from(
             vec![Some(12), Some(-123), Some(0), Some(9), None],
         )))])?
         .into_array(5)?;
@@ -174,7 +174,7 @@ mod test {
 
     #[test]
     fn test_make_array_int_mixed_params() -> Result<(), Box<dyn Error>> {
-        let result = array(&vec![
+        let result = array(&[
             ColumnarValue::Scalar(ScalarValue::from(123456)),
             ColumnarValue::Array(Arc::new(Int32Array::from(vec![
                 Some(12),
@@ -202,7 +202,7 @@ mod test {
 
     #[test]
     fn test_make_array_float() -> Result<(), Box<dyn Error>> {
-        let result = array(&vec![
+        let result = array(&[
             ColumnarValue::Scalar(ScalarValue::Float32(Some(2.2))),
             ColumnarValue::Scalar(ScalarValue::Float32(Some(-2.3))),
         ])?

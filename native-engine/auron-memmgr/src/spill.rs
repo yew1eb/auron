@@ -79,7 +79,7 @@ fn spill_compression_codec() -> &'static str {
             if is_jni_bridge_inited() {
                 conf::SPILL_COMPRESSION_CODEC.value()
             } else {
-                Ok(format!("lz4")) // for testing
+                Ok("lz4".to_string()) // for testing
             }
         })
         .expect("error reading spark.auron.spill.compression.codec")
@@ -169,8 +169,7 @@ impl Drop for FileSpill {
         if let Some(file_path) = &self.2 {
             if let Err(e) = fs::remove_file(file_path) {
                 warn!(
-                    "Was unable to delete spill file: {}. error: {}",
-                    file_path, e
+                    "Was unable to delete spill file: {file_path}. error: {e}"
                 );
             }
         }
@@ -309,11 +308,13 @@ impl<'a> OwnedSpillBufReader<'a> {
     pub fn from(spill: Box<dyn Spill>) -> Self {
         let buf_reader = unsafe {
             // safety: bypass ownership and lifetime checker
+            #[allow(clippy::missing_transmute_annotations)]
             std::mem::transmute(spill.get_buf_reader())
         };
         Self { spill, buf_reader }
     }
 
+    #[allow(clippy::borrowed_box)]
     pub fn spill(&self) -> &Box<dyn Spill> {
         &self.spill
     }

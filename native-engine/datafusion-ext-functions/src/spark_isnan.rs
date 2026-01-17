@@ -85,7 +85,7 @@ mod test {
         ];
         let input_columnar_value = ColumnarValue::Array(Arc::new(Float64Array::from(input_data)));
 
-        let result = spark_isnan(&vec![input_columnar_value])?.into_array(6)?;
+        let result = spark_isnan(&[input_columnar_value])?.into_array(6)?;
 
         let expected_data = vec![
             Some(false),
@@ -112,7 +112,7 @@ mod test {
         ];
         let input_columnar_value = ColumnarValue::Array(Arc::new(Float32Array::from(input_data)));
 
-        let result = spark_isnan(&vec![input_columnar_value])?.into_array(6)?;
+        let result = spark_isnan(&[input_columnar_value])?.into_array(6)?;
 
         let expected_data = vec![
             Some(false),
@@ -130,7 +130,7 @@ mod test {
     #[test]
     fn test_isnan_scalar_f64_nan() -> Result<(), Box<dyn Error>> {
         let input_columnar_value = ColumnarValue::Scalar(ScalarValue::Float64(Some(f64::NAN)));
-        let result = spark_isnan(&vec![input_columnar_value])?.into_array(1)?;
+        let result = spark_isnan(&[input_columnar_value])?.into_array(1)?;
         let expected: ArrayRef = Arc::new(BooleanArray::from(vec![Some(true)]));
         assert_eq!(&result, &expected);
         Ok(())
@@ -139,7 +139,7 @@ mod test {
     #[test]
     fn test_isnan_scalar_f64_null() -> Result<(), Box<dyn Error>> {
         let input_columnar_value = ColumnarValue::Scalar(ScalarValue::Float64(None));
-        let result = spark_isnan(&vec![input_columnar_value])?.into_array(1)?;
+        let result = spark_isnan(&[input_columnar_value])?.into_array(1)?;
         let expected: ArrayRef = Arc::new(BooleanArray::from(vec![Some(false)]));
         assert_eq!(&result, &expected);
         Ok(())
@@ -148,7 +148,7 @@ mod test {
     #[test]
     fn test_isnan_scalar_f32_null() -> Result<(), Box<dyn Error>> {
         let input_columnar_value = ColumnarValue::Scalar(ScalarValue::Float32(None));
-        let result = spark_isnan(&vec![input_columnar_value])?.into_array(1)?;
+        let result = spark_isnan(&[input_columnar_value])?.into_array(1)?;
         let expected: ArrayRef = Arc::new(BooleanArray::from(vec![Some(false)]));
         assert_eq!(&result, &expected);
         Ok(())

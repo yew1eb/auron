@@ -13,10 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::any::Any;
-
-use datafusion::physical_expr::{PhysicalExpr, PhysicalExprRef};
-
 pub mod bloom_filter_might_contain;
 pub mod cast;
 pub mod get_indexed_field;
@@ -28,17 +24,3 @@ pub mod spark_udf_wrapper;
 pub mod string_contains;
 pub mod string_ends_with;
 pub mod string_starts_with;
-
-fn down_cast_any_ref(any: &dyn Any) -> &dyn Any {
-    if any.is::<PhysicalExprRef>() {
-        any.downcast_ref::<PhysicalExprRef>()
-            .expect("Expected a PhysicalExpr")
-            .as_any()
-    } else if any.is::<Box<dyn PhysicalExpr>>() {
-        any.downcast_ref::<Box<dyn PhysicalExpr>>()
-            .expect("Expected a PhysicalExpr")
-            .as_any()
-    } else {
-        any
-    }
-}

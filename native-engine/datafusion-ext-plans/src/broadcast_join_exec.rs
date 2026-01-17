@@ -94,6 +94,8 @@ pub struct BroadcastJoinExec {
 }
 
 impl BroadcastJoinExec {
+
+    #[allow(clippy::too_many_arguments)]
     pub fn try_new(
         schema: SchemaRef,
         left: Arc<dyn ExecutionPlan>,
@@ -278,7 +280,7 @@ impl ExecutionPlan for BroadcastJoinExec {
             self.schema.clone(),
             children[0].clone(),
             children[1].clone(),
-            self.on.iter().cloned().collect(),
+            self.on.to_vec(),
             self.join_type,
             self.broadcast_side,
             self.is_built,
@@ -319,6 +321,7 @@ impl DisplayAs for BroadcastJoinExec {
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 async fn execute_join_with_map(
     probed_plan: Arc<dyn ExecutionPlan>,
     map: Arc<JoinHashMap>,
@@ -448,8 +451,7 @@ async fn execute_join_with_smj_fallback(
         right_exec.clone(),
         join_params
             .left_keys
-            .to_vec()
-            .into_iter()
+            .iter().cloned()
             .zip(join_params.right_keys.to_vec())
             .collect(),
         join_params.join_type,
@@ -489,6 +491,7 @@ async fn execute_join_with_smj_fallback(
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)]
 async fn execute_join(
     left: Arc<dyn ExecutionPlan>,
     right: Arc<dyn ExecutionPlan>,
@@ -653,7 +656,7 @@ async fn get_cached_join_hash_map<Fut: Future<Output = Result<CollectJoinHashMap
 
     // remove expire keys and insert new key
     let slot = {
-        let cached_join_hash_map = CACHED_JOIN_HASH_MAP.get_or_init(|| Arc::default());
+        let cached_join_hash_map = CACHED_JOIN_HASH_MAP.get_or_init(Arc::default);
         let mut cached_join_hash_map = cached_join_hash_map.lock();
 
         cached_join_hash_map.retain(|_, v| Arc::strong_count(v) > 0);

@@ -110,7 +110,7 @@ impl ExecutionPlan for LimitExec {
 
     fn statistics(&self) -> Result<Statistics> {
         Statistics::with_fetch(
-            self.input.statistics()?,
+            self.input.partition_statistics(None)?,
             self.schema(),
             Some(self.limit as usize),
             0,
@@ -212,9 +212,9 @@ mod test {
         let task_ctx = session_ctx.task_ctx();
         let output = limit_exec.execute(0, task_ctx)?;
         let batches = common::collect(output).await?;
-        let row_count = limit_exec.statistics()?.num_rows;
+        let row_count = limit_exec.partition_statistics(None)?.num_rows;
 
-        let expected = vec![
+        let expected = [
             "+---+---+---+",
             "| a | b | c |",
             "+---+---+---+",

@@ -93,6 +93,7 @@ impl StreamCursor {
     }
 }
 
+#[allow(clippy::should_implement_trait)]
 impl StreamCursor {
     pub fn next(&mut self) -> Option<Pin<Box<dyn Future<Output = Result<()>> + Send + '_>>> {
         self.cur_idx.1 += 1;
@@ -124,7 +125,7 @@ impl StreamCursor {
                     return Ok(());
                 }
                 self.finished = true;
-                return Ok(());
+                Ok(())
             }))
         } else {
             None

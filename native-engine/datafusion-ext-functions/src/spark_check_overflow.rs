@@ -33,8 +33,7 @@ pub fn spark_check_overflow(args: &[ColumnarValue]) -> Result<ColumnarValue> {
     };
     assert!(
         to_precision >= 1,
-        "check_overflow: illegal precision: {}",
-        to_precision
+        "check_overflow: illegal precision: {to_precision}"
     );
 
     Ok(match &args[0] {
@@ -146,7 +145,7 @@ mod test {
         ])
         .with_precision_and_scale(20, 8)?;
 
-        let result = spark_check_overflow(&vec![
+        let result = spark_check_overflow(&[
             ColumnarValue::Array(Arc::new(array)),
             ColumnarValue::Scalar(ScalarValue::Int32(Some(10))), // precision
             ColumnarValue::Scalar(ScalarValue::Int32(Some(5))),  // scale

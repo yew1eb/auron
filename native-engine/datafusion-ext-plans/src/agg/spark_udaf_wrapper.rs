@@ -105,7 +105,7 @@ impl SparkUDAFWrapper {
             ))
         });
 
-        let params_batch_num_rows = match partial_args.get(0) {
+        let params_batch_num_rows = match partial_args.first() {
             Some(arg) => arg.len(),
             None => 0,
         };
@@ -308,6 +308,7 @@ impl AccUDAFBufferRowsColumn {
 
         // UnsafeRow is serialized with big-endian i32 length prefix
         let mut cursor = Cursor::new(&serialized_bytes);
+        #[allow(clippy::needless_range_loop)]
         for i in 0..array.len() {
             let mut bytes_len_buf = [0; 4];
             cursor.read_exact(&mut bytes_len_buf)?;

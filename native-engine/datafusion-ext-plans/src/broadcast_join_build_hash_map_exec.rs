@@ -199,7 +199,7 @@ pub fn execute_build_hash_map(
             // sort all input data
             let input: SendableRecordBatchStream = Box::pin(RecordBatchStreamAdapter::new(
                 data_schema,
-                futures::stream::iter(staging_batches.into_iter().map(|batch| Ok(batch)))
+                futures::stream::iter(staging_batches.into_iter().map(Ok))
                     .chain(input),
             ));
             let input_exec = create_record_batch_stream_exec(input, exec_ctx.partition_id())?;

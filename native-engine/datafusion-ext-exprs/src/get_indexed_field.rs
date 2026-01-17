@@ -17,7 +17,7 @@ use std::{
     any::Any,
     convert::TryInto,
     fmt::{Debug, Formatter},
-    hash::{Hash, Hasher},
+    hash::Hash,
     sync::Arc,
 };
 
@@ -34,6 +34,7 @@ use datafusion_ext_commons::df_execution_err;
 
 /// expression to get a field of a list array.
 #[derive(Debug, Eq, Hash)]
+#[allow(clippy::derived_hash_with_manual_eq)]
 pub struct GetIndexedFieldExpr {
     arg: PhysicalExprRef,
     key: ScalarValue,
@@ -217,7 +218,7 @@ mod test {
         let output_batch =
             RecordBatch::try_from_iter_with_nullable(vec![("cccccc1", output_array, true)])?;
 
-        let expected = vec![
+        let expected = [
             "+---------+",
             "| cccccc1 |",
             "+---------+",
@@ -235,7 +236,7 @@ mod test {
         let output_array = get_indexed.evaluate(&input_batch)?.into_array(0)?;
         let output_batch =
             RecordBatch::try_from_iter_with_nullable(vec![("cccccc1", output_array, true)])?;
-        let expected = vec![
+        let expected = [
             "+---------+",
             "| cccccc1 |",
             "+---------+",

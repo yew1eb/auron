@@ -438,6 +438,7 @@ mod test {
         agg_exec::AggExec,
     };
 
+    #[allow(clippy::too_many_arguments)]
     fn build_table_i32(
         a: (&str, &Vec<i32>),
         b: (&str, &Vec<i32>),
@@ -475,6 +476,7 @@ mod test {
         Ok(batch)
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn build_table(
         a: (&str, &Vec<i32>),
         b: (&str, &Vec<i32>),
@@ -666,7 +668,7 @@ mod test {
         let task_ctx = session_ctx.task_ctx();
         let output_final = agg_exec_final.execute(0, task_ctx)?;
         let batches = datafusion::physical_plan::common::collect(output_final).await?;
-        let expected = vec![
+        let expected = [
             "+---+--------------+--------------+--------------+--------------+----------------+----------------------+---------------------+--------------------------+-------------------------+------------------+",
             "| c | agg_expr_sum | agg_expr_avg | agg_expr_max | agg_expr_min | agg_expr_count | agg_expr_collectlist | agg_expr_collectset | agg_expr_collectlist_nil | agg_expr_collectset_nil | agg_agg_firstign |",
             "+---+--------------+--------------+--------------+--------------+----------------+----------------------+---------------------+--------------------------+-------------------------+------------------+",
@@ -765,7 +767,7 @@ mod fuzztest {
         let partial_agg = Arc::new(AggExec::try_new(
             HashAgg,
             vec![GroupingExpr {
-                field_name: format!("key"),
+                field_name: "key".to_string(),
                 expr: phys_expr::col("key", &schema)?,
             }],
             vec![
@@ -792,7 +794,7 @@ mod fuzztest {
         let final_agg = Arc::new(AggExec::try_new(
             HashAgg,
             vec![GroupingExpr {
-                field_name: format!("key"),
+                field_name: "key".to_string(),
                 expr: phys_expr::col("key", &schema)?,
             }],
             vec![

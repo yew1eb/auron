@@ -203,6 +203,7 @@ impl<W: Write> IoCompressionWriter<W> {
     fn finish_internal(&mut self) -> Result<()> {
         match self {
             IoCompressionWriter::LZ4(w) => {
+                #[allow(clippy::bind_instead_of_map)]
                 w.try_finish()
                     .or_else(|_| df_execution_err!("ipc compression error"))?;
             }
@@ -272,7 +273,7 @@ fn io_compression_codec() -> &'static str {
             if is_jni_bridge_inited() {
                 conf::SPARK_IO_COMPRESSION_CODEC.value()
             } else {
-                Ok(format!("lz4")) // for testing
+                Ok("lz4".to_string()) // for testing
             }
         })
         .expect("error reading spark.io.compression.codec")
@@ -281,7 +282,7 @@ fn io_compression_codec() -> &'static str {
 
 #[derive(Default)]
 struct VecBuffer {
-    vec: Box<Vec<u8>>,
+    vec: Vec<u8>,
 }
 
 struct VecBufferWrite {
@@ -311,7 +312,7 @@ impl VecBuffer {
 
     fn writer(&mut self) -> VecBufferWrite {
         VecBufferWrite {
-            unsafe_inner: &mut *self.vec as *mut Vec<u8>,
+            unsafe_inner: &mut self.vec as *mut Vec<u8>,
         }
     }
 }

@@ -34,6 +34,7 @@ use datafusion::{
 use datafusion_ext_commons::df_execution_err;
 
 #[derive(Debug, Eq, Hash)]
+#[allow(clippy::derived_hash_with_manual_eq)]
 pub struct StringStartsWithExpr {
     expr: PhysicalExprRef,
     prefix: String,

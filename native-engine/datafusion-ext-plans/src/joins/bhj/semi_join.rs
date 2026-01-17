@@ -127,9 +127,9 @@ impl<const P: JoinerParams> SemiJoiner<P> {
         let probed_key_columns: Vec<ArrayRef> = probed_key_exprs
             .iter()
             .map(|expr| {
-                Ok(expr
+                expr
                     .evaluate(probed_batch)?
-                    .into_array(probed_batch.num_rows())?)
+                    .into_array(probed_batch.num_rows())
             })
             .collect::<Result<_>>()?;
         Ok(probed_key_columns)
@@ -232,8 +232,7 @@ impl<const P: JoinerParams> Joiner for SemiJoiner<P> {
                         if let Some(&map_idx) = eqs.next() {
                             if P.probe_is_join_side {
                                 probed_joined.set(row_idx, true);
-                            } else {
-                                if !map_joined[map_idx as usize] {
+                            } else if !map_joined[map_idx as usize] {
                                     map_joined.set(map_idx as usize, true);
                                     for &map_idx in eqs {
                                         map_joined.set(map_idx as usize, true);
@@ -242,7 +241,6 @@ impl<const P: JoinerParams> Joiner for SemiJoiner<P> {
                                 // otherwise all map records with this key
                                 // should
                                 // have already been joined
-                            }
                         }
                     }
                     _ => {} // map_value.is_empty()

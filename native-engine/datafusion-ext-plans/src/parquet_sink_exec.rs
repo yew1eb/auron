@@ -327,6 +327,7 @@ fn rfind_part_values(batch: &RecordBatch, part_values: &[ScalarValue]) -> Result
     Ok(0)
 }
 
+#[allow(deprecated)] // set_max_statistics_size
 fn parse_writer_props(prop_kvs: &[(String, String)]) -> WriterProperties {
     let mut builder = WriterProperties::builder();
 
@@ -366,7 +367,7 @@ fn parse_writer_props(prop_kvs: &[(String, String)]) -> WriterProperties {
                     "PARQUET_1_0" => WriterVersion::PARQUET_1_0,
                     "PARQUET_2_0" => WriterVersion::PARQUET_2_0,
                     _ => {
-                        log::warn!("unsupported parquet writer version: {}", value);
+                        log::warn!("unsupported parquet writer version: {value}");
                         WriterVersion::PARQUET_1_0
                     }
                 })
@@ -390,7 +391,7 @@ fn parse_writer_props(prop_kvs: &[(String, String)]) -> WriterProperties {
                         Compression::ZSTD(ZstdLevel::try_new(level).unwrap_or_default())
                     }
                     _ => {
-                        log::warn!("unsupported parquet compression: {}", value);
+                        log::warn!("unsupported parquet compression: {value}");
                         Compression::UNCOMPRESSED
                     }
                 })
@@ -454,7 +455,7 @@ impl PartWriter {
 
     fn write(&mut self, batch: &RecordBatch) -> Result<()> {
         let row_group_block_size = self.parquet_sink_context.row_group_block_size;
-        self.parquet_writer.write(&batch)?;
+        self.parquet_writer.write(batch)?;
         if self.parquet_writer.in_progress_size() >= row_group_block_size {
             self.parquet_writer.flush()?;
         }
@@ -519,8 +520,8 @@ impl FSDataWriter {
 impl Write for FSDataWriter {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
         self.inner
-            .write_fully(&buf)
-            .map_err(|err| std::io::Error::new(std::io::ErrorKind::Other, err))?;
+            .write_fully(buf)
+            .map_err(|err| std::io::Error::other(err))?;
         self.bytes_written.add(buf.len());
         Ok(buf.len())
     }

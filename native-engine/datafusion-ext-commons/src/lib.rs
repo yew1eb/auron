@@ -72,7 +72,7 @@ macro_rules! downcast_any {
 }
 
 pub fn batch_size() -> usize {
-    const CACHED_BATCH_SIZE: OnceCell<usize> = OnceCell::new();
+    static CACHED_BATCH_SIZE: OnceCell<usize> = OnceCell::new();
     *CACHED_BATCH_SIZE.get_or_init(|| BATCH_SIZE.value().unwrap_or(10000) as usize)
 }
 
@@ -119,7 +119,7 @@ fn compute_batch_size_with_target_mem_size(
 macro_rules! unchecked {
     ($e:expr) => {{
         // safety: bypass bounds checking, used in performance critical path
-        #[allow(unused_unsafe)]
+        #[allow(unused_unsafe, clippy::macro_metavars_in_unsafe)]
         unsafe {
             unchecked_index::unchecked_index($e)
         }
@@ -130,7 +130,7 @@ macro_rules! unchecked {
 macro_rules! assume {
     ($e:expr) => {{
         // safety: use assume
-        #[allow(unused_unsafe)]
+        #[allow(unused_unsafe, clippy::macro_metavars_in_unsafe)]
         unsafe {
             std::intrinsics::assume($e)
         }
@@ -186,6 +186,8 @@ pub trait UninitializedInit<T> {
 }
 
 impl<T: Copy> UninitializedInit<Vec<T>> for Vec<T> {
+
+    #[allow(clippy::uninit_vec)]
     fn uninitialized_init(len: usize) -> Vec<T> {
         let mut v = Vec::with_capacity(len);
         unsafe { v.set_len(len) };
@@ -194,6 +196,8 @@ impl<T: Copy> UninitializedInit<Vec<T>> for Vec<T> {
 }
 
 impl<T: Copy, const N: usize> UninitializedInit<SmallVec<T, N>> for SmallVec<T, N> {
+
+    #[allow(clippy::uninit_vec)]
     fn uninitialized_init(len: usize) -> SmallVec<T, N> {
         let mut v = SmallVec::with_capacity(len);
         unsafe { v.set_len(len) };
@@ -209,6 +213,7 @@ pub trait SliceAsRawBytes {
 impl<T: Sized + Copy> SliceAsRawBytes for [T] {
     fn as_raw_bytes<'a>(&self) -> &'a [u8] {
         let bytes_ptr = self.as_ptr() as *const u8;
+        #[allow(clippy::manual_slice_size_calculation)]
         unsafe {
             // safety: access raw bytes
             std::slice::from_raw_parts(bytes_ptr, size_of::<T>() * self.len())
@@ -217,6 +222,7 @@ impl<T: Sized + Copy> SliceAsRawBytes for [T] {
 
     fn as_raw_bytes_mut<'a>(&mut self) -> &'a mut [u8] {
         let bytes_ptr = self.as_mut_ptr() as *mut u8;
+        #[allow(clippy::manual_slice_size_calculation)]
         unsafe {
             // safety: access raw bytes
             std::slice::from_raw_parts_mut(bytes_ptr, size_of::<T>() * self.len())
