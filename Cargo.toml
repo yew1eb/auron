@@ -28,7 +28,6 @@ members = [
 ]
 
 [workspace.lints.clippy]
-expect_fun_call = "allow"
 
 unwrap_used = "deny"
 panic = "deny"
