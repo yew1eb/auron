@@ -365,6 +365,7 @@ impl AccColumn for AccUDAFBufferRowsColumn {
         self
     }
 
+    #[allow(clippy::panic)] // Temporarily allow panic to refactor to Result later
     fn resize(&mut self, len: usize) {
         match jni_call!(SparkUDAFWrapperContext(self.jcontext.as_obj())
             .resize(self.obj.as_obj(), len as i32)-> ())
@@ -376,6 +377,7 @@ impl AccColumn for AccUDAFBufferRowsColumn {
 
     fn shrink_to_fit(&mut self) {}
 
+    #[allow(clippy::panic)] // Temporarily allow panic to refactor to Result later
     fn num_records(&self) -> usize {
         match jni_call!(SparkUDAFWrapperContext(self.jcontext.as_obj())
             .numRecords(self.obj.as_obj()) -> i32)

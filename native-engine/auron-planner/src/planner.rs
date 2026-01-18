@@ -108,6 +108,7 @@ pub struct PhysicalPlanner {
     partition_id: usize,
 }
 
+#[allow(clippy::panic)] // Temporarily allow panic to refactor to Result later
 impl PhysicalPlanner {
     pub fn new(partition_id: usize) -> Self {
         Self { partition_id }

@@ -56,6 +56,7 @@ pub fn create_hashes<T: num::PrimInt>(
     hash_buffer
 }
 
+#[allow(clippy::panic)] // Temporarily allow panic to refactor to Result later
 #[inline]
 fn hash_array<T: num::PrimInt>(
     array: &ArrayRef,
@@ -245,6 +246,7 @@ fn create_hashes_dictionary<K: ArrowDictionaryKeyType, T: num::PrimInt>(
     }
 }
 
+#[allow(clippy::panic)] // Temporarily allow panic to refactor to Result later
 fn hash_one<T: num::PrimInt>(
     col: &ArrayRef,
     idx: usize,
