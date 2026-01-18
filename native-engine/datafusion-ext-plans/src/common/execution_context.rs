@@ -76,6 +76,7 @@ pub struct ExecutionContext {
     input_stat_metrics: Arc<OnceCell<Option<InputBatchStatistics>>>,
 }
 
+#[allow(clippy::panic)] // Temporarily allow panic to refactor to Result later
 impl ExecutionContext {
     pub fn new(
         task_ctx: Arc<TaskContext>,
@@ -501,7 +502,6 @@ impl ExecutionContext {
         })
     }
 
-    #[allow(clippy::panic)] // Temporarily allow panic to refactor to Result later
     fn output_with_sender_impl<
         T: RecordBatchWithPayload,
         Fut: Future<Output = Result<()>> + Send,
@@ -691,6 +691,7 @@ pub struct WrappedSender<T: RecordBatchWithPayload> {
     exclude_time: OnceCell<Time>,
 }
 
+#[allow(clippy::panic)] // Temporarily allow panic to refactor to Result later
 impl<T: RecordBatchWithPayload> WrappedSender<T> {
     pub fn new(exec_ctx: Arc<ExecutionContext>, sender: Sender<Result<T>>) -> Arc<Self> {
         let wrapped = Arc::new(Self {
@@ -711,7 +712,6 @@ impl<T: RecordBatchWithPayload> WrappedSender<T> {
         self.exclude_time.get_or_init(|| exclude_time.clone());
     }
 
-    #[allow(clippy::panic)] // Temporarily allow panic to refactor to Result later
     pub async fn send(&self, batch: T) {
         if batch.is_empty() {
             return;
