@@ -30,6 +30,7 @@ trait BaseAuronSQLSuite extends SharedSparkSession {
       .set("spark.memory.offHeap.enabled", "false")
       .set("spark.auron.enable", "true")
       .set("spark.ui.enabled", "false")
+      // Avoid the code size overflow error in Spark code generation.
+      .set("spark.sql.codegen.wholeStage", "false")
   }
-
 }
