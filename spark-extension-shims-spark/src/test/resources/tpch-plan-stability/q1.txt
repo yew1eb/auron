@@ -1,0 +1,137 @@
+== Physical Plan ==
+AdaptiveSparkPlan (23)
++- == Final Plan ==
+   NativeSort (14)
+   +- ConvertToNative (13)
+      +- AQEShuffleRead (12)
+         +- ShuffleQueryStage (11), Statistics(sizeInBytes=672.0 B, rowCount=4)
+            +- Exchange (10)
+               +- * HashAggregate (9)
+                  +- AQEShuffleRead (8)
+                     +- ShuffleQueryStage (7), Statistics(sizeInBytes=1088.0 B, rowCount=4)
+                        +- Exchange (6)
+                           +- * HashAggregate (5)
+                              +- NativeProject (4)
+                                 +- NativeFilter (3)
+                                    +- InputAdapter (2)
+                                       +- NativeParquetScan  (1)
++- == Initial Plan ==
+   Sort (22)
+   +- Exchange (21)
+      +- HashAggregate (20)
+         +- Exchange (19)
+            +- HashAggregate (18)
+               +- Project (17)
+                  +- Filter (16)
+                     +- Scan parquet  (15)
+
+
+(15) Scan parquet 
+Output [7]: [l_quantity#1, l_extendedprice#2, l_discount#3, l_tax#4, l_returnflag#5, l_linestatus#6, l_shipdate#7]
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(l_shipdate), LessThanOrEqual(l_shipdate,1998-09-02)]
+ReadSchema: struct<l_quantity:decimal(12,2),l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_tax:decimal(12,2),l_returnflag:string,l_linestatus:string,l_shipdate:date>
+
+(2) InputAdapter
+Input [7]: [l_quantity#1, l_extendedprice#2, l_discount#3, l_tax#4, l_returnflag#5, l_linestatus#6, l_shipdate#7]
+Arguments: [#1, #2, #3, #4, #5, #6, #7]
+
+(3) NativeFilter
+Input [7]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6, #7#7]
+Condition : (isnotnull(l_shipdate#7) AND (l_shipdate#7 <= 1998-09-02))
+
+(4) NativeProject
+Output [6]: [l_quantity#1, l_extendedprice#2, l_discount#3, l_tax#4, l_returnflag#5, l_linestatus#6]
+Input [7]: [#1#1, #2#2, #3#3, #4#4, #5#5, #6#6, #7#7]
+
+(5) HashAggregate [codegen id : 1]
+Input [6]: [l_quantity#1, l_extendedprice#2, l_discount#3, l_tax#4, l_returnflag#5, l_linestatus#6]
+Keys [2]: [l_returnflag#5, l_linestatus#6]
+Functions [8]: [partial_sum(l_quantity#1), partial_sum(l_extendedprice#2), partial_sum((l_extendedprice#2 * (1 - l_discount#3))), partial_sum(((l_extendedprice#2 * (1 - l_discount#3)) * (1 + l_tax#4))), partial_avg(l_quantity#1), partial_avg(l_extendedprice#2), partial_avg(l_discount#3), partial_count(1)]
+Aggregate Attributes [15]: [sum#8, isEmpty#9, sum#10, isEmpty#11, sum#12, isEmpty#13, sum#14, isEmpty#15, sum#16, count#17, sum#18, count#19, sum#20, count#21, count#22]
+Results [17]: [l_returnflag#5, l_linestatus#6, sum#23, isEmpty#24, sum#25, isEmpty#26, sum#27, isEmpty#28, sum#29, isEmpty#30, sum#31, count#32, sum#33, count#34, sum#35, count#36, count#37]
+
+(6) Exchange
+Input [17]: [l_returnflag#5, l_linestatus#6, sum#23, isEmpty#24, sum#25, isEmpty#26, sum#27, isEmpty#28, sum#29, isEmpty#30, sum#31, count#32, sum#33, count#34, sum#35, count#36, count#37]
+Arguments: hashpartitioning(l_returnflag#5, l_linestatus#6, 5), ENSURE_REQUIREMENTS, [plan_id=1]
+
+(7) ShuffleQueryStage
+Output [17]: [l_returnflag#5, l_linestatus#6, sum#23, isEmpty#24, sum#25, isEmpty#26, sum#27, isEmpty#28, sum#29, isEmpty#30, sum#31, count#32, sum#33, count#34, sum#35, count#36, count#37]
+Arguments: X
+
+(8) AQEShuffleRead
+Input [17]: [l_returnflag#5, l_linestatus#6, sum#23, isEmpty#24, sum#25, isEmpty#26, sum#27, isEmpty#28, sum#29, isEmpty#30, sum#31, count#32, sum#33, count#34, sum#35, count#36, count#37]
+Arguments: coalesced
+
+(9) HashAggregate [codegen id : 2]
+Input [17]: [l_returnflag#5, l_linestatus#6, sum#23, isEmpty#24, sum#25, isEmpty#26, sum#27, isEmpty#28, sum#29, isEmpty#30, sum#31, count#32, sum#33, count#34, sum#35, count#36, count#37]
+Keys [2]: [l_returnflag#5, l_linestatus#6]
+Functions [8]: [sum(l_quantity#1), sum(l_extendedprice#2), sum((l_extendedprice#2 * (1 - l_discount#3))), sum(((l_extendedprice#2 * (1 - l_discount#3)) * (1 + l_tax#4))), avg(l_quantity#1), avg(l_extendedprice#2), avg(l_discount#3), count(1)]
+Aggregate Attributes [8]: [sum(l_quantity#1)#38, sum(l_extendedprice#2)#39, sum((l_extendedprice#2 * (1 - l_discount#3)))#40, sum(((l_extendedprice#2 * (1 - l_discount#3)) * (1 + l_tax#4)))#41, avg(l_quantity#1)#42, avg(l_extendedprice#2)#43, avg(l_discount#3)#44, count(1)#45]
+Results [10]: [l_returnflag#5, l_linestatus#6, sum(l_quantity#1)#38 AS sum_qty#46, sum(l_extendedprice#2)#39 AS sum_base_price#47, sum((l_extendedprice#2 * (1 - l_discount#3)))#40 AS sum_disc_price#48, sum(((l_extendedprice#2 * (1 - l_discount#3)) * (1 + l_tax#4)))#41 AS sum_charge#49, avg(l_quantity#1)#42 AS avg_qty#50, avg(l_extendedprice#2)#43 AS avg_price#51, avg(l_discount#3)#44 AS avg_disc#52, count(1)#45 AS count_order#53]
+
+(10) Exchange
+Input [10]: [l_returnflag#5, l_linestatus#6, sum_qty#46, sum_base_price#47, sum_disc_price#48, sum_charge#49, avg_qty#50, avg_price#51, avg_disc#52, count_order#53]
+Arguments: rangepartitioning(l_returnflag#5 ASC NULLS FIRST, l_linestatus#6 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=2]
+
+(11) ShuffleQueryStage
+Output [10]: [l_returnflag#5, l_linestatus#6, sum_qty#46, sum_base_price#47, sum_disc_price#48, sum_charge#49, avg_qty#50, avg_price#51, avg_disc#52, count_order#53]
+Arguments: X
+
+(12) AQEShuffleRead
+Input [10]: [l_returnflag#5, l_linestatus#6, sum_qty#46, sum_base_price#47, sum_disc_price#48, sum_charge#49, avg_qty#50, avg_price#51, avg_disc#52, count_order#53]
+Arguments: coalesced
+
+(13) ConvertToNative
+Input [10]: [l_returnflag#5, l_linestatus#6, sum_qty#46, sum_base_price#47, sum_disc_price#48, sum_charge#49, avg_qty#50, avg_price#51, avg_disc#52, count_order#53]
+
+(14) NativeSort
+Input [10]: [l_returnflag#5, l_linestatus#6, sum_qty#46, sum_base_price#47, sum_disc_price#48, sum_charge#49, avg_qty#50, avg_price#51, avg_disc#52, count_order#53]
+Arguments: [l_returnflag#5 ASC NULLS FIRST, l_linestatus#6 ASC NULLS FIRST], true
+
+(15) Scan parquet 
+Output [7]: [l_quantity#1, l_extendedprice#2, l_discount#3, l_tax#4, l_returnflag#5, l_linestatus#6, l_shipdate#7]
+Batched: true
+Location: InMemoryFileIndex [file:/<warehouse_dir>]
+PushedFilters: [IsNotNull(l_shipdate), LessThanOrEqual(l_shipdate,1998-09-02)]
+ReadSchema: struct<l_quantity:decimal(12,2),l_extendedprice:decimal(12,2),l_discount:decimal(12,2),l_tax:decimal(12,2),l_returnflag:string,l_linestatus:string,l_shipdate:date>
+
+(16) Filter
+Input [7]: [l_quantity#1, l_extendedprice#2, l_discount#3, l_tax#4, l_returnflag#5, l_linestatus#6, l_shipdate#7]
+Condition : (isnotnull(l_shipdate#7) AND (l_shipdate#7 <= 1998-09-02))
+
+(17) Project
+Output [6]: [l_quantity#1, l_extendedprice#2, l_discount#3, l_tax#4, l_returnflag#5, l_linestatus#6]
+Input [7]: [l_quantity#1, l_extendedprice#2, l_discount#3, l_tax#4, l_returnflag#5, l_linestatus#6, l_shipdate#7]
+
+(18) HashAggregate
+Input [6]: [l_quantity#1, l_extendedprice#2, l_discount#3, l_tax#4, l_returnflag#5, l_linestatus#6]
+Keys [2]: [l_returnflag#5, l_linestatus#6]
+Functions [8]: [partial_sum(l_quantity#1), partial_sum(l_extendedprice#2), partial_sum((l_extendedprice#2 * (1 - l_discount#3))), partial_sum(((l_extendedprice#2 * (1 - l_discount#3)) * (1 + l_tax#4))), partial_avg(l_quantity#1), partial_avg(l_extendedprice#2), partial_avg(l_discount#3), partial_count(1)]
+Aggregate Attributes [15]: [sum#8, isEmpty#9, sum#10, isEmpty#11, sum#12, isEmpty#13, sum#14, isEmpty#15, sum#16, count#17, sum#18, count#19, sum#20, count#21, count#22]
+Results [17]: [l_returnflag#5, l_linestatus#6, sum#23, isEmpty#24, sum#25, isEmpty#26, sum#27, isEmpty#28, sum#29, isEmpty#30, sum#31, count#32, sum#33, count#34, sum#35, count#36, count#37]
+
+(19) Exchange
+Input [17]: [l_returnflag#5, l_linestatus#6, sum#23, isEmpty#24, sum#25, isEmpty#26, sum#27, isEmpty#28, sum#29, isEmpty#30, sum#31, count#32, sum#33, count#34, sum#35, count#36, count#37]
+Arguments: hashpartitioning(l_returnflag#5, l_linestatus#6, 5), ENSURE_REQUIREMENTS, [plan_id=3]
+
+(20) HashAggregate
+Input [17]: [l_returnflag#5, l_linestatus#6, sum#23, isEmpty#24, sum#25, isEmpty#26, sum#27, isEmpty#28, sum#29, isEmpty#30, sum#31, count#32, sum#33, count#34, sum#35, count#36, count#37]
+Keys [2]: [l_returnflag#5, l_linestatus#6]
+Functions [8]: [sum(l_quantity#1), sum(l_extendedprice#2), sum((l_extendedprice#2 * (1 - l_discount#3))), sum(((l_extendedprice#2 * (1 - l_discount#3)) * (1 + l_tax#4))), avg(l_quantity#1), avg(l_extendedprice#2), avg(l_discount#3), count(1)]
+Aggregate Attributes [8]: [sum(l_quantity#1)#38, sum(l_extendedprice#2)#39, sum((l_extendedprice#2 * (1 - l_discount#3)))#40, sum(((l_extendedprice#2 * (1 - l_discount#3)) * (1 + l_tax#4)))#41, avg(l_quantity#1)#42, avg(l_extendedprice#2)#43, avg(l_discount#3)#44, count(1)#45]
+Results [10]: [l_returnflag#5, l_linestatus#6, sum(l_quantity#1)#38 AS sum_qty#46, sum(l_extendedprice#2)#39 AS sum_base_price#47, sum((l_extendedprice#2 * (1 - l_discount#3)))#40 AS sum_disc_price#48, sum(((l_extendedprice#2 * (1 - l_discount#3)) * (1 + l_tax#4)))#41 AS sum_charge#49, avg(l_quantity#1)#42 AS avg_qty#50, avg(l_extendedprice#2)#43 AS avg_price#51, avg(l_discount#3)#44 AS avg_disc#52, count(1)#45 AS count_order#53]
+
+(21) Exchange
+Input [10]: [l_returnflag#5, l_linestatus#6, sum_qty#46, sum_base_price#47, sum_disc_price#48, sum_charge#49, avg_qty#50, avg_price#51, avg_disc#52, count_order#53]
+Arguments: rangepartitioning(l_returnflag#5 ASC NULLS FIRST, l_linestatus#6 ASC NULLS FIRST, 5), ENSURE_REQUIREMENTS, [plan_id=4]
+
+(22) Sort
+Input [10]: [l_returnflag#5, l_linestatus#6, sum_qty#46, sum_base_price#47, sum_disc_price#48, sum_charge#49, avg_qty#50, avg_price#51, avg_disc#52, count_order#53]
+Arguments: [l_returnflag#5 ASC NULLS FIRST, l_linestatus#6 ASC NULLS FIRST], true, 0
+
+(23) AdaptiveSparkPlan
+Output [10]: [l_returnflag#5, l_linestatus#6, sum_qty#46, sum_base_price#47, sum_disc_price#48, sum_charge#49, avg_qty#50, avg_price#51, avg_disc#52, count_order#53]
+Arguments: isFinalPlan=true
+
