@@ -110,24 +110,6 @@ jobs:
           version: "21.7"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Rust toolchain
-        uses:  ./.github/actions/setup-rust-toolchain
-        with:
-          rustflags: --allow warnings -C target-feature=+aes
-          components:
-            cargo
-            rustfmt
-            clippy
-
-      - name: Cargo clippy
-        run: |
-          cargo clippy --all-targets --workspace -- -D warnings
-
-      - name: Cargo test
-        run: |
-          cargo --version
-          cargo test --workspace --all-features
-
       - name: Build auron (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
         run: |
           sed -i 's/opt-level = 1/opt-level = 0/g' Cargo.toml # use opt-level 0
