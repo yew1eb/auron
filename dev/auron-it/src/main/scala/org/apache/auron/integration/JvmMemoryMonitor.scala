@@ -20,6 +20,9 @@ import java.lang.management.ManagementFactory
 import java.text.SimpleDateFormat
 import java.util.{Date, Timer, TimerTask}
 
+import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
+import scala.util.Try
+
 // scalastyle:off
 object JvmMemoryMonitor {
   private val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -28,39 +31,50 @@ object JvmMemoryMonitor {
     val timer = new Timer("JVM-Memory-Monitor", true)
     timer.scheduleAtFixedRate(
       new TimerTask {
-        override def run(): Unit = printJvmMemoryInfo()
+        override def run(): Unit = printMemoryInfo()
       },
       0,
       2000)
   }
 
-  def printJvmMemoryInfo(): Unit = {
-    val runtime = Runtime.getRuntime()
+  private def printMemoryInfo(): Unit = {
     val mb = 1024 * 1024
+    val runtime = Runtime.getRuntime()
 
-    // Basic memory metrics (MB)
-    val totalMemory = runtime.totalMemory() / mb // Total memory allocated to JVM
-    val freeMemory = runtime.freeMemory() / mb // Free memory in JVM
-    val usedMemory = totalMemory - freeMemory // Used memory in JVM
-    val maxMemory = runtime.maxMemory() / mb // Maximum memory JVM can use
-    val memoryUsagePercent = (usedMemory.toDouble / maxMemory * 100).formatted("%.2f")
+    val jvmUsed = (runtime.totalMemory() - runtime.freeMemory()) / mb
+    val jvmMax = runtime.maxMemory() / mb
 
-    // Heap and Non-Heap memory details (more accurate)
-    val memoryMXBean = ManagementFactory.getMemoryMXBean()
-    val heapUsed = memoryMXBean.getHeapMemoryUsage().getUsed() / mb
-    val nonHeapUsed = memoryMXBean.getNonHeapMemoryUsage().getUsed() / mb
+    val mxBean = ManagementFactory.getMemoryMXBean()
+    val heapUsed = mxBean.getHeapMemoryUsage().getUsed() / mb
+    val nonHeapUsed = mxBean.getNonHeapMemoryUsage().getUsed() / mb
 
-    // Get current timestamp
+    val directUsed = ManagementFactory.getMemoryPoolMXBeans
+      .filter(_.getName.contains("Direct"))
+      .map(_.getUsage.getUsed / mb)
+      .headOption
+      .getOrElse(0L)
+
+    val memInfo = Try {
+      scala.io.Source
+        .fromFile("/proc/meminfo")
+        .getLines()
+        .map(_.split("\\s+"))
+        .filter(arr => arr(0) == "MemTotal:" || arr(0) == "MemUsed:" || arr(0) == "MemAvailable:")
+        .map(arr => (arr(0).replace(":", ""), arr(1).toLong / 1024))
+        .toMap
+    }.getOrElse(Map.empty[String, Long])
+
+    val sysTotal = memInfo.getOrElse("MemTotal", 0L)
+    val sysUsed = sysTotal - memInfo.getOrElse("MemAvailable", 0L)
+
     val currentTime = dateFormat.format(new Date())
 
-    // Print formatted memory info
     println(s"[$currentTime]")
-    println(s"\n=== JVM Memory Monitor ===")
+    println(s"\n=== Memory Monitor ===")
     println(
-      s"Total Memory: $totalMemory MB | Used Memory: $usedMemory MB | Free Memory: $freeMemory MB")
-    println(s"Max Memory: $maxMemory MB | Memory Usage: $memoryUsagePercent%")
-    println(s"Heap Memory Used: $heapUsed MB | Non-Heap Memory Used: $nonHeapUsed MB")
-    println("============================================")
+      s"JVM: Used=$jvmUsed MB (Max=$jvmMax MB) | Heap=$heapUsed MB | Non-Heap=$nonHeapUsed MB | Off-Heap=$directUsed MB")
+    println(s"OS (Ubuntu): Used=$sysUsed MB (Total=$sysTotal MB)")
+    println("----------------------------------------")
   }
   // scalastyle:on
 }

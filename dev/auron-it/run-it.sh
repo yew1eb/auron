@@ -69,6 +69,8 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
+free -h
+
 exec $SPARK_HOME/bin/spark-submit \
   --driver-memory 8g \
   --conf spark.driver.memoryOverhead=6g \
