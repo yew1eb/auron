@@ -71,6 +71,7 @@ object Main {
     OParser.parse(parser, args, SuiteArgs())
   }
 
+  // scalastyle:off
   def main(mainArgs: Array[String]): Unit = {
     parseArgs(mainArgs) match {
       case Some(args) =>
@@ -80,6 +81,8 @@ object Main {
         }
 
         printConfigurationSummary(args)
+
+        JvmMemoryMonitor.start()
 
         val suite = createSuite(args)
         var exitCode = 0
@@ -124,3 +127,4 @@ object Main {
     println("")
   }
 }
+// scalastyle:on

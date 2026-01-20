@@ -131,7 +131,6 @@ jobs:
 
       - name: Build auron (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
         run: |
-          sed -i 's/opt-level = 1/opt-level = 0/g' Cargo.toml # use opt-level 0
           rm -f .build-checksum_*.cache
           
           SPARK_NUMBER="${{ inputs.sparkver }}"
@@ -185,7 +184,7 @@ jobs:
           path: target/auron-${{ inputs.sparkver }}_${{ inputs.scalaver }}-pre-*.jar
           overwrite: true
       - name: Upload auron maven artifacts (Spark ${{ inputs.sparkver }}, Scala ${{ inputs.scalaver }}, JDK ${{ inputs.javaver }})
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: auron-artifacts-${{ inputs.sparkver }}_${{ inputs.scalaver }}-jdk-${{ inputs.javaver
             }}${{ inputs.celebornver && format('-{0}', inputs.celebornver) || ''
