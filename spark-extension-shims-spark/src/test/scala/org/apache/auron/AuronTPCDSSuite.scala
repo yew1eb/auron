@@ -16,18 +16,19 @@
  */
 package org.apache.auron
 
+import java.io.File
+import java.nio.charset.StandardCharsets
+
+import scala.collection.mutable
+import scala.util.matching.Regex
+
 import org.apache.commons.io.FileUtils
 import org.apache.spark.SparkConf
+import org.apache.spark.sql.{AuronQueryTest, DataFrame, Row}
 import org.apache.spark.sql.auron.Shims
 import org.apache.spark.sql.execution.FormattedMode
 import org.apache.spark.sql.test.SharedSparkSession
 import org.apache.spark.sql.types.DoubleType
-import org.apache.spark.sql.{AuronQueryTest, DataFrame, Row}
-
-import java.io.File
-import java.nio.charset.StandardCharsets
-import scala.collection.mutable
-import scala.util.matching.Regex
 
 /**
  * // Build [tpcds-kit](https://github.com/databricks/tpcds-kit) cd /tmp && git clone
@@ -169,7 +170,7 @@ abstract class AuronTPCDSSuite extends AuronQueryTest with SharedSparkSession {
         "spark.shuffle.manager",
         "org.apache.spark.sql.execution.auron.shuffle.AuronShuffleManager")
       .set("spark.memory.offHeap.enabled", "false")
-      .set("spark.auron.decimal.arithOp.enabled", "true")
+      .set("spark.auron.native.log.level", "warn")
       .set("spark.auron.enable", "true")
   }
 
@@ -405,6 +406,10 @@ abstract class AuronTPCDSSuite extends AuronQueryTest with SharedSparkSession {
       val sqlStr = FileUtils.readFileToString(
         new File(s"$tpcdsQueriesPath/$sqlNum.sql"),
         StandardCharsets.UTF_8)
+
+      //sql(sqlStr).collect()
+      //checkSparkAnswer(sqlStr)
+
       verifyResult(sql(sqlStr), sqlNum, tpcdsResultsPath)
       //verifyPlan(sql(sqlStr), sqlNum, tpcdsPlanPath)
       //checkSparkAnswer(sqlStr)

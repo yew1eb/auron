@@ -16,17 +16,18 @@
  */
 package org.apache.spark.sql.auron
 
+import java.io.File
+import java.nio.charset.StandardCharsets
+
+import scala.collection.mutable
+import scala.util.matching.Regex
+
 import org.apache.commons.io.FileUtils
 import org.apache.spark.SparkConf
+import org.apache.spark.sql.{DataFrame, QueryTest, Row}
 import org.apache.spark.sql.execution.FormattedMode
 import org.apache.spark.sql.test.SharedSparkSession
 import org.apache.spark.sql.types.DoubleType
-import org.apache.spark.sql.{DataFrame, QueryTest, Row}
-
-import java.io.File
-import java.nio.charset.StandardCharsets
-import scala.collection.mutable
-import scala.util.matching.Regex
 
 abstract class AuronTPCHSuite extends QueryTest with SharedSparkSession {
 
