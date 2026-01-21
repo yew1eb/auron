@@ -413,7 +413,7 @@ abstract class AuronTPCDSSuite extends AuronQueryTest with SharedSparkSession {
       verifyResult(sql(sqlStr), sqlNum, tpcdsResultsPath)
       //verifyPlan(sql(sqlStr), sqlNum, tpcdsPlanPath)
       //checkSparkAnswer(sqlStr)
-      Thread.sleep(100000000)
+      //Thread.sleep(100000000)
     }
   }
 
