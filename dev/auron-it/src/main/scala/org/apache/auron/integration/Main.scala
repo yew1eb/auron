@@ -82,6 +82,8 @@ object Main {
 
         printConfigurationSummary(args)
 
+        JvmMemoryMonitor.start()
+
         val suite = createSuite(args)
         var exitCode = 0
         try {
