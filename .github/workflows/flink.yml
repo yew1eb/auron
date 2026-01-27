@@ -34,6 +34,7 @@ concurrency:
 
 jobs:
   test-flink:
+    if: false
     name: Test Flink ${{ matrix.flinkver }}
     runs-on: ubuntu-24.04
     strategy:

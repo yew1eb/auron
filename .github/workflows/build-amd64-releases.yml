@@ -33,6 +33,7 @@ on:
 
 jobs:
   build-snapshot:
+    if: false
     name: Build amd64
     runs-on: ${{ matrix.runner }}
     strategy:

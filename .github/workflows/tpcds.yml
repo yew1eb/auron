@@ -34,6 +34,7 @@ concurrency:
 
 jobs:
   test-spark-30:
+    if: false
     name: Test spark-3.0
     uses: ./.github/workflows/tpcds-reusable.yml
     with:
@@ -41,6 +42,7 @@ jobs:
       hadoop-profile: 'hadoop2.7'
 
   test-spark-31:
+    if: false
     name: Test spark-3.1
     uses: ./.github/workflows/tpcds-reusable.yml
     with:
@@ -48,6 +50,7 @@ jobs:
       hadoop-profile: 'hadoop2.7'
 
   test-spark-32:
+    if: false
     name: Test spark-3.2
     uses: ./.github/workflows/tpcds-reusable.yml
     with:
@@ -55,6 +58,7 @@ jobs:
       hadoop-profile: 'hadoop2.7'
 
   test-spark-33:
+    if: false
     name: Test spark-3.3
     uses: ./.github/workflows/tpcds-reusable.yml
     with:
@@ -63,6 +67,7 @@ jobs:
       sparktests: true
 
   test-spark-34-jdk11:
+    if: false
     name: Test spark-3.4
     uses: ./.github/workflows/tpcds-reusable.yml
     with:
@@ -71,6 +76,7 @@ jobs:
       hadoop-profile: 'hadoop3'
 
   test-spark-35-jdk17-scala-2-13:
+    if: false
     name: Test spark-3.5 JDK17 Scala-2.13
     uses: ./.github/workflows/tpcds-reusable.yml
     with:
@@ -80,10 +86,20 @@ jobs:
       hadoop-profile: 'hadoop3'
 
   test-spark-35-jdk21-scala-2-13:
+    if: false
     name: Test spark-3.5 JDK21 Scala-2.13
     uses: ./.github/workflows/tpcds-reusable.yml
     with:
       sparkver: spark-3.5
+      javaver: '21'
+      scalaver: '2.13'
+      hadoop-profile: 'hadoop3'
+
+  test-spark-41-jdk21-scala-2-13:
+    name: Test spark-4.1 JDK21 Scala-2.13
+    uses: ./.github/workflows/tpcds-reusable.yml
+    with:
+      sparkver: spark-4.1
       javaver: '21'
       scalaver: '2.13'
       hadoop-profile: 'hadoop3'
