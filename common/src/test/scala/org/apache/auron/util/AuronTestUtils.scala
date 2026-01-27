@@ -27,4 +27,5 @@ object AuronTestUtils {
   lazy val isSparkV33OrGreater: Boolean = SPARK_RUNTIME_VERSION >= "3.3"
   lazy val isSparkV34OrGreater: Boolean = SPARK_RUNTIME_VERSION >= "3.4"
   lazy val isSparkV35OrGreater: Boolean = SPARK_RUNTIME_VERSION >= "3.5"
+  lazy val isSparkV40OrGreater: Boolean = SPARK_RUNTIME_VERSION >= "4.0"
 }

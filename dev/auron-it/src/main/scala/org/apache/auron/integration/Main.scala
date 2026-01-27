@@ -82,6 +82,8 @@ object Main {
 
         printConfigurationSummary(args)
 
+        JvmMemoryMonitor.start()
+
         val suite = createSuite(args)
         var exitCode = 0
         try {
@@ -114,8 +116,8 @@ object Main {
                |Spark Version: ${Shims.get.shimVersion}
                |Data: ${args.dataLocation}
                |Queries: [${args.queryFilter.mkString(", ")}] (${if (args.queryFilter.isEmpty)
-      "all"
-    else args.queryFilter.length} queries)
+                 "all"
+               else args.queryFilter.length} queries)
                |Extra Spark Conf: ${args.extraSparkConf}""".stripMargin)
 
     if (args.auronOnly) println("Mode: Auron-only (skip baseline)")
