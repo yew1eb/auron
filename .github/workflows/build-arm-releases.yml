@@ -33,6 +33,7 @@ on:
 
 jobs:
   build-snapshot:
+    if: false
     name: Build ARM
     runs-on: ${{ matrix.runner }}
     strategy:

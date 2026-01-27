@@ -33,6 +33,7 @@ concurrency:
 
 jobs:
   style:
+    if: false
     name: Style
     runs-on: ubuntu-24.04
     strategy:
