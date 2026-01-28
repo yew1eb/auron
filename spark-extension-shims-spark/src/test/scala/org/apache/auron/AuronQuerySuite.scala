@@ -20,7 +20,7 @@ import org.apache.spark.sql.{AuronQueryTest, Row}
 import org.apache.spark.sql.auron.AuronConf
 import org.apache.spark.sql.execution.joins.auron.plan.NativeBroadcastJoinExec
 
-import org.apache.auron.util.AuronTestUtils
+import org.apache.auron.util.{AuronTestUtils, SparkVersionUtil}
 
 class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQLTestHelper {
   import testImplicits._
@@ -164,6 +164,9 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
   }
 
   test("log function with negative input") {
+    // TODO: Fix flaky codegen cache failures in SPARK-4.x, https://github.com/apache/auron/issues/1961
+    assume(!SparkVersionUtil.isSparkV40OrGreater)
+
     withTable("t1") {
       sql("create table t1 using parquet as select -1 as c1")
       checkSparkAnswerAndOperator("select ln(c1) from t1")
@@ -171,6 +174,9 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
   }
 
   test("floor function with long input") {
+    // TODO: Fix flaky codegen cache failures in SPARK-4.x, https://github.com/apache/auron/issues/1961
+    assume(!SparkVersionUtil.isSparkV40OrGreater)
+
     withTable("t1") {
       sql("create table t1 using parquet as select 1L as c1, 2.2 as c2")
       checkSparkAnswerAndOperator("select floor(c1), floor(c2) from t1")
@@ -210,7 +216,7 @@ class AuronQuerySuite extends AuronQueryTest with BaseAuronSQLSuite with AuronSQ
             withTable("t") {
               sql(s"CREATE EXTERNAL TABLE t(c3 INT, c2 INT) USING ORC LOCATION '$path'")
 
-              val expected = if (forcePositionalEvolution) {
+              if (forcePositionalEvolution) {
                 correctAnswer
               } else {
                 Seq(Row(null, 2), Row(null, 4), Row(null, 6), Row(null, null))
