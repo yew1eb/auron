@@ -19,6 +19,7 @@ package org.apache.spark.sql.auron
 import java.io.File
 import java.util.UUID
 
+import scala.annotation.nowarn
 import scala.collection.mutable
 
 import org.apache.commons.lang3.reflect.FieldUtils
@@ -106,6 +107,7 @@ import org.apache.spark.storage.FileSegment
 import org.apache.auron.{protobuf => pb, sparkver}
 import org.apache.auron.common.AuronBuildInfo
 import org.apache.auron.metric.SparkMetricNode
+import org.apache.auron.spark.configuration.SparkAuronConfiguration
 import org.apache.auron.spark.ui.AuronBuildInfoEvent
 
 class ShimsImpl extends Shims with Logging {
@@ -129,7 +131,7 @@ class ShimsImpl extends Shims with Logging {
   override def initExtension(): Unit = {
     ValidateSparkPlanInjector.inject()
 
-    if (AuronConf.FORCE_SHUFFLED_HASH_JOIN.booleanConf()) {
+    if (SparkAuronConfiguration.FORCE_SHUFFLED_HASH_JOIN.get()) {
       ForceApplyShuffledHashJoinInjector.inject()
     }
 
@@ -142,19 +144,18 @@ class ShimsImpl extends Shims with Logging {
 
   @sparkver("3.0 / 3.1")
   override def initExtension(): Unit = {
-    if (AuronConf.FORCE_SHUFFLED_HASH_JOIN.booleanConf()) {
-      logWarning(s"${AuronConf.FORCE_SHUFFLED_HASH_JOIN.key} is not supported in $shimVersion")
+    if (SparkAuronConfiguration.FORCE_SHUFFLED_HASH_JOIN.get()) {
+      logWarning(
+        s"${SparkAuronConfiguration.FORCE_SHUFFLED_HASH_JOIN.key} is not supported in $shimVersion")
     }
 
   }
 
   // set Auron spark ui if spark.auron.ui.enabled is true
   override def onApplyingExtension(): Unit = {
-    logInfo(
-      " onApplyingExtension get ui_enabled : " + SparkEnv.get.conf
-        .get(AuronConf.UI_ENABLED.key, "true"))
+    logInfo(s"onApplyingExtension get ui_enabled: ${SparkAuronConfiguration.UI_ENABLED.get()}")
 
-    if (SparkEnv.get.conf.get(AuronConf.UI_ENABLED.key, "true").equals("true")) {
+    if (SparkAuronConfiguration.UI_ENABLED.get()) {
       val sparkContext = SparkContext.getActive.getOrElse {
         throw new IllegalStateException("No active spark context found that should not happen")
       }
@@ -286,6 +287,7 @@ class ShimsImpl extends Shims with Logging {
       child: SparkPlan): NativeGenerateBase =
     NativeGenerateExec(generator, requiredChildOutput, outer, generatorOutput, child)
 
+  @sparkver("3.4 / 3.5 / 4.1")
   private def effectiveLimit(rawLimit: Int): Int =
     if (rawLimit == -1) Int.MaxValue else rawLimit
 
@@ -991,6 +993,7 @@ class ShimsImpl extends Shims with Logging {
     }
   }
 
+  @nowarn("cat=unused") // Some params temporarily unused
   @sparkver("3.4 / 3.5 / 4.1")
   private def convertPromotePrecision(
       e: Expression,
@@ -1023,6 +1026,7 @@ class ShimsImpl extends Shims with Logging {
     }
   }
 
+  @nowarn("cat=unused") // Some params temporarily unused
   @sparkver("3.0 / 3.1 / 3.2")
   private def convertBloomFilterAgg(agg: AggregateFunction): Option[pb.PhysicalAggExprNode] = None
 
@@ -1049,6 +1053,7 @@ class ShimsImpl extends Shims with Logging {
     }
   }
 
+  @nowarn("cat=unused") // Some params temporarily unused
   @sparkver("3.0 / 3.1 / 3.2")
   private def convertBloomFilterMightContain(
       e: Expression,
