@@ -22,6 +22,8 @@ import org.apache.commons.io.FileUtils
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.test.SharedSparkSession
 
+import org.apache.auron.spark.configuration.SparkAuronConfiguration
+
 trait BaseAuronSQLSuite extends SharedSparkSession {
   protected val suiteWorkspace: String = getClass.getResource("/").getPath + "auron-tests-workdir"
   protected val warehouseDir: String = suiteWorkspace + "/spark-warehouse"
@@ -58,6 +60,7 @@ trait BaseAuronSQLSuite extends SharedSparkSession {
       .set("spark.auron.enable", "true")
       .set("spark.ui.enabled", "false")
       .set("spark.sql.warehouse.dir", warehouseDir)
+      .set(SparkAuronConfiguration.UDF_SINGLE_CHILD_FALLBACK_ENABLED.key(), "false")
       // Avoid the code size overflow error in Spark code generation.
       .set("spark.sql.codegen.wholeStage", "false")
       .set("spark.sql.codegen.factoryMode", "NO_CODEGEN")
