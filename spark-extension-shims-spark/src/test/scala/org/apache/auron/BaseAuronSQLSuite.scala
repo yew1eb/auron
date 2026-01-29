@@ -41,7 +41,7 @@ trait BaseAuronSQLSuite extends SharedSparkSession {
     // Prepare a clean workspace before SparkSession initialization
     resetSuiteWorkspace()
     super.beforeAll()
-    spark.sparkContext.setLogLevel("WARN")
+    //spark.sparkContext.setLogLevel("WARN")
   }
 
   override def afterAll(): Unit = {
