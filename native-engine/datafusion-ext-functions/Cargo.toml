@@ -38,3 +38,6 @@ serde_json = { workspace = true }
 sonic-rs = { workspace = true }
 chrono = "0.4.43"
 chrono-tz = "0.10.4"
+
+[dev-dependencies]
+criterion = { version = "0.7", features = ["async", "async_tokio", "async_std"] }
