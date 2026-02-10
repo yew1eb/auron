@@ -43,7 +43,7 @@ trait BaseAuronSQLSuite extends SharedSparkSession {
     // Prepare a clean workspace before SparkSession initialization
     resetSuiteWorkspace()
     super.beforeAll()
-    spark.sparkContext.setLogLevel("WARN")
+    spark.sparkContext.setLogLevel("INFO")
   }
 
   override def afterAll(): Unit = {
@@ -59,6 +59,7 @@ trait BaseAuronSQLSuite extends SharedSparkSession {
       .set("spark.memory.offHeap.enabled", "false")
       .set("spark.auron.enable", "true")
       .set("spark.ui.enabled", "false")
+      .set("spark.auron.native.log.level", "warn")
       .set("spark.sql.warehouse.dir", warehouseDir)
       .set("spark.auron.udf.singleChildFallback.enabled", "false")
 
