@@ -69,3 +69,9 @@ procfs = { workspace = true }
 
 [dev-dependencies]
 rand = { workspace = true }
+criterion = { workspace = true}
+
+
+[[bench]]
+name = "shuffle_writer"
+harness = false

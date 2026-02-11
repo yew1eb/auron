@@ -1463,7 +1463,6 @@ version = "0.1.0"
 dependencies = [
  "arrow",
  "auron-jni-bridge",
- "criterion",
  "datafusion",
  "datafusion-ext-commons",
  "itertools 0.14.0",
@@ -1471,7 +1470,6 @@ dependencies = [
  "log",
  "once_cell",
  "parking_lot",
- "rand",
 ]
 
 [[package]]
@@ -1508,6 +1506,7 @@ dependencies = [
  "bytes 1.11.0",
  "bytesize",
  "count-write",
+ "criterion",
  "datafusion",
  "datafusion-datasource",
  "datafusion-datasource-parquet",
