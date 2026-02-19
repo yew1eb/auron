@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::hint::black_box;
 use std::sync::Arc;
 use criterion::{criterion_group, criterion_main, Criterion};
 use datafusion::physical_expr::expressions::{Column};
@@ -27,36 +28,35 @@ use datafusion::physical_plan::test::TestMemoryExec;
 use datafusion_ext_plans::shuffle::Partitioning;
 use datafusion_ext_plans::shuffle_writer_exec::ShuffleWriterExec;
 
-use datafusion::{
-    physical_plan::{common::collect, ExecutionPlan},
-    prelude::SessionContext,
-};
-
+use datafusion::physical_plan::ExecutionPlan;
+use datafusion::execution::TaskContext;
+use futures_util::StreamExt;
 use tokio::runtime::Runtime;
 use auron_memmgr::MemManager;
 
 fn criterion_benchmark(c: &mut Criterion) {
-    MemManager::init(1000000);
+    MemManager::init(1073741824 * 2);
     let mut group = c.benchmark_group("shuffle_writer");
-    group.bench_function("shuffle_writer: end to end",
-            |b| {
-                let ctx = SessionContext::new();
-                let exec = create_shuffle_writer_exec();
-                b.iter(|| {
-                    let task_ctx = ctx.task_ctx();
-                    let stream = exec.execute(0, task_ctx).unwrap();
-                    let rt = Runtime::new().unwrap();
-                    rt.block_on(collect(stream)).unwrap();
-                });
-            },
-        );
 
+    let rt = Runtime::new().unwrap();
+
+    group.bench_function("shuffle_writer: end to end", |b| {
+        let exec = create_shuffle_writer_exec();
+        b.to_async(&rt).iter(|| {
+            black_box(async {
+                let mut stream = exec.execute(0, Arc::new(TaskContext::default())).unwrap();
+                while let Some(batch) = stream.next().await {
+                    let _batch = batch.unwrap();
+                }
+            })
+        })
+    });
     group.finish();
 }
 
 fn create_shuffle_writer_exec(
 ) -> ShuffleWriterExec {
-    let batches = create_batches(8192, 10);
+    let batches = create_batches(81920, 10);
     let schema = batches[0].schema();
     let partitions = &[batches];
     let input = Arc::new(TestMemoryExec::try_new(
@@ -65,7 +65,7 @@ fn create_shuffle_writer_exec(
         None,
     ).unwrap());
 
-    let partitioning = Partitioning::HashPartitioning(vec![Arc::new(Column::new("a", 0))], 16);
+    let partitioning = Partitioning::HashPartitioning(vec![Arc::new(Column::new("c0", 0))], 16);
 
     ShuffleWriterExec::try_new(
         input,
