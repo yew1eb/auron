@@ -156,7 +156,7 @@ class AuronMapredParquetOutputFormat
 
     new FileSinkOperator.RecordWriter {
       override def write(w: Writable): Unit = {
-        ParquetSinkTaskContext.get.processingOutputFiles.offer(finalOutPath.toString)
+        val _ = ParquetSinkTaskContext.get.processingOutputFiles.offer(finalOutPath.toString)
       }
 
       override def close(abort: Boolean): Unit = {}

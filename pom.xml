@@ -386,6 +386,9 @@
             <arg>-feature</arg>
             <arg>-Ywarn-unused</arg>
             <arg>-Xfatal-warnings</arg>
+            <arg>-Ywarn-dead-code</arg>
+            <arg>-Ywarn-numeric-widen</arg>
+            <arg>-Ywarn-value-discard</arg>
 
             <arg>-Wconf:msg=method newInstance in class Class is deprecated:s</arg>
             <arg>-Wconf:msg=class ThreadDeath in package lang is deprecated:s</arg>

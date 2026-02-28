@@ -141,7 +141,7 @@ class ShimsImpl extends Shims with Logging {
     // disable MultiCommutativeOp suggested in spark3.4+
     if (shimVersion >= "spark-3.4") {
       val confName = "spark.sql.analyzer.canonicalization.multiCommutativeOpMemoryOptThreshold"
-      SparkEnv.get.conf.set(confName, Int.MaxValue.toString)
+      val _ = SparkEnv.get.conf.set(confName, Int.MaxValue.toString)
     }
   }
 
@@ -1021,7 +1021,7 @@ class ShimsImpl extends Shims with Logging {
         val numBits = numBitsExpression.eval().asInstanceOf[Number].longValue()
         val numBitsNextPowerOf2 = numBits match {
           case 1 => 1L
-          case n => Integer.highestOneBit(n.toInt - 1) << 1
+          case n => Integer.highestOneBit(n.toInt - 1).toLong << 1
         }
         Some(
           pb.PhysicalAggExprNode

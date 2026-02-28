@@ -95,7 +95,7 @@ object NativeHelper extends Logging {
       context: Option[TaskContext]): Iterator[InternalRow] = {
 
     if (partition.index == 0 && metrics != null && context.nonEmpty) {
-      metrics.foreach(_.add("stage_id", context.get.stageId()))
+      metrics.foreach(_.add("stage_id", context.get.stageId().toLong))
     }
     if (nativePlan == null) {
       return Iterator.empty
@@ -159,8 +159,7 @@ object NativeHelper extends Logging {
     }
 
     CompletionIterator[InternalRow, Iterator[InternalRow]](
-      rowIterator,
-      () -> {
+      rowIterator, {
         synchronized {
           auronCallNativeWrapper.close()
         }

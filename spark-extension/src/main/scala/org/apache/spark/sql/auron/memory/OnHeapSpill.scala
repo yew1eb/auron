@@ -45,7 +45,7 @@ case class OnHeapSpill(hsm: SparkOnHeapSpillManager, id: Int) extends Logging {
     withLock {
       spillBuf match {
         case _: MemBasedSpillBuf =>
-          val acquiredMemory = hsm.acquireMemory(buf.capacity())
+          val acquiredMemory = hsm.acquireMemory(buf.capacity().toLong)
           if (acquiredMemory < buf.capacity()) { // cannot allocate memory, will spill buffer
             hsm.freeMemory(acquiredMemory)
             needSpill = true

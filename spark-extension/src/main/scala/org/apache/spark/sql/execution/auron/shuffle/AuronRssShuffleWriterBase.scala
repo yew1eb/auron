@@ -97,7 +97,7 @@ abstract class AuronRssShuffleWriterBase[K, V](metrics: ShuffleWriteMetricsRepor
       case None =>
         // Fall back to get mapStatus manually
         val blockManagerId = SparkEnv.get.blockManager.shuffleServerId
-        Some(Shims.get.getMapStatus(blockManagerId, rpw.getPartitionLengthMap, mapId))
+        Some(Shims.get.getMapStatus(blockManagerId, rpw.getPartitionLengthMap, mapId.toLong))
     }
   }
 }

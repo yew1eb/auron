@@ -45,7 +45,7 @@ abstract class AuronShuffleWriterBase[K, V](metrics: ShuffleWriteMetricsReporter
 
     val shuffleBlockResolver =
       SparkEnv.get.shuffleManager.shuffleBlockResolver.asInstanceOf[IndexShuffleBlockResolver]
-    val dataFile = shuffleBlockResolver.getDataFile(dep.shuffleId, mapId)
+    val dataFile = shuffleBlockResolver.getDataFile(dep.shuffleId, mapId.toLong)
     val tempDataFilename = dataFile.getPath.replace(".data", ".data.tmp")
     val tempIndexFilename = dataFile.getPath.replace(".data", ".index.tmp")
     val tempDataFilePath = Paths.get(tempDataFilename)
@@ -91,7 +91,7 @@ abstract class AuronShuffleWriterBase[K, V](metrics: ShuffleWriteMetricsReporter
         dep,
         shuffleBlockResolver,
         tempDataFilePath.toFile,
-        mapId,
+        mapId.toLong,
         partitionLengths,
         dataSize,
         context))

@@ -100,7 +100,7 @@ abstract class NativeBroadcastExchangeBase(mode: BroadcastMode, override val chi
 
   override def doPrepare(): Unit = {
     // Materialize the future.
-    relationFuture
+    val _ = relationFuture
   }
 
   override def doExecuteBroadcast[T](): Broadcast[T] = {
@@ -128,10 +128,10 @@ abstract class NativeBroadcastExchangeBase(mode: BroadcastMode, override val chi
     val dummyBroadcasted = new Broadcast[Any](-1) {
       override protected def getValue(): Any = v
       override protected def doUnpersist(blocking: Boolean): Unit = {
-        MethodUtils.invokeMethod(broadcast, true, "doUnpersist", Array(blocking))
+        val _ = MethodUtils.invokeMethod(broadcast, true, "doUnpersist", Array(blocking))
       }
       override protected def doDestroy(blocking: Boolean): Unit = {
-        MethodUtils.invokeMethod(broadcast, true, "doDestroy", Array(blocking))
+        val _ = MethodUtils.invokeMethod(broadcast, true, "doDestroy", Array(blocking))
       }
     }
     dummyBroadcasted.asInstanceOf[Broadcast[T]]
@@ -216,7 +216,7 @@ abstract class NativeBroadcastExchangeBase(mode: BroadcastMode, override val chi
               val byteArray = new Array[Byte](byteBuffer.capacity())
               byteBuffer.get(byteArray)
               bos.write(byteArray)
-              metrics("dataSize") += byteArray.length
+              metrics("dataSize") += byteArray.length.toLong
             })
 
           val input = inputRDD.nativePlan(inputRDD.partitions(split.index), context)

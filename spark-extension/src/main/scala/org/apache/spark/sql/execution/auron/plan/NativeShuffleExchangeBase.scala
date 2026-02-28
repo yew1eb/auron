@@ -266,20 +266,20 @@ abstract class NativeShuffleExchangeBase(
               .setHashRepartition(
                 PhysicalHashRepartition
                   .newBuilder()
-                  .setPartitionCount(numPartitions)
+                  .setPartitionCount(numPartitions.toLong)
                   .addAllHashExpr(nativeHashExprs.asJava))
           case RoundRobinPartitioning(_) =>
             repartitionBuilder
               .setRoundRobinRepartition(
                 PhysicalRoundRobinRepartition
                   .newBuilder()
-                  .setPartitionCount(numPartitions))
+                  .setPartitionCount(numPartitions.toLong))
           case RangePartitioning(_, _) =>
             repartitionBuilder
               .setRangeRepartition(
                 PhysicalRangeRepartition
                   .newBuilder()
-                  .setPartitionCount(numPartitionsRest) // reset partition num
+                  .setPartitionCount(numPartitionsRest.toLong) // reset partition num
                   .addAllListValue(nativeBounds.asJava)
                   .setSortExpr(nativeSortExecNode))
           case p =>
@@ -303,7 +303,7 @@ abstract class NativeShuffleExchangeBase(
         override def getPartition(key: Any): Int = key.asInstanceOf[Int]
       },
       schema = Util.getSchema(outputAttributes, useExprId = false))
-    metrics("numPartitions").set(numPartitionsRest)
+    metrics("numPartitions").set(numPartitionsRest.toLong)
     val executionId = sparkContext.getLocalProperty(SQLExecution.EXECUTION_ID_KEY)
     SQLMetrics.postDriverMetricUpdates(sparkContext, executionId, metrics("numPartitions") :: Nil)
     dependency
@@ -346,7 +346,8 @@ abstract class NativeShuffleExchangeBase(
           // Re-sample imbalanced partitions with the desired sampling probability.
           val imbalanced = new PartitionPruningRDD(rdd.map(_._1), imbalancedPartitions.contains)
           val seed = byteswap32(-rdd.id - 1)
-          val reSampled = imbalanced.sample(withReplacement = false, fraction, seed).collect()
+          val reSampled =
+            imbalanced.sample(withReplacement = false, fraction, seed.toLong).collect()
           val weight = (1.0 / fraction).toFloat
           candidates ++= reSampled.map(x => (x, weight))
         }

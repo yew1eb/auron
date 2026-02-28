@@ -159,8 +159,8 @@ object NativeConverters extends Logging {
         arrowTypeBuilder.setDECIMAL(
           org.apache.auron.protobuf.Decimal
             .newBuilder()
-            .setWhole(Math.max(t.precision, 1))
-            .setFractional(t.scale)
+            .setWhole(Math.max(t.precision, 1).toLong)
+            .setFractional(t.scale.toLong)
             .build())
 
       // array/list
@@ -431,7 +431,7 @@ object NativeConverters extends Logging {
           _.setBoundReference(
             pb.BoundReference
               .newBuilder()
-              .setIndex(bound.ordinal)
+              .setIndex(bound.ordinal.toLong)
               .setDataType(convertDataType(bound.dataType))
               .setNullable(bound.nullable))
         }

@@ -196,7 +196,7 @@ abstract class NativeAggBase(
               .addAllMode(nativeAggrModes.asJava)
               .addAllAggExpr(nativeAggrs.asJava)
               .addAllGroupingExpr(nativeGroupingExprs.asJava)
-              .setInitialInputBufferOffset(initialInputBufferOffset)
+              .setInitialInputBufferOffset(initialInputBufferOffset.toLong)
               .setSupportsPartialSkipping(supportsPartialSkipping)
               .setInput(inputPlan))
           .build()

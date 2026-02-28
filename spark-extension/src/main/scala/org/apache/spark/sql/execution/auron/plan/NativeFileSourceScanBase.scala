@@ -63,7 +63,7 @@ abstract class NativeFileSourceScanBase(basedFileScan: FileSourceScanExec)
       case rdd: MapPartitionsRDD[_, _] => rdd.prev.asInstanceOf[FileScanRDD]
     }
     val numPartitions = fileScanRDD.filePartitions.length
-    metrics("numPartitions").add(numPartitions)
+    metrics("numPartitions").add(numPartitions.toLong)
     val numFiles = fileScanRDD.filePartitions.foldLeft(0L)(_ + _.files.length)
     metrics("numFiles").add(numFiles)
     val executionId = sparkContext.getLocalProperty(SQLExecution.EXECUTION_ID_KEY)

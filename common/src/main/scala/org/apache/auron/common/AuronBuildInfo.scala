@@ -37,7 +37,7 @@ object AuronBuildInfo {
   try {
     props.load(buildFileStream)
   } finally {
-    Try(buildFileStream.close())
+    val _ = Try(buildFileStream.close())
   }
 
   val VERSION_STRING: String = "Auron Version"

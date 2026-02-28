@@ -124,7 +124,7 @@ object TaskContextHelper extends Logging {
             Utils.classForName("org.apache.hadoop.ipc.CallerContext$Builder")
           val builderInst = builder.getConstructor(classOf[String]).newInstance(context)
           val hdfsContext = builder.getMethod("build").invoke(builderInst)
-          callerContext.getMethod("setCurrent", callerContext).invoke(null, hdfsContext)
+          val _ = callerContext.getMethod("setCurrent", callerContext).invoke(null, hdfsContext)
         } catch {
           case NonFatal(e) =>
             logWarning("Fail to set Spark caller context", e)

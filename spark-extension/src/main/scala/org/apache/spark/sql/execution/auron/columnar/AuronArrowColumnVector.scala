@@ -328,7 +328,7 @@ object AuronArrowColumnVector {
 
     final override def getMap(rowId: Int): AuronColumnarMap = {
       val index = rowId * BaseRepeatedValueVector.OFFSET_WIDTH
-      val offset = vector.getOffsetBuffer.getInt(index)
+      val offset = vector.getOffsetBuffer.getInt(index.toLong)
       val length = vector.getInnerValueCountAt(rowId)
       new AuronColumnarMap(keys, values, offset, length)
     }
