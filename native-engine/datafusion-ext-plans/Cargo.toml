@@ -73,4 +73,21 @@ sonic-rs = { workspace = true }
 procfs = { workspace = true }
 
 [dev-dependencies]
+criterion = { workspace = true }
 rand = { workspace = true }
+
+[[bench]]
+name = "agg_hash_map"
+harness = false
+
+[[bench]]
+name = "rdx_sort"
+harness = false
+
+[[bench]]
+name = "batch_interleaver"
+harness = false
+
+[[bench]]
+name = "spark_hash"
+harness = false
