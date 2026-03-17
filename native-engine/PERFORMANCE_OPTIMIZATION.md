@@ -10,6 +10,8 @@
 |--------|----------|----------|
 | 高 | `RangePartitioning` 每个批次都重建 `RowConverter` | `datafusion-ext-plans/src/shuffle/mod.rs` |
 | 高 | `radix_sort_by_key` 外层循环中 `retain` 调用的时间复杂度为 O(k²) | `datafusion-ext-commons/src/algorithm/rdx_sort.rs` |
+| 高 | `GetMapValueExpr` Map 查找使用线性搜索 | `datafusion-ext-exprs/src/get_map_value.rs` |
+| 高 | `CachedExprsEvaluator` 双重加锁问题 | `datafusion-ext-plans/src/common/cached_exprs_evaluator.rs` |
 | 中 | `AggHashMap::rehash` 仅部分利用了 SIMD | `datafusion-ext-plans/src/agg/agg_hash_map.rs` |
 | 中 | `JoinHashMap::lookup_many` 每次探测步骤执行两次 SIMD 比较 | `datafusion-ext-plans/src/joins/join_hash_map.rs` |
 | 中 | Shuffle 暂存 `Vec` 在每次 `flush_staging` 时都重新分配 | `datafusion-ext-plans/src/shuffle/buffered_data.rs` |
@@ -18,7 +20,13 @@
 | 中 | `CachedExprsEvaluator::Cache` 每次表达式求值加锁两次 | `datafusion-ext-plans/src/common/cached_exprs_evaluator.rs` |
 | 中 | SMJ `FullJoiner::flush` 每次 flush 都重建 `BatchInterleaver` | `datafusion-ext-plans/src/joins/smj/full_join.rs` |
 | 中 | `AccPrimColumn::update_value` 在聚合热循环中每行做一次 `BitVec` 随机访问 | `datafusion-ext-plans/src/agg/acc.rs` |
+| 中 | `AggContext::create_grouping_rows` RowConverter 加锁开销 | `datafusion-ext-plans/src/agg/agg_ctx.rs` |
+| 中 | `SortExec` 缺乏类型特化排序路径 | `datafusion-ext-plans/src/sort_exec.rs` |
+| 中 | 字符串函数（`string_lower`/`upper`）逐行处理 | `datafusion-ext-functions/src/spark_strings.rs` |
 | 低 | `hash_one` 对 `List`/`Map`/`Struct` 列没有批量处理路径 | `datafusion-ext-commons/src/spark_hash.rs` |
+| 低 | `TryCastExpr` 标量值转换分配临时数组 | `datafusion-ext-exprs/src/cast.rs` |
+| 低 | `spark_get_json_object` 逐行解析 JSON | `datafusion-ext-functions/src/spark_get_json_object.rs` |
+| 低 | 日期函数重复类型转换 | `datafusion-ext-functions/src/spark_dates.rs` |
 
 ---
 
@@ -85,7 +93,90 @@ while active > 1 {
 
 ---
 
-## 3. `AggHashMap::rehash` 仅部分利用 SIMD（中）
+## 3. `GetMapValueExpr` Map 查找使用线性搜索（高）
+
+**文件：** `datafusion-ext-exprs/src/get_map_value.rs:100-117`
+
+```rust
+for (start, end) in as_map_array.value_offsets().iter().map(...) {
+    let mut found = false;
+    for key_idx in start..end {        // ← 内层循环：线性搜索 O(n*m)
+        if comparator(key_idx, 0).is_eq() {
+            found = true;
+            mutable.extend(0, key_idx, key_idx + 1);
+            break;
+        }
+    }
+    if !found {
+        mutable.extend_nulls(1);
+    }
+}
+```
+
+**问题：** 对每个 Map 条目进行线性搜索，时间复杂度 O(n*m)。`MutableArrayData::extend` 每次调用都有边界检查开销，且未利用 SIMD 加速键比较。对于包含大 Map 的数据，这可能成为显著瓶颈。
+
+**建议修复：**
+1. **小 Map 优化**：如果键数量少（< 8），保持线性搜索并展开循环
+2. **大 Map 优化**：构建临时哈希表或使用二分查找（如果键有序）
+3. **SIMD 批量比较**：对固定宽度类型（如 int）使用 SIMD 并行比较多个键
+
+```rust
+// 优化示例：对于常见的小 Map（键数<8），展开循环
+match end - start {
+    0 => mutable.extend_nulls(1),
+    1 => { /* 直接比较，无循环开销 */ },
+    2 => { /* 展开两次比较 */ },
+    // ...
+    _ => { /* 回退到通用循环或哈希查找 */ }
+}
+```
+
+---
+
+## 4. `CachedExprsEvaluator` 双重加锁优化（高）
+
+**文件：** `datafusion-ext-plans/src/common/cached_exprs_evaluator.rs:423-448`
+
+```rust
+fn get(&self, id: usize, evaluate_on_vacant: impl Fn() -> Result<ColumnarValue>) -> Result<ColumnarValue> {
+    if let Some(cached) = &self.values.lock()[id] {  // ← 加锁 #1
+        return Ok(cached.clone());
+    }
+    let cached = evaluate_on_vacant()?;
+    self.values.lock()[id] = Some(cached.clone());   // ← 加锁 #2
+    Ok(cached)
+}
+
+fn update_all(&self, on_update: ...) -> Result<()> {
+    let current_values = self.values.lock().clone();  // ← 克隆完整 Vec
+    let updated_values = current_values.into_iter()...collect()?;
+    *self.values.lock() = updated_values;             // ← 第二次加锁
+    Ok(())
+}
+```
+
+**问题：** `get` 方法对 `parking_lot::Mutex` 加锁两次（读取检查一次、写入一次）。`update_all` 将缓存 Vec 克隆到临时变量，对克隆应用 `on_update`，再替换回去。当缓存的子表达式较多、过滤谓词较多时，这会使锁竞争加倍，且每个谓词应用时都会触发一次分配。
+
+**建议修复：**
+- `get` 中：用单次 `lock()` 调用完成"检查后写入"的全过程，避免双重加锁
+- `update_all` 中：在单次加锁范围内对 `Vec` 原地 `iter_mut`，避免克隆和二次替换
+
+```rust
+fn get(&self, id: usize, eval: impl Fn() -> Result<ColumnarValue>) -> Result<ColumnarValue> {
+    let mut guard = self.values.lock();
+    if let Some(cached) = &guard[id] {
+        return Ok(cached.clone());
+    }
+    drop(guard); // 求值期间（可能开销较大）先释放锁
+    let result = eval()?;
+    self.values.lock()[id] = Some(result.clone());
+    Ok(result)
+}
+```
+
+---
+
+## 5. `AggHashMap::rehash` 仅部分利用 SIMD（中）
 
 **文件：** `datafusion-ext-plans/src/agg/agg_hash_map.rs:139`
 
@@ -111,7 +202,7 @@ fn rehash(&mut self, map_mod_bits: u32) {
 
 ---
 
-## 4. `JoinHashMap::lookup_many` 每次探测执行两次 SIMD 比较（中）
+## 6. `JoinHashMap::lookup_many` 每次探测执行两次 SIMD 比较（中）
 
 **文件：** `datafusion-ext-plans/src/joins/join_hash_map.rs:255`
 
@@ -150,7 +241,7 @@ loop {
 
 ---
 
-## 5. Shuffle 暂存 `Vec` 每次 `flush_staging` 都重新分配（中）
+## 7. Shuffle 暂存 `Vec` 每次 `flush_staging` 都重新分配（中）
 
 **文件：** `datafusion-ext-plans/src/shuffle/buffered_data.rs:285`
 
@@ -173,7 +264,7 @@ fn sort_batches_by_partition_id(...) -> Result<(Vec<u32>, RecordBatch)> {
 
 ---
 
-## 6. BHJ 探测阶段：null key 过滤导致额外 `collect` 和双游标（中）
+## 8. BHJ 探测阶段：null key 过滤导致额外 `collect` 和双游标（中）
 
 **文件：** `datafusion-ext-plans/src/joins/bhj/full_join.rs:243`
 
@@ -216,7 +307,7 @@ let map_values = map.lookup_many(probed_hashes); // 长度始终等于 num_rows
 
 ---
 
-## 7. `MergingData::entries` 4 元组过大（中）
+## 9. `MergingData::entries` 4 元组过大（中）
 
 **文件：** `datafusion-ext-plans/src/agg/agg_table.rs:596`
 
@@ -230,7 +321,7 @@ entries: Vec<(u32, u32, u32, u32)>, // (bucket_id, batch_idx, row_idx, acc_idx)
 
 ---
 
-## 8. `CachedExprsEvaluator::Cache` 每次表达式求值加锁两次（中）
+## 10. `CachedExprsEvaluator::Cache` 每次表达式求值加锁两次（中）
 
 **文件：** `datafusion-ext-plans/src/common/cached_exprs_evaluator.rs:423`
 
@@ -281,7 +372,7 @@ fn get(&self, id: usize, eval: impl Fn() -> Result<ColumnarValue>) -> Result<Col
 
 ---
 
-## 9. SMJ `FullJoiner::flush` 每次 flush 重建 `BatchInterleaver`（中）
+## 11. SMJ `FullJoiner::flush` 每次 flush 重建 `BatchInterleaver`（中）
 
 **文件：** `datafusion-ext-plans/src/joins/smj/full_join.rs:63`
 
@@ -314,7 +405,7 @@ pub struct FullJoiner<const L_OUTER: bool, const R_OUTER: bool> {
 
 ---
 
-## 10. `AccPrimColumn::update_value` 聚合热循环中每行 `BitVec` 随机访问（中）
+## 12. `AccPrimColumn::update_value` 聚合热循环中每行 `BitVec` 随机访问（中）
 
 **文件：** `datafusion-ext-plans/src/agg/acc.rs:265`
 
@@ -343,7 +434,107 @@ pub fn update_range(&mut self, begin: usize, end: usize, src: &[T]) {
 
 ---
 
-## 11. `hash_one` 对 `List`/`Map`/`Struct` 列缺少批量处理路径（低）
+## 13. `AggContext::create_grouping_rows` RowConverter 加锁开销（中）
+
+**文件：** `datafusion-ext-plans/src/agg/agg_ctx.rs:233-244`
+
+```rust
+pub fn create_grouping_rows(&self, input_batch: &RecordBatch) -> Result<Rows> {
+    let grouping_arrays: Vec<ArrayRef> = self
+        .groupings
+        .iter()
+        .map(|grouping| grouping.expr.evaluate(&input_batch))
+        .map(|r| r.and_then(|columnar| columnar.into_array(input_batch.num_rows())))
+        .collect::<Result<_>>()?;
+    Ok(self
+        .grouping_row_converter
+        .lock()  // ← 每次都有锁开销
+        .convert_columns(&grouping_arrays)?)
+}
+```
+
+**问题：** 每次创建 grouping rows 都需要获取 `Mutex` 锁，即使 `RowConverter` 的内部状态是只读的。在高并发聚合场景下，这把锁可能成为瓶颈。
+
+**建议修复：**
+1. 使用线程本地存储（Thread Local Storage）为每个线程缓存一个 `RowConverter` 实例
+2. 或者使用 `RwLock`，读取时并发，仅在初始化时写入
+
+```rust
+thread_local! {
+    static ROW_CONVERTER_CACHE: RefCell<HashMap<SchemaRef, RowConverter>> = ...;
+}
+
+pub fn create_grouping_rows(&self, input_batch: &RecordBatch) -> Result<Rows> {
+    // 在线程本地缓存中获取或创建 converter
+    ROW_CONVERTER_CACHE.with(|cache| {
+        // ...
+    })
+}
+```
+
+---
+
+## 14. `SortExec` 缺乏类型特化排序路径（中）
+
+**文件：** `datafusion-ext-plans/src/sort_exec.rs`
+
+**问题：** 当前实现使用 `RowConverter` 进行键转换，存在序列化开销。对于简单类型（int, float），可以使用直接比较而非行格式。此外，对于整数类型可以使用基数排序替代比较排序。
+
+**建议修复：**
+1. **类型特化**：对常见类型（Int32, Int64, Float64, String）实现专门的排序路径
+2. **SIMD 比较**：对固定宽度类型使用 SIMD 批量比较
+3. **基数排序**：对整数类型使用基数排序替代比较排序
+
+```rust
+// 特化路径示例
+match key_type {
+    DataType::Int32 => simd_sort_i32(keys, values),
+    DataType::Int64 => simd_sort_i64(keys, values),
+    _ => generic_sort(keys, values),  // 回退到通用路径
+}
+```
+
+---
+
+## 15. 字符串函数逐行处理（中）
+
+**文件：** `datafusion-ext-functions/src/spark_strings.rs:31-46`
+
+```rust
+pub fn string_lower(args: &[ColumnarValue]) -> Result<ColumnarValue> {
+    match &args[0] {
+        ColumnarValue::Array(array) => Ok(ColumnarValue::Array(Arc::new(StringArray::from_iter(
+            as_string_array(array)?
+                .into_iter()
+                .map(|s| s.map(|s| s.to_lowercase())),  // ← 逐行处理
+        ))))),
+        // ...
+    }
+}
+```
+
+**问题：** 字符串函数（`string_lower`、`string_upper`、`string_repeat` 等）逐行迭代处理，无法利用 SIMD 或并行处理。对于大数据集，这可能成为 CPU 瓶颈。
+
+**建议修复：**
+1. **SIMD 字符串处理**：对 ASCII 字符使用 SIMD 批量转换大小写
+2. **并行处理**：对大数据量使用 `rayon` 并行迭代
+3. **特殊路径**：检测全 ASCII 字符串，使用快速路径
+
+```rust
+// ASCII 快速路径
+if s.is_ascii() {
+    // 使用 SIMD 批量转换
+    s.as_bytes()
+     .chunks_exact(32)
+     .map(|chunk| chunk.to_ascii_lowercase_simd())
+} else {
+    s.to_lowercase()  // Unicode 慢路径
+}
+```
+
+---
+
+## 16. `hash_one` 对 `List`/`Map`/`Struct` 列缺少批量处理路径（低）
 
 **文件：** `datafusion-ext-commons/src/spark_hash.rs:218`
 
@@ -362,3 +553,144 @@ _ => {
 - 对 `Struct`：以列为单位迭代字段，每个字段在一次扫描中更新所有行的哈希，与现有 `hash_array` 的列式循环保持一致。
 
 此改动较为复杂，同时可能对上游 DataFusion 项目产生价值。
+
+---
+
+## 17. `TryCastExpr` 标量值转换分配临时数组（低）
+
+**文件：** `datafusion-ext-exprs/src/cast.rs:69-82`
+
+```rust
+fn evaluate(&self, batch: &RecordBatch) -> Result<ColumnarValue> {
+    Ok(match self.expr.evaluate(batch)? {
+        ColumnarValue::Array(array) => ColumnarValue::Array(
+            datafusion_ext_commons::arrow::cast::cast(&array, &self.cast_type)?,
+        ),
+        ColumnarValue::Scalar(scalar) => {
+            let array = scalar.to_array()?;  // ← 分配临时数组
+            ColumnarValue::Scalar(ScalarValue::try_from_array(
+                &datafusion_ext_commons::arrow::cast::cast(&array, &self.cast_type)?,
+                0,
+            )?)
+        }
+    })
+}
+```
+
+**问题：** 标量值转换时先转换为单元素数组，转换后再转回标量，造成不必要的内存分配。
+
+**建议修复：**
+1. 添加类型检查快速路径：如果类型相同，直接返回原值
+2. 实现标量到标量的直接转换，避免数组分配
+
+```rust
+fn evaluate(&self, batch: &RecordBatch) -> Result<ColumnarValue> {
+    match self.expr.evaluate(batch)? {
+        ColumnarValue::Array(array) => {
+            if array.data_type() == &self.cast_type {
+                return Ok(ColumnarValue::Array(array)); // 无操作转换
+            }
+            ColumnarValue::Array(cast(&array, &self.cast_type)?)
+        }
+        ColumnarValue::Scalar(scalar) => {
+            if scalar.data_type() == self.cast_type {
+                return Ok(ColumnarValue::Scalar(scalar));
+            }
+            // 直接转换标量，避免数组分配
+            ColumnarValue::Scalar(scalar_cast(&scalar, &self.cast_type)?)
+        }
+    }
+}
+```
+
+---
+
+## 18. `spark_get_json_object` 逐行解析 JSON（低）
+
+**文件：** `datafusion-ext-functions/src/spark_get_json_object.rs:69-79`
+
+```rust
+let output = json_strings
+    .iter()
+    .map(|json_string| {
+        json_string.and_then(|s| match evaluator.evaluate(s) {
+            Ok(Some(matched)) => Some(matched),
+            _ => None,
+        })
+    })
+    .collect::<StringArray>();
+```
+
+**问题：** 逐行迭代，每行都独立解析 JSON 和执行路径匹配。无法利用批量解析优化，且 `HiveGetJsonObjectEvaluator` 对每行都执行路径匹配。
+
+**建议修复：**
+1. **批量 JSON 解析**：使用 `sonic_rs` 的批量解析 API
+2. **路径缓存**：缓存解析路径，避免重复计算
+3. **SIMD 字符串搜索**：对简单路径（如 `$.field`）使用 SIMD 加速
+
+---
+
+## 19. 日期函数重复类型转换（低）
+
+**文件：** `datafusion-ext-functions/src/spark_dates.rs:34-47`
+
+```rust
+pub fn spark_year(args: &[ColumnarValue]) -> Result<ColumnarValue> {
+    let input = cast(&args[0].clone().into_array(1)?, &DataType::Date32)?;
+    Ok(ColumnarValue::Array(date_part(&input, DatePart::Year)?))
+}
+
+pub fn spark_month(args: &[ColumnarValue]) -> Result<ColumnarValue> {
+    let input = cast(&args[0].clone().into_array(1)?, &DataType::Date32)?;
+    Ok(ColumnarValue::Array(date_part(&input, DatePart::Month)?))
+}
+```
+
+**问题：** 每个日期函数都重复进行类型转换（`cast`）。如果同一列被多个日期函数使用，转换会被重复执行。
+
+**建议修复：**
+1. **批量转换**：在更高层统一转换类型，避免每个函数都转换
+2. **缓存转换结果**：如果同一列被多次使用，缓存转换后的数组
+3. **计划阶段优化**：在查询计划阶段合并同一列的多个日期提取操作，一次转换后提取多个部分
+
+```rust
+// 优化示例：一次提取多个日期部分
+fn extract_date_parts(input: &ArrayRef, parts: &[DatePart]) -> Result<Vec<ArrayRef>> {
+    let converted = cast(input, &DataType::Date32)?;
+    parts.iter()
+        .map(|part| date_part(&converted, *part))
+        .collect()
+}
+```
+
+---
+
+## 附录：优化优先级与预期收益
+
+### 高优先级（立即实施）
+
+| 优化项 | 预期收益 | 实施难度 | 相关模块 |
+|-------|---------|---------|---------|
+| 修复 CachedExprsEvaluator 双重加锁 | 10-30% 过滤性能提升 | 低 | Filter/Project |
+| JoinHashMap::lookup_many SIMD 优化 | 20-50% Join 性能提升 | 中 | Join |
+| GetMapValueExpr 线性搜索优化 | 2-5x Map 查找性能 | 中 | Expression |
+| AggHashMap rehash 批量插入 | 15-30% 聚合性能提升 | 中 | Aggregation |
+| RangePartitioning RowConverter 缓存 | 10-20% Shuffle 性能提升 | 低 | Shuffle |
+
+### 中优先级（短期实施）
+
+| 优化项 | 预期收益 | 实施难度 | 相关模块 |
+|-------|---------|---------|---------|
+| AggContext RowConverter 线程本地缓存 | 5-15% 聚合性能提升 | 中 | Aggregation |
+| SortExec 类型特化 | 20-40% 排序性能 | 中 | Sort |
+| 字符串函数 SIMD 优化 | 2-4x 字符串处理 | 中 | String Functions |
+| AccPrimColumn 批量更新 | 10-20% 聚合性能 | 中 | Aggregation |
+
+### 低优先级（长期规划）
+
+| 优化项 | 预期收益 | 实施难度 | 相关模块 |
+|-------|---------|---------|---------|
+| JSON 函数批量解析 | 30-50% JSON 处理 | 高 | JSON Functions |
+| 复杂类型哈希向量化 | 2-3x 复杂类型哈希 | 高 | Hash |
+| 日期函数转换缓存 | 10-20% 日期处理 | 低 | Date Functions |
+| TryCastExpr 标量优化 | 5-10% 转换性能 | 低 | Expression |
