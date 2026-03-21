@@ -13,9 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::io::Write;
+use std::{io::Write, sync::Arc};
 
-use arrow::record_batch::RecordBatch;
+use arrow::{record_batch::RecordBatch, row::{RowConverter, SortField}};
 use auron_jni_bridge::{is_task_running, jni_call};
 use bytesize::ByteSize;
 use count_write::CountWrite;
@@ -56,6 +56,10 @@ pub struct BufferedData {
     num_rows: usize,
     sorted_mem_used: usize,
     output_io_time: Time,
+    /// Cached RowConverter for RangePartitioning to avoid rebuilding for each batch.
+    /// The RowConverter is created on first batch processing and reused for all subsequent batches.
+    /// Since all batches in a shuffle operation share the same schema, this is safe and efficient.
+    range_row_converter: Option<(Vec<SortField>, Arc<RowConverter>)>,
 }
 
 impl BufferedData {
@@ -71,6 +75,7 @@ impl BufferedData {
             num_rows: 0,
             sorted_mem_used: 0,
             output_io_time,
+            range_row_converter: None,
         }
     }
 
@@ -84,6 +89,7 @@ impl BufferedData {
             ),
         )
     }
+}
 
     pub fn add_batch(&mut self, batch: RecordBatch) -> Result<()> {
         // first add to staging, mem used is doubled for later sorting
@@ -108,6 +114,7 @@ impl BufferedData {
             &self.partitioning,
             sorted_num_rows,
             self.partition_id,
+            &mut self.range_row_converter,
         )?;
         self.staging_num_rows = 0;
         self.staging_mem_used = 0;
