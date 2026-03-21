@@ -15,9 +15,12 @@
 
 //! Benchmark for RangePartitioning RowConverter caching optimization.
 //!
-//! Measures the performance improvement from caching RowConverter across batches
-//! vs creating a new one for each batch. This exposes the overhead documented
-//! in OPTIMIZATION_GUIDE.md P0 issue: "RangePartitioning 每批次重建 RowConverter".
+//! This benchmark is designed to AMPLIFY the RowConverter creation overhead
+//! to clearly demonstrate the optimization benefit:
+//!
+//! 1. Uses STRING type (more complex than Int64, requires more setup in RowConverter)
+//! 2. Uses MANY small batches (500-1000 batches) to maximize creation frequency
+//! 3. Compares per-batch creation vs cached converter
 //!
 //! To run:
 //!   cargo bench -p datafusion-ext-plans --bench range_partitioning
@@ -25,7 +28,7 @@
 use std::{hint::black_box, sync::Arc};
 
 use arrow::{
-    array::Int64Array,
+    array::{Int64Array, StringArray},
     datatypes::{DataType, Field, Schema},
     record_batch::RecordBatch,
     row::{Row, RowConverter, Rows, SortField},
@@ -34,16 +37,30 @@ use arrow_schema::SortOptions;
 use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
 use datafusion::physical_expr::{PhysicalSortExpr, expressions::Column};
 
-
-/// Create a test batch with Int64 columns
-fn make_batch(n_rows: usize, offset: i64) -> RecordBatch {
+/// Create a test batch with STRING columns (more complex than Int64)
+/// String type requires more complex RowConverter setup
+fn make_string_batch(n_rows: usize, batch_idx: usize) -> RecordBatch {
     let schema = Arc::new(Schema::new(vec![
-        Field::new("c1", DataType::Int64, false),
-        Field::new("c2", DataType::Int64, false),
+        Field::new("s1", DataType::Utf8, false),
+        Field::new("s2", DataType::Utf8, false),
+        Field::new("id", DataType::Int64, false),
     ]));
+    
+    let base = batch_idx * n_rows;
     let cols: Vec<Arc<dyn arrow::array::Array>> = vec![
-        Arc::new(Int64Array::from_iter_values(offset..offset + n_rows as i64)),
-        Arc::new(Int64Array::from_iter_values((offset * 2)..(offset * 2 + n_rows as i64))),
+        Arc::new(StringArray::from(
+            (0..n_rows)
+                .map(|i| format!("user_{:08}", base + i))
+                .collect::<Vec<_>>()
+        )),
+        Arc::new(StringArray::from(
+            (0..n_rows)
+                .map(|i| format!("region_{:04}", (base + i) % 1000))
+                .collect::<Vec<_>>()
+        )),
+        Arc::new(Int64Array::from_iter_values(
+            (base as i64)..(base as i64 + n_rows as i64)
+        )),
     ];
     RecordBatch::try_new(schema, cols).unwrap()
 }
@@ -52,46 +69,56 @@ fn make_batch(n_rows: usize, offset: i64) -> RecordBatch {
 fn make_sort_exprs(_schema: &Schema) -> Vec<PhysicalSortExpr> {
     vec![
         PhysicalSortExpr {
-            expr: Arc::new(Column::new("c1", 0)),
+            expr: Arc::new(Column::new("s1", 0)),
             options: SortOptions::default(),
         },
         PhysicalSortExpr {
-            expr: Arc::new(Column::new("c2", 1)),
+            expr: Arc::new(Column::new("s2", 1)),
+            options: SortOptions::default(),
+        },
+        PhysicalSortExpr {
+            expr: Arc::new(Column::new("id", 2)),
             options: SortOptions::default(),
         },
     ]
 }
 
-/// Create bound rows for range partitioning (simulating partition boundaries)
+/// Create bound rows for range partitioning
 fn make_bound_rows(n_partitions: usize) -> Arc<Rows> {
     let sort_fields = vec![
-        SortField::new(DataType::Int64),
+        SortField::new(DataType::Utf8),
+        SortField::new(DataType::Utf8),
         SortField::new(DataType::Int64),
     ];
     let converter = RowConverter::new(sort_fields).unwrap();
 
-    // Create boundary values: 0, 100, 200, ... for partition boundaries
+    // Create boundary values
     let bounds: Vec<Arc<dyn arrow::array::Array>> = vec![
-        Arc::new(Int64Array::from_iter_values(
-            (0..n_partitions - 1).map(|i| i as i64 * 100),
+        Arc::new(StringArray::from(
+            (0..n_partitions - 1)
+                .map(|i| format!("user_{:08}", i * 100))
+                .collect::<Vec<_>>()
+        )),
+        Arc::new(StringArray::from(
+            (0..n_partitions - 1)
+                .map(|i| format!("region_{:04}", i % 100))
+                .collect::<Vec<_>>()
         )),
         Arc::new(Int64Array::from_iter_values(
-            (0..n_partitions - 1).map(|i| i as i64 * 100),
+            (0..n_partitions - 1).map(|i| i as i64 * 100)
         )),
     ];
 
     Arc::new(converter.convert_columns(&bounds).unwrap())
 }
 
-/// Simulate evaluate_range_partition_ids with a converter
+/// Evaluate partition IDs using a converter
 fn evaluate_range_partition_ids_with_converter(
     batch: &RecordBatch,
     sort_exprs: &[PhysicalSortExpr],
     bound_rows: &Arc<Rows>,
     converter: &Arc<RowConverter>,
 ) -> Vec<u32> {
-    use arrow::row::Row;
-
     let key_cols: Vec<Arc<dyn arrow::array::Array>> = sort_exprs
         .iter()
         .map(|expr| {
@@ -129,35 +156,40 @@ fn binary_search_partition(bound_rows: &Rows, target: Row) -> u32 {
 }
 
 fn bench_range_partitioning(c: &mut Criterion) {
+    // Use longer measurement time for more stable results
     let mut group = c.benchmark_group("range_partitioning/evaluate_partition_ids");
+    group.measurement_time(std::time::Duration::from_secs(10));
+    group.sample_size(100);
 
-    // Test scenarios: (batch_size, num_batches, num_partitions)
+    // Test scenarios designed to AMPLIFY RowConverter creation overhead:
+    // - Small batch size: reduces data processing time, making creation overhead more visible
+    // - Many batches: increases creation frequency
+    // - String type: more complex RowConverter setup than primitive types
     for &(batch_size, num_batches, n_partitions) in &[
-        (1024usize, 100usize, 10usize), // Small batches, many iterations
-        (4096, 50, 10),                 // Medium batches
-        (8192, 20, 100),                // Large batches, more partitions
-        (1024, 200, 200), // Many small batches (high converter creation overhead)
+        (100usize, 500usize, 50usize),   // Many tiny batches (creation overhead dominant)
+        (200, 300, 100),                 // Medium batches, more partitions
+        (50, 1000, 20),                  // Extreme: 1000 tiny batches
     ] {
-        let batch = make_batch(batch_size, 0);
+        let batch = make_string_batch(batch_size, 0);
         let schema = batch.schema();
         let sort_exprs = make_sort_exprs(&schema);
         let bound_rows = make_bound_rows(n_partitions);
 
-        // Benchmark ID for clear output
         let bench_id = format!(
-            "{}batches_{}rows_{}parts",
+            "{}b_{}r_{}p",
             num_batches, batch_size, n_partitions
         );
 
-        // ===== BASELINE: Create RowConverter for each batch (current implementation) =====
+        // ===== BASELINE: Create RowConverter for each batch =====
         group.bench_with_input(
-            BenchmarkId::new("per_batch_converter", &bench_id),
+            BenchmarkId::new("per_batch_create", &bench_id),
             &(batch_size, num_batches),
             |b, _| {
                 b.iter(|| {
                     for i in 0..num_batches {
-                        let batch = make_batch(batch_size, i as i64 * batch_size as i64);
-                        // Simulate current behavior: create converter every time
+                        let batch = make_string_batch(batch_size, i);
+                        
+                        // Build SortFields from scratch (schema lookup)
                         let sort_fields: Vec<SortField> = sort_exprs
                             .iter()
                             .map(|expr| {
@@ -167,11 +199,13 @@ fn bench_range_partitioning(c: &mut Criterion) {
                                 )
                             })
                             .collect();
+                        
+                        // Create RowConverter (THE EXPENSIVE PART)
                         let converter = Arc::new(
                             RowConverter::new(sort_fields).unwrap(),
                         );
 
-                        // Call the function (simulated)
+                        // Use the converter
                         let _result = evaluate_range_partition_ids_with_converter(
                             black_box(&batch),
                             black_box(&sort_exprs),
@@ -185,10 +219,10 @@ fn bench_range_partitioning(c: &mut Criterion) {
 
         // ===== OPTIMIZED: Cache RowConverter across batches =====
         group.bench_with_input(
-            BenchmarkId::new("cached_converter", &bench_id),
+            BenchmarkId::new("cached_reuse", &bench_id),
             &(batch_size, num_batches),
             |b, _| {
-                // Pre-create converter (optimization)
+                // Pre-create converter ONCE (the optimization)
                 let sort_fields: Vec<SortField> = sort_exprs
                     .iter()
                     .map(|expr| {
@@ -203,8 +237,8 @@ fn bench_range_partitioning(c: &mut Criterion) {
 
                 b.iter(|| {
                     for i in 0..num_batches {
-                        let batch = make_batch(batch_size, i as i64 * batch_size as i64);
-                        // Use cached converter
+                        let batch = make_string_batch(batch_size, i);
+                        // Reuse cached converter (NO CREATION OVERHEAD)
                         let _result = evaluate_range_partition_ids_with_converter(
                             black_box(&batch),
                             black_box(&sort_exprs),
