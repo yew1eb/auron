@@ -28,7 +28,7 @@ use arrow::{
     array::Int64Array,
     datatypes::{DataType, Field, Schema},
     record_batch::RecordBatch,
-    row::{RowConverter, Rows, SortField},
+    row::{Row, RowConverter, Rows, SortField},
 };
 use arrow_schema::SortOptions;
 use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
@@ -49,7 +49,7 @@ fn make_batch(n_rows: usize, offset: i64) -> RecordBatch {
 }
 
 /// Create sort expressions for testing
-fn make_sort_exprs(schema: &Schema) -> Vec<PhysicalSortExpr> {
+fn make_sort_exprs(_schema: &Schema) -> Vec<PhysicalSortExpr> {
     vec![
         PhysicalSortExpr {
             expr: Arc::new(Column::new("c1", 0)),
