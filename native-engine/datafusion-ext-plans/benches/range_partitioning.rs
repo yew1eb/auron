@@ -33,7 +33,7 @@ use arrow::{
 use arrow_schema::SortOptions;
 use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
 use datafusion::physical_expr::{PhysicalSortExpr, expressions::Column};
-use parking_lot::Mutex as SyncMutex;
+
 
 /// Create a test batch with Int64 columns
 fn make_batch(n_rows: usize, offset: i64) -> RecordBatch {
@@ -88,7 +88,7 @@ fn evaluate_range_partition_ids_with_converter(
     batch: &RecordBatch,
     sort_exprs: &[PhysicalSortExpr],
     bound_rows: &Arc<Rows>,
-    converter: &Arc<SyncMutex<RowConverter>>,
+    converter: &Arc<RowConverter>,
 ) -> Vec<u32> {
     use arrow::row::Row;
 
@@ -103,7 +103,7 @@ fn evaluate_range_partition_ids_with_converter(
         })
         .collect();
 
-    let key_rows = converter.lock().convert_columns(&key_cols).unwrap();
+    let key_rows = converter.convert_columns(&key_cols).unwrap();
 
     let mut result = Vec::with_capacity(batch.num_rows());
     for key_row in key_rows.iter() {
@@ -167,9 +167,9 @@ fn bench_range_partitioning(c: &mut Criterion) {
                                 )
                             })
                             .collect();
-                        let converter = Arc::new(SyncMutex::new(
+                        let converter = Arc::new(
                             RowConverter::new(sort_fields).unwrap(),
-                        ));
+                        );
 
                         // Call the function (simulated)
                         let _result = evaluate_range_partition_ids_with_converter(
@@ -199,7 +199,7 @@ fn bench_range_partitioning(c: &mut Criterion) {
                     })
                     .collect();
                 let cached_converter =
-                    Arc::new(SyncMutex::new(RowConverter::new(sort_fields).unwrap()));
+                    Arc::new(RowConverter::new(sort_fields).unwrap());
 
                 b.iter(|| {
                     for i in 0..num_batches {
