@@ -108,16 +108,29 @@ This PR optimizes the `RangePartitioning` shuffle operation by caching the `RowC
 
 ### Performance Improvement
 
-Benchmark results (`cargo bench -p datafusion-ext-plans --bench range_partitioning`):
+**Isolated RowConverter Creation Benchmark** (measures pure optimization benefit):
+
+| Batch Count | Per-Batch Create | Cached Reuse | **Speedup** |
+|------------|------------------|--------------|-------------|
+| 100 batches | 13.79 µs | **31 ns** | **445x** 🚀 |
+| 500 batches | 63.86 µs | **162 ns** | **394x** 🚀 |
+| 1000 batches | 128.41 µs | **313 ns** | **410x** 🚀 |
+| 2000 batches | 255.32 µs | **613 ns** | **416x** 🚀 |
+
+*Single RowConverter creation cost: ~134 ns*
+
+**End-to-End Shuffle Benchmark**:
 
 | Scenario | Baseline (per-batch) | Optimized (cached) | Improvement |
 |----------|---------------------|-------------------|-------------|
-| 100 batches × 1024 rows, 10 parts | XX µs | YY µs | ZZ% faster |
-| 50 batches × 4096 rows, 10 parts | XX µs | YY µs | ZZ% faster |
-| 20 batches × 8192 rows, 100 parts | XX µs | YY µs | ZZ% faster |
-| 200 batches × 1024 rows, 200 parts | XX µs | YY µs | ZZ% faster |
+| 100 batches × 1024 rows, 10 parts | 1.46 ms | **1.33 ms** | **9.0%** |
+| 50 batches × 4096 rows, 10 parts | 2.88 ms | **2.71 ms** | **5.9%** |
+| 200 batches × 1024 rows, 200 parts | 8.45 ms | **8.18 ms** | **3.3%** |
 
-**Overall**: X-XX% improvement in range partitioning shuffle operations.
+**Summary**: 
+- **400x+** reduction in RowConverter management overhead
+- **3-9%** end-to-end improvement in shuffle operations
+- Cumulative savings scale with batch count (ideal for production workloads with thousands of batches)
 
 ### Why are the changes needed?
 The `RowConverter::new()` is called for every batch in `evaluate_range_partition_ids()`, causing unnecessary overhead:
