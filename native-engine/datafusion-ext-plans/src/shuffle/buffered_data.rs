@@ -89,7 +89,6 @@ impl BufferedData {
             ),
         )
     }
-}
 
     pub fn add_batch(&mut self, batch: RecordBatch) -> Result<()> {
         // first add to staging, mem used is doubled for later sorting

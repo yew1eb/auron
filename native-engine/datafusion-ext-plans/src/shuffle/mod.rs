@@ -40,7 +40,7 @@ use datafusion::{
 };
 use datafusion_ext_commons::{arrow::array_size::BatchSize, spark_hash::create_murmur3_hashes};
 use futures::StreamExt;
-use parking_lot::Mutex as SyncMutex;
+
 
 use crate::common::execution_context::ExecutionContext;
 
@@ -205,7 +205,7 @@ fn evaluate_range_partition_ids(
     batch: &RecordBatch,
     sort_expr: &Vec<PhysicalSortExpr>,
     bound_rows: &Arc<Rows>,
-    sort_fields: &[SortField],
+    _sort_fields: &[SortField],
     converter: &Arc<RowConverter>,
 ) -> Result<Vec<u32>> {
     let num_rows = batch.num_rows();
