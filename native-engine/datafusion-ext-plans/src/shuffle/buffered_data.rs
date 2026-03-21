@@ -429,8 +429,9 @@ mod test {
         )?;
 
         let round_robin_partitioning = Partitioning::RoundRobinPartitioning(4);
+        let mut cached_converter: Option<(Vec<SortField>, Arc<RowConverter>)> = None;
         let (_parts, sorted_batch) =
-            sort_batches_by_partition_id(vec![record_batch], &round_robin_partitioning, 3, 0)?;
+            sort_batches_by_partition_id(vec![record_batch], &round_robin_partitioning, 3, 0, &mut cached_converter)?;
 
         let expected = vec![
             "+----+---+---+",
@@ -483,8 +484,9 @@ mod test {
 
         let range_repartitioning =
             Partitioning::RangePartitioning(sort_exprs, partition_num, Arc::from(rows));
+        let mut cached_converter: Option<(Vec<SortField>, Arc<RowConverter>)> = None;
         let (_parts, sorted_batch) =
-            sort_batches_by_partition_id(vec![record_batch], &range_repartitioning, 0, 0)?;
+            sort_batches_by_partition_id(vec![record_batch], &range_repartitioning, 0, 0, &mut cached_converter)?;
 
         let expected = vec![
             "+----+---+---+",
@@ -545,8 +547,9 @@ mod test {
 
         let range_repartitioning =
             Partitioning::RangePartitioning(sort_exprs, partition_num, Arc::from(rows));
+        let mut cached_converter: Option<(Vec<SortField>, Arc<RowConverter>)> = None;
         let (_parts, sorted_batch) =
-            sort_batches_by_partition_id(vec![record_batch], &range_repartitioning, 0, 0)?;
+            sort_batches_by_partition_id(vec![record_batch], &range_repartitioning, 0, 0, &mut cached_converter)?;
 
         let expected = vec![
             "+----+---+---+",
