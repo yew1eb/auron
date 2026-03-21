@@ -19,7 +19,7 @@ use arrow::{record_batch::RecordBatch, row::{RowConverter, SortField}};
 use auron_jni_bridge::{is_task_running, jni_call};
 use bytesize::ByteSize;
 use count_write::CountWrite;
-use datafusion::{common::Result, physical_plan::metrics::Time};
+use datafusion::{common::Result, physical_expr::PhysicalSortExpr, physical_plan::metrics::Time};
 use datafusion_ext_commons::{
     algorithm::rdx_sort::radix_sort_by_key,
     arrow::{
@@ -294,7 +294,9 @@ fn sort_batches_by_partition_id(
     partitioning: &Partitioning,
     current_num_rows: usize,
     partition_id: usize,
+    cached_converter: &mut Option<(Vec<SortField>, Arc<RowConverter>)>,
 ) -> Result<(Vec<u32>, RecordBatch)> {
+    use datafusion::common::Result as DFResult;
     let num_partitions = partitioning.partition_count();
     let mut round_robin_start_rows =
         (partition_id * 1000193 + current_num_rows) % partitioning.partition_count();
@@ -319,7 +321,26 @@ fn sort_batches_by_partition_id(
                     part_ids
                 }
                 Partitioning::RangePartitioning(sort_expr, _, bounds) => {
-                    evaluate_range_partition_ids(&batch, sort_expr, bounds)
+                    // Initialize converter on first batch if not already cached
+                    if cached_converter.is_none() {
+                        let sort_fields: DFResult<Vec<_>> = sort_expr
+                            .iter()
+                            .map(|expr: &PhysicalSortExpr| {
+                                Ok(SortField::new_with_options(
+                                    expr.expr.data_type(&batch.schema())?,
+                                    expr.options,
+                                ))
+                            })
+                            .collect();
+                        let sort_fields = sort_fields.expect("failed to create sort fields");
+                        let converter = Arc::new(
+                            RowConverter::new(sort_fields.clone())
+                                .expect("failed to create row converter"),
+                        );
+                        *cached_converter = Some((sort_fields, converter));
+                    }
+                    let (sort_fields, converter) = cached_converter.as_ref().unwrap();
+                    evaluate_range_partition_ids(&batch, sort_expr, bounds, sort_fields, converter)
                         .expect("failed to evaluate range partition ids")
                 }
                 _ => unreachable!("unsupported partitioning: {:?}", partitioning),

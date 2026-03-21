@@ -205,20 +205,10 @@ fn evaluate_range_partition_ids(
     batch: &RecordBatch,
     sort_expr: &Vec<PhysicalSortExpr>,
     bound_rows: &Arc<Rows>,
+    sort_fields: &[SortField],
+    converter: &Arc<RowConverter>,
 ) -> Result<Vec<u32>> {
     let num_rows = batch.num_rows();
-
-    let sort_row_converter = Arc::new(SyncMutex::new(RowConverter::new(
-        sort_expr
-            .iter()
-            .map(|expr: &PhysicalSortExpr| {
-                Ok(SortField::new_with_options(
-                    expr.expr.data_type(&batch.schema())?,
-                    expr.options,
-                ))
-            })
-            .collect::<Result<Vec<SortField>>>()?,
-    )?));
 
     let key_cols: Vec<ArrayRef> = sort_expr
         .iter()
@@ -228,7 +218,7 @@ fn evaluate_range_partition_ids(
                 .and_then(|cv| cv.into_array(batch.num_rows()))
         })
         .collect::<Result<_>>()?;
-    let key_rows = sort_row_converter.lock().convert_columns(&key_cols)?;
+    let key_rows = converter.convert_columns(&key_cols)?;
     let mut vec_u32 = Vec::with_capacity(num_rows);
     for key_row in key_rows.iter() {
         let partition = get_partition(key_row, bound_rows, true);
