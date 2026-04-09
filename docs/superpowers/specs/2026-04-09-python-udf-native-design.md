@@ -113,7 +113,7 @@ DataFusion 执行引擎（Rust）
 | `AuronConverters` 扩展 | `spark-extension/.../AuronConverters.scala` | Scala | 新增 `EvalPythonExec` 转换分支 |
 | `AuronConvertStrategy` 扩展 | `spark-extension/.../AuronConvertStrategy.scala` | Scala | 新增 `EvalPythonExec` 可转换性判断 |
 | `NativeConverters` 扩展 | `spark-extension/.../NativeConverters.scala` | Scala | Python UDF 表达式序列化 |
-| `SparkAuronConfiguration` 扩展 | `spark-extension/.../SparkAuronConfiguration.scala` | Scala | `spark.auron.enable.pythonUDF` 配置项 |
+| `SparkAuronConfiguration` 扩展 | `spark-extension/.../SparkAuronConfiguration.scala` | Scala | `spark.auron.enable.pythonUdf` 配置项 |
 
 无需新增 Java JNI 方法，无需 `NativePythonUDFExec` SparkPlan，复用现有 `NativeProjectBase` 执行路径。
 
@@ -257,7 +257,7 @@ case e: EvalPythonExec if AuronConverters.enablePythonUDF && isNative(e.child) =
 **`SparkAuronConfiguration.scala` — 新增配置项：**
 
 ```scala
-val ENABLE_PYTHON_UDF = conf("spark.auron.enable.pythonUDF", defaultValue = true)
+val ENABLE_PYTHON_UDF = conf("spark.auron.enable.pythonUdf", defaultValue = true)
 ```
 
 **`AuronConverters.scala` — 新增转换分支和函数：**
