@@ -33,6 +33,7 @@ import org.apache.spark.sql.execution.joins.BroadcastHashJoinExec
 import org.apache.spark.sql.execution.joins.BroadcastNestedLoopJoinExec
 import org.apache.spark.sql.execution.joins.ShuffledHashJoinExec
 import org.apache.spark.sql.execution.joins.SortMergeJoinExec
+import org.apache.spark.sql.execution.python.EvalPythonExec
 import org.apache.spark.sql.execution.window.WindowExec
 
 object AuronConvertStrategy extends Logging {
@@ -164,6 +165,8 @@ object AuronConvertStrategy extends Logging {
           if e.getClass.getSimpleName == "WindowGroupLimitExec" && isNative(e.child) =>
         e.setTagValue(convertStrategyTag, AlwaysConvert)
       case e: GenerateExec if isNative(e.child) =>
+        e.setTagValue(convertStrategyTag, AlwaysConvert)
+      case e: EvalPythonExec if AuronConverters.enablePythonUDF && isNative(e.child) =>
         e.setTagValue(convertStrategyTag, AlwaysConvert)
       case e: ObjectHashAggregateExec if isNative(e.child) =>
         e.setTagValue(convertStrategyTag, AlwaysConvert)

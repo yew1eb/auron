@@ -370,6 +370,24 @@ object NativeConverters extends Logging {
     }
   }
 
+  def convertPythonUDFExpr(
+      funcBytes: Array[Byte],
+      returnType: DataType,
+      returnNullable: Boolean,
+      params: Seq[pb.PhysicalExprNode],
+      exprString: String): pb.PhysicalExprNode =
+    pb.PhysicalExprNode
+      .newBuilder()
+      .setPythonUdfWrapperExpr(
+        pb.PhysicalPythonUDFWrapperExprNode
+          .newBuilder()
+          .setFuncBytes(com.google.protobuf.ByteString.copyFrom(funcBytes))
+          .setReturnType(convertDataType(returnType))
+          .setReturnNullable(returnNullable)
+          .addAllParams(params.asJava)
+          .setExprString(exprString))
+      .build()
+
   def convertScanPruningExpr(sparkExpr: Expression): pb.PhysicalExprNode = {
     convertExprWithFallback(
       sparkExpr,

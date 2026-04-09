@@ -66,11 +66,12 @@ import org.apache.spark.sql.execution.command.DataWritingCommandExec
 import org.apache.spark.sql.execution.exchange.BroadcastExchangeExec
 import org.apache.spark.sql.execution.exchange.ShuffleExchangeExec
 import org.apache.spark.sql.execution.joins._
+import org.apache.spark.sql.execution.python.EvalPythonExec
 import org.apache.spark.sql.execution.window.WindowExec
 import org.apache.spark.sql.hive.execution.InsertIntoHiveTable
 import org.apache.spark.sql.hive.execution.auron.plan.NativeHiveTableScanBase
 import org.apache.spark.sql.internal.SQLConf
-import org.apache.spark.sql.types.LongType
+import org.apache.spark.sql.types.{BooleanType, DataType, DoubleType, FloatType, IntegerType, LongType, NullType, StringType}
 
 import org.apache.auron.configuration.AuronConfiguration
 import org.apache.auron.jni.AuronAdaptor
@@ -234,6 +235,8 @@ object AuronConverters extends Logging {
         tryConvert(e, convertLocalTableScanExec)
       case e: DataWritingCommandExec if enableDataWriting => // data writing
         tryConvert(e, convertDataWritingCommandExec)
+      case e: EvalPythonExec if enablePythonUDF =>
+        tryConvert(e, convertEvalPythonExec)
 
       case exec: ForceNativeExecutionWrapperBase => exec
       case exec =>
@@ -998,6 +1001,44 @@ object AuronConverters extends Logging {
       exec.requiredChildOutput,
       exec.outer,
       exec.generatorOutput,
+      addRenameColumnsExec(convertToNative(exec.child)))
+  }
+
+  private val supportedPythonUDFTypes: Set[DataType] =
+    Set(IntegerType, LongType, FloatType, DoubleType, StringType, BooleanType, NullType)
+
+  def convertEvalPythonExec(exec: EvalPythonExec): SparkPlan = {
+    if (!exec.udfs.forall(udf =>
+        supportedPythonUDFTypes.contains(udf.dataType) &&
+          udf.children.forall(e => supportedPythonUDFTypes.contains(e.dataType)))) {
+      throw new NotImplementedError(
+        s"EvalPythonExec contains unsupported types: ${exec.udfs.map(_.dataType)}")
+    }
+
+    val udfProtoExprs = exec.udfs.zip(exec.resultAttrs).map { case (udf, resultAttr) =>
+      val convertedParams = udf.children.map(NativeConverters.convertExpr)
+      val funcBytes = udf.func.command.toArray
+      NativeConverters.convertPythonUDFExpr(
+        funcBytes,
+        resultAttr.dataType,
+        resultAttr.nullable,
+        convertedParams,
+        udf.toString)
+    }
+
+    // Output = all child output columns + UDF result columns (appended on right)
+    // Each UDF result is an Alias wrapping the native Python UDF expression
+    val outputExprs: Seq[NamedExpression] =
+      exec.child.output.map(attr => attr: NamedExpression) ++
+        exec.resultAttrs.zip(udfProtoExprs).map { case (resultAttr, protoExpr) =>
+          Alias(
+            Shims.get
+              .createNativeExprWrapper(protoExpr, resultAttr.dataType, resultAttr.nullable),
+            resultAttr.name)(resultAttr.exprId, resultAttr.qualifier)
+        }
+
+    Shims.get.createNativeProjectExec(
+      outputExprs,
       addRenameColumnsExec(convertToNative(exec.child)))
   }
 
