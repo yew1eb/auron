@@ -174,7 +174,7 @@ pub struct SparkPythonUDFWrapperExpr {
     pub return_nullable: bool,
     pub params: Vec<PhysicalExprRef>, // 输入参数表达式
     // 缓存已反序列化的 Python callable，每个 task 线程只反序列化一次
-    py_func: OnceCell<Arc<Mutex<PyObject>>>,
+    py_func: OnceCell<PyObject>,    // 无需 Mutex：GIL 已提供互斥保证，PyObject 无状态
     expr_string: String,
 }
 
@@ -192,11 +192,11 @@ impl PhysicalExpr for SparkPythonUDFWrapperExpr {
 
         let result = tokio::task::block_in_place(|| {
             Python::with_gil(|py| {
-                // 3. 懒加载并缓存 Python callable
-                let callable = py_func.get_or_try_init(|| -> Result<_> {
+                // 3. 懒加载并缓存 Python callable（OnceCell 保证只反序列化一次；PyObject 无状态，GIL 保证并发安全）
+                let callable = py_func.get_or_try_init(|| -> PyResult<PyObject> {
                     let cloudpickle = py.import("cloudpickle")?;
                     let func = cloudpickle.call_method1("loads", (func_bytes.as_slice(),))?;
-                    Ok(Arc::new(Mutex::new(func.into())))
+                    Ok(func.into())
                 })?;
 
                 // 4. 逐行调用
@@ -206,7 +206,7 @@ impl PhysicalExpr for SparkPythonUDFWrapperExpr {
                     let py_args: Vec<PyObject> = params.iter()
                         .map(|col| arrow_scalar_to_py(py, col, i))
                         .collect::<PyResult<_>>()?;
-                    let py_result = callable.lock().call1(py, PyTuple::new(py, &py_args)?)?;
+                    let py_result = callable.call1(py, PyTuple::new(py, &py_args)?)?;
                     results.push(py_to_arrow_scalar(py, &py_result, &return_type)?);
                 }
                 build_arrow_array(results, &return_type)
@@ -218,7 +218,7 @@ impl PhysicalExpr for SparkPythonUDFWrapperExpr {
 }
 ```
 
-> **`block_in_place` vs `spawn_blocking`**：DataFusion 的执行是在 tokio 的 `block_on` 上下文中运行的，使用 `block_in_place` 允许当前线程执行阻塞操作（获取 GIL）而不阻塞整个 tokio runtime，是处理 GIL 的推荐方式。
+> **`block_in_place` 使用前提**：要求 tokio `rt-multi-thread` 运行时（Auron 已使用，见 `auron/Cargo.toml` default features）。在单线程运行时中调用会 panic。若出现非 tokio 上下文（如某些测试场景），降级为直接 `Python::with_gil` 调用（不使用 `block_in_place`），实现中通过 `tokio::runtime::Handle::try_current()` 判断是否在 tokio 上下文中。
 
 **MVP 支持类型（`type_convert.rs`）：**
 
@@ -230,57 +230,29 @@ impl PhysicalExpr for SparkPythonUDFWrapperExpr {
 | `Boolean` | `bool` |
 | `Null` | `None` |
 
-**Python 解释器初始化（`lib.rs`）：**
+**Python 解释器初始化位置：**
+
+在 `auron-jni-bridge/src/jni_bridge.rs` 的 JNI 初始化路径（`INIT.get_or_try_init` 块）中调用：
 
 ```rust
-// 在 JNI onload 或首次使用前调用，与 Auron 现有的 INIT.get_or_try_init 机制集成
-pub fn init_python() {
-    pyo3::prepare_freethreaded_python();
-}
+// jni_bridge.rs 的 INIT 块中新增，与其他初始化逻辑并列
+pyo3::prepare_freethreaded_python();
 ```
 
-> PyO3 0.20 起已废弃 `auto-initialize` feature，改用显式 `prepare_freethreaded_python()`。
+此处是 JVM 加载 `.so` 后的唯一初始化入口，确保 Python 解释器在任何 UDF 调用之前就绪，且只初始化一次。PyO3 0.20+ 已移除 `auto-initialize` feature，必须显式调用。
 
 ### 4.2 Spark 集成层（Scala）
 
-**`AuronConverters.scala` — 新增转换分支：**
+**`AuronConvertStrategy.scala` — 新增 `AlwaysConvert` 判断：**
+
+在第二个 `foreachUp` 循环（决定 `AlwaysConvert`）中新增，仿照 `ProjectExec`/`FilterExec` 同类 case：
 
 ```scala
-// 在 convertSparkPlan 的 match 语句中新增（其他 case 之后）
-case e: EvalPythonExec if enablePythonUDF =>
-  tryConvert(e, convertEvalPythonExec)
-
-// 新增转换函数
-def convertEvalPythonExec(exec: EvalPythonExec): Option[SparkPlan] = {
-  // 验证所有 UDF 使用 MVP 支持的类型
-  if (!exec.udfs.forall(udf =>
-      SupportedPythonUDFTypes.contains(udf.dataType) &&
-      udf.children.forall(e => SupportedPythonUDFTypes.contains(e.dataType)))) {
-    return None  // 回退到 Spark 原生路径
-  }
-
-  // 转换每个 PythonUDF 为 SparkPythonUDFWrapperExpr
-  val udfExprs: Seq[(Attribute, Expression)] = exec.udfs.zip(exec.resultAttrs).map {
-    case (udf, resultAttr) =>
-      val convertedParams = udf.children.map(NativeConverters.convertExpr)
-      val wrapperExpr = NativeConverters.serializePythonUDFExpr(
-        funcBytes    = udf.func.command,
-        returnType   = resultAttr.dataType,
-        returnNullable = resultAttr.nullable,
-        params       = convertedParams,
-        exprString   = udf.toString,
-      )
-      (resultAttr, wrapperExpr)
-  }
-
-  // 构建输出 Project：原有输出列 + UDF 结果列
-  val outputExprs: Seq[NamedExpression] =
-    exec.child.output.map(attr => attr: NamedExpression) ++
-    udfExprs.map { case (attr, expr) => Alias(expr, attr.name)(attr.exprId) }
-
-  Some(Shims.get.newNativeProjectExec(outputExprs, exec.child))
-}
+case e: EvalPythonExec if AuronConverters.enablePythonUDF && isNative(e.child) =>
+  e.setTagValue(convertStrategyTag, AlwaysConvert)
 ```
+
+若 `isNative(e.child)` 为 false，节点不被标记，`convertSparkPlanRecursively` 中不会触发转换，节点保留为原 `EvalPythonExec`，Spark 自动走 Python Worker 路径（自然回退）。
 
 **`SparkAuronConfiguration.scala` — 新增配置项：**
 
@@ -288,12 +260,78 @@ def convertEvalPythonExec(exec: EvalPythonExec): Option[SparkPlan] = {
 val ENABLE_PYTHON_UDF = conf("spark.auron.enable.pythonUDF", defaultValue = true)
 ```
 
-**`AuronConvertStrategy.scala` — 新增可转换性判断：**
+**`AuronConverters.scala` — 新增转换分支和函数：**
 
 ```scala
-case e: EvalPythonExec =>
-  if (AuronConverters.enablePythonUDF) markConvertible(e) else markNeverConvert(e)
+// convertSparkPlan match 语句中新增
+case e: EvalPythonExec if enablePythonUDF =>
+  tryConvert(e, convertEvalPythonExec)
+
+def convertEvalPythonExec(exec: EvalPythonExec): Option[SparkPlan] = {
+  if (!exec.udfs.forall(udf =>
+      SupportedPythonUDFTypes.contains(udf.dataType) &&
+      udf.children.forall(e => SupportedPythonUDFTypes.contains(e.dataType)))) {
+    return None
+  }
+  val udfExprs = exec.udfs.zip(exec.resultAttrs).map { case (udf, resultAttr) =>
+    val convertedParams = udf.children.map(NativeConverters.convertExpr)
+    val wrapperNode = NativeConverters.convertPythonUDFExpr(
+      funcBytes      = udf.func.command,
+      returnType     = resultAttr.dataType,
+      returnNullable = resultAttr.nullable,
+      params         = convertedParams,
+      exprString     = udf.toString,
+    )
+    (resultAttr, wrapperNode)
+  }
+  val outputExprs: Seq[NamedExpression] =
+    exec.child.output.map(attr => attr: NamedExpression) ++
+    udfExprs.map { case (attr, _) => attr }
+  Some(Shims.get.newNativeProjectExec(outputExprs, exec.child))
+}
 ```
+
+**`NativeConverters.scala` — 新增 Python UDF protobuf 序列化：**
+
+仿照现有 `SparkUDFWrapperExpr` 的序列化路径（`pb.PhysicalSparkUDFWrapperExprNode`）：
+
+```scala
+def convertPythonUDFExpr(
+    funcBytes: Array[Byte],
+    returnType: DataType,
+    returnNullable: Boolean,
+    params: Seq[pb.PhysicalExprNode],
+    exprString: String,
+): pb.PhysicalExprNode =
+  pb.PhysicalExprNode.newBuilder()
+    .setPythonUdfWrapperExpr(
+      pb.PhysicalPythonUDFWrapperExprNode.newBuilder()
+        .setFuncBytes(ByteString.copyFrom(funcBytes))  // cloudpickle bytes
+        .setReturnType(convertDataType(returnType))
+        .setReturnNullable(returnNullable)
+        .addAllParams(params.asJava)
+        .setExprString(exprString))
+    .build()
+```
+
+**protobuf 变更（`auron-planner/proto/physical_plan.proto`）：**
+
+```protobuf
+message PhysicalPythonUDFWrapperExprNode {
+  bytes func_bytes              = 1;
+  ArrowType return_type         = 2;
+  bool return_nullable          = 3;
+  repeated PhysicalExprNode params = 4;
+  string expr_string            = 5;
+}
+
+// 在 PhysicalExprNode.oneof expr_type 中新增
+PhysicalPythonUDFWrapperExprNode python_udf_wrapper_expr = <next_field_id>;
+```
+
+**Rust 端 protobuf 解码（`auron-planner/src/...`）：**
+
+仿照现有 `spark_udf_wrapper_expr` 解码分支，新增 `python_udf_wrapper_expr` 分支，构造 `SparkPythonUDFWrapperExpr`。
 
 ---
 
