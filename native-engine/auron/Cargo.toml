@@ -38,6 +38,7 @@ arrow = { workspace = true }
 auron-jni-bridge = { workspace = true }
 auron-memmgr = { workspace = true }
 auron-planner = { workspace = true }
+auron-python-udf = { workspace = true }
 datafusion = { workspace = true }
 datafusion-ext-commons = { workspace = true }
 datafusion-ext-plans = { workspace = true }
