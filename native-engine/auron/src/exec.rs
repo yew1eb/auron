@@ -73,6 +73,10 @@ pub extern "system" fn Java_org_apache_auron_jni_JniBridge_callNative(
             log::info!("initializing JNI bridge");
             JavaClasses::init(&env);
 
+            // init python interpreter
+            log::info!("initializing Python interpreter");
+            auron_python_udf::init_python();
+
             // init datafusion session context
             log::info!("initializing datafusion session");
             SESSION.get_or_try_init(|| {
