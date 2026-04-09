@@ -59,6 +59,7 @@ use datafusion_ext_exprs::{
     spark_udf_wrapper::SparkUDFWrapperExpr, string_contains::StringContainsExpr,
     string_ends_with::StringEndsWithExpr, string_starts_with::StringStartsWithExpr,
 };
+use auron_python_udf::expr::SparkPythonUDFWrapperExpr;
 use datafusion_ext_plans::{
     agg::{
         AggExecMode, AggExpr, AggFunction, AggMode, GroupingExpr,
@@ -956,6 +957,18 @@ impl PhysicalPlanner {
                     .collect::<Result<Vec<_>, _>>()?,
                 e.expr_string.clone(),
             )?),
+            ExprType::PythonUdfWrapperExpr(e) => Arc::new(
+                SparkPythonUDFWrapperExpr::try_new(
+                    e.func_bytes.to_vec(),
+                    convert_required!(e.return_type)?,
+                    e.return_nullable,
+                    e.params
+                        .iter()
+                        .map(|x| self.try_parse_physical_expr(x, input_schema))
+                        .collect::<Result<Vec<_>, _>>()?,
+                    e.expr_string.clone(),
+                )?
+            ),
             ExprType::SparkScalarSubqueryWrapperExpr(e) => {
                 Arc::new(SparkScalarSubqueryWrapperExpr::try_new(
                     e.serialized.clone(),
