@@ -454,6 +454,12 @@ public class SparkAuronConfiguration extends AuronConfiguration {
             .withDescription("Enable GenerateExec operation conversion to native Auron implementations.")
             .withDefaultValue(true);
 
+    public static final ConfigOption<Boolean> ENABLE_PYTHON_UDF = new SQLConfOption<>(Boolean.class)
+            .withKey("auron.enable.pythonUdf")
+            .withCategory("Operator Supports")
+            .withDescription("Enable EvalPythonExec conversion to native Python UDF execution via PyO3.")
+            .withDefaultValue(true);
+
     public static final ConfigOption<Boolean> ENABLE_LOCAL_TABLE_SCAN = new SQLConfOption<>(Boolean.class)
             .withKey("auron.enable.local.table.scan")
             .withCategory("Operator Supports")

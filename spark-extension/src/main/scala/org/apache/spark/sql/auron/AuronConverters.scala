@@ -99,6 +99,7 @@ object AuronConverters extends Logging {
   def enableWindow: Boolean = SparkAuronConfiguration.ENABLE_WINDOW.get()
   def enableWindowGroupLimit: Boolean = SparkAuronConfiguration.ENABLE_WINDOW_GROUP_LIMIT.get()
   def enableGenerate: Boolean = SparkAuronConfiguration.ENABLE_GENERATE.get()
+  def enablePythonUDF: Boolean = SparkAuronConfiguration.ENABLE_PYTHON_UDF.get()
   def enableLocalTableScan: Boolean = SparkAuronConfiguration.ENABLE_LOCAL_TABLE_SCAN.get()
   def enableDataWriting: Boolean = SparkAuronConfiguration.ENABLE_DATA_WRITING.get()
   def enableScanParquet: Boolean = SparkAuronConfiguration.ENABLE_SCAN_PARQUET.get()
