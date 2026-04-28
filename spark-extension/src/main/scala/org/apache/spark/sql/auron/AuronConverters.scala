@@ -1011,8 +1011,9 @@ object AuronConverters extends Logging {
     if (!exec.udfs.forall(udf =>
         supportedPythonUDFTypes.contains(udf.dataType) &&
           udf.children.forall(e => supportedPythonUDFTypes.contains(e.dataType)))) {
-      throw new NotImplementedError(
-        s"EvalPythonExec contains unsupported types: ${exec.udfs.map(_.dataType)}")
+      logDebug(
+        s"EvalPythonExec contains unsupported types: ${exec.udfs.map(_.dataType)}, falling back to Python Worker")
+      return exec
     }
 
     val udfProtoExprs = exec.udfs.zip(exec.resultAttrs).map { case (udf, resultAttr) =>

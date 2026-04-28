@@ -405,6 +405,7 @@ name = "auron-planner"
 version = "0.1.0"
 dependencies = [
  "arrow",
+ "auron-python-udf",
  "base64",
  "datafusion",
  "datafusion-ext-exprs",

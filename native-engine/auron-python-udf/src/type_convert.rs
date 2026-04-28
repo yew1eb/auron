@@ -86,6 +86,7 @@ pub fn arrow_scalar_to_py(py: Python<'_>, array: &ArrayRef, row_idx: usize) -> P
                 .value(row_idx);
             Ok(v.into_pyobject(py).unwrap().to_owned().into_any().unbind())
         }
+        DataType::Null => Ok(py.None()),
         dt => Err(pyo3::exceptions::PyTypeError::new_err(format!(
             "Unsupported Arrow type for Python UDF parameter: {dt}"
         ))),
@@ -108,6 +109,7 @@ pub fn py_to_arrow_scalar(
             DataType::Utf8 => ScalarValue::Utf8(None),
             DataType::LargeUtf8 => ScalarValue::LargeUtf8(None),
             DataType::Boolean => ScalarValue::Boolean(None),
+            DataType::Null => ScalarValue::Null,
             dt => df_execution_err!("Unsupported return type for Python UDF: {dt}")?,
         });
     }
@@ -161,6 +163,7 @@ pub fn py_to_arrow_scalar(
                 .map_err(|e| datafusion::error::DataFusionError::External(Box::new(e)))?;
             Ok(ScalarValue::Boolean(Some(v)))
         }
+        DataType::Null => Ok(ScalarValue::Null),
         dt => df_execution_err!("Unsupported return type for Python UDF: {dt}"),
     }
 }
@@ -246,6 +249,19 @@ mod tests {
             let py_val = arrow_scalar_to_py(py, &arr, 0).unwrap();
             let result = py_to_arrow_scalar(py, &py_val, &DataType::Boolean).unwrap();
             assert_eq!(result, ScalarValue::Boolean(Some(true)));
+        });
+    }
+
+    #[test]
+    fn test_null_type() {
+        init();
+        Python::with_gil(|py| {
+            use arrow::array::NullArray;
+            let arr = Arc::new(NullArray::new(1)) as ArrayRef;
+            let py_val = arrow_scalar_to_py(py, &arr, 0).unwrap();
+            assert!(py_val.is_none(py));
+            let result = py_to_arrow_scalar(py, &py_val, &DataType::Null).unwrap();
+            assert_eq!(result, ScalarValue::Null);
         });
     }
 
