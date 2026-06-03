@@ -110,6 +110,10 @@ impl<W: Write> IpcCompressionWriter<W> {
     pub fn inner_mut(&mut self) -> &mut W {
         &mut self.output
     }
+
+    pub fn into_inner(self) -> W {
+        self.output
+    }
 }
 
 pub struct IpcCompressionReader<R: Read + 'static> {

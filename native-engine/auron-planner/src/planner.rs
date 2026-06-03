@@ -316,6 +316,11 @@ impl PhysicalPlanner {
                     output_partitioning.expect("shuffle writer: output_partitioning must be set"),
                     shuffle_writer.output_data_file.clone(),
                     shuffle_writer.output_index_file.clone(),
+                    if shuffle_writer.checksum_enabled && !shuffle_writer.output_checksum_file.is_empty() {
+                        Some(shuffle_writer.output_checksum_file.clone())
+                    } else {
+                        None
+                    },
                 )?))
             }
             PhysicalPlanType::RssShuffleWriter(rss_shuffle_writer) => {

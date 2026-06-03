@@ -35,6 +35,7 @@ datafusion = { workspace = true }
 bigdecimal = { workspace = true }
 byteorder = { workspace = true }
 chrono = { workspace = true }
+crc32fast = { workspace = true }
 itertools = { workspace = true }
 jni = { workspace = true }
 log = { workspace = true }

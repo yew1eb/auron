@@ -20,7 +20,7 @@ import java.nio.{ByteBuffer, ByteOrder}
 import java.nio.file.{Files, Paths}
 
 import org.apache.spark.{Partition, ShuffleDependency, SparkEnv, TaskContext}
-import org.apache.spark.internal.Logging
+import org.apache.spark.internal.{Logging, config}
 import org.apache.spark.scheduler.MapStatus
 import org.apache.spark.shuffle.{IndexShuffleBlockResolver, ShuffleWriteMetricsReporter, ShuffleWriter}
 import org.apache.spark.sql.auron.{NativeHelper, NativeRDD, Shims}
@@ -51,6 +51,17 @@ abstract class AuronShuffleWriterBase[K, V](metrics: ShuffleWriteMetricsReporter
     val tempDataFilePath = Paths.get(tempDataFilename)
     val tempIndexFilePath = Paths.get(tempIndexFilename)
 
+    // Checksum is only supported for CRC32. Spark's default is Adler32, so
+    // when Adler32 is configured we silently disable native checksum and pass
+    // an empty array, which keeps Spark happy (it falls back to no validation).
+    val conf = SparkEnv.get.conf
+    val checksumEnabled = conf.get(config.SHUFFLE_CHECKSUM_ENABLED) &&
+      conf.get(config.SHUFFLE_CHECKSUM_ALGORITHM).equalsIgnoreCase("CRC32")
+    val tempChecksumFilename = if (checksumEnabled)
+      dataFile.getPath.replace(".data", ".checksum.tmp")
+    else ""
+    val tempChecksumFilePath = if (checksumEnabled) Paths.get(tempChecksumFilename) else null
+
     val nativeShuffleWriterExec = PhysicalPlanNode
       .newBuilder()
       .setShuffleWriter(
@@ -58,6 +69,8 @@ abstract class AuronShuffleWriterBase[K, V](metrics: ShuffleWriteMetricsReporter
           .newBuilder(nativeShuffleRDD.nativePlan(partition, context).getShuffleWriter)
           .setOutputDataFile(tempDataFilename)
           .setOutputIndexFile(tempIndexFilename)
+          .setChecksumEnabled(checksumEnabled)
+          .setOutputChecksumFile(tempChecksumFilename)
           .build())
       .build()
     val iterator = NativeHelper.executeNativePlan(
@@ -82,6 +95,18 @@ abstract class AuronShuffleWriterBase[K, V](metrics: ShuffleWriteMetricsReporter
       })
       .toArray
 
+    // read per-partition CRC32 checksums written by the native shuffle writer
+    val checksums: Array[Long] =
+      if (checksumEnabled && tempChecksumFilePath != null && tempChecksumFilePath.toFile.exists()) {
+        Files
+          .readAllBytes(tempChecksumFilePath)
+          .grouped(8)
+          .map(b => ByteBuffer.wrap(b).order(ByteOrder.LITTLE_ENDIAN).getLong)
+          .toArray
+      } else {
+        Array[Long]()
+      }
+
     // update metrics
     val dataSize = Files.size(tempDataFilePath)
     metrics.incBytesWritten(dataSize)
@@ -93,6 +118,7 @@ abstract class AuronShuffleWriterBase[K, V](metrics: ShuffleWriteMetricsReporter
         tempDataFilePath.toFile,
         mapId,
         partitionLengths,
+        checksums,
         dataSize,
         context))
   }

@@ -18,7 +18,6 @@ use std::io::Write;
 use arrow::record_batch::RecordBatch;
 use auron_jni_bridge::{is_task_running, jni_call};
 use bytesize::ByteSize;
-use count_write::CountWrite;
 use datafusion::{common::Result, physical_plan::metrics::Time};
 use datafusion_ext_commons::{
     algorithm::rdx_sort::radix_sort_by_key,
@@ -27,7 +26,7 @@ use datafusion_ext_commons::{
         selection::{BatchInterleaver, create_batch_interleaver},
     },
     compute_suggested_batch_size_for_output, df_execution_err,
-    io::ipc_compression::IpcCompressionWriter,
+    io::{checksum::PartitionChecksums, ipc_compression::IpcCompressionWriter},
 };
 use itertools::Itertools;
 use jni::objects::GlobalRef;
@@ -118,11 +117,16 @@ impl BufferedData {
         Ok(())
     }
 
-    // write buffered data to spill/target file, returns uncompressed size and
-    // offsets to each partition
-    pub fn write<W: Write>(mut self, mut w: W) -> Result<Vec<u64>> {
+    // write buffered data to spill/target file, returns partition offsets and
+    // optional per-partition CRC32 checksums (when checksum_enabled is true).
+    pub fn write<W: Write>(
+        mut self,
+        w: W,
+        checksum_enabled: bool,
+    ) -> Result<(Vec<u64>, Option<Vec<u64>>)> {
         if self.num_rows == 0 {
-            return Ok(vec![0; self.partitioning.partition_count() + 1]);
+            let empty_offsets = vec![0; self.partitioning.partition_count() + 1];
+            return Ok((empty_offsets, None));
         }
 
         let mem_used = ByteSize(self.mem_used() as u64);
@@ -134,7 +138,12 @@ impl BufferedData {
 
         let output_io_time = self.output_io_time.clone();
         let num_partitions = self.partitioning.partition_count();
-        let mut writer = IpcCompressionWriter::new(CountWrite::from(&mut w));
+        let checksums = checksum_enabled.then(|| PartitionChecksums::new(num_partitions));
+
+        // TeeCountWriter simultaneously counts bytes and feeds each partition's
+        // written bytes to the corresponding CRC32 hasher. IpcCompressionWriter
+        // takes ownership so we access tee via inner_mut() to avoid borrow conflicts.
+        let mut writer = IpcCompressionWriter::new(TeeCountWriter::new(w, checksums));
         let mut offsets = vec![];
         let mut iter = self.into_sorted_batches()?;
 
@@ -143,18 +152,21 @@ impl BufferedData {
                 df_execution_err!("task completed/killed")?;
             }
 
-            offsets.resize(partition_id + 1, writer.inner().count());
+            offsets.resize(partition_id + 1, writer.inner_mut().count());
+            writer.inner_mut().set_partition(partition_id);
             for batch in batch_iter {
                 output_io_time
                     .with_timer(|| writer.write_batch(batch.num_rows(), batch.columns()))?;
             }
             output_io_time.with_timer(|| writer.finish_current_buf())?;
         }
-        offsets.resize(num_partitions + 1, writer.inner().count());
+        offsets.resize(num_partitions + 1, writer.inner_mut().count());
 
         let compressed_size = ByteSize(offsets.last().cloned().unwrap_or_default());
         log::info!("all buffered data drained, compressed_size={compressed_size}");
-        Ok(offsets)
+
+        let checksum_values = writer.into_inner().into_checksums().map(|c| c.finalize());
+        Ok((offsets, checksum_values))
     }
 
     // write buffered data to rss, returns uncompressed size
@@ -352,9 +364,55 @@ fn sort_batches_by_partition_id(
     return Ok((partition_offsets, sorted_batch));
 }
 
+/// A writer that simultaneously counts bytes written and feeds each partition's
+/// bytes to the corresponding CRC32 hasher.
+struct TeeCountWriter<W: Write> {
+    inner: W,
+    count: u64,
+    checksums: Option<PartitionChecksums>,
+    current_partition: usize,
+}
+
+impl<W: Write> TeeCountWriter<W> {
+    fn new(inner: W, checksums: Option<PartitionChecksums>) -> Self {
+        Self {
+            inner,
+            count: 0,
+            checksums,
+            current_partition: 0,
+        }
+    }
+
+    fn set_partition(&mut self, partition_id: usize) {
+        self.current_partition = partition_id;
+    }
+
+    fn count(&self) -> u64 {
+        self.count
+    }
+
+    fn into_checksums(self) -> Option<PartitionChecksums> {
+        self.checksums
+    }
+}
+
+impl<W: Write> Write for TeeCountWriter<W> {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        let n = self.inner.write(buf)?;
+        self.count += n as u64;
+        if let Some(cs) = self.checksums.as_mut() {
+            cs.update(self.current_partition, &buf[..n]);
+        }
+        Ok(n)
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        self.inner.flush()
+    }
+}
+
 #[cfg(test)]
 mod test {
-    use std::sync::Arc;
 
     use arrow::{
         array::{ArrayRef, Int32Array},

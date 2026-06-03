@@ -487,10 +487,10 @@ class ShimsImpl extends Shims with Logging {
       tempDataFile: File,
       mapId: Long,
       partitionLengths: Array[Long],
+      checksums: Array[Long],
       dataSize: Long,
       context: TaskContext): MapStatus = {
 
-    val checksums = Array[Long]()
     shuffleBlockResolver.writeMetadataFileAndCommit(
       dep.shuffleId,
       mapId,
@@ -507,6 +507,7 @@ class ShimsImpl extends Shims with Logging {
       tempDataFile: File,
       mapId: Long,
       partitionLengths: Array[Long],
+      checksums: Array[Long],
       dataSize: Long,
       context: TaskContext): MapStatus = {
 

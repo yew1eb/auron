@@ -46,6 +46,7 @@ pub struct SortShuffleRepartitioner {
     mem_consumer_info: Option<Weak<MemConsumerInfo>>,
     output_data_file: String,
     output_index_file: String,
+    output_checksum_file: Option<String>,
     data: Mutex<BufferedData>,
     spills: Mutex<Vec<Offsetted<u64, Box<dyn Spill>>>>,
     num_output_partitions: usize,
@@ -57,6 +58,7 @@ impl SortShuffleRepartitioner {
         exec_ctx: Arc<ExecutionContext>,
         output_data_file: String,
         output_index_file: String,
+        output_checksum_file: Option<String>,
         partitioning: Partitioning,
         output_io_time: Time,
     ) -> Self {
@@ -67,6 +69,7 @@ impl SortShuffleRepartitioner {
             mem_consumer_info: None,
             output_data_file,
             output_index_file,
+            output_checksum_file,
             data: Mutex::new(BufferedData::new(
                 partitioning,
                 partition_id,
@@ -100,7 +103,8 @@ impl MemConsumer for SortShuffleRepartitioner {
         let spill_metrics = self.exec_ctx.spill_metrics().clone();
         let spill = tokio::task::spawn_blocking(move || {
             let mut spill = try_new_spill(&spill_metrics)?;
-            let offsets = data.write(spill.get_buf_writer())?;
+            // checksum is not computed for spill files (intermediate results)
+            let (offsets, _) = data.write(spill.get_buf_writer(), false)?;
             Ok::<_, DataFusionError>(Offsetted::new(offsets, spill))
         })
         .await
@@ -162,6 +166,8 @@ impl ShuffleRepartitioner for SortShuffleRepartitioner {
 
         let data_file = self.output_data_file.clone();
         let index_file = self.output_index_file.clone();
+        let checksum_file = self.output_checksum_file.clone();
+        let checksum_enabled = checksum_file.is_some();
 
         // no spills - directly write current batches into final file
         if spills.is_empty() {
@@ -173,16 +179,25 @@ impl ShuffleRepartitioner for SortShuffleRepartitioner {
                 let mut output_data = open_shuffle_file(&data_file)?;
                 let mut output_index = open_shuffle_file(&index_file)?;
 
-                // write data file
-                // exclude io timer because it is already included buffered_data.write()
-                let offsets = output_io_time.exclude_timer(|| data.write(&mut output_data))?;
+                let (offsets, checksums) =
+                    output_io_time.exclude_timer(|| data.write(&mut output_data, checksum_enabled))?;
 
                 // write index file
                 let mut offsets_data = vec![];
-                for offset in offsets {
-                    offsets_data.extend_from_slice(&(offset as i64).to_le_bytes()[..]);
+                for offset in &offsets {
+                    offsets_data.extend_from_slice(&(*offset as i64).to_le_bytes()[..]);
                 }
                 output_index.write_all(&offsets_data)?;
+
+                // write checksum file if enabled
+                if let (Some(checksums), Some(checksum_file)) = (checksums, checksum_file) {
+                    let mut output_checksum = open_shuffle_file(&checksum_file)?;
+                    let mut checksum_data = vec![];
+                    for checksum in checksums {
+                        checksum_data.extend_from_slice(&(checksum as i64).to_le_bytes()[..]);
+                    }
+                    output_checksum.write_all(&checksum_data)?;
+                }
 
                 Ok::<(), DataFusionError>(())
             })
@@ -197,14 +212,14 @@ impl ShuffleRepartitioner for SortShuffleRepartitioner {
             if self.mem_used_percent() < 0.5 {
                 let mut spill = Box::new(vec![]);
                 let writer = spill.get_buf_writer();
-                let offsets = data.write(writer)?;
+                let (offsets, _) = data.write(writer, false)?;
                 self.update_mem_used(spill.len()).await?;
                 spills.push(Offsetted::new(offsets, spill));
             } else {
                 let spill_metrics = self.exec_ctx.spill_metrics().clone();
                 let spill = tokio::task::spawn_blocking(move || {
                     let mut spill = try_new_spill(&spill_metrics)?;
-                    let offsets = data.write(spill.get_buf_writer())?;
+                    let (offsets, _) = data.write(spill.get_buf_writer(), false)?;
                     Ok::<_, DataFusionError>(Offsetted::new(offsets, spill))
                 })
                 .await
@@ -214,7 +229,8 @@ impl ShuffleRepartitioner for SortShuffleRepartitioner {
             }
         }
 
-        // append partition in each spills
+        // append partition in each spills; checksum cannot be computed for
+        // merged spill data because the bytes have already been written.
         let num_output_partitions = self.num_output_partitions;
         let output_io_time = self.output_io_time.clone();
         tokio::task::spawn_blocking(move || {
@@ -242,6 +258,9 @@ impl ShuffleRepartitioner for SortShuffleRepartitioner {
                 offsets_data.extend_from_slice(&(offset as i64).to_le_bytes()[..]);
             }
             output_index.write_all(&offsets_data)?;
+
+            // checksum is not available when spills are merged
+            // (bytes have already been flushed to disk before checksum can be computed)
 
             Ok::<(), DataFusionError>(())
         })

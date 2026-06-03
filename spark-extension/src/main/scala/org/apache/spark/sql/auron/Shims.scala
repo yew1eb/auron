@@ -250,6 +250,7 @@ abstract class Shims {
       tempDataFile: File,
       mapId: Long,
       partitionLengths: Array[Long],
+      checksums: Array[Long],
       dataSize: Long,
       context: TaskContext): MapStatus
 

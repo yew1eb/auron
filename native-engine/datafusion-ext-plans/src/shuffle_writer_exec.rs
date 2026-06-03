@@ -53,6 +53,7 @@ pub struct ShuffleWriterExec {
     partitioning: Partitioning,
     output_data_file: String,
     output_index_file: String,
+    output_checksum_file: Option<String>,
     metrics: ExecutionPlanMetricsSet,
     props: OnceCell<PlanProperties>,
 }
@@ -102,6 +103,7 @@ impl ExecutionPlan for ShuffleWriterExec {
                 self.partitioning.clone(),
                 self.output_data_file.clone(),
                 self.output_index_file.clone(),
+                self.output_checksum_file.clone(),
             )?)),
             _ => df_execution_err!("ShuffleWriterExec wrong number of children"),
         }
@@ -123,6 +125,7 @@ impl ExecutionPlan for ShuffleWriterExec {
             p if p.partition_count() == 1 => Arc::new(SingleShuffleRepartitioner::new(
                 self.output_data_file.clone(),
                 self.output_index_file.clone(),
+                self.output_checksum_file.clone(),
                 output_time,
             )),
             Partitioning::HashPartitioning(..) | Partitioning::RangePartitioning(..) => {
@@ -130,6 +133,7 @@ impl ExecutionPlan for ShuffleWriterExec {
                     exec_ctx.clone(),
                     self.output_data_file.clone(),
                     self.output_index_file.clone(),
+                    self.output_checksum_file.clone(),
                     self.partitioning.clone(),
                     output_time,
                 ));
@@ -156,6 +160,7 @@ impl ExecutionPlan for ShuffleWriterExec {
                     exec_ctx.clone(),
                     self.output_data_file.clone(),
                     self.output_index_file.clone(),
+                    self.output_checksum_file.clone(),
                     self.partitioning.clone(),
                     output_time,
                 ));
@@ -185,6 +190,7 @@ impl ShuffleWriterExec {
         partitioning: Partitioning,
         output_data_file: String,
         output_index_file: String,
+        output_checksum_file: Option<String>,
     ) -> Result<Self> {
         Ok(ShuffleWriterExec {
             input,
@@ -192,6 +198,7 @@ impl ShuffleWriterExec {
             metrics: ExecutionPlanMetricsSet::new(),
             output_data_file,
             output_index_file,
+            output_checksum_file,
             props: OnceCell::new(),
         })
     }

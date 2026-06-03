@@ -556,6 +556,8 @@ message ShuffleWriterExecNode {
   PhysicalRepartition output_partitioning = 2;
   string output_data_file = 3;
   string output_index_file = 4;
+  bool checksum_enabled = 5;
+  string output_checksum_file = 6;
 }
 
 message RssShuffleWriterExecNode {

@@ -47,6 +47,7 @@ byteorder = { workspace = true }
 bytes = { workspace = true }
 bytesize = { workspace = true }
 count-write = { workspace = true }
+crc32fast = { workspace = true }
 foldhash = { workspace = true }
 futures = { workspace = true }
 futures-util = { workspace = true }
