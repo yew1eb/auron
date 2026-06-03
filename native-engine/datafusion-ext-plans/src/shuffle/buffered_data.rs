@@ -414,6 +414,8 @@ impl<W: Write> Write for TeeCountWriter<W> {
 #[cfg(test)]
 mod test {
 
+    use std::sync::Arc;
+
     use arrow::{
         array::{ArrayRef, Int32Array},
         datatypes::{DataType, Field, Schema},
@@ -421,6 +423,7 @@ mod test {
         row::{RowConverter, Rows, SortField},
     };
     use arrow_schema::SortOptions;
+    use crc32fast::Hasher as CrcHasher;
     use datafusion::{
         assert_batches_eq,
         common::Result,
@@ -596,6 +599,138 @@ mod test {
             "+----+---+---+",
         ];
         assert_batches_eq!(expected, &vec![sorted_batch]);
+        Ok(())
+    }
+
+    // Write buffered data to a Vec<u8> and return (offsets, optional checksums).
+    fn write_buffered(data: BufferedData, checksum_enabled: bool) -> Result<(Vec<u64>, Option<Vec<u64>>)> {
+        let mut buf = vec![];
+        data.write(&mut buf, checksum_enabled)
+    }
+
+    #[tokio::test]
+    async fn test_write_checksum_disabled() -> Result<()> {
+        let batch = build_table_i32(
+            ("a", &vec![1, 2, 3, 4]),
+            ("b", &vec![10, 20, 30, 40]),
+            ("c", &vec![100, 200, 300, 400]),
+        )?;
+        let mut data = BufferedData::new(Partitioning::RoundRobinPartitioning(2), 0, Time::default());
+        data.add_batch(batch)?;
+
+        let (offsets, checksums) = write_buffered(data, false)?;
+        // offsets has num_partitions+1 entries
+        assert_eq!(offsets.len(), 3);
+        // checksums should be None when disabled
+        assert!(checksums.is_none());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_write_checksum_enabled_count() -> Result<()> {
+        let batch = build_table_i32(
+            ("a", &vec![1, 2, 3, 4]),
+            ("b", &vec![10, 20, 30, 40]),
+            ("c", &vec![100, 200, 300, 400]),
+        )?;
+        let num_partitions = 4;
+        let mut data = BufferedData::new(
+            Partitioning::RoundRobinPartitioning(num_partitions), 0, Time::default());
+        data.add_batch(batch)?;
+
+        let (offsets, checksums) = write_buffered(data, true)?;
+        // offsets has num_partitions+1 entries
+        assert_eq!(offsets.len(), num_partitions + 1);
+        // checksums should be Some with one value per partition
+        let checksums = checksums.expect("checksums should be Some when enabled");
+        assert_eq!(checksums.len(), num_partitions);
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_write_checksum_deterministic() -> Result<()> {
+        // Writing the same data twice must produce identical checksums.
+        let make_batch = || {
+            build_table_i32(
+                ("a", &vec![1, 2, 3, 4, 5, 6]),
+                ("b", &vec![6, 5, 4, 3, 2, 1]),
+                ("c", &vec![10, 20, 30, 40, 50, 60]),
+            )
+        };
+        let num_partitions = 3;
+
+        let mut data1 = BufferedData::new(
+            Partitioning::RoundRobinPartitioning(num_partitions), 0, Time::default());
+        data1.add_batch(make_batch()?)?;
+
+        let mut data2 = BufferedData::new(
+            Partitioning::RoundRobinPartitioning(num_partitions), 0, Time::default());
+        data2.add_batch(make_batch()?)?;
+
+        let (_, cs1) = write_buffered(data1, true)?;
+        let (_, cs2) = write_buffered(data2, true)?;
+
+        assert_eq!(cs1, cs2, "checksums should be deterministic for same data");
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_write_checksum_nonempty() -> Result<()> {
+        // Partitions that received data should have non-zero checksums.
+        // (CRC32 of any non-empty byte sequence is non-zero with overwhelming probability.)
+        let batch = build_table_i32(
+            ("a", &vec![1, 2, 3, 4]),
+            ("b", &vec![10, 20, 30, 40]),
+            ("c", &vec![100, 200, 300, 400]),
+        )?;
+        let num_partitions = 2;
+        let mut data = BufferedData::new(
+            Partitioning::RoundRobinPartitioning(num_partitions), 0, Time::default());
+        data.add_batch(batch)?;
+
+        let (offsets, checksums) = write_buffered(data, true)?;
+        let checksums = checksums.unwrap();
+
+        // Every partition should have written some bytes.
+        for i in 0..num_partitions {
+            assert!(offsets[i + 1] > offsets[i], "partition {i} should have data");
+            assert_ne!(checksums[i], 0, "checksum for partition {i} should be non-zero");
+        }
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_write_checksum_consistent_with_raw_bytes() -> Result<()> {
+        // Verify that the checksum equals the CRC32 of the raw compressed bytes for each partition.
+        let batch = build_table_i32(
+            ("a", &vec![1, 2, 3]),
+            ("b", &vec![4, 5, 6]),
+            ("c", &vec![7, 8, 9]),
+        )?;
+        let num_partitions = 3;
+        let mut data = BufferedData::new(
+            Partitioning::RoundRobinPartitioning(num_partitions), 0, Time::default());
+        data.add_batch(batch)?;
+
+        let mut buf = vec![];
+        let (offsets, checksums) = data.write(&mut buf, true)?;
+        let checksums = checksums.unwrap();
+
+        for i in 0..num_partitions {
+            let start = offsets[i] as usize;
+            let end = offsets[i + 1] as usize;
+            let partition_bytes = &buf[start..end];
+
+            let mut h = CrcHasher::new();
+            h.update(partition_bytes);
+            let expected = h.finalize() as u64;
+
+            assert_eq!(
+                checksums[i], expected,
+                "checksum mismatch for partition {i}: got {}, expected {}",
+                checksums[i], expected
+            );
+        }
         Ok(())
     }
 }

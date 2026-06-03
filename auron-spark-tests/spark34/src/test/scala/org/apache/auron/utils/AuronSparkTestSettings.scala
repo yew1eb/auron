@@ -17,6 +17,7 @@
 package org.apache.auron.utils
 
 import org.apache.spark.sql._
+import org.apache.spark.sql.execution.AuronShuffleChecksumSuite
 import org.apache.spark.sql.execution.datasources.parquet._
 
 class AuronSparkTestSettings extends SparkTestSettings {
@@ -212,6 +213,8 @@ class AuronSparkTestSettings extends SparkTestSettings {
     .exclude("returning batch for wide table")
   enableSuite[AuronParquetV2SchemaPruningSuite]
   enableSuite[AuronParquetVectorizedSuite]
+
+  enableSuite[AuronShuffleChecksumSuite]
 
   override def getSQLQueryTestSettings: SQLQueryTestSettings = new SQLQueryTestSettings {
     override def getResourceFilePath: String = ""
