@@ -179,8 +179,8 @@ impl ShuffleRepartitioner for SortShuffleRepartitioner {
                 let mut output_data = open_shuffle_file(&data_file)?;
                 let mut output_index = open_shuffle_file(&index_file)?;
 
-                let (offsets, checksums) =
-                    output_io_time.exclude_timer(|| data.write(&mut output_data, checksum_enabled))?;
+                let (offsets, checksums) = output_io_time
+                    .exclude_timer(|| data.write(&mut output_data, checksum_enabled))?;
 
                 // write index file
                 let mut offsets_data = vec![];

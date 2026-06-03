@@ -603,7 +603,10 @@ mod test {
     }
 
     // Write buffered data to a Vec<u8> and return (offsets, optional checksums).
-    fn write_buffered(data: BufferedData, checksum_enabled: bool) -> Result<(Vec<u64>, Option<Vec<u64>>)> {
+    fn write_buffered(
+        data: BufferedData,
+        checksum_enabled: bool,
+    ) -> Result<(Vec<u64>, Option<Vec<u64>>)> {
         let mut buf = vec![];
         data.write(&mut buf, checksum_enabled)
     }
@@ -615,7 +618,8 @@ mod test {
             ("b", &vec![10, 20, 30, 40]),
             ("c", &vec![100, 200, 300, 400]),
         )?;
-        let mut data = BufferedData::new(Partitioning::RoundRobinPartitioning(2), 0, Time::default());
+        let mut data =
+            BufferedData::new(Partitioning::RoundRobinPartitioning(2), 0, Time::default());
         data.add_batch(batch)?;
 
         let (offsets, checksums) = write_buffered(data, false)?;
@@ -635,7 +639,10 @@ mod test {
         )?;
         let num_partitions = 4;
         let mut data = BufferedData::new(
-            Partitioning::RoundRobinPartitioning(num_partitions), 0, Time::default());
+            Partitioning::RoundRobinPartitioning(num_partitions),
+            0,
+            Time::default(),
+        );
         data.add_batch(batch)?;
 
         let (offsets, checksums) = write_buffered(data, true)?;
@@ -660,11 +667,17 @@ mod test {
         let num_partitions = 3;
 
         let mut data1 = BufferedData::new(
-            Partitioning::RoundRobinPartitioning(num_partitions), 0, Time::default());
+            Partitioning::RoundRobinPartitioning(num_partitions),
+            0,
+            Time::default(),
+        );
         data1.add_batch(make_batch()?)?;
 
         let mut data2 = BufferedData::new(
-            Partitioning::RoundRobinPartitioning(num_partitions), 0, Time::default());
+            Partitioning::RoundRobinPartitioning(num_partitions),
+            0,
+            Time::default(),
+        );
         data2.add_batch(make_batch()?)?;
 
         let (_, cs1) = write_buffered(data1, true)?;
@@ -677,7 +690,8 @@ mod test {
     #[tokio::test]
     async fn test_write_checksum_nonempty() -> Result<()> {
         // Partitions that received data should have non-zero checksums.
-        // (CRC32 of any non-empty byte sequence is non-zero with overwhelming probability.)
+        // (CRC32 of any non-empty byte sequence is non-zero with overwhelming
+        // probability.)
         let batch = build_table_i32(
             ("a", &vec![1, 2, 3, 4]),
             ("b", &vec![10, 20, 30, 40]),
@@ -685,7 +699,10 @@ mod test {
         )?;
         let num_partitions = 2;
         let mut data = BufferedData::new(
-            Partitioning::RoundRobinPartitioning(num_partitions), 0, Time::default());
+            Partitioning::RoundRobinPartitioning(num_partitions),
+            0,
+            Time::default(),
+        );
         data.add_batch(batch)?;
 
         let (offsets, checksums) = write_buffered(data, true)?;
@@ -693,15 +710,22 @@ mod test {
 
         // Every partition should have written some bytes.
         for i in 0..num_partitions {
-            assert!(offsets[i + 1] > offsets[i], "partition {i} should have data");
-            assert_ne!(checksums[i], 0, "checksum for partition {i} should be non-zero");
+            assert!(
+                offsets[i + 1] > offsets[i],
+                "partition {i} should have data"
+            );
+            assert_ne!(
+                checksums[i], 0,
+                "checksum for partition {i} should be non-zero"
+            );
         }
         Ok(())
     }
 
     #[tokio::test]
     async fn test_write_checksum_consistent_with_raw_bytes() -> Result<()> {
-        // Verify that the checksum equals the CRC32 of the raw compressed bytes for each partition.
+        // Verify that the checksum equals the CRC32 of the raw compressed bytes for
+        // each partition.
         let batch = build_table_i32(
             ("a", &vec![1, 2, 3]),
             ("b", &vec![4, 5, 6]),
@@ -709,7 +733,10 @@ mod test {
         )?;
         let num_partitions = 3;
         let mut data = BufferedData::new(
-            Partitioning::RoundRobinPartitioning(num_partitions), 0, Time::default());
+            Partitioning::RoundRobinPartitioning(num_partitions),
+            0,
+            Time::default(),
+        );
         data.add_batch(batch)?;
 
         let mut buf = vec![];
