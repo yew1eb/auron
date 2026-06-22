@@ -1701,7 +1701,8 @@ mod fuzztest {
         let schema = Arc::new(arrow::datatypes::Schema::new(vec![
             arrow::datatypes::Field::new("l_orderkey", arrow::datatypes::DataType::Int64, false),
         ]));
-        RecordBatch::try_new(schema, vec![Arc::new(Int64Array::from(values)) as ArrayRef]).unwrap()
+        RecordBatch::try_new(schema, vec![Arc::new(Int64Array::from(values)) as ArrayRef])
+            .expect("failed to create benchmark batch")
     }
 
     async fn bench_sort_repeat(repeat: usize, mem: usize, use_auron: bool) -> Result<(usize, f64)> {
