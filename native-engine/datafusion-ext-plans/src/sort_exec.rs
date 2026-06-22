@@ -644,8 +644,9 @@ impl ExternalSorter {
             .fetch_add(batch.get_batch_mem_size(), SeqCst);
 
         // sort keys
-        // fast path: for single-column primitive types, use arrow sort_to_indices directly
-        // to avoid RowConverter encoding overhead (~6x faster than byte-comparison path)
+        // fast path: for single-column primitive types, use arrow sort_to_indices
+        // directly to avoid RowConverter encoding overhead (~6x faster than
+        // byte-comparison path)
         let batch = if let Some(key) = &self.prune_sort_keys_from_batch.primitive_fast_path {
             let sorted_indices = self
                 .prune_sort_keys_from_batch
@@ -661,27 +662,33 @@ impl ExternalSorter {
 
         // NOTE: we use stable merge sort for longer keys due to less comparison
         let (keys, batch) = self.prune_sort_keys_from_batch.prune(batch)?;
-        let sorted_indices = if self.prune_sort_keys_from_batch.primitive_fast_path.is_some() {
+        let sorted_indices = if self
+            .prune_sort_keys_from_batch
+            .primitive_fast_path
+            .is_some()
+        {
             // batch is already sorted; generate identity indices
             (0..keys.num_rows() as u32).collect::<Vec<_>>()
         } else if keys.size() / keys.num_rows() <= 8 {
-            (0..keys.num_rows() as u32).sorted_unstable_by_key(|&row_idx| unsafe {
-                // safety: bypass boundary and lifetime checking
-                std::mem::transmute::<_, &'static [u8]>(
-                    keys.row_unchecked(row_idx as usize).as_ref(),
-                )
-            })
-            .take(self.limit)
-            .collect::<Vec<_>>()
+            (0..keys.num_rows() as u32)
+                .sorted_unstable_by_key(|&row_idx| unsafe {
+                    // safety: bypass boundary and lifetime checking
+                    std::mem::transmute::<_, &'static [u8]>(
+                        keys.row_unchecked(row_idx as usize).as_ref(),
+                    )
+                })
+                .take(self.limit)
+                .collect::<Vec<_>>()
         } else {
-            (0..keys.num_rows() as u32).sorted_by_key(|&row_idx| unsafe {
-                // safety: bypass boundary and lifetime checking
-                std::mem::transmute::<_, &'static [u8]>(
-                    keys.row_unchecked(row_idx as usize).as_ref(),
-                )
-            })
-            .take(self.limit)
-            .collect::<Vec<_>>()
+            (0..keys.num_rows() as u32)
+                .sorted_by_key(|&row_idx| unsafe {
+                    // safety: bypass boundary and lifetime checking
+                    std::mem::transmute::<_, &'static [u8]>(
+                        keys.row_unchecked(row_idx as usize).as_ref(),
+                    )
+                })
+                .take(self.limit)
+                .collect::<Vec<_>>()
         };
 
         // build keys
@@ -694,7 +701,11 @@ impl ExternalSorter {
 
         // build batch
         let sorted_batch = if !self.prune_sort_keys_from_batch.is_all_pruned() {
-            if self.prune_sort_keys_from_batch.primitive_fast_path.is_some() {
+            if self
+                .prune_sort_keys_from_batch
+                .primitive_fast_path
+                .is_some()
+            {
                 // batch is already sorted and pruned; avoid unnecessary take_batch copy
                 batch
             } else {
@@ -1675,8 +1686,9 @@ mod fuzztest {
 
     use crate::sort_exec::SortExec;
 
-    /// Benchmark helper: build a single Int64 column where each value is repeated
-    /// `repeat` times, shuffled, to simulate TPC-H lineitem.l_orderkey distribution.
+    /// Benchmark helper: build a single Int64 column where each value is
+    /// repeated `repeat` times, shuffled, to simulate TPC-H
+    /// lineitem.l_orderkey distribution.
     fn build_repeated_i64_batch(num_rows: usize, repeat: usize, seed: u64) -> RecordBatch {
         use rand::{Rng, SeedableRng};
         let unique_keys = (num_rows + repeat - 1) / repeat;
@@ -1686,19 +1698,13 @@ mod fuzztest {
             .collect();
         let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
         rand::seq::SliceRandom::shuffle(values.as_mut_slice(), &mut rng);
-        let schema = Arc::new(arrow::datatypes::Schema::new(vec![arrow::datatypes::Field::new(
-            "l_orderkey",
-            arrow::datatypes::DataType::Int64,
-            false,
-        )]));
+        let schema = Arc::new(arrow::datatypes::Schema::new(vec![
+            arrow::datatypes::Field::new("l_orderkey", arrow::datatypes::DataType::Int64, false),
+        ]));
         RecordBatch::try_new(schema, vec![Arc::new(Int64Array::from(values)) as ArrayRef]).unwrap()
     }
 
-    async fn bench_sort_repeat(
-        repeat: usize,
-        mem: usize,
-        use_auron: bool,
-    ) -> Result<(usize, f64)> {
+    async fn bench_sort_repeat(repeat: usize, mem: usize, use_auron: bool) -> Result<(usize, f64)> {
         MemManager::init(mem);
         let session_ctx =
             SessionContext::new_with_config(SessionConfig::new().with_batch_size(10000));
@@ -1711,7 +1717,11 @@ mod fuzztest {
             options: SortOptions::default(),
         }];
 
-        let input = Arc::new(TestMemoryExec::try_new(&[vec![batch]], schema.clone(), None)?);
+        let input = Arc::new(TestMemoryExec::try_new(
+            &[vec![batch]],
+            schema.clone(),
+            None,
+        )?);
         let sort: Arc<dyn ExecutionPlan> = if use_auron {
             Arc::new(SortExec::new(input, sort_exprs.clone(), None, 0))
         } else {
@@ -1735,7 +1745,10 @@ mod fuzztest {
             let (_, elapsed_df) = bench_sort_repeat(repeat, 1_000_000_000, false).await?;
             eprintln!(
                 "[sort in-mem] repeat={:>3}, auron={:.3}s, datafusion={:.3}s, speedup(df/auron)={:.2}x",
-                repeat, elapsed_auron, elapsed_df, elapsed_auron / elapsed_df
+                repeat,
+                elapsed_auron,
+                elapsed_df,
+                elapsed_auron / elapsed_df
             );
         }
         Ok(())
@@ -1749,7 +1762,10 @@ mod fuzztest {
             let (_, elapsed_df) = bench_sort_repeat(repeat, 2_000_000, false).await?;
             eprintln!(
                 "[sort external] repeat={:>3}, auron={:.3}s, datafusion={:.3}s, speedup(df/auron)={:.2}x",
-                repeat, elapsed_auron, elapsed_df, elapsed_auron / elapsed_df
+                repeat,
+                elapsed_auron,
+                elapsed_df,
+                elapsed_auron / elapsed_df
             );
         }
         Ok(())
